@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Documentation;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\DocumentationRepository;
 use App\Service\LogService;
 use App\Service\ProjectDirService;
@@ -36,13 +36,13 @@ class DocumentationController extends AbstractController
         Documentation $documentation,
         DocumentationRepository $documentationRepository,
     ): Response {
-        /** @var ?User $user */
-        $user = $this->getUser();
+        /** @var ?Member $member */
+        $member = $this->getUser();
 
         return $this->render('documentation/_frame_novelty.html.twig', [
             'documentation' => $documentation,
-            'isNovelty' => ($user)
-                ? $documentationRepository->isNoveltyByUser($user, $documentation)
+            'isNovelty' => ($member)
+                ? $documentationRepository->isNoveltyByUser($member, $documentation)
                 : false
         ]);
     }

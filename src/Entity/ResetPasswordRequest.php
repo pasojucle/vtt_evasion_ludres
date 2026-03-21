@@ -23,13 +23,13 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: User::class)]
+    #[ManyToOne(targetEntity: Member::class)]
     #[JoinColumn(nullable: false)]
-    private User $user;
+    private Member $member;
 
-    public function __construct(object $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
+    public function __construct(object $member, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
     {
-        $this->user = $user;
+        $this->member = $member;
         $this->initialize($expiresAt, $selector, $hashedToken);
     }
 
@@ -40,6 +40,6 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     public function getUser(): object
     {
-        return $this->user;
+        return $this->member;
     }
 }

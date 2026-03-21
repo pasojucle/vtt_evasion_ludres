@@ -8,7 +8,7 @@ use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
-use App\Entity\User;
+use App\Entity\Member;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -40,37 +40,37 @@ class SurveyVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        /** @var User $user */
-        $user = $token->getUser();
-        if (!$user instanceof User) {
+        /** @var Member $member */
+        $member = $token->getUser();
+        if (!$member instanceof Member) {
             return false;
         }
 
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::SURVEY);
+        $isUserWithPermission = $isActiveUser && $member->hasPermissions(PermissionEnum::SURVEY);
 
         return match ($attribute) {
-            self::EDIT , self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
-            self::VIEW => $this->canView($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::EDIT , self::ADD => $this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission),
+            self::VIEW => $this->canView($token, $member, $subject, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, Member $member, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
             return true;
         }
 
-        return $this->isOwner($subject, $user) && $isActiveUser;
+        return $this->isOwner($subject, $member) && $isActiveUser;
     }
 
-    private function canView(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canView(TokenInterface $token, Member $member, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
+        if ($this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
         }
 
@@ -90,12 +90,12 @@ class SurveyVoter extends Voter
         return $isActiveUser;
     }
 
-    private function isOwner(null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, User $user): bool
+    private function isOwner(null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, Member $member): bool
     {
         if (!$subject || $subject instanceof Survey || $subject instanceof SurveyIssue) {
             return false;
         }
 
-        return $subject->getUser() === $user;
+        return $subject->getMember() === $member;
     }
 }

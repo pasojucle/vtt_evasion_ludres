@@ -8,7 +8,7 @@ use App\Entity\Cluster;
 use App\Entity\Enum\PracticeEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Licence;
-use App\Form\HiddenClusterType;
+use App\Form\HiddenEntityType;
 use App\Form\SurveyResponsesType;
 use App\Service\SeasonService;
 use App\Service\SessionService;
@@ -92,8 +92,9 @@ class SessionType extends AbstractType
                         ])
                     ;
             } else {
-                $form
-                        ->add('cluster', HiddenClusterType::class)
+                $form->add('cluster', HiddenEntityType::class, [
+                            'class' => Cluster::class,
+                        ]);
                     ;
             }
             if (true === $bikeRide->getBikeRideType()->isDisplayBikeKind()) {

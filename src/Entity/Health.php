@@ -21,7 +21,7 @@ class Health
     private ?DateTimeInterface $medicalCertificateDate = null;
     
     #[ORM\OneToOne(inversedBy: 'health', cascade: ['persist', 'remove'])]
-    private ?User $user = null;
+    private ?Member $member = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
@@ -57,14 +57,14 @@ class Health
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): static
+    public function setMember(?Member $member): static
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

@@ -8,6 +8,7 @@ use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\PracticeEnum;
 use App\Entity\Session;
+use App\Form\HiddenEntityType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
@@ -59,7 +60,9 @@ class SessionEditType extends AbstractType
                         ]);
                 } else {
                     $form
-                        ->add('cluster', HiddenClusterType::class);
+                        ->add('cluster', HiddenEntityType::class, [
+                            'class' => Cluster::class,
+                        ]);
                 }
             }
             
@@ -76,7 +79,7 @@ class SessionEditType extends AbstractType
         });
 
         $builder
-            ->add('user', HiddenUserType::class);
+            ->add('user', HiddenMemberType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

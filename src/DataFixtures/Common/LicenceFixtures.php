@@ -7,6 +7,7 @@ namespace App\DataFixtures\Common;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
+use App\Entity\Member;
 use App\Entity\User;
 use App\Service\SeasonService;
 use DateTime;
@@ -50,7 +51,7 @@ class LicenceFixtures extends AbstractFixture implements FixtureGroupInterface, 
         foreach (self::LICENCES  as $ref => [$user, $coverage, $category, $state]) {
             $currentSeason = $this->seasonService->getCurrentSeason();
             $licence = new Licence();
-            $licence->setUser($this->getReference($user, User::class))
+            $licence->setUser($this->getReference($user, Member::class))
                 ->setCoverage($coverage)
                 ->setCategory($category)
                 ->setSeason($currentSeason)

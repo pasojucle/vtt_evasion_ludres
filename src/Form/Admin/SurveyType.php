@@ -8,7 +8,7 @@ use App\Entity\Survey;
 use App\Form\Admin\EventListener\Survey\AddRestrictionSubscriber;
 use App\Form\Type\TiptapType;
 use App\Repository\BikeRideRepository;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use App\Service\LevelService;
 use App\Validator\CKEditorBlank;
 use Symfony\Component\Form\AbstractType;
@@ -31,7 +31,7 @@ class SurveyType extends AbstractType
 
     public function __construct(
         private readonly LevelService $levelService,
-        private readonly UserRepository $userRepository,
+        private readonly MemberRepository $memberRepository,
         private readonly BikeRideRepository $bikeRideRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -114,7 +114,7 @@ class SurveyType extends AbstractType
                 ]);
         });
 
-        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->bikeRideRepository, $this->urlGenerator));
+        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->memberRepository, $this->bikeRideRepository, $this->urlGenerator));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

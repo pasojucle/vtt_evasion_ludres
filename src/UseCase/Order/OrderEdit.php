@@ -50,7 +50,7 @@ class OrderEdit
         $this->entityManager->persist($orderHeader);
         $this->entityManager->flush();
 
-        $identity = $orderHeader->getUser()->getIdentity();
+        $identity = $orderHeader->getMember()->getIdentity();
         $this->mailerService->sendMailToClub([
             'name' => $identity->getName(),
             'firstName' => $identity->getFirstName(),

@@ -6,8 +6,6 @@ namespace App\Form\EventListener;
 
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
-use App\Entity\Licence;
-use App\Entity\User;
 use App\Form\AddressType;
 use App\Form\Admin\CommuneAutocompleteField;
 use App\Service\LicenceService;
@@ -160,20 +158,16 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
             $birthDate = (array_key_exists('birthDate', $data)) ? new dateTime($data['birthDate']) : null;
             $category = ($birthDate) ? $this->licenceService->getCategoryByBirthDate($birthDate) : LicenceCategoryEnum::ADULT;
             $foreignBorn = array_key_exists('foreignBorn', $data);
-            dump($data);
             $this->modifier($event->getForm(), $category, $foreignBorn);
         }
     }
 
     private function modifier(FormInterface $form, LicenceCategoryEnum $category, bool $foreignBorn): void
     {
-        dump($foreignBorn);
         $isYearly = $form->getConfig()->getOption('is_yearly');
-        dump($isYearly);
         $hidden = LicenceCategoryEnum::ADULT !== $category;
         $class = ($hidden) ? 'hidden' : 'form-group-inline';
         list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
-        dump(sprintf('%s - %s', $birthCommuneClass, $birthPlaceClass));
         $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
         $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
         $form

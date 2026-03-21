@@ -6,7 +6,7 @@ namespace App\UseCase\SecondHand;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\SecondHand;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
 use App\Service\UploadService;
@@ -30,17 +30,17 @@ class EditSecondHand
     public function execute(FormInterface $form, Request $request): void
     {
         $secondHand = $form->getData();
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $this->setData($secondHand, $user);
+        /** @var Member $member */
+        $member = $this->security->getUser();
+        $this->setData($secondHand, $member);
         $this->saveImages($secondHand, $request);
         $this->secondHandRepository->save($secondHand, true);
-        $this->sendEmail($secondHand, $user);
+        $this->sendEmail($secondHand, $member);
     }
 
-    private function setData(SecondHand $secondHand, User $user): void
+    private function setData(SecondHand $secondHand, Member $member): void
     {
-        $secondHand->setUser($user)
+        $secondHand->setMember($member)
             ->setCreatedAt(new DateTimeImmutable())
             ->setDeleted(false)
             ->setDisabled(false)
@@ -66,9 +66,9 @@ class EditSecondHand
         };
     }
 
-    private function sendEmail(SecondHand $secondHand, User $user): void
+    private function sendEmail(SecondHand $secondHand, Member $member): void
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $this->mailerService->sendMailToClub([
             'name' => $userDto->member->name,
             'firstName' => $userDto->member->firstName,

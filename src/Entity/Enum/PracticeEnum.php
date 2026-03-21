@@ -11,10 +11,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 enum PracticeEnum: string implements TranslatableInterface
 {
     case VTT = 'vtt';
-    case VTTAE = 'vttae';
+    case VTT_AE = 'vttae';
     case ROADBIKE = 'roadbike';
     case GRAVEL = 'gravel';
+    case GRAVEL_AE = 'gravelae';
     case WALKING = 'walking';
+    case NONE = 'none';
 
     use EnumTrait;
 
@@ -22,9 +24,10 @@ enum PracticeEnum: string implements TranslatableInterface
     public function color(): string
     {
         return match ($this) {
-            self::VTTAE => '#2596be',
+            self::VTT_AE => '#2596be',
             self::ROADBIKE => '#76448a',
             self::GRAVEL => '#e67e22',
+            self::GRAVEL_AE => '#463d6d',
             self::WALKING => '#f1c40f',
             default => '#229954'
         };

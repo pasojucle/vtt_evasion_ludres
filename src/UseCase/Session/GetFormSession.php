@@ -7,8 +7,8 @@ namespace App\UseCase\Session;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
+use App\Entity\Member;
 use App\Entity\Session;
-use App\Entity\User;
 use App\Form\SessionType;
 use App\Repository\SessionRepository;
 use App\Service\SessionService;
@@ -36,16 +36,16 @@ class GetFormSession
     ) {
     }
 
-    public function toAdd(User $user, BikeRide $bikeRide): FormInterface
+    public function toAdd(Member $member, BikeRide $bikeRide): FormInterface
     {
         $clusters = $this->getBikeRideClusters($bikeRide);
-        $userSession = $this->getUserSession($bikeRide, $user, $clusters);
+        $userSession = $this->getUserSession($bikeRide, $member, $clusters);
         $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $userSession->getUser());
         $sessions = ($isWritableAvailability)
             ? $this->sessionService->getSessionsBytype($bikeRide)
             : $this->sessionService->getBikeRideMembers($bikeRide);
 
-        $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyService->getResponsesByUserAndSurvey($user, $bikeRide->getSurvey()) : null;
+        $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyService->getResponsesByUserAndSurvey($member, $bikeRide->getSurvey()) : null;
 
         $form = $this->getForm($userSession, $bikeRide, $clusters, $isWritableAvailability, $surveyResponses);
 
@@ -57,17 +57,17 @@ class GetFormSession
     public function toEdit(Session $session): FormInterface
     {
         $bikeRide = $session->getCluster()->getBikeRide();
-
+        $member = $session->getMember();
         $clusters = $this->getBikeRideClusters($bikeRide);
         $isWritableAvailability = true;
-        $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
+        $sessions = $this->sessionService->getSessionsBytype($bikeRide, $member);
 
         $surveyResponses = ($bikeRide->getSurvey())
-            ? $this->surveyService->getResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey())
+            ? $this->surveyService->getResponsesByUserAndSurvey($member, $bikeRide->getSurvey())
             : null;
 
         $surveyHistories = ($surveyResponses)
-            ? $this->surveyService->getHistory($bikeRide->getSurvey(), $session->getUser())
+            ? $this->surveyService->getHistory($bikeRide->getSurvey(), $member)
             : null;
         $form = $this->getForm($session, $bikeRide, $clusters, $isWritableAvailability, $surveyResponses);
 
@@ -78,7 +78,7 @@ class GetFormSession
 
     private function getBikeRideClusters(BikeRide $bikeRide): Collection
     {
-        /** @var COllection $clusters */
+        /** @var Collection $clusters */
         $clusters = $bikeRide->getClusters();
         if ($clusters->isEmpty()) {
             $this->createClusters->execute($bikeRide);
@@ -89,15 +89,14 @@ class GetFormSession
         return $clusters;
     }
 
-    private function getUserSession(BikeRide $bikeRide, User $user, Collection $clusters): Session
+    private function getUserSession(BikeRide $bikeRide, Member $member, Collection $clusters): Session
     {
-        $userSession = $this->sessionRepository->findOneByUserAndClusters($user, $clusters);
+        $userSession = $this->sessionRepository->findOneByUserAndClusters($member, $clusters);
 
         if (null === $userSession) {
-            $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
+            $userCluster = $this->sessionService->getCluster($bikeRide, $member, $clusters);
             $userSession = new Session();
-            $userSession->setUser($user)
-                ;
+            $userSession->setUser($member);
 
             if (null !== $userCluster) {
                 $userSession->setCluster($userCluster);

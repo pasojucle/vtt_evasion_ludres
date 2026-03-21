@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\BikeRide;
 use App\Entity\Respondent;
 use App\Entity\Survey;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -28,17 +27,17 @@ class RespondentRepository extends ServiceEntityRepository
         parent::__construct($registry, Respondent::class);
     }
 
-    public function findOneBySurveyAndUser(Survey $survey, User $user): ?Respondent
+    public function findOneBySurveyAndUser(Survey $survey, Member $member): ?Respondent
     {
         try {
             return $this->createQueryBuilder('v')
                 ->andWhere(
                     (new Expr())->eq('v.survey', ':survey'),
-                    (new Expr())->eq('v.user', ':user'),
+                    (new Expr())->eq('v.member', ':member'),
                 )
                 ->setParameters(new ArrayCollection([
                     new Parameter('survey', $survey),
-                    new Parameter('user', $user),
+                    new Parameter('member', $member),
                 ]))
                 ->getQuery()
                 ->getOneOrNullResult()
@@ -48,32 +47,32 @@ class RespondentRepository extends ServiceEntityRepository
         }
     }
 
-    public function findActiveSurveysByUser(User $user): array
+    public function findActiveSurveysByUser(Member $member): array
     {
         return  $this->createQueryBuilder('vu')
             ->join('vu.survey', 'v')
             ->andWhere(
-                (new Expr())->eq('vu.user', ':user'),
+                (new Expr())->eq('vu.member', ':member'),
                 (new Expr())->eq('v.disabled', 0),
                 (new Expr())->lte('v.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('v.endAt', 'CURRENT_DATE()'),
             )
-            ->setParameter('user', $user)
+            ->setParameter('member', $member)
             ->getQuery()
             ->getResult()
         ;
     }
     
-    public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
+    public function deleteResponsesByUserAndSurvey(Member $member, Survey $survey): void
     {
         $this->createQueryBuilder('r')
         ->delete()
         ->andWhere(
-            (new Expr())->eq('r.user', ':user'),
+            (new Expr())->eq('r.member', ':member'),
             (new Expr())->in('r.survey', ':survey')
         )
         ->setParameters(new ArrayCollection([
-            new Parameter('user', $user),
+            new Parameter('member', $member),
             new Parameter('survey', $survey),
         ]))
         ->getQuery()

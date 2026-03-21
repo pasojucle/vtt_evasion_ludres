@@ -10,13 +10,14 @@ use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
+use App\Entity\Guest;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Form\Admin\ParticipationFilterType;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\SessionRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
-use DateTime;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -60,7 +61,7 @@ class GetParticipations
 
         $session->set($this->filterName, $filters);
         $sessions = $this->sessionRepository->findByFilters($filters);
-        $users = $this->getUsers($sessions);
+        $users = $this->getMember($sessions);
         $paginator = $this->paginate($users, $sessions, $request, 4);
 
         return [
@@ -101,13 +102,13 @@ class GetParticipations
         ];
     }
 
-    private function getUsers(array $sessions): array
+    private function getMember(array $sessions): array
     {
         $userEntities = [];
         /** @var Session $session */
         foreach ($sessions as $session) {
             $user = $session->getUser();
-            if (!array_key_exists($user->getId(), $userEntities)) {
+            if ($user instanceof Member && !array_key_exists($user->getId(), $userEntities)) {
                 $userEntities[$user->getId()] = $user;
             }
         }
@@ -121,7 +122,7 @@ class GetParticipations
         $session = $request->getSession();
         $filters = $session->get($this->filterName);
         $sessions = $this->sessionRepository->findByFilters($filters);
-        $users = $this->getUsers($sessions);
+        $users = $this->getMember($sessions);
         $content = [];
         $this->addExportHeader($content, $filters);
         $this->addExportContent($content, $users, $sessions);

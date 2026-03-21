@@ -6,7 +6,7 @@ namespace App\UseCase\Survey;
 
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Entity\Survey;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SurveyResponseRepository;
 
 class GetResponsesByUser
@@ -16,9 +16,9 @@ class GetResponsesByUser
         private SurveyResponseDtoTransformer $surveyResponseDtoTransformer
     ) {
     }
-    public function execute(Survey $survey, User $user): array
+    public function execute(Survey $survey, Member $member): array
     {
-        $responses = $this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey);
+        $responses = $this->surveyResponseRepository->findResponsesByUserAndSurvey($member, $survey);
 
         return $this->surveyResponseDtoTransformer->fromEntities($responses);
     }

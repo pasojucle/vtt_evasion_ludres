@@ -3,9 +3,9 @@
 namespace App\Form\Admin;
 
 use App\Entity\Enum\EvaluationEnum;
-use App\Entity\UserSkill;
+use App\Entity\MemberSkill;
+use App\Form\HiddenMemberType;
 use App\Form\HiddenSkillType;
-use App\Form\HiddenUserType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -22,11 +22,11 @@ class UserSkillType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-            /** @var UserSkill $userSkill */
-            $userSkill = $event->getData();
+            /** @var MemberSkill $memberSkill */
+            $memberSkill = $event->getData();
             $form = $event->getForm();
   
-            list($name, $content) = $this->getText($options['text_type'], $userSkill);
+            list($name, $content) = $this->getText($options['text_type'], $memberSkill);
 
             $form
                 ->add($name, TextType::class, [
@@ -46,25 +46,25 @@ class UserSkillType extends AbstractType
                     ],
                 ])
                 ->add('skill', HiddenSkillType::class)
-                ->add('user', HiddenUserType::class)
+                ->add('user', HiddenMemberType::class)
             ;
         });
     }
 
-    private function getText(int $type, UserSkill $userSkill): array
+    private function getText(int $type, MemberSkill $memberSkill): array
     {
         if (self::BY_USERS === $type) {
-            $member = $userSkill->getUser()->getIdentity();
+            $member = $memberSkill->getMember()->getIdentity();
             return ['member', sprintf('%s %s', $member->getName(), $member->getFirstName())];
         }
 
-        return ['content', $userSkill->getSkill()->getContent()];
+        return ['content', $memberSkill->getSkill()->getContent()];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => UserSkill::class,
+            'data_class' => MemberSkill::class,
             'text_type' => self::BY_USERS,
         ]);
     }

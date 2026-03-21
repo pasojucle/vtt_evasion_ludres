@@ -3,14 +3,12 @@
 namespace App\Entity;
 
 use App\Entity\Enum\EvaluationEnum;
-use App\Repository\UserSkillRepository;
+use App\Repository\MemberSkillRepository;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserSkillRepository::class)]
-class UserSkill
+#[ORM\Entity(repositoryClass: MemberSkillRepository::class)]
+class MemberSkill
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,10 +21,10 @@ class UserSkill
     #[ORM\Column(type: 'Evaluation')]
     private EvaluationEnum $evaluation = EvaluationEnum::UNACQUIRED;
 
-    #[ORM\ManyToOne(inversedBy: 'userSkills')]
-    private ?User $user = null;
+    #[ORM\ManyToOne(inversedBy: 'memberSkills')]
+    private ?Member $member = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userSkills')]
+    #[ORM\ManyToOne(inversedBy: 'memberSkills')]
     private ?Skill $skill = null;
 
     public function getId(): ?int
@@ -58,14 +56,14 @@ class UserSkill
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): static
+    public function setMember(?Member $member): static
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

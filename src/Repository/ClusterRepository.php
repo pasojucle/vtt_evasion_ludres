@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Log;
+use App\Entity\Member;
 use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -43,19 +44,23 @@ class ClusterRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findAvailableByUser(User $user): array
+    public function findAvailableByUser(Member $member): array
     {
         return $this->createQueryBuilder('c')
-            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX((new Expr())->eq('c.id', 'log.entityId'), (new Expr())->eq('log.entity', ':entityName'), (new Expr())->eq('log.user', ':user')))
+            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX(
+                    (new Expr())->eq('c.id', 'log.entityId'), 
+                    (new Expr())->eq('log.entity', ':entityName'), 
+                    (new Expr())->eq('log.member', ':member'))
+                )
             ->join('c.bikeRide', 'br')
             ->join('c.sessions', 's')
             ->andWhere(
                 (new Expr())->isNull('log'),
-                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->eq('s.member', ':member'),
                 (new Expr())->gte('br.startAt', ':start'),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', 'Cluster'),
                 new Parameter('start', (new DateTimeImmutable())->setTime(0, 0, 0)),
             ]))

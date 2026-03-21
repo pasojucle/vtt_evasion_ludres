@@ -10,11 +10,11 @@ use App\Entity\Cluster;
 use App\Entity\Documentation;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Licence;
+use App\Entity\Member;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
 use App\Entity\Session;
 use App\Entity\Survey;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -37,9 +37,9 @@ class NotificationService
 
     public function getIndex(Survey|OrderHeader|Notification|Licence|BikeRide|string|array $entity)
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $id = (null !== $user) ? $user->getLicenceNumber() : 'PUBLIC_ACCESS';
+        /** @var Member $member */
+        $member = $this->security->getUser();
+        $id = (null !== $member) ? $member->getLicenceNumber() : 'PUBLIC_ACCESS';
         return match (true) {
             is_string($entity) => sprintf('%s-%s', $id, $entity),
             is_array($entity) => $entity['index'],
@@ -160,7 +160,6 @@ class NotificationService
     public function sessionToArray(string $name): array
     {
         $session = $this->requestStack->getSession();
-        dump($session);
         $value = $session->get($name);
         return (null !== $value) ? json_decode($value, true) : [];
     }

@@ -6,7 +6,7 @@ namespace App\Controller;
 
 use App\Dto\DtoTransformer\LinkDtoTransformer;
 use App\Entity\Link;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\ContentRepository;
 use App\Repository\LinkRepository;
 use App\Service\LogService;
@@ -26,10 +26,10 @@ class LinkController extends AbstractController
     #[Route('/liens', name: 'links', methods: ['GET'])]
     public function list(LinkRepository $linkRepository, UserService $userService): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $novelties = ($user && $userService->licenceIsActive($user))
-            ? $linkRepository->findNoveltiesByUserIds($user)
+        /** @var Member $member */
+        $member = $this->getUser();
+        $novelties = ($member && $userService->licenceIsActive($member))
+            ? $linkRepository->findNoveltiesByUserIds($member)
             : [];
 
         return $this->render('link/list.html.twig', [

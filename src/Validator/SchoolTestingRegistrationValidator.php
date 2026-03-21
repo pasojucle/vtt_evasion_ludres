@@ -6,7 +6,6 @@ namespace App\Validator;
 
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
-use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Service\ParameterService;
 use App\Validator\SchoolTestingRegistration;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\PracticeEnum;
 use App\Repository\ClusterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -52,6 +53,8 @@ class Cluster
     #[ORM\ManyToMany(targetEntity: Skill::class, inversedBy: 'clusters')]
     private Collection $skills;
 
+    #[ORM\Column(type: 'string', enumType: PracticeEnum::class, options: ['default' => PracticeEnum::VTT->value])]
+    private PracticeEnum $practice = PracticeEnum::VTT;
 
     public function __construct()
     {
@@ -203,6 +206,18 @@ class Cluster
     public function removeSkill(Skill $skill): static
     {
         $this->skills->removeElement($skill);
+
+        return $this;
+    }
+
+    public function getPractice(): PracticeEnum
+    {
+        return $this->practice;
+    }
+
+    public function setPractice(PracticeEnum $practice): static
+    {
+        $this->practice = $practice;
 
         return $this;
     }

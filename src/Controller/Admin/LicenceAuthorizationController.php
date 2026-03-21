@@ -7,7 +7,7 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\LicenceAgreementDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\LicenceAgreement;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\LicenceAgreementType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,11 +27,11 @@ class LicenceAuthorizationController extends AbstractController
     }
 
     #[Route('edit/{licenceAuthorization}', name: 'edit', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'licenceAuthorization')]
+    #[IsGranted('MEMBER_EDIT', 'licenceAuthorization')]
     public function edit(Request $request, LicenceAgreement $licenceAuthorization): Response
     {
-        /** @var User $user */
-        $user = $licenceAuthorization->getLicence()->getUser();
+        /** @var Member $member */
+        $member = $licenceAuthorization->getLicence()->getMember();
         $form = $this->createForm(LicenceAgreementType::class, $licenceAuthorization, [
             'action' => $request->getUri(),
         ]);
@@ -41,12 +41,12 @@ class LicenceAuthorizationController extends AbstractController
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_user', [
-                'user' => $user->getId(),
+                'user' => $member->getId(),
             ]);
         }
 
         return $this->render('licenceAuthorization/admin/edit.html.twig', [
-            'user' => $this->userDtoTransformer->fromEntity($user),
+            'user' => $this->userDtoTransformer->fromEntity($member),
             'approval' => $this->approvalDtoTransformer->fromEntity($licenceAuthorization),
             'form' => $form->createView(),
         ]);

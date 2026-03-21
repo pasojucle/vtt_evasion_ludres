@@ -16,7 +16,7 @@ class History
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'registrationChanges')]
-    private ?User $user = null;
+    private ?Member $member = null;
 
     #[ORM\Column(length: 100)]
     private ?string $entity = null;
@@ -38,14 +38,14 @@ class History
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): static
+    public function setMember(?Member $member): static
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

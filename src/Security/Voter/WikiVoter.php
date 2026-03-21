@@ -3,7 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\User;
+use App\Entity\Member;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -25,17 +25,17 @@ class WikiVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        /** @var User $user */
-        $user = $token->getUser();
-        if (!$user instanceof User) {
+        /** @var Member $member */
+        $member = $token->getUser();
+        if (!$member instanceof Member) {
             return false;
         }
 
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
 
-        $isUserWithPermission = $isActiveUser && !empty($user->getPermissions());
+        $isUserWithPermission = $isActiveUser && !empty($member->getPermissions());
         if (self::VIEW === $attribute) {
             return $this->canView($token, $isUserWithPermission);
         }

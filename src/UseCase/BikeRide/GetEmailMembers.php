@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
+use App\Entity\Member;
 use App\Entity\Session;
-use App\Entity\User;
 
 class GetEmailMembers
 {
@@ -24,7 +24,7 @@ class GetEmailMembers
         foreach ($bikeRide->getClusters() as $cluster) {
             foreach ($cluster->getSessions() as $session) {
                 if (!in_array($session->getAvailability(), [Session::AVAILABILITY_AVAILABLE, Session::AVAILABILITY_UNAVAILABLE])) {
-                    $users[] = $session->getUser();
+                    $users[] = $session->getMember();
                 }
             }
         }
@@ -35,9 +35,9 @@ class GetEmailMembers
     private function getEmails(array $users): array
     {
         $emails = [];
-        /** @var User $user */
-        foreach ($users as $user) {
-            $emails[] = $user->getMainIdentity()->getEmail();
+        /** @var Member $member */
+        foreach ($users as $member) {
+            $emails[] = $member->getMainIdentity()->getEmail();
         }
         return $emails;
     }

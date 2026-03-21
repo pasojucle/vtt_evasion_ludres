@@ -6,7 +6,7 @@ namespace App\UseCase\Survey;
 
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\SurveyType;
 use App\Service\SeasonService;
 use DateTimeImmutable;
@@ -74,7 +74,7 @@ class GetSurvey
     private function addMembres(Survey $originalSurvey, Survey $survey): void
     {
         $minSeasonToTakePart = $this->seasonService->getMinSeasonToTakePart();
-        /** @var User $member */
+        /** @var Member $member */
         foreach ($originalSurvey->getMembers() as $member) {
             $lastLicence = $member->getLastLicence()->getSeason();
             if ($minSeasonToTakePart <= $lastLicence) {

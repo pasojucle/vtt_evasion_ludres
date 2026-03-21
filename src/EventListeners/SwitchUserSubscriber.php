@@ -3,7 +3,7 @@
 namespace App\EventListeners;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\User;
+use App\Entity\Member;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Http\Event\SwitchUserEvent;
 use Symfony\Component\Security\Http\SecurityEvents;
@@ -19,9 +19,9 @@ class SwitchUserSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        /** @var User $user */
-        $user = $event->getTargetUser();
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        /** @var Member $member */
+        $member = $event->getTargetUser();
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $request->getSession()->set('user_fullName', $userDto->member->fullName);
     }
 

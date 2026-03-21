@@ -6,10 +6,9 @@ namespace App\UseCase\Cluster;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\MailerService;
 use App\Service\MessageService;
-use App\Service\ParameterService;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class MailerSendUsersOffSite
@@ -35,7 +34,7 @@ class MailerSendUsersOffSite
 
     public function additionalParams(string $bikeRideTitle): array
     {
-        /** @var User $framer */
+        /** @var Member $framer */
         $framer = $this->security->getUser();
         $framerTdto = $this->userDtoTransformer->identifiersFromEntity($framer);
         return [

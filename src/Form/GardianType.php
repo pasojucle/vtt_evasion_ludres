@@ -7,7 +7,7 @@ namespace App\Form;
 use App\Entity\Enum\GardianKindEnum;
 use App\Entity\Enum\KinshipEnum;
 use App\Entity\Licence;
-use App\Entity\UserGardian;
+use App\Entity\MemberGardian;
 use App\Form\GardianIdentityType;
 use App\Form\IdentityType;
 use App\Service\LicenceService;
@@ -62,7 +62,7 @@ class GardianType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => UserGardian::class,
+            'data_class' => MemberGardian::class,
             'category' => Licence::CATEGORY_ADULT,
             'is_yearly' => null,
         ]);

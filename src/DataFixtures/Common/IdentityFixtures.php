@@ -7,7 +7,7 @@ namespace App\DataFixtures\Common;
 use App\Entity\Address;
 use App\Entity\Commune;
 use App\Entity\Identity;
-use App\Entity\User;
+use App\Entity\Member;
 use DateInterval;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -81,7 +81,7 @@ class IdentityFixtures extends AbstractFixture implements FixtureGroupInterface,
         foreach (self::IDENTITIES as $ref => [$user, $address, $name, $firstName, $dateInterval, $mobile, $profession, $email, $birthCommune, $emergencyPhone, $emergencyContact]) {
             $identity = new Identity();
             $identity
-                ->setUser($this->getReference($user, User::class))
+                ->setUser($this->getReference($user, Member::class))
                 ->setAddress($this->getReference($address, Address::class))
                 ->setName($name)
                 ->setFirstName($firstName)

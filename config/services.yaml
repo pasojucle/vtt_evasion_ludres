@@ -7,6 +7,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    club_name: '%env(CLUB_NAME)%'
     club_email: '%env(CLUB_EMAIL)%'
     webmaster_email: '%env(WEBMASTER_EMAIL)%'
     project_directory: '%kernel.project_dir%/'

@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -92,14 +92,14 @@ class SurveyResponseRepository extends ServiceEntityRepository
         ;
     }
 
-    public function deleteResponsesByUser(User $user): void
+    public function deleteResponsesByUser(Member $member): void
     {
         $this->createQueryBuilder('r')
         ->delete()
         ->andWhere(
-            (new Expr())->eq('r.user', ':user')
+            (new Expr())->eq('r.member', ':member')
         )
-        ->setParameter('user', $user)
+        ->setParameter('member', $member)
         ->getQuery()
         ->getResult()
     ;
@@ -125,7 +125,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
     ;
     }
 
-    public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
+    public function deleteResponsesByUserAndSurvey(Member $member, Survey $survey): void
     {
         $issues = $this->getEntityManager()->createQueryBuilder()
         ->select('(issue)')
@@ -137,11 +137,11 @@ class SurveyResponseRepository extends ServiceEntityRepository
         $this->createQueryBuilder('r')
         ->delete()
         ->andWhere(
-            (new Expr())->eq('r.user', ':user'),
+            (new Expr())->eq('r.member', ':member'),
             (new Expr())->in('r.surveyIssue', $issues->getDQL())
         )
         ->setParameters(new ArrayCollection([
-            new Parameter('user', $user),
+            new Parameter('member', $member),
             new Parameter('survey', $survey),
         ]))
         ->getQuery()
@@ -149,7 +149,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
     ;
     }
 
-    public function findResponsesByUserAndSurvey(User $user, Survey $survey): array
+    public function findResponsesByUserAndSurvey(Member $member, Survey $survey): array
     {
         $issues = $this->getEntityManager()->createQueryBuilder()
         ->select('(issue)')
@@ -160,11 +160,11 @@ class SurveyResponseRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('r')
         ->andWhere(
-            (new Expr())->eq('r.user', ':user'),
+            (new Expr())->eq('r.member', ':member'),
             (new Expr())->in('r.surveyIssue', $issues->getDQL())
         )
         ->setParameters(new ArrayCollection([
-            new Parameter('user', $user),
+            new Parameter('member', $member),
             new Parameter('survey', $survey),
         ]))
         ->getQuery()

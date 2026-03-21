@@ -25,7 +25,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 
     public function getQuery(array $filters): QueryBuilder
     {
-        return $this->userRepository->findLicenceInProgressQuery($filters);
+        return $this->memberRepository->findLicenceInProgressQuery($filters);
     }
 
     public function getStatusChoices(): ?array

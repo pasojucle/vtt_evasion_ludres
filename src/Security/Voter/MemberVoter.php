@@ -10,18 +10,18 @@ use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\LicenceAgreement;
-use App\Entity\User;
+use App\Entity\Member;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class UserVoter extends Voter
+class MemberVoter extends Voter
 {
-    public const SHARE = 'USER_SHARE';
-    public const LIST = 'USER_LIST';
-    public const EDIT = 'USER_EDIT';
-    public const VIEW = 'USER_VIEW';
+    public const SHARE = 'MEMBER_SHARE';
+    public const LIST = 'MEMBER_LIST';
+    public const EDIT = 'MEMBER_EDIT';
+    public const VIEW = 'MEMBER_VIEW';
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
@@ -40,37 +40,37 @@ class UserVoter extends Voter
         }
 
         return in_array($attribute, [self::EDIT, self::VIEW])
-        && ($subject instanceof User || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health || $subject instanceof LicenceAgreement);
+        && ($subject instanceof Member || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health || $subject instanceof LicenceAgreement);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        /** @var User $user */
-        $user = $token->getUser();
-        if (!$user instanceof User) {
+        /** @var Member $member */
+        $member = $token->getUser();
+        if (!$member instanceof Member) {
             return false;
         }
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithSharePermission = $isActiveUser && $user->hasPermissions([PermissionEnum::USER, PermissionEnum::BIKE_RIDE]);
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::USER);
+        $isUserWithSharePermission = $isActiveUser && $member->hasPermissions([PermissionEnum::USER, PermissionEnum::BIKE_RIDE]);
+        $isUserWithPermission = $isActiveUser && $member->hasPermissions(PermissionEnum::USER);
 
         return match ($attribute) {
-            self::EDIT, self::VIEW => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::EDIT, self::VIEW => $this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isUserWithPermission),
-            self::SHARE => $this->canShare($token, $user, $subject, $isActiveUser, $isUserWithPermission, $isUserWithSharePermission),
+            self::SHARE => $this->canShare($token, $member, $subject, $isActiveUser, $isUserWithPermission, $isUserWithSharePermission),
             default => false
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence|LicenceAgreement|Identity $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, Member $member, null|Member|UserDto|Licence|LicenceAgreement|Identity $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
             return true;
         }
 
-        return $this->isOwner($subject, $user) && $isActiveUser;
+        return $this->isOwner($subject, $member) && $isActiveUser;
     }
 
     private function canList(TokenInterface $token, bool $isUserWithPermission): bool
@@ -82,27 +82,31 @@ class UserVoter extends Voter
         return $isUserWithPermission;
     }
 
-    private function canShare(TokenInterface $token, User $user, null|User|UserDto|Licence|Agreement $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
+    private function canShare(TokenInterface $token, Member $member, null|Member|UserDto|Licence|Agreement $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
     {
-        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
+        if ($this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
         }
 
         return $isUserWithSharePermission;
     }
 
-    private function isOwner(null|User|UserDto|Licence|LicenceAgreement $subject, User $user): bool
+    private function isOwner(null|Member|UserDto|Licence|LicenceAgreement $subject, Member $member): bool
     {
         if (!$subject) {
             return false;
         }
 
-        if ($subject instanceof User) {
-            return $subject === $user;
+        if ($subject instanceof Member) {
+            return $subject === $member;
         }
 
-        if ($subject instanceof Licence || $subject instanceof LicenceAgreement) {
-            return $subject->getUser() === $user;
+        if ($subject instanceof Licence) {
+            return $subject->getMember() === $member;
+        }
+
+        if ($subject instanceof LicenceAgreement) {
+            return $subject->getLicence()->getMember() === $member;
         }
         
         return false;

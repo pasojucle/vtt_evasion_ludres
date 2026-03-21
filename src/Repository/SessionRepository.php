@@ -9,8 +9,9 @@ use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
-use App\Entity\Session;
+use App\Entity\Member;
 use App\Entity\User;
+use App\Entity\Session;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -36,16 +37,16 @@ class SessionRepository extends ServiceEntityRepository
         parent::__construct($registry, Session::class);
     }
 
-    public function findOneByUserAndClusters(User $user, Collection $clusers): ?Session
+    public function findOneByUserAndClusters(Member $member, Collection $clusers): ?Session
     {
         try {
             return $this->createQueryBuilder('s')
             ->andWhere(
                 (new Expr())->in('s.cluster', ':clusers'),
-                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->eq('s.user', ':member'),
             )
             ->setParameter('clusers', $clusers)
-            ->setParameter('user', $user)
+            ->setParameter('member', $member)
             ->getQuery()
             ->getOneOrNullResult()
             ;
@@ -54,16 +55,16 @@ class SessionRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByUserAndCluster(User $user, Cluster $cluser): ?Session
+    public function findOneByUserAndCluster(Member $member, Cluster $cluser): ?Session
     {
         try {
             return $this->createQueryBuilder('s')
             ->andWhere(
                 (new Expr())->eq('s.cluster', ':cluser'),
-                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->eq('s.user', ':member'),
             )
             ->setParameter('cluser', $cluser)
-            ->setParameter('user', $user)
+            ->setParameter('member', $member)
             ->getQuery()
             ->getOneOrNullResult()
             ;
@@ -145,16 +146,16 @@ class SessionRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByUserAndFilters(User $user, array $filters): QueryBuilder
+    public function findByUserAndFilters(Member $member, array $filters): QueryBuilder
     {
         $qb = $this->createQueryBuilder('s');
         $qb
             ->leftJoin('s.cluster', 'c')
             ->leftJoin('c.bikeRide', 'br')
             ->andWhere(
-                $qb->expr()->eq('s.user', ':user')
+                $qb->expr()->eq('s.user', ':member')
             )
-            ->setParameter('user', $user)
+            ->setParameter('member', $member)
             ->orderBy('br.startAt')
             ;
         if (isset($filters['startAt']) && isset($filters['endAt'])) {
@@ -247,7 +248,7 @@ class SessionRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOfTheDayByUser(User $user): ?Session
+    public function findOfTheDayByUser(Member $member): ?Session
     {
         try {
             $today = new DateTimeImmutable();
@@ -256,12 +257,12 @@ class SessionRepository extends ServiceEntityRepository
                 ->join('c.bikeRide', 'br')
                 ->andWhere(
                     (new Expr())->eq('s.availability', ':availability'),
-                    (new Expr())->eq('s.user', ':user'),
+                    (new Expr())->eq('s.user', 'member'),
                     (new Expr())->between('br.startAt', ':start', ':end'),
                 )
                 ->setParameters(new ArrayCollection([
                     new Parameter('availability', Session::AVAILABILITY_REGISTERED),
-                    new Parameter('user', $user),
+                    new Parameter('member', $member),
                     new Parameter('start', $today->setTime(0, 0, 0)),
                     new Parameter('end', $today->setTime(18, 0, 0)),
                 ]))
@@ -310,18 +311,18 @@ class SessionRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findAvailableByUser(User $user): array
+    public function findAvailableByUser(Member $member): array
     {
         $today = new DateTimeImmutable();
         return $this->createQueryBuilder('s')
             ->join('s.cluster', 'c')
             ->join('c.bikeRide', 'br')
             ->andWhere(
-                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->eq('s.user', ':member'),
                 (new Expr())->gte('br.startAt', ':start'),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('start', $today->setTime(0, 0, 0)),
             ]))
             ->getQuery()
@@ -375,15 +376,15 @@ class SessionRepository extends ServiceEntityRepository
     //     ;
     // }
 
-    public function findParticipationByUser(User $user): int
+    public function findParticipationByUser(Member $member): int
     {
         return $this->createQueryBuilder('s')
             ->select((new Expr())->count('s.isPresent'))
             ->andWhere(
-                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->eq('s.user', ':member'),
                 (new Expr())->eq('s.isPresent', ':isPresent')
             )
-            ->setParameter('user', $user)
+            ->setParameter('member', $member)
             ->setParameter('isPresent', true)
             ->getQuery()
             ->getSingleScalarResult()

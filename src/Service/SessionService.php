@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SessionRepository;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SessionService
 {
@@ -28,12 +28,12 @@ class SessionService
         private ParameterService $parameterService,
         private MessageService $messageService,
         private ClusterService $clusterService,
-        private SessionDtoTransformer $sessionDtoTransformer,
+        private TranslatorInterface $translator,
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
 
-    public function getSessionsBytype(BikeRide $bikeRide, ?User $user = null): array
+    public function getSessionsBytype(BikeRide $bikeRide, ?Member $member = null): array
     {
         $members = [];
         $framers = [];
@@ -47,8 +47,8 @@ class SessionService
                 $members[$levelId]['members'][] = $session->getUser();
                 $members[$levelId]['title'] = $levelTitle;
             } else {
-                if ($user !== $session->getUser()) {
-                    $framers[] = $this->sessionDtoTransformer->fromEntity($session);
+                if ($member !== $session->getUser()) {
+                    // $framers[] = $this->sessionDtoTransformer->fromEntity($session);
                 }
             }
         }
@@ -100,11 +100,11 @@ class SessionService
         return ['header' => $header, 'rows' => $rows];
     }
     
-    public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): ?Cluster
+    public function getCluster(BikeRide $bikeRide, Member $member, Collection $clusters): ?Cluster
     {
         $userCluster = null;
 
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_SCHOOL_MEMBER !== $user->getLevel()->getType()) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_SCHOOL_MEMBER !== $member->getLevel()->getType()) {
             foreach ($bikeRide->getClusters() as $cluster) {
                 if ('ROLE_FRAME' === $cluster->getRole()) {
                     return $cluster;
@@ -119,7 +119,7 @@ class SessionService
         if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
             $clustersLevelAsUser = [];
             foreach ($bikeRide->getClusters() as $cluster) {
-                if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
+                if (null !== $cluster->getLevel() && $cluster->getLevel() === $member->getLevel()) {
                     $clustersLevelAsUser[] = $cluster;
                     if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
                         $userCluster = $cluster;
@@ -130,8 +130,8 @@ class SessionService
             if (null === $userCluster) {
                 $cluster = new Cluster();
                 $count = count($clustersLevelAsUser) + 1;
-                $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
-                    ->setLevel($user->getLevel())
+                $cluster->setTitle($member->getLevel()->getTitle() . ' ' . $count)
+                    ->setLevel($member->getLevel())
                     ->setBikeRide($bikeRide)
                     ->setMaxUsers(Cluster::SCHOOL_MAX_MEMBERS)
                 ;
@@ -154,9 +154,9 @@ class SessionService
         return $userCluster;
     }
 
-    public function checkEndTesting(User $user): void
+    public function checkEndTesting(Member $member): void
     {
-        $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
+        $userDto = $this->userDtoTransformer->identifiersFromEntity($member);
         if ($userDto->isEndTesting) {
             $subject = 'Fin de la période d\'essai';
             $this->mailerService->sendMailToMember($userDto, $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
@@ -188,5 +188,24 @@ class SessionService
             }
         }
         return $count;
+    }
+
+    public function getAvailability(AvailabilityEnum $availability): array
+    {
+        $availbilityClass = [
+            AvailabilityEnum::REGISTERED->name => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>', 'color' => 'success-color'],
+            AvailabilityEnum::AVAILABLE->name => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 'color' => 'warning-color'],
+            AvailabilityEnum::UNAVAILABLE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
+            AvailabilityEnum::NONE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
+        ];
+
+        $availabilityView = [
+            'class' => $availbilityClass[$availability->name],
+            'text' => $availability->trans($this->translator),
+            'value' => $availability->name,
+            'enum' => $availability,
+        ];
+
+        return $availabilityView;
     }
 }

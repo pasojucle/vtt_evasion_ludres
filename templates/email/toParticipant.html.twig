@@ -1,0 +1,12 @@
+{% extends 'base_email.html.twig' %}
+
+{% block body %}
+<p><b>{{ subject }}</b></p>
+<br>
+
+<div>{{ content|raw}}</div>
+
+<p>Cordialement</p>
+<p>L'équipe du VTT Évasion Ludres</p>
+<hr>
+{% endblock %}

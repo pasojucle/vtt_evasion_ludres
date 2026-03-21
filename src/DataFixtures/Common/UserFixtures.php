@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures\Common;
 
 use App\Entity\Level;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -38,15 +38,16 @@ class UserFixtures extends AbstractFixture implements FixtureGroupInterface, Dep
     public function load(ObjectManager $manager): void
     {
         foreach (self::USERS as $ref => [$licenceNumber, $password, $roles, $active, $level, $passWordMustChanged, $loginSend, $protected]) {
-            $admin = new User();
-            $admin->setLicenceNumber($licenceNumber)
+            $admin = new Member();
+            $admin
                 ->setPassword($password)
-                ->setRoles($roles)
                 ->setActive($active)
-                ->setLevel($this->getReference($level, Level::class))
-                ->setPasswordMustBeChanged($passWordMustChanged)
+                ->setProtected($protected)
                 ->setLoginSend($loginSend)
-                ->setProtected($protected);
+                ->setPasswordMustBeChanged($passWordMustChanged)
+                ->setRoles($roles)
+                ->setLevel($this->getReference($level, Level::class))
+                ->setLicenceNumber($licenceNumber);
 
             $manager->persist($admin);
             $this->addReference($ref, $admin);

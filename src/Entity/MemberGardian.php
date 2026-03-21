@@ -4,22 +4,21 @@ namespace App\Entity;
 
 use App\Entity\Enum\GardianKindEnum;
 use App\Entity\Enum\KinshipEnum;
-use App\Repository\UserGardianRepository;
-use Doctrine\Common\Collections\Criteria;
+use App\Repository\MemberGardianRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserGardianRepository::class)]
-class UserGardian
+#[ORM\Entity(repositoryClass: MemberGardianRepository::class)]
+class MemberGardian
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userGardians')]
-    private ?User $user = null;
+    #[ORM\ManyToOne(inversedBy: 'memberGardians')]
+    private ?Member $member = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userGardians')]
+    #[ORM\ManyToOne(inversedBy: 'memberGardians')]
     private ?Identity $identity = null;
 
     #[ORM\Column(type: 'Kinship')]
@@ -33,14 +32,14 @@ class UserGardian
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): static
+    public function setMember(?Member $member): static
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

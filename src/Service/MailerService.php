@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\User;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -105,6 +106,56 @@ class MailerService
             }
         }
 
+        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
+            $email->addBcc($webmasterEmail);
+        }
+
+        try {
+            $this->mailer->send($email);
+
+            return [
+                'success' => true,
+            ];
+        } catch (TransportExceptionInterface $e) {
+            return [
+                'success' => false,
+                'message' => 'Problème d\'envoi de mail',
+            ];
+        }
+    }
+
+    public function sendMailToParticipant(User $participant, string $subject, string $content, ?array $attachements = null): array
+    {
+        $particpantEmail = $participant->getContactEmail();
+        [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
+        if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
+            $particpantEmail = $clubEmail->getAddress();
+        }
+
+        try {
+            $email = new Address($particpantEmail);
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Adresse mail manquante ou erronnée',
+            ];
+        }
+
+        $email = (new TemplatedEmail())
+            ->to($email)
+            ->replyTo($clubEmail)
+            ->subject($subject)
+            ->htmlTemplate('email/toParticipant.html.twig')
+            ->context([
+                'subject' => $subject,
+                'content' => $content,
+            ])
+        ;
+        if ($attachements) {
+            foreach ($attachements as $attachement) {
+                $email->addPart(new DataPart(new File($attachement)));
+            }
+        }
         if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
             $email->addBcc($webmasterEmail);
         }

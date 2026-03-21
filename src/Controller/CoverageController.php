@@ -8,8 +8,7 @@ use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
 use App\Entity\Enum\DisplayModeEnum;
-use App\Entity\RegistrationStep;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\HistoryRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\PdfService;
@@ -24,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CoverageController extends AbstractController
 {
     #[Route('/current/season/{user}', name: '_current_season_edit', methods: ['GET'])]
-    #[IsGranted('USER_EDIT', 'user')]
+    #[IsGranted('MEMBER_EDIT', 'user')]
     public function currentSeasonEdit(
         RegistrationStepRepository $registrationStepRepository,
         HistoryRepository $historyRepository,
@@ -32,14 +31,14 @@ class CoverageController extends AbstractController
         RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         PdfService $pdfService,
         UserDtoTransformer $userDtoTransformer,
-        User $user
+        Member $member
     ) {
-        $histories = $historyRepository->findBySeason($user, $seasonService->getCurrentSeason());
-        $userDto = $userDtoTransformer->fromEntity($user, $histories);
+        $histories = $historyRepository->findBySeason($member, $seasonService->getCurrentSeason());
+        $userDto = $userDtoTransformer->fromEntity($member, $histories);
 
         $coverageStep = $registrationStepRepository->findCoverageStep();
 
-        $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $user, $userDto, 1, DisplayModeEnum::FILE);
+        $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $member, $userDto, 1, DisplayModeEnum::FILE);
         $files = [];
         if (null !== $step->pdfFilename) {
             $filename = $step->pdfPath;
@@ -49,7 +48,7 @@ class CoverageController extends AbstractController
             ];
         }
 
-        $filename = $pdfService->joinPdf($files, $user, RegistrationStepDto::OUTPUT_FILENAME_CLUB);
+        $filename = $pdfService->joinPdf($files, $member, RegistrationStepDto::OUTPUT_FILENAME_CLUB);
 
         $fileContent = file_get_contents($filename);
 

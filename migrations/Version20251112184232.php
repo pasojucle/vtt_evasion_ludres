@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Form\UserType;
 use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use Doctrine\DBAL\Schema\Schema;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
-use App\Entity\Enum\RegistrationFormEnum;
 use Doctrine\Migrations\AbstractMigration;
 
 /**

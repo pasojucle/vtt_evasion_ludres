@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\RespondentRepository;
-use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,9 +19,9 @@ class Respondent
     #[ORM\JoinColumn(nullable: false)]
     private Survey $survey;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'respondents')]
+    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: 'respondents')]
     #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    private Member $member;
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
@@ -56,14 +55,14 @@ class Respondent
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): self
+    public function setMember(?Member $member): self
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

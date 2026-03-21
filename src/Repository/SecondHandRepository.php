@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Log;
+use App\Entity\Member;
 use App\Entity\SecondHand;
-use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -124,10 +124,13 @@ class SecondHandRepository extends ServiceEntityRepository
        ;
     }
 
-    public function quertNoveltiesByUser(User $user): QueryBuilder
+    public function quertNoveltiesByUser(Member $member): QueryBuilder
     {
         return $this->createQueryBuilder('s')
-            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX((new Expr())->eq('s.id', 'log.entityId'), (new Expr())->eq('log.entity', ':entityName'), (new Expr())->eq('log.user', ':user')))
+            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX(
+                (new Expr())->eq('s.id', 'log.entityId'), 
+                (new Expr())->eq('log.entity', ':entityName'), 
+                (new Expr())->eq('log.member', ':member')))
             ->andWhere(
                 (new Expr())->orX(
                     (new Expr())->isNull('log'),
@@ -137,7 +140,7 @@ class SecondHandRepository extends ServiceEntityRepository
                 (new Expr())->eq('s.disabled', ':disabled'),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', 'SecondHand'),
                 new Parameter('disabled', false),
             ]))
@@ -147,9 +150,9 @@ class SecondHandRepository extends ServiceEntityRepository
     /**
      * @return SecondHand[] Returns an array of SecondHand objects
      */
-    public function findNoveltiesByUser(User $user): array
+    public function findNoveltiesByUser(Member $member): array
     {
-        return $this->quertNoveltiesByUser($user)
+        return $this->quertNoveltiesByUser($member)
             ->getQuery()
             ->getResult()
        ;
@@ -158,9 +161,9 @@ class SecondHandRepository extends ServiceEntityRepository
     /**
      * @return int[] Returns an array of integer
      */
-    public function findNoveltiesByUserIds(User $user): array
+    public function findNoveltiesByUserIds(Member $member): array
     {
-        return $this->quertNoveltiesByUser($user)
+        return $this->quertNoveltiesByUser($member)
             ->select('s.id')
             ->getQuery()
             ->getSingleColumnResult()

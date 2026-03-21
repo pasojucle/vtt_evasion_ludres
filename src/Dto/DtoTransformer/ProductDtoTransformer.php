@@ -8,7 +8,7 @@ use App\Dto\ProductDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Product;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\ProjectDirService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -23,7 +23,7 @@ class ProductDtoTransformer
     ) {
     }
 
-    public function fromEntity(?Product $product, ?UserDto $user = null): ProductDto
+    public function fromEntity(?Product $product, ?UserDto $member = null): ProductDto
     {
         $productDto = new ProductDto();
         if ($product) {
@@ -42,15 +42,14 @@ class ProductDtoTransformer
             $productDto->discountTitle = null;
             $productDto->isDisabled = $product->isDisabled();
 
-            /** @var ?User $userConnected */
-            $userConnected = $this->security->getUser();
-            if (null === $user && $userConnected) {
-                $user = $this->userDtoTransformer->fromEntity($userConnected);
+            /** @var ?Member $memberConnected */
+            $memberConnected = $this->security->getUser();
+            if (null === $member && $memberConnected) {
+                $member = $this->userDtoTransformer->fromEntity($memberConnected);
             }
             
-            if (null !== $user && $user instanceof UserDto) {
-                dump($product->getCategory(), $user->lastLicence->category);
-                if (!empty($user->member) && $product->getCategory() === 1 && LicenceCategoryEnum::SCHOOL === $user->lastLicence->category) {
+            if (null !== $member && $member instanceof UserDto) {
+                if (!empty($member->member) && $product->getCategory() === LicenceCategoryEnum::SCHOOL && LicenceCategoryEnum::SCHOOL === $member->lastLicence->category) {
                     $productDto->sellingPrice = $product->getDiscountPrice();
                     $productDto->discountPrice = number_format($product->getDiscountPrice(), 2) . ' €';
                     $productDto->priceClass = 'throughed-price';

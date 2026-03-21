@@ -35,7 +35,7 @@ class SecondHandDtoTransformer
             $secondHandDto->name = $secondHand->getName();
             $secondHandDto->content = $secondHand->getContent();
             $secondHandDto->images = $this->getImages($secondHand->getImages());
-            $secondHandDto->user = $this->userDtoTransformer->fromEntity($secondHand->getUser());
+            $secondHandDto->user = $this->userDtoTransformer->fromEntity($secondHand->getMember());
             $secondHandDto->price = (new Currency($secondHand->getPrice()))->__toString();
             $secondHandDto->category = $secondHand->getCategory()->getName();
             $secondHandDto->createdAt = $secondHand->getCreatedAt()->format('d/m/y');

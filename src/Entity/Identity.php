@@ -9,6 +9,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use LogicException;
 
 #[ORM\Entity(repositoryClass: IdentityRepository::class)]
 
@@ -61,17 +62,17 @@ class Identity
     private ?string $emergencyContact = null;
 
     /**
-     * @var Collection<int, UserGardian>
+     * @var Collection<int, MemberGardian>
      */
-    #[ORM\OneToMany(targetEntity: UserGardian::class, mappedBy: 'identity')]
-    private Collection $userGardians;
+    #[ORM\OneToMany(targetEntity: MemberGardian::class, mappedBy: 'identity')]
+    private Collection $memberGardians;
 
     #[ORM\OneToOne(inversedBy: 'identity', cascade: ['persist', 'remove'])]
     private ?User $user = null;
 
     public function __construct()
     {
-        $this->userGardians = new ArrayCollection();
+        $this->memberGardians = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -265,29 +266,29 @@ class Identity
     }
 
     /**
-     * @return Collection<int, UserGardian>
+     * @return Collection<int, MemberGardian>
      */
-    public function getUserGardians(): Collection
+    public function getMemberGardians(): Collection
     {
-        return $this->userGardians;
+        return $this->memberGardians;
     }
 
-    public function addUserGardian(UserGardian $userGardian): static
+    public function addMemberGardian(MemberGardian $memberGardian): static
     {
-        if (!$this->userGardians->contains($userGardian)) {
-            $this->userGardians->add($userGardian);
-            $userGardian->setIdentity($this);
+        if (!$this->memberGardians->contains($memberGardian)) {
+            $this->memberGardians->add($memberGardian);
+            $memberGardian->setIdentity($this);
         }
 
         return $this;
     }
 
-    public function removeUserGardian(UserGardian $userGardian): static
+    public function removeMemberGardian(MemberGardian $memberGardian): static
     {
-        if ($this->userGardians->removeElement($userGardian)) {
+        if ($this->memberGardians->removeElement($memberGardian)) {
             // set the owning side to null (unless already changed)
-            if ($userGardian->getIdentity() === $this) {
-                $userGardian->setIdentity(null);
+            if ($memberGardian->getIdentity() === $this) {
+                $memberGardian->setIdentity(null);
             }
         }
 
@@ -296,6 +297,18 @@ class Identity
 
     public function getUser(): ?User
     {
+        return $this->user;
+    }
+
+    public function getMember(): Member
+    {
+        if (!$this->user instanceof Member) {
+            throw new LogicException(sprintf(
+                'L\'entité Indentity (%d) est associée à un participant de type "%s", mais un "Member" était attendu.',
+                $this->id,
+                get_debug_type($this->user)
+            ));
+        }
         return $this->user;
     }
 

@@ -10,7 +10,7 @@ use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Licence;
-use App\Entity\User;
+use App\Entity\Member;
 use DateTime;
 use Dompdf\Dompdf;
 use setasign\Fpdi\Fpdi;
@@ -49,7 +49,7 @@ class PdfService
         return $pdfFilepath;
     }
 
-    private function writeCoverage(Fpdi &$pdf, User $user): void
+    private function writeCoverage(Fpdi &$pdf, Member $user): void
     {
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
@@ -171,7 +171,7 @@ class PdfService
     }
 
 
-    public function joinPdf(array $files, ?User $user = null, ?int $key = null, ?string $filename = null): string
+    public function joinPdf(array $files, ?Member $user = null, ?int $key = null, ?string $filename = null): string
     {
         if (null === $filename) {
             $filename = $this->projectDir->path('tmp', 'pdf_temp.pdf');

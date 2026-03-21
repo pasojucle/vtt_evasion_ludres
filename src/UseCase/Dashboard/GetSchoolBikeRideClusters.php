@@ -25,7 +25,7 @@ class GetSchoolBikeRideClusters
         $sessionsByClusters = [];
         /** @var Session $session */
         foreach ($this->sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
-            $clusterId = ($isSchoolBikeRide && Level::TYPE_FRAME === $session->getUser()->getLevel()->getType())
+            $clusterId = ($isSchoolBikeRide && Level::TYPE_FRAME === $session->getMember()->getLevel()->getType())
                 ? 'framers'
                 : $session->getCluster()->getId();
             $sessionsByClusters[$clusterId][] = $session;

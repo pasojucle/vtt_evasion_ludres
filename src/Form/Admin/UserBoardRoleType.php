@@ -7,7 +7,7 @@ namespace App\Form\Admin;
 use App\Entity\BoardRole;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Level;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -81,10 +81,10 @@ class UserBoardRoleType extends AbstractType
             ])
         ;
 
-        $formModifier = function (FormInterface $form, User $user) {
-            $token = new UsernamePasswordToken($user, 'none', $user->getRoles());
+        $formModifier = function (FormInterface $form, Member $member) {
+            $token = new UsernamePasswordToken($member, 'none', $member->getRoles());
             $isGrantedAdmin = $this->accessDecisionManager->decide($token, ['ROLE_ADMIN']);
-            if (!$isGrantedAdmin && $this->security->isGranted('PERMISSION_EDIT', $user)) {
+            if (!$isGrantedAdmin && $this->security->isGranted('PERMISSION_EDIT', $member)) {
                 $notAllowedPermission = PermissionEnum::PERMISSION;
                 $form
                     ->add('permissions', EnumType::class, [
@@ -116,7 +116,7 @@ class UserBoardRoleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class,            
+            'data_class' => Member::class,            
         ]);
     }
 }

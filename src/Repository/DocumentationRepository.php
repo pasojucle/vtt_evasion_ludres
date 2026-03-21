@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Documentation;
 use App\Entity\Log;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -80,10 +80,14 @@ class DocumentationRepository extends ServiceEntityRepository
         return $nexOrder;
     }
 
-    public function quertNoveltiesByUser(User $user): QueryBuilder
+    public function quertNoveltiesByUser(Member $member): QueryBuilder
     {
         return $this->createQueryBuilder('d')
-            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX((new Expr())->eq('d.id', 'log.entityId'), (new Expr())->eq('log.entity', ':entityName'), (new Expr())->eq('log.user', ':user')))
+            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX(
+                    (new Expr())->eq('d.id', 'log.entityId'), 
+                    (new Expr())->eq('log.entity', ':entityName'), 
+                    (new Expr())->eq('log.member', ':member'))
+                )
             ->andWhere(
                 (new Expr())->orX(
                     (new Expr())->isNull('log'),
@@ -92,7 +96,7 @@ class DocumentationRepository extends ServiceEntityRepository
                 (new Expr())->isNotNull('d.updateAt'),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', 'Documentation'),
             ]))
        ;
@@ -101,9 +105,9 @@ class DocumentationRepository extends ServiceEntityRepository
     /**
      * @return Documentation[] Returns an array of Link objects
      */
-    public function findNoveltiesByUser(User $user): array
+    public function findNoveltiesByUser(Member $member): array
     {
-        return $this->quertNoveltiesByUser($user)
+        return $this->quertNoveltiesByUser($member)
             ->getQuery()
             ->getResult()
        ;
@@ -112,16 +116,16 @@ class DocumentationRepository extends ServiceEntityRepository
     // /**
     //  * @return int[] Returns an array of integer
     //  */
-    // public function findNoveltiesByUserIds(User $user): array
+    // public function findNoveltiesByUserIds(Member $member): array
     // {
-    //     return $this->quertNoveltiesByUser($user)
+    //     return $this->quertNoveltiesByUser($member)
     //         ->select('d.id')
     //         ->getQuery()
     //         ->getSingleColumnResult()
     //    ;
     // }
 
-    public function isNoveltyByUser(User $user, Documentation $documentation): bool
+    public function isNoveltyByUser(Member $member, Documentation $documentation): bool
     {
         try {
             $result = $this->createQueryBuilder('d')
@@ -144,7 +148,7 @@ class DocumentationRepository extends ServiceEntityRepository
                     ),
                 )
                 ->setParameters(new ArrayCollection([
-                    new Parameter('user', $user),
+                    new Parameter('user', $member),
                     new Parameter('entityName', 'Documentation'),
                     new Parameter('entityId', $documentation->getId()),
                 ]))

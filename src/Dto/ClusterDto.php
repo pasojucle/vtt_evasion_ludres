@@ -21,7 +21,7 @@ class ClusterDto
 
     public ?ArrayCollection $memberSessions;
 
-    public ?ArrayCollection $availableSessions;
+    public ?array $availableSessions;
 
     public ?int $maxUsers;
 

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Cluster;
+use App\Entity\Enum\PracticeEnum;
 use App\Entity\Level;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -63,6 +65,13 @@ class ClusterType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
                 'required' => false,
+            ])
+            ->add('practice', EnumType::class, [
+                'label' => 'Type de vélo',
+                'class' => PracticeEnum::class,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Enregistrer',

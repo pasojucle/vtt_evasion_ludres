@@ -9,7 +9,7 @@ use App\Entity\History;
 use App\Entity\Identity;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\BikeRideService;
 use App\UseCase\Survey\GetResponsesByUser;
 use Doctrine\Common\Collections\Collection;
@@ -45,10 +45,10 @@ class SurveyDtoTransformer
             if (!empty($histories)) {
                 $this->formatHistories($histories, $surveyDto);
             }
-            /** @var ?User $user */
-            $user = $this->security->getUser();
-            if ('survey' === $this->request->getCurrentRequest()->attributes->get('_route') && $user) {
-                $surveyDto->responses = $this->getResponsesByUser->execute($survey, $user);
+            /** @var ?Member $member */
+            $member = $this->security->getUser();
+            if ('survey' === $this->request->getCurrentRequest()->attributes->get('_route') && $member) {
+                $surveyDto->responses = $this->getResponsesByUser->execute($survey, $member);
             }
             $surveyDto->bikeRide = $this->getBikeRide($survey);
             $surveyDto->members = $this->getMembers($survey);
@@ -140,10 +140,10 @@ class SurveyDtoTransformer
             return null;
         }
         $members = [];
-        foreach ($collectionMembers as $user) {
-            /** @var Identity $member */
-            $member = $user->getIdentity();
-            $members[] = sprintf('%s %s', $member->getName(), $member->getFirstName());
+        foreach ($collectionMembers as $member) {
+            /** @var Identity $identity */
+            $identity = $member->getIdentity();
+            $members[] = sprintf('%s %s', $identity->getName(), $identity->getFirstName());
         }
 
         sort($members);

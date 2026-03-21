@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Error;
 
 use App\Entity\LogError;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\ParameterService;
 use DateTime;
 use ErrorException;
@@ -54,7 +54,7 @@ class GetError
             if (Response::HTTP_FORBIDDEN === $statusCode) {
                 /** @var AccessDeniedException  $previousExceptions */
                 $previousExceptions = $exception->getPrevious();
-                $route = (!$previousExceptions->getSubject() instanceof User) ? $previousExceptions->getSubject()?->attributes?->get('_route') : null;
+                $route = (!$previousExceptions->getSubject() instanceof Member) ? $previousExceptions->getSubject()?->attributes?->get('_route') : null;
                 $logError->setRoute($route)
                     ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.')
                 ;
@@ -89,10 +89,10 @@ class GetError
 
     public function addUser(LogError &$logError): void
     {
-        /** @var ?User $user */
-        $user = $this->security->getUser();
-        if ($user) {
-            $logError->setUserId($user->getId());
+        /** @var ?Member $member */
+        $member = $this->security->getUser();
+        if ($member) {
+            $logError->setUserId($member->getId());
         }
     }
 }

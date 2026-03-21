@@ -41,8 +41,8 @@ class SurveyResponse
     #[Column(type: 'string', length: 23)]
     private string $uuid;
 
-    #[ManyToOne(targetEntity: User::class)]
-    private ?User $user;
+    #[ManyToOne(targetEntity: Member::class)]
+    private ?Member $member;
 
     public function getId(): ?int
     {
@@ -85,14 +85,14 @@ class SurveyResponse
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): self
+    public function setMember(?Member $member): self
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

@@ -7,7 +7,7 @@ namespace App\Service;
 use App\Entity\BikeRide;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\HistoryRepository;
 use App\Repository\LogRepository;
 use App\Repository\RespondentRepository;
@@ -28,10 +28,10 @@ class SurveyService
     ) {
     }
 
-    public function getHistory(Survey $survey, User $user): array
+    public function getHistory(Survey $survey, Member $member): array
     {
         $reflexionClass = new ReflectionClass($survey);
-        $log = $this->logRepository->findOneByEntityAndUser($reflexionClass->getShortName(), $survey->getId(), $user);
+        $log = $this->logRepository->findOneByEntityAndUser($reflexionClass->getShortName(), $survey->getId(), $member);
         $histories = ($log) ? $this->historyRepository->findBySurvey($survey, $log->getViewAt()) : [];
         
         return $histories;
@@ -49,10 +49,10 @@ class SurveyService
         return null;
     }
 
-    public function deleteResponses(User $user, Survey $survey): void
+    public function deleteResponses(Member $member, Survey $survey): void
     {
-        $this->surveyResponseRepository->deleteResponsesByUserAndSurvey($user, $survey);
-        $this->respondentRepository->deleteResponsesByUserAndSurvey($user, $survey);
+        $this->surveyResponseRepository->deleteResponsesByUserAndSurvey($member, $survey);
+        $this->respondentRepository->deleteResponsesByUserAndSurvey($member, $survey);
     }
 
     public function deleteSurvey(Survey $survey): void
@@ -76,11 +76,11 @@ class SurveyService
         return $this->getSurveyResponses($bikeRide->getSurvey());
     }
 
-    public function getResponsesByUserAndSurvey(User $user, Survey $survey): array
+    public function getResponsesByUserAndSurvey(Member $member, Survey $survey): array
     {
         $responseByIssue = [];
         /** @var SurveyResponse $response */
-        foreach ($this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey) as $response) {
+        foreach ($this->surveyResponseRepository->findResponsesByUserAndSurvey($member, $survey) as $response) {
             $responseByIssue[$response->getSurveyIssue()->getId()] = $response;
         }
 

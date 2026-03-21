@@ -6,6 +6,7 @@ namespace App\Service\Order;
 
 use App\Entity\OrderHeader;
 use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\OrderHeaderRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -23,12 +24,12 @@ class OrderGetService
 
     public function getOrderByUser(): ?OrderHeader
     {
-        /** @var ?User $user */
-        $user = $this->security->getUser();
-        if (null === $user) {
+        /** @var ?User $member */
+        $member = $this->security->getUser();
+        if (!$member instanceof Member) {
             return null;
         }
 
-        return $this->orderHeaderRepository->findOneOrderNotEmpty($user);
+        return $this->orderHeaderRepository->findOneOrderNotEmpty($member);
     }
 }

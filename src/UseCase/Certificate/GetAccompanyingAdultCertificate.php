@@ -7,8 +7,7 @@ namespace App\UseCase\Certificate;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
-use App\Entity\RegistrationStep;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\MessageService;
 use App\Service\PdfService;
 use App\Service\ReplaceKeywordsService;
@@ -30,13 +29,13 @@ class GetAccompanyingAdultCertificate
     ) {
     }
 
-    public function execute(Request $request, User $user, ?string $content = null): array
+    public function execute(Request $request, Member $member, ?string $content = null): array
     {
         $filename = null;
 
-        $user = $this->userDtoTransformer->fromEntity($user);
+        $member = $this->userDtoTransformer->fromEntity($member);
         if (null === $content) {
-            $content = $this->getContent($user);
+            $content = $this->getContent($member);
         }
         
         if (!$request->isXmlHttpRequest() && $content) {
@@ -46,11 +45,11 @@ class GetAccompanyingAdultCertificate
         return [$content, $filename];
     }
 
-    private function getContent(UserDto $user)
+    private function getContent(UserDto $member)
     {
         $content = $this->messageService->getMessageByName('ACCOMPANYING_ADULT_CERTIFICATE');
 
-        return $this->replaceKeywordsService->replace($content, $user, DisplayModeEnum::FILE);
+        return $this->replaceKeywordsService->replace($content, $member, DisplayModeEnum::FILE);
     }
 
     private function makePdf(string $content): string

@@ -9,6 +9,7 @@ use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Level;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
@@ -112,7 +113,7 @@ class BikeRideDtoTransformer
         $bikeRides = [];
         /** @var User $user */
         $user = $this->security->getUser();
-        $userAvailableSessions = ($user) ? $this->sessionRepository->findAvailableByUser($user) : null;
+        $userAvailableSessions = ($user instanceof Member) ? $this->sessionRepository->findAvailableByUser($user) : null;
         foreach ($bikeRideEntities as $bikeRideEntity) {
             $bikeRides[] = $this->fromEntity($bikeRideEntity, $userAvailableSessions);
         }
@@ -180,7 +181,7 @@ class BikeRideDtoTransformer
             return true;
         }
 
-        return !($private && !$user);
+        return !($private && !$$user);
     }
 
     private function getUnregistrable(?array $userAvailableSessions, BikeRide $bikeRide): false|array
@@ -254,7 +255,7 @@ class BikeRideDtoTransformer
 
     private function getShowFramerAndMemberList(BikeRide $bikeRide): bool
     {
-        /** @var User $user */
+        /** @var Member $user */
         $user = $this->security->getUser();
 
         return $bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME;

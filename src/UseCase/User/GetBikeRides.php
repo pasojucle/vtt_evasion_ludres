@@ -6,7 +6,7 @@ namespace App\UseCase\User;
 
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Entity\Session;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SessionRepository;
 use App\Service\SessionService;
 
@@ -20,12 +20,12 @@ class GetBikeRides
     }
 
 
-    public function execute(User $user): array
+    public function execute(Member $member): array
     {
         $bikeRides = [];
 
         /** @var Session $session */
-        foreach ($this->sessionRepository->findAvailableByUser($user) as $session) {
+        foreach ($this->sessionRepository->findAvailableByUser($member) as $session) {
             $sessionDto = $this->sessionDtoTransformer->fromEntity($session);
             $bikeRides[] = [
                 'bikeRide' => $sessionDto->bikeRide,

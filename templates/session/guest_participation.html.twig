@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ bikeRide.title }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper background-green background-color col-content">
+        <div class="wrapper-content">
+            <div class="reveal" data-controller="reveal">
+                <h1>{{ bikeRide.title }}</h1>
+                <p>Votre participation à la randonnée {{ bikeRide.title}} le {{ bikeRide.period }} est bien prise en compte.</p>
+                <p>Parcours : {{ session.cluster.title }}</p>
+                {% if session.bikeType != enum('App\\Entity\\Enum\\BikeTypeEnum').NONE %}
+                    <p>Type de vélo: {{ session.bikeType|trans }}</p>
+                {% endif %}
+                <p>Tarif: {{ amount }}</p>
+                {# TODO ajouter le numéro de transaction #}
+                <p>Un mail de confirmation vous a été envoyé sur {{ email }}
+            </div>
+        </div>
+        <div class="flex justify-center p-4 max-h-[calc(100vh-200px)]">
+            <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}"/>
+        </div>
+    </div>
+{% endblock %}

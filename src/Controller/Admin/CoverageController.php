@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CoverageController extends AbstractController
 {
     #[Route('s/{filtered}', name: '_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('MEMBER_LIST')]
     public function list(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request,
@@ -33,14 +33,14 @@ class CoverageController extends AbstractController
     }
 
     #[Route('validate/{licence}', name: '_validate', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'licence')]
+    #[IsGranted('MEMBER_EDIT', 'licence')]
     public function adminRegistartionValidate(
         Request $request,
         ValidateCoverage $validateCoverage,
         UserDtoTransformer $userDtoTransformer,
         Licence $licence
     ): Response {
-        $userDto = $userDtoTransformer->fromEntity($licence->getUser());
+        $userDto = $userDtoTransformer->fromEntity($licence->getMember());
         $fullName = $userDto->member->fullName;
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
@@ -70,7 +70,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('/export', name: 's_export', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('MEMBER_LIST')]
     public function adminCoveragesExport(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
@@ -79,7 +79,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('/emails', name: 's_email_to_clipboard', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('MEMBER_LIST')]
     public function adminEmailCoverages(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
@@ -88,7 +88,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('/autocomplete', name: '_autocomplete', methods: ['GET'])]
-    #[IsGranted('USER_SHARE')]
+    #[IsGranted('MEMBER_SHARE')]
     public function memberAutocomplete(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request

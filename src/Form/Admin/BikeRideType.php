@@ -8,7 +8,7 @@ use App\Entity\BikeRide;
 use App\Entity\BikeRideType as EntityBikeRideType;
 use App\Form\Admin\EventListener\BikeRide\BikeRideSubscriber;
 use App\Repository\BikeRideTypeRepository;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use App\Service\LevelService;
 use App\Service\MessageService;
 use Doctrine\ORM\EntityRepository;
@@ -18,7 +18,6 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -34,7 +33,7 @@ class BikeRideType extends AbstractType
     public function __construct(
         private readonly LevelService $levelService,
         private readonly BikeRideTypeRepository $bikeRideTypeRepository,
-        private readonly UserRepository $userRepository,
+        private readonly MemberRepository $memberRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MessageService $messageService,
     ) {
@@ -71,9 +70,6 @@ class BikeRideType extends AbstractType
                 'block_prefix' => 'custom_file',
                 'attr' => [
                     'accept' => '.bmp,.jpeg,.jpg,.png, .pdf',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
                 ],
                 'constraints' => [
                     new File([
@@ -137,7 +133,7 @@ class BikeRideType extends AbstractType
             ])
         ;
 
-        $builder->addEventSubscriber(new BikeRideSubscriber($this->bikeRideTypeRepository, $this->messageService, $this->levelService, $this->userRepository, $this->urlGenerator));
+        $builder->addEventSubscriber(new BikeRideSubscriber($this->bikeRideTypeRepository, $this->messageService, $this->levelService, $this->memberRepository, $this->urlGenerator));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

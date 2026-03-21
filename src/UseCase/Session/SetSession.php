@@ -7,9 +7,9 @@ namespace App\UseCase\Session;
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Level;
+use App\Entity\Member;
 use App\Entity\Respondent;
 use App\Entity\Session;
-use App\Entity\User;
 use App\Service\CacheService;
 use App\Service\LogService;
 use App\Service\NotificationService;
@@ -33,20 +33,20 @@ class SetSession
     ) {
     }
 
-    public function add(FormInterface $form, User $user, BikeRide $bikeRide): void
+    public function add(FormInterface $form, Member $member, BikeRide $bikeRide): void
     {
         /** @var Session $session */
         $session = $form->get('session')->getData();
-        $user->addSession($session);
+        $member->addSession($session);
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
-        if ($this->hasSurveyResponsesToAdd($responses, $user, $bikeRide, $session)) {
-            $this->addSurveyResponses($responses['surveyResponses'], $user, $bikeRide);
+        if ($this->hasSurveyResponsesToAdd($responses, $member, $bikeRide, $session)) {
+            $this->addSurveyResponses($responses['surveyResponses'], $member, $bikeRide);
         }
         $this->confirmationSession->execute($session);
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->entityManager->persist($session);
         $this->entityManager->flush();
-        $this->writeLog($bikeRide, $user);
+        $this->writeLog($bikeRide, $member);
 
         $this->notificationService->notify($session);
     }
@@ -57,33 +57,33 @@ class SetSession
         $session = $form->get('session')->getData();
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
         $bikeRide = $session->getCluster()->getBikeRide();
-        $user = $session->getUser();
+        $member = $session->getMember();
         if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {
-            $this->editSurveyResponses($user, $bikeRide, $surveyResponses, $session->getAvailability());
+            $this->editSurveyResponses($member, $bikeRide, $surveyResponses, $session->getAvailability());
         }
         $this->entityManager->flush();
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->confirmationSession->execute($session);
-        $this->writeLog($bikeRide, $user);
+        $this->writeLog($bikeRide, $member);
         $this->notificationService->notify($session);
     }
 
-    public function addFromdmin(array $data, User $user, BikeRide $bikeRide): void
+    public function addFromdmin(array $data, Member $member, BikeRide $bikeRide): void
     {
         $userSession = new Session();
         $userCluster = $data['cluster'];
         if (null === $userCluster) {
-            $userCluster = $this->sessionService->getCluster($bikeRide, $user, $bikeRide->getClusters());
+            $userCluster = $this->sessionService->getCluster($bikeRide, $member, $bikeRide->getClusters());
         }
-        $userSession->setUser($user)
+        $userSession->setUser($member)
             ->setCluster($userCluster);
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && $member->getLevel()->getType() === Level::TYPE_FRAME) {
             $userSession->setAvailability(AvailabilityEnum::REGISTERED);
         }
-        $user->addSession($userSession);
+        $member->addSession($userSession);
         $responses = array_key_exists('responses', $data) ? $data['responses'] : null;
         if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {
-            $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
+            $this->addSurveyResponses($surveyResponses, $member, $bikeRide);
         }
         $this->entityManager->persist($userSession);
         $this->cacheService->deleteCacheIndex($userSession->getCluster());
@@ -93,17 +93,17 @@ class SetSession
     public function delete(Session $session): void
     {
         if ($survey = $session->getCluster()->getBikeRide()->getSurvey()) {
-            $this->surveyService->deleteResponses($session->getUser(), $survey);
+            $this->surveyService->deleteResponses($session->getMember(), $survey);
         }
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->entityManager->remove($session);
         $this->entityManager->flush();
     }
 
-    private function editSurveyResponses(User $user, BikeRide $bikeRide, array $surveyResponses, ?AvailabilityEnum $availability): void
+    private function editSurveyResponses(Member $member, BikeRide $bikeRide, array $surveyResponses, ?AvailabilityEnum $availability): void
     {
         if (AvailabilityEnum::REGISTERED !== $availability) {
-            $this->surveyService->deleteResponses($user, $bikeRide->getSurvey());
+            $this->surveyService->deleteResponses($member, $bikeRide->getSurvey());
             return;
         }
 
@@ -117,11 +117,11 @@ class SetSession
             }
         }
         if (UnitOfWork::STATE_MANAGED < $entityState) {
-            $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
+            $this->addSurveyResponses($surveyResponses, $member, $bikeRide);
         }
     }
 
-    private function hasSurveyResponsesToAdd(?array $responses, User $user, BikeRide $bikeRide, Session $session): bool
+    private function hasSurveyResponsesToAdd(?array $responses, Member $member, BikeRide $bikeRide, Session $session): bool
     {
         if (null === $bikeRide->getSurvey()) {
             return false;
@@ -131,35 +131,35 @@ class SetSession
             return false;
         }
 
-        if (Level::TYPE_FRAME === $user->getLevel()->getType() && $bikeRide->getBikeRideType()->isNeedFramers() && AvailabilityEnum::REGISTERED !== $session->getAVailability()) {
+        if (Level::TYPE_FRAME === $member->getLevel()->getType() && $bikeRide->getBikeRideType()->isNeedFramers() && AvailabilityEnum::REGISTERED !== $session->getAVailability()) {
             return false;
         }
 
         return true;
     }
 
-    private function addSurveyResponses(array $surveyResponses, User $user, BikeRide $bikeRide): void
+    private function addSurveyResponses(array $surveyResponses, Member $member, BikeRide $bikeRide): void
     {
         foreach ($surveyResponses as $response) {
             if (!$bikeRide->getSurvey()->isAnonymous()) {
-                $response->setUser($user);
+                $response->setUser($member);
             }
             $this->entityManager->persist($response);
         }
         $now = new DateTime();
 
         $respondent = new Respondent();
-        $respondent->setUser($user)
+        $respondent->setMember($member)
             ->setSurvey($bikeRide->getSurvey())
             ->setCreatedAt($now)
         ;
         $this->entityManager->persist($respondent);
     }
 
-    private function writeLog(BikeRide $bikeRide, User $user): void
+    private function writeLog(BikeRide $bikeRide, Member $member): void
     {
         if ($survey = $bikeRide->getSurvey()) {
-            $this->logService->write('Survey', $survey->getId(), $user);
+            $this->logService->write('Survey', $survey->getId(), $member);
         }
     }
 }

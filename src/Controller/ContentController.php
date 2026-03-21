@@ -11,7 +11,7 @@ use App\Dto\DtoTransformer\SummaryDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Link;
 use App\Entity\SlideshowImage;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\ContactType;
 use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
@@ -21,13 +21,11 @@ use App\Repository\LinkRepository;
 use App\Repository\LogRepository;
 use App\Repository\SlideshowImageRepository;
 use App\Repository\SummaryRepository;
-use App\Service\IdentityService;
 use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ProjectDirService;
 use DateTimeImmutable;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -144,8 +142,8 @@ class ContentController extends AbstractController
         DocumentationRepository $documentationRepository,
         DocumentationDtoTransformer $documentationDtoTransformer,
     ): Response {
-        /** @var ?User $user */
-        $user = $this->getUser();
+        /** @var ?Member $member */
+        $member = $this->getUser();
 
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_documentation'),
@@ -161,9 +159,9 @@ class ContentController extends AbstractController
         UserDtoTransformer $userDtoTransformer,
         MessageService $messageService,
     ): Response {
-        /** @var ?User $user */
-        $user = $this->getUser();
-        $mainContact = $user?->getMainIdentity();
+        /** @var ?Member $member */
+        $member = $this->getUser();
+        $mainContact = $member?->getMainIdentity();
         
         $data = ($mainContact)
             ? ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()]
@@ -175,8 +173,8 @@ class ContentController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
      
-            $userData = ($user)
-                ? $userDtoTransformer->fromEntity($user)
+            $userData = ($member)
+                ? $userDtoTransformer->fromEntity($member)
                 : $data;
 
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
@@ -249,10 +247,10 @@ class ContentController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function slideshow(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        /** @var Member $member */
+        $member = $this->getUser();
         $form = $this->logService->getForm(['entityName' => 'SlideshowImage']);
-        $latestView = $this->logRepository->findLatestView($user, 'SlideshowImage');
+        $latestView = $this->logRepository->findLatestView($member, 'SlideshowImage');
         return $this->render('content/slideshow.html.twig', [
             'form' => $form->createView(),
             'latestView' => ($latestView) ? (new DateTimeImmutable($latestView))->getTimestamp() : 1577836800,
@@ -266,9 +264,9 @@ class ContentController extends AbstractController
         int $latestView,
     ): JsonResponse {
         $images = [];
-        /** @var User $user */
-        $user = $this->getUser();
-        $slideShowimageViewedIds = $this->logRepository->findSlideShowimageViewedIds($user);
+        /** @var Member $member */
+        $member = $this->getUser();
+        $slideShowimageViewedIds = $this->logRepository->findSlideShowimageViewedIds($member);
         $latestView = (new DateTimeImmutable())->setTimestamp($latestView);
         /** @var SlideshowImage $image */
         foreach ($slideshowImageRepository->findAll() as $image) {
@@ -306,12 +304,12 @@ class ContentController extends AbstractController
         SummaryRepository $summaryRepository,
         SummaryDtoTransformer $summaryDtoTransformer,
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
-        $summaryViewedIds = $this->logRepository->findSummaryViewedIds($user);
+        /** @var Member $member */
+        $member = $this->getUser();
+        $summaryViewedIds = $this->logRepository->findSummaryViewedIds($member);
         $summaries = $summaryRepository->findLatestDesc();
         foreach ($summaries as $summary) {
-            $this->logService->write('Summary', $summary->getId(), $user);
+            $this->logService->write('Summary', $summary->getId(), $member);
         }
         
         return $this->render('content/summary.html.twig', [

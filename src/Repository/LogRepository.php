@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Log;
-use App\Entity\User;
+use App\Entity\Member;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,16 +28,16 @@ class LogRepository extends ServiceEntityRepository
     }
 
 
-    public function findOneByRouteAndUser(string $route, User $user): ?Log
+    public function findOneByRouteAndUser(string $route, Member $member): ?Log
     {
         try {
             return $this->createQueryBuilder('l')
                 ->andWhere(
-                    (new Expr())->eq('l.user', ':user'),
+                    (new Expr())->eq('l.member', ':member'),
                     (new Expr())->eq('l.route', ':route'),
                 )
                 ->setParameters(new ArrayCollection([
-                    new Parameter('user', $user),
+                    new Parameter('member', $member),
                     new Parameter('route', $route),
                 ]))
                 ->getQuery()
@@ -48,17 +48,17 @@ class LogRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByEntityAndUser(string $className, int $entityId, User $user): ?Log
+    public function findOneByEntityAndUser(string $className, int $entityId, Member $member): ?Log
     {
         try {
             return $this->createQueryBuilder('l')
                 ->andWhere(
-                    (new Expr())->eq('l.user', ':user'),
+                    (new Expr())->eq('l.user', ':member'),
                     (new Expr())->eq('l.entity', ':className'),
                     (new Expr())->eq('l.entityId', ':entityId'),
                 )
                 ->setParameters(new ArrayCollection([
-                    new Parameter('user', $user),
+                    new Parameter('member', $member),
                     new Parameter('className', $className),
                     new Parameter('entityId', $entityId),
                 ]))
@@ -83,38 +83,38 @@ class LogRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    private function findEntityViewedIds(User $user, string $entityName): array
+    private function findEntityViewedIds(Member $member, string $entityName): array
     {
         return $this->createQueryBuilder('l')
             ->select('l.entityId')
             ->andWhere(
-                (new Expr())->eq('l.user', ':user'),
+                (new Expr())->eq('l.member', ':member'),
                 (new Expr())->eq('l.entity', ':entityName')
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', $entityName)
             ]))
             ->getQuery()
             ->getSingleColumnResult();
     }
 
-    public function findSlideShowimageViewedIds(User $user): array
+    public function findSlideShowimageViewedIds(Member $member): array
     {
-        return $this->findEntityViewedIds($user, 'SlideshowImage');
+        return $this->findEntityViewedIds($member, 'SlideshowImage');
     }
 
-    public function findSummaryViewedIds(User $user): array
+    public function findSummaryViewedIds(Member $member): array
     {
-        return $this->findEntityViewedIds($user, 'Summary');
+        return $this->findEntityViewedIds($member, 'Summary');
     }
 
-    public function findSecondHandViewedIds(User $user): array
+    public function findSecondHandViewedIds(Member $member): array
     {
-        return $this->findEntityViewedIds($user, 'SecondHand');
+        return $this->findEntityViewedIds($member, 'SecondHand');
     }
 
-    public function findLatestView(User $user, string $entity)
+    public function findLatestView(Member $member, string $entity)
     {
         return $this->createQueryBuilder('l')
             ->select((new Expr())->max('l.viewAt'))
@@ -124,7 +124,7 @@ class LogRepository extends ServiceEntityRepository
                 (new Expr())->lt('l.viewAt', ':today'),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', $entity),
                 new Parameter('today', (new DateTimeImmutable())),
             ]))

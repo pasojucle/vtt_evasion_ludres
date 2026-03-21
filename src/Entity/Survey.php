@@ -55,7 +55,7 @@ class Survey
     #[JoinColumn(nullable: true)]
     private ?BikeRide $bikeRide = null;
 
-    #[ManyToMany(targetEntity: User::class, inversedBy: 'surveys')]
+    #[ManyToMany(targetEntity: Member::class, inversedBy: 'surveys')]
     private Collection $members;
 
     private ?int $restriction = SurveyType::DISPLAY_ALL_MEMBERS;
@@ -223,14 +223,14 @@ class Survey
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Member>
      */
     public function getMembers(): Collection
     {
         return $this->members;
     }
 
-    public function addMember(User $member): self
+    public function addMember(Member $member): self
     {
         if (!$this->members->contains($member)) {
             $this->members[] = $member;
@@ -239,7 +239,7 @@ class Survey
         return $this;
     }
 
-    public function removeMember(User $member): self
+    public function removeMember(Member $member): self
     {
         $this->members->removeElement($member);
 

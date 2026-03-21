@@ -6,9 +6,9 @@ namespace App\UseCase\Skill;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\DtoTransformer\UserSkillDtoTransformer;
-use App\Entity\User;
-use App\Entity\UserSkill;
-use App\Repository\UserSkillRepository;
+use App\Entity\Member;
+use App\Entity\MemberSkill;
+use App\Repository\MemberSkillRepository;
 use App\UseCase\User\GetMembersFiltered;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -18,7 +18,7 @@ class GetUsersSkills
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly UserSkillRepository $userSkillRepository,
+        private readonly MemberSkillRepository $memberSkillRepository,
         private readonly GetMembersFiltered $getMembersFiltered,
         private readonly UserDtoTransformer $userDtoTransformer,
         private readonly UserSkillDtoTransformer $userSkillDtoTransformer,
@@ -45,9 +45,9 @@ class GetUsersSkills
     private function getUsers(array $filters): array
     {
         $users = [];
-        /** @var User $user */
-        foreach ($this->getMembersFiltered->getQuery($filters)->getQuery()->getResult() as $user) {
-            $users[] = $user->getId();
+        /** @var Member $member */
+        foreach ($this->getMembersFiltered->getQuery($filters)->getQuery()->getResult() as $member) {
+            $users[] = $member->getId();
         }
 
         return $users;
@@ -60,29 +60,29 @@ class GetUsersSkills
         $users = $this->getUsers($filters);
 
 
-        return $this->userSkillRepository->findByUsers($users);
+        return $this->memberSkillRepository->findByUsers($users);
     }
 
-    private function getExportContent(array $usersSkills): string
+    private function getExportContent(array $membersSkills): string
     {
         $content = [];
         $row = ['date d\'évaluation', 'compétence', 'évaluation'];
         $content[] = implode(',', $row);
 
         $prevUserId = null;
-        /** @var UserSkill $userSkill */
-        foreach ($usersSkills as  $userSkill) {
-            if (!$userSkill->getEvaluateAt()) {
+        /** @var MemberSkill $memberSkill */
+        foreach ($membersSkills as $memberSkill) {
+            if (!$memberSkill->getEvaluateAt()) {
                 continue;
             }
-            $userId = $userSkill->getUser()->getId();
+            $userId = $memberSkill->getMember()->getId();
             if ($prevUserId !== $userId) {
                 $prevUserId = $userId;
-                $userDto = $this->userDtoTransformer->fromEntity($userSkill->getUser());
+                $userDto = $this->userDtoTransformer->fromEntity($memberSkill->getMember());
                 $content[] = '';
                 $content[] = sprintf('%s - %s', $userDto->licenceNumber, $userDto->member->fullName);
             }
-            $userSkillDto = $this->userSkillDtoTransformer->fromEntity($userSkill);
+            $userSkillDto = $this->userSkillDtoTransformer->fromEntity($memberSkill);
             $row = [$userSkillDto->evaluateAt, sprintf('"%s"', strip_tags($userSkillDto->content)), $userSkillDto->evaluation['value']];
             $content[] = implode(',', $row);
         }

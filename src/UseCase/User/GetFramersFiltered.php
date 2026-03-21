@@ -11,7 +11,7 @@ use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Form\Admin\FramerFilterType;
 use App\Repository\SessionRepository;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ class GetFramersFiltered
         private readonly FormFactoryInterface $formFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly UserDtoTransformer $userDtoTransformer,
-        private readonly UserRepository $userRepository,
+        private readonly MemberRepository $memberRepository,
         private readonly SessionRepository $sessionRepository,
         private readonly SessionDtoTransformer $sessionDtoTransformer,
         private readonly TranslatorInterface $translator,
@@ -47,7 +47,7 @@ class GetFramersFiltered
             return ['redirect' => true];
         }
         $session->set(self::FILTER_NAME, $filters);
-        $users = $this->userRepository->findFramers($filters)->getQuery()->getResult();
+        $users = $this->memberRepository->findFramers($filters)->getQuery()->getResult();
         $this->setRedirect($request, $bikeRide);
 
         return [
@@ -108,7 +108,7 @@ class GetFramersFiltered
     {
         $filters['user'] = null;
 
-        $query = $this->userRepository->findFramers($filters);
+        $query = $this->memberRepository->findFramers($filters);
 
         $users = $query->getQuery()->getResult();
 

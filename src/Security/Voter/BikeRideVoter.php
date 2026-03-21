@@ -8,7 +8,7 @@ use App\Entity\Cluster;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Session;
 use App\Entity\Summary;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SessionRepository;
 use DateTime;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -44,36 +44,36 @@ class BikeRideVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        /** @var User $user */
-        $user = $token->getUser();
-        if (!$user instanceof User) {
+        /** @var Member $member */
+        $member = $token->getUser();
+        if (!$member instanceof Member) {
             return false;
         }
 
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::BIKE_RIDE);
+        $isUserWithPermission = $isActiveUser && $member->hasPermissions(PermissionEnum::BIKE_RIDE);
 
         return match ($attribute) {
-            self::EXPORT => $this->canExport($token, $user, $subject, $isActiveUser),
-            self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
-            self::VIEW => $this->canView($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::EXPORT => $this->canExport($token, $member, $subject, $isActiveUser),
+            self::EDIT, self::ADD => $this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission),
+            self::VIEW => $this->canView($token, $member, $subject, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
     }
 
-    private function canExport(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser): bool
+    private function canExport(TokenInterface $token, Member $member, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
 
-        return $isActiveUser && $user->hasPermissions([PermissionEnum::BIKE_RIDE, PermissionEnum::BIKE_RIDE_CLUSTER]) && $this->isOwner($subject, $user);
+        return $isActiveUser && $member->hasPermissions([PermissionEnum::BIKE_RIDE, PermissionEnum::BIKE_RIDE_CLUSTER]) && $this->isOwner($subject, $member);
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, Member $member, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
@@ -94,16 +94,16 @@ class BikeRideVoter extends Voter
             return false;
         }
 
-        if ($isUserWithPermission && $this->getSession($subject, $user)) {
+        if ($isUserWithPermission && $this->getSession($subject, $member)) {
             return true;
         };
 
-        return $this->isOwner($subject, $user) && $isActiveUser;
+        return $this->isOwner($subject, $member) && $isActiveUser;
     }
 
-    private function canView(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canView(TokenInterface $token, Member $member, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
+        if ($this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
         }
 
@@ -123,31 +123,31 @@ class BikeRideVoter extends Voter
         return $isActiveUser;
     }
 
-    private function getSession(BikeRide|Cluster|Session|Summary $subject, User $user): ?Session
+    private function getSession(BikeRide|Cluster|Session|Summary $subject, Member $member): ?Session
     {
         if ($subject instanceof Session) {
             return $subject;
         }
 
         $bikeRide = ($subject instanceof BikeRide) ? $subject : $subject->getBikeRide();
-        return $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide);
+        return $this->sessionRepository->findOneByUserAndBikeRide($member, $bikeRide);
     }
 
-    private function isOwner(BikeRide|Cluster|Session|null|Summary $subject, User $user): bool
+    private function isOwner(BikeRide|Cluster|Session|null|Summary $subject, Member $member): bool
     {
         if (!$subject) {
             return false;
         }
         if ($subject instanceof Session) {
-            return $subject->getUser() === $user;
+            return $subject->getMember() === $member;
         }
         $session = match (true) {
-            $subject instanceof Cluster => $this->sessionRepository->findOneByUserAndCluster($user, $subject),
-            $subject instanceof BikeRide => $this->sessionRepository->findOneByUserAndBikeRide($user, $subject),
+            $subject instanceof Cluster => $this->sessionRepository->findOneByUserAndCluster($member, $subject),
+            $subject instanceof BikeRide => $this->sessionRepository->findOneByUserAndBikeRide($member, $subject),
             default => null,
         };
         if ($session) {
-            return $session->getUser() === $user;
+            return $session->getMember() === $member;
         }
 
         return false;

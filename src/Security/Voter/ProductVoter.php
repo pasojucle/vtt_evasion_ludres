@@ -5,10 +5,10 @@ namespace App\Security\Voter;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\ProductDto;
 use App\Entity\Enum\PermissionEnum;
+use App\Entity\Member;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use App\Entity\Product;
-use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -39,37 +39,37 @@ class ProductVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        /** @var User $user */
-        $user = $token->getUser();
-        if (!$user instanceof User) {
+        /** @var Member $member */
+        $member = $token->getUser();
+        if (!$member instanceof Member) {
             return false;
         }
 
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::PRODUCT);
+        $isUserWithPermission = $isActiveUser && $member->hasPermissions(PermissionEnum::PRODUCT);
 
         return match ($attribute) {
-            self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
-            self::VIEW => $this->canView($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::EDIT, self::ADD => $this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission),
+            self::VIEW => $this->canView($token, $member, $subject, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|Product|ProductDto|OrderHeader|OrderLine $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, Member $member, null|Product|ProductDto|OrderHeader|OrderLine $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
             return true;
         }
 
-        return $this->isOwner($subject, $user) && $isActiveUser;
+        return $this->isOwner($subject, $member) && $isActiveUser;
     }
 
-    private function canView(TokenInterface $token, User $user, null|Product|ProductDto|OrderHeader|OrderLine $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canView(TokenInterface $token, Member $member, null|Product|ProductDto|OrderHeader|OrderLine $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
+        if ($this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
         }
 
@@ -89,7 +89,7 @@ class ProductVoter extends Voter
         return $isActiveUser;
     }
 
-    private function isOwner(Product|ProductDto|OrderHeader|OrderLine|null $subject, User $user): bool
+    private function isOwner(Product|ProductDto|OrderHeader|OrderLine|null $subject, Member $member): bool
     {
         if (!$subject || $subject instanceof Product || $subject instanceof ProductDto) {
             return false;
@@ -97,6 +97,6 @@ class ProductVoter extends Voter
 
         $orderHeader = ($subject instanceof OrderHeader) ? $subject : $subject->getOrderHeader();
 
-        return $orderHeader->getUser() === $user;
+        return $orderHeader->getMember() === $member;
     }
 }

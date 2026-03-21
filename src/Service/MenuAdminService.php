@@ -21,7 +21,7 @@ class MenuAdminService
                 'route' => null,
                 'pattern' => null,
                 'subMenus' => $this->getManagementMenus(),
-                'role' => ['BIKE_RIDE_LIST', 'USER_LIST', 'SURVEY_LIST', 'SECOND_HAND_LIST', 'MODAL_WINDOW_LIST', 'PRODUCT_LIST'],
+                'role' => ['BIKE_RIDE_LIST', 'MEMBER_LIST', 'SURVEY_LIST', 'SECOND_HAND_LIST', 'MODAL_WINDOW_LIST', 'PRODUCT_LIST'],
             ],
             [
                 'label' => 'Contenus',
@@ -66,7 +66,7 @@ class MenuAdminService
                 'label' => 'Adhérents',
                 'route' => 'admin_users',
                 'pattern' => '/^admin_user/',
-                'role' => 'USER_LIST',
+                'role' => 'MEMBER_LIST',
             ],
             [
                 'label' => 'Participation',
@@ -78,13 +78,13 @@ class MenuAdminService
                 'label' => 'Inscriptions',
                 'route' => 'admin_registrations',
                 'pattern' => '/^admin_registration/',
-                'role' => 'USER_LIST',
+                'role' => 'MEMBER_LIST',
             ],
             [
                 'label' => 'Assurances ' . $this->seasonService->getCurrentSeason(),
                 'route' => 'admin_coverage_list',
                 'pattern' => '/^admin_coverage/',
-                'role' => 'USER_LIST',
+                'role' => 'MEMBER_LIST',
             ],
             [
                 'label' => 'Boutique',

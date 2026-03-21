@@ -36,7 +36,7 @@
             </li>
         {% endif %}
       {% endif %}
-      {% if is_granted('USER_LIST') and user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER')%}
+      {% if is_granted('MEMBER_LIST') and user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER')%}
         <li>
           <a 
             class="dropdown-item" 
@@ -60,7 +60,7 @@
         <li>
           <a 
             class="dropdown-item" 
-            href="{{ path('admin_user_certificate', {'user': user.id}) }}"
+            href="{{ path('admin_user_certificate', {'member': user.id}) }}"
             data-turbo-frame="_top"
           >
             <i class="fas fa-file-contract"></i> Attestation d'inscription CE
@@ -70,7 +70,7 @@
           <li>
             <a 
               class="dropdown-item" 
-              href="{{ path('admin_user_accompanying_certificate', {'user': user.id}) }}"
+              href="{{ path('admin_user_accompanying_certificate', {'member': user.id}) }}"
               data-turbo-frame="_top"
             >
               <i class="fas fa-file-contract"></i> Attestation adulte accompagnateur

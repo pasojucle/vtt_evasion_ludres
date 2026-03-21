@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\AggregatedType;
+use LogicException;
 
 #[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
@@ -136,15 +136,21 @@ class Licence
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'familyMember')]
     private Collection $familyMembers;
 
+    #[ORM\Column(options:['default' => false])]
+    private bool $FFVelo = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $clubName = null;
+
     public function __construct()
     {
         $this->licenceAgreements = new ArrayCollection();
         $this->familyMembers = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->getUser()->getLicenceNumber();
+        return $this->getUser()->getLicenceNumber() ?? '';
     }
 
     public function getId(): ?int
@@ -202,6 +208,18 @@ class Licence
 
     public function getUser(): ?User
     {
+        return $this->user;
+    }
+
+    public function getMember(): Member
+    {
+        if (!$this->user instanceof Member) {
+            throw new LogicException(sprintf(
+                'L\'entité Licence (%d) est associée à un user de type "%s", mais un "Member" était attendu.',
+                $this->id,
+                get_debug_type($this->user)
+            ));
+        }
         return $this->user;
     }
 
@@ -413,6 +431,30 @@ class Licence
                 $familyMember->setFamilyMember(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isFFVelo(): ?bool
+    {
+        return $this->FFVelo;
+    }
+
+    public function setFFVelo(bool $FFVelo): static
+    {
+        $this->FFVelo = $FFVelo;
+
+        return $this;
+    }
+
+    public function getClubName(): ?string
+    {
+        return $this->clubName;
+    }
+
+    public function setClubName(?string $clubName): static
+    {
+        $this->clubName = $clubName;
 
         return $this;
     }

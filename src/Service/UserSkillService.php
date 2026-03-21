@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\UserSkillType;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserSkillService
@@ -21,10 +19,10 @@ class UserSkillService
     ) {
     }
 
-    public function getList(User $user): array
+    public function getList(Member $member): array
     {
         $userSkills = [];
-        foreach ($user->getUserSkills() as $userSkill) {
+        foreach ($member->getUserSkills() as $userSkill) {
             $form = $this->formFactory->create(UserSkillType::class, $userSkill, [
                 'text_type' => UserSkillType::BY_SKILLS,
                 'action' => $this->urlGenerator->generate('api_user_skill_edit', ['userSkill' => $userSkill->getId()])

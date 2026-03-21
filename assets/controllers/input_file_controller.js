@@ -23,6 +23,13 @@ export default class extends Controller {
                 case media instanceof HTMLObjectElement && 'application/pdf' === file.type:
                     media.classList.remove('hidden');
                     media.data = fileUrl;
+                    this.dispatch("resize-post-upload", { 
+                        prefix: "pdf-size", 
+                        detail: { 
+                            wrapper: this.element,
+                            media: media,
+                        }
+                    })
                     break;
                 case media instanceof HTMLVideoElement && 'video/mp4' === file.type:
                     media.classList.remove('hidden');

@@ -7,7 +7,7 @@ namespace App\UseCase\Survey;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\SurveyResponsesType;
 use App\Repository\RespondentRepository;
 use App\Service\SurveyService;
@@ -26,7 +26,7 @@ class SetSurveyResponses
     ) {
     }
 
-    public function execute(Request $request, Survey $survey, User $user)
+    public function execute(Request $request, Survey $survey, Member $member)
     {
         $respondent = null;
         $now = new DateTime();
@@ -34,13 +34,13 @@ class SetSurveyResponses
         if ($message) {
             return [null, null, null, $message, $this->getRedirect($survey)];
         }
-        $respondent = $this->respondentRepository->findOneBySurveyAndUser($survey, $user);
+        $respondent = $this->respondentRepository->findOneBySurveyAndUser($survey, $member);
         if ($respondent) {
-            $histories = $this->surveyService->getHistory($survey, $user);
-            return $this->editResponses($request, $survey, $respondent, $user, $message, $histories);
+            $histories = $this->surveyService->getHistory($survey, $member);
+            return $this->editResponses($request, $survey, $respondent, $member, $message, $histories);
         }
 
-        return $this->addResponses($request, $survey, $user, $now, $message);
+        return $this->addResponses($request, $survey, $member, $now, $message);
     }
 
     private function validate(Survey $survey, DateTime $now): ?array
@@ -78,10 +78,10 @@ class SetSurveyResponses
         return $surveyResponses;
     }
 
-    private function editResponses(Request $request, Survey $survey, Respondent $respondent, User $user, ?array $message, ?array $histories): array
+    private function editResponses(Request $request, Survey $survey, Respondent $respondent, Member $member, ?array $message, ?array $histories): array
     {
         $form = $this->formFactory->create(SurveyResponsesType::class, [
-            'surveyResponses' => $this->surveyService->getResponsesByUserAndSurvey($user, $survey),
+            'surveyResponses' => $this->surveyService->getResponsesByUserAndSurvey($member, $survey),
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -89,7 +89,7 @@ class SetSurveyResponses
             if (!empty($data['surveyResponses'])) {
                 foreach ($data['surveyResponses'] as $response) {
                     if (!$survey->isAnonymous()) {
-                        $response->setUser($user);
+                        $response->setUser($member);
                     }
                 }
             }
@@ -103,7 +103,7 @@ class SetSurveyResponses
         return [$histories, $respondent, $form, $message, $this->getRedirect($survey)];
     }
 
-    private function addResponses(Request $request, Survey $survey, User $user, DateTime $now, ?array $message): array
+    private function addResponses(Request $request, Survey $survey, Member $member, DateTime $now, ?array $message): array
     {
         $respondent = null;
 
@@ -115,12 +115,12 @@ class SetSurveyResponses
             $data = $form->getData();
             foreach ($data['surveyResponses'] as $response) {
                 if (!$survey->isAnonymous()) {
-                    $response->setUser($user);
+                    $response->setUser($member);
                 }
                 $this->entityManager->persist($response);
             }
             $respondent = new Respondent();
-            $respondent->setUser($user)
+            $respondent->setMember($member)
                 ->setSurvey($survey)
                 ->setCreatedAt($now)
             ;

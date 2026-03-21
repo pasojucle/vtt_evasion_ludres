@@ -6,10 +6,17 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\LicenceAgreementDto;
 use App\Entity\LicenceAgreement;
+use App\Service\LicenceAgreementService;
 use Doctrine\Common\Collections\Collection;
 
 class LicenceAgreementDtoTransformer
 {
+    public function __construct(
+        Private LicenceAgreementService $licenceAgreementService
+    )
+    {
+    }
+
     public function fromEntity(?LicenceAgreement $licenceAgreement): LicenceAgreementDto
     {
         $licenceAgreementDto = new LicenceAgreementDto();
@@ -18,7 +25,7 @@ class LicenceAgreementDtoTransformer
             $licenceAgreementDto->title = $licenceAgreement->getAgreement()->getTitle();
             $licenceAgreementDto->agreed = $licenceAgreement->isAgreed();
             $licenceAgreementDto->toString = ($licenceAgreement->isAgreed()) ? 'autorise' : 'n\'autorise pas';
-            $licenceAgreementDto->toHtml = $this->toHtml($licenceAgreement);
+            $licenceAgreementDto->toHtml = $this->licenceAgreementService->toHtml($licenceAgreement);
             $licenceAgreementDto->content = $licenceAgreement->getAgreement()->getContent();
             $licenceAgreementDto->kind = $licenceAgreement->getAgreement()->getKind();
         }
@@ -36,21 +43,5 @@ class LicenceAgreementDtoTransformer
         }
 
         return $licencesAgreements;
-    }
-
-    private function toHtml(LicenceAgreement $licenceAgreement): array
-    {
-        $agreement = $licenceAgreement->getAgreement();
-        return ($licenceAgreement->isAgreed())
-            ? [
-                'color' => 'success',
-                'icon' => $agreement->getAuthorizationIcon(),
-                'message' => $agreement->getAuthorizationMessage(),
-            ]
-            : [
-                'color' => 'danger',
-                'icon' => $agreement->getRejectionIcon(),
-                'message' => $agreement->getRejectionMessage(),
-            ];
     }
 }

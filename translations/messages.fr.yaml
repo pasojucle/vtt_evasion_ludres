@@ -121,7 +121,13 @@ session:
     vttae: VTTAE
     roadbike: Vélo de route
     gravel: Gravel
+    gravelae: Gravel électrique 
     walking: Marche
+    none: Aucune
+
+bike_type:
+  muscular: Vélo musculaire
+  electric: Vélo Ass. électrique (NON-DEBRIDÉ)
 
 role:
    ROLE_FRAME: Encadrant

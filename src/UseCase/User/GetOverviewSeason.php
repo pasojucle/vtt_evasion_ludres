@@ -6,9 +6,9 @@ namespace App\UseCase\User;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\OverviewSaisonMemberType;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ class GetOverviewSeason
     ];
 
     public function __construct(
-        private UserRepository $userRepository,
+        private MemberRepository $memberRepository,
         private UserDtoTransformer $userDtoTransformer,
         private FormFactoryInterface $formFactory
     ) {
@@ -45,9 +45,9 @@ class GetOverviewSeason
 
         return [
             'users' => [
-                self::TAB_NEW_REGISTRATIONS => $this->userDtoTransformer->fromEntities($this->userRepository->findNewRegisteredBySeason($season)),
-                self::TAB_RE_REGISTRATIONS => $this->userDtoTransformer->fromEntities($this->userRepository->findReRegisteredBySeason($season)),
-                self::TAB_UNREGISTRATIONS => $this->userDtoTransformer->fromEntities($this->userRepository->findUnRegisteredBySeason($season)),
+                self::TAB_NEW_REGISTRATIONS => $this->userDtoTransformer->fromEntities($this->memberRepository->findNewRegisteredBySeason($season)),
+                self::TAB_RE_REGISTRATIONS => $this->userDtoTransformer->fromEntities($this->memberRepository->findReRegisteredBySeason($season)),
+                self::TAB_UNREGISTRATIONS => $this->userDtoTransformer->fromEntities($this->memberRepository->findUnRegisteredBySeason($season)),
             ],
             'season' => $season,
             'form' => $form->createView(),
@@ -71,9 +71,9 @@ class GetOverviewSeason
     {
         list($season) = $this->getSeason($request, true);
         $users = [
-            self::TAB_NEW_REGISTRATIONS => $this->userRepository->findNewRegisteredBySeason($season),
-            self::TAB_RE_REGISTRATIONS => $this->userRepository->findReRegisteredBySeason($season),
-            self::TAB_UNREGISTRATIONS => $this->userRepository->findUnRegisteredBySeason($season),
+            self::TAB_NEW_REGISTRATIONS => $this->memberRepository->findNewRegisteredBySeason($season),
+            self::TAB_RE_REGISTRATIONS => $this->memberRepository->findReRegisteredBySeason($season),
+            self::TAB_UNREGISTRATIONS => $this->memberRepository->findUnRegisteredBySeason($season),
         ];
 
         $content = [];
@@ -111,13 +111,13 @@ class GetOverviewSeason
     {
         list($season, $tab) = $this->getSeason($request, true);
         $users = match ($tab) {
-            self::TAB_NEW_REGISTRATIONS => $this->userRepository->findNewRegisteredBySeason($season),
-            self::TAB_RE_REGISTRATIONS => $this->userRepository->findReRegisteredBySeason($season),
-            self::TAB_UNREGISTRATIONS => $this->userRepository->findUnRegisteredBySeason($season),
+            self::TAB_NEW_REGISTRATIONS => $this->memberRepository->findNewRegisteredBySeason($season),
+            self::TAB_RE_REGISTRATIONS => $this->memberRepository->findReRegisteredBySeason($season),
+            self::TAB_UNREGISTRATIONS => $this->memberRepository->findUnRegisteredBySeason($season),
             default => [],
         };
         $emails = [];
-        /** @var User $user */
+        /** @var Member $user */
         foreach ($users as $user) {
             $emails[] = $user->getMainIdentity()->getEmail();
         }

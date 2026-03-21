@@ -7,7 +7,7 @@ namespace App\UseCase\Registration;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\User;
+use App\Entity\Member;
 
 class GetStatusWarning
 {
@@ -16,9 +16,9 @@ class GetStatusWarning
     ) {
     }
 
-    public function execute(User $user): string
+    public function execute(Member $member): string
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $lastLicence = $userDto->lastLicence;
         if ($lastLicence->isSeasonLicence) {
             $licenceStatus = (in_array($lastLicence->state, [LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED]))
@@ -28,10 +28,10 @@ class GetStatusWarning
             if (in_array($lastLicence->state['value'], [LicenceStateEnum::YEARLY_FILE_SUBMITTED, LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED ])) {
                 return sprintf('Votre inscription pour la saison %s a été %s.<br>Vous ne pouvez plus la modifier en ligne.</p>', $lastLicence->shortSeason, $licenceStatus);
             }
-            if ($user->getDoneSessions()->isEmpty() && LicenceCategoryEnum::SCHOOL === $lastLicence->category) {
+            if ($member->getDoneSessions()->isEmpty() && LicenceCategoryEnum::SCHOOL === $lastLicence->category) {
                 return sprintf('Votre inscription aux 3 séances d\'essai a été %s.<br>Pour s\'incrire à la saison %s, vous devez avoir participé au moins à une sortie du club. </p>', $licenceStatus, $lastLicence->shortSeason);
             }
-            if ($user->getSessions()->isEmpty() && LicenceCategoryEnum::ADULT === $lastLicence->category) {
+            if ($member->getSessions()->isEmpty() && LicenceCategoryEnum::ADULT === $lastLicence->category) {
                 return sprintf('Votre inscription aux 3 séances d\'essai a été %s.<br>Pour s\'incrire à la saison %s, vous devez être inscrit au moins à une sortie du club. </p>', $licenceStatus, $lastLicence->shortSeason);
             }
             if (LicenceStateEnum::TRIAL_FILE_SUBMITTED === $lastLicence->state['value'] && LicenceCategoryEnum::SCHOOL === $lastLicence->category) {

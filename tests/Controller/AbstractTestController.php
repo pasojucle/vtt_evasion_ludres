@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use DOMDocument;
-use App\Entity\User;
 use App\Entity\BikeRideType;
 use App\Service\SeasonService;
-use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ClusterRepository;
 use App\Repository\LicenceRepository;
@@ -19,6 +17,9 @@ use Symfony\Component\DomCrawler\Form;
 use App\Repository\SecondHandRepository;
 use App\DataFixtures\Common\UserFixtures;
 use App\DataFixtures\Common\BikeRideTypeFixtures;
+use App\Entity\Member;
+use App\Entity\Participant;
+use App\Repository\MemberRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -31,7 +32,7 @@ abstract class AbstractTestController extends WebTestCase
     PUBLIC CONST ADULT = ['name' => 'Roue', 'firstName' => 'Libre', 'password' => 'test01'];
 
     public KernelBrowser $client;
-    public UserRepository $userRepository;
+    public MemberRepository $memberRepository;
     public IdentityRepository $identityRepository;
     public SessionRepository $sessionRepository;
     public LicenceRepository $licenceRepository;
@@ -48,7 +49,7 @@ abstract class AbstractTestController extends WebTestCase
         
         $this->client = static::createClient([], ['REMOTE_ADDR' => '11.11.11.11']);
         $this->client->disableReboot();
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->memberRepository = static::getContainer()->get(MemberRepository::class);
         $this->identityRepository = static::getContainer()->get(IdentityRepository::class);
         $this->sessionRepository = static::getContainer()->get(SessionRepository::class);
         $this->licenceRepository = static::getContainer()->get(LicenceRepository::class);
@@ -70,11 +71,11 @@ abstract class AbstractTestController extends WebTestCase
         $form->set($formfield); 
     }
 
-    public function loginUser(User $user): void
+    public function loginUser(Member $member): void
     {
         $this->client->getCookieJar()->clear();
         $this->client->request('GET', '/login');
-        $this->client->loginUser($user);
+        $this->client->loginUser($member);
     }
 
     public function logOut():void
@@ -90,18 +91,18 @@ abstract class AbstractTestController extends WebTestCase
         return static::getContainer()->get('doctrine')->getManager();
     }
 
-    public function getUserFromIdentity(array $identity): User
+    public function getUserFromIdentity(array $identity): Member
     {
         $userIdentity = $this->identityRepository->findOneBy(['name' => $identity['name'], 'firstName' => $identity['firstName']]);
         $this->assertNotNull($userIdentity, sprintf('Aucun utilisateur trouvé pour %s %s', $identity['name'], $identity['firstName']));
 
-        return $userIdentity->getUser();        
+        return $userIdentity->getMember();        
     }
 
     public function loginAdmin(): void
     {
         $licenceNumber = UserFixtures::getLicenceNumberFromReference(UserFixtures::USER_ADMIN);
-        $admin = $this->userRepository->findOneByLicenceNumber($licenceNumber);
+        $admin = $this->memberRepository->findOneByLicenceNumber($licenceNumber);
         $this->assertNotNull($admin, sprintf('Aucun admin trouvé pour le numéro de licence %s', $licenceNumber));
 
         $this->loginUser($admin);

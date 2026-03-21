@@ -6,11 +6,11 @@ namespace App\UseCase\User;
 
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\UserFilterType;
-use App\Repository\UserRepository;
-use App\Service\PaginatorService;
+use App\Repository\MemberRepository;
 use App\Service\SeasonService;
+use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use ReflectionClass;
@@ -36,7 +36,7 @@ abstract class GetUsersFiltered
         private readonly FormFactoryInterface $formFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly UserDtoTransformer $userDtoTransformer,
-        protected UserRepository $userRepository,
+        protected MemberRepository $memberRepository,
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -118,12 +118,12 @@ abstract class GetUsersFiltered
         if (array_key_exists('user', $filters)) {
             unset($filters['user']);
         }
-        
+        dump($filters);
         $query = $this->getQuery($filters);
         $users = $query->getQuery()->getResult();
 
         $results = [];
-        /** @var User $user */
+        /** @var Member $user */
         foreach ($users as $user) {
             $results[] = [
                 'value' => $user->getId(),

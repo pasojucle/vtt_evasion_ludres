@@ -5,7 +5,7 @@ namespace App\Security\Voter;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Skill;
-use App\Entity\User;
+use App\Entity\Member;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -34,17 +34,17 @@ class SkillVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        /** @var User $user */
-        $user = $token->getUser();
+        /** @var Member $member */
+        $member = $token->getUser();
 
-        if (!$user instanceof User) {
+        if (!$member instanceof Member) {
             return false;
         }
 
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::SKILL);
+        $isUserWithPermission = $isActiveUser && $member->hasPermissions(PermissionEnum::SKILL);
 
         return match ($attribute) {
             self::EDIT , self::ADD => $this->canEdit($token, $isUserWithPermission),

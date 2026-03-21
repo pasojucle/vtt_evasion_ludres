@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\CertificateType;
 use App\UseCase\Certificate\GetAccompanyingAdultCertificate;
 use App\UseCase\Certificate\GetRegistrationCertificate;
@@ -23,14 +23,14 @@ class CertificateController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/adherent/certificate/{user}', name: 'user_certificate', methods: ['GET', 'POST'])]
+    #[Route('/admin/adherent/certificate/{member}', name: 'user_certificate', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationCertificate(
         Request $request,
         GetRegistrationCertificate $getRegistrationCertificate,
-        User $user
+        Member $member
     ): Response {
-        list($content) = $getRegistrationCertificate->execute($request, $user);
+        list($content) = $getRegistrationCertificate->execute($request, $member);
         $form = $this->createForm(CertificateType::class, [
             'content' => $content,
         ]);
@@ -39,7 +39,7 @@ class CertificateController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            list($content, $filename) = $getRegistrationCertificate->execute($request, $user, mb_convert_encoding($data['content'], 'UTF-8'));
+            list($content, $filename) = $getRegistrationCertificate->execute($request, $member, mb_convert_encoding($data['content'], 'UTF-8'));
             $filename = base64_encode($this->parameterBag->get('data_directory_path') . $filename);
         }
 
@@ -51,14 +51,14 @@ class CertificateController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/accompaganteur/certificate/{user}', name: 'user_accompanying_certificate', methods: ['GET', 'POST'])]
+    #[Route('/admin/accompaganteur/certificate/{member}', name: 'user_accompanying_certificate', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminAccompanyingCertificate(
         Request $request,
         GetAccompanyingAdultCertificate $getAccompanyingAdultCertificate,
-        User $user
+        Member $member
     ): Response {
-        list($content) = $getAccompanyingAdultCertificate->execute($request, $user);
+        list($content) = $getAccompanyingAdultCertificate->execute($request, $member);
         $form = $this->createForm(CertificateType::class, [
             'content' => $content,
         ]);
@@ -67,7 +67,7 @@ class CertificateController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            list($content, $filename) = $getAccompanyingAdultCertificate->execute($request, $user, mb_convert_encoding($data['content'], 'UTF-8'));
+            list($content, $filename) = $getAccompanyingAdultCertificate->execute($request, $member, mb_convert_encoding($data['content'], 'UTF-8'));
             $filename = base64_encode($this->parameterBag->get('data_directory_path') . $filename);
         }
 

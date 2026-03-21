@@ -6,7 +6,7 @@ namespace App\UseCase\Licence;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\MessageService;
@@ -27,35 +27,35 @@ class ValidateLicence
 
     public function execute(Request $request, Licence $licence)
     {
-        $user = $licence->getUser();
-        $licenceNumber = $user->getLicenceNumber();
+        $member = $licence->getMember();
+        $licenceNumber = $member->getLicenceNumber();
         $this->licenceService->applyTransition($licence, 'register_to_federation');
         $this->entityManager->persist($licence);
         $data = $request->request->all('licence_validate');
-        $this->setLicenceNumber($data, $user);
-        $this->sendMail($licenceNumber, $user);
-        $this->setMedicalCertificateDate($data, $user);
+        $this->setLicenceNumber($data, $member);
+        $this->sendMail($licenceNumber, $member);
+        $this->setMedicalCertificateDate($data, $member);
 
         $this->entityManager->flush();
     }
 
-    private function setLicenceNumber(array $data, User $user)
+    private function setLicenceNumber(array $data, Member $member)
     {
         if (array_key_exists('licenceNumber', $data)) {
             $licenceNumber = $data['licenceNumber'];
             if (!empty($licenceNumber)) {
-                $user->setLicenceNumber($licenceNumber);
-                $this->entityManager->persist($user);
+                $member->setLicenceNumber($licenceNumber);
+                $this->entityManager->persist($member);
             }
         }
     }
 
-    private function setMedicalCertificateDate(array $data, User $user)
+    private function setMedicalCertificateDate(array $data, Member $member)
     {
         if (array_key_exists('medicalCertificateDate', $data)) {
             $medicalCertificateDate = $data['medicalCertificateDate'];
             if (!empty($medicalCertificateDate)) {
-                $health = $user->getHealth();
+                $health = $member->getHealth();
                 $medicalCertificateDate = DateTime::createFromFormat('d/m/Y', $medicalCertificateDate);
                 $health->setMedicalCertificateDate($medicalCertificateDate);
                 $this->entityManager->persist($health);
@@ -63,11 +63,11 @@ class ValidateLicence
         }
     }
 
-    private function sendMail(string $licenceNumber, User $user)
+    private function sendMail(string $licenceNumber, Member $member)
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         if ($licenceNumber !== $userDto->licenceNumber) {
-            $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
+            $userDto = $this->userDtoTransformer->identifiersFromEntity($member);
             $subject = 'Votre numero de licence';
             $this->mailerService->sendMailToMember($userDto, $subject, $this->messageService->getMessageByName('EMAIL_LICENCE_VALIDATE'));
         }

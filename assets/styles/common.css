@@ -636,6 +636,7 @@ main:not(.admin) {
     line-height: 36px;
     border: none;
     background: var(--light-color);
+    color: var(--background-color);
     padding: 5px;
 }
 .form-group .ts-control {
@@ -751,12 +752,12 @@ button[type=submit].btn.btn-primary:disabled, button.add-item-file:disabled {
 }
 .inputGroup {
     display: inline-block;
-    width: calc(33% - 2px);
     margin: 10px 0;
     position: relative;
+    min-width: calc(33% - 2px);
 }
 .inputGroup label {
-    padding: 12px 30px 12px 12px;
+    padding: 12px 50px 12px 12px;
     display: block;
     text-align: left;
     color: var(--gray-color);
@@ -948,6 +949,9 @@ input[type="file"] {
 }
 .col-content {
     grid-template-columns: 4fr 5fr;
+}
+.col-content.col-inverse {
+    grid-template-columns: 5fr 4fr;
 }
 .col-3 {
     grid-template-columns: repeat(3, 1fr);

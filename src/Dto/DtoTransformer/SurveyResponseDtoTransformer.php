@@ -8,7 +8,7 @@ use App\Dto\SurveyResponseDto;
 
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,7 +24,7 @@ class SurveyResponseDtoTransformer
     {
         $surveyResponseDto = new SurveyResponseDto();
         $surveyResponseDto->issue = $surveyResponse->getSurveyIssue()->getContent();
-        $surveyResponseDto->user = $this->getUser($surveyResponse->getUser());
+        $surveyResponseDto->user = $this->getUser($surveyResponse->getMember());
         $surveyResponseDto->value = (null !== $surveyResponse->getValue() && SurveyIssue::RESPONSE_TYPE_STRING !== $surveyResponse->getSurveyIssue()->getResponseType())
             ? $this->translator->trans(SurveyResponse::VALUES[$surveyResponse->getValue()])
             : $surveyResponse->getValue();
@@ -43,14 +43,14 @@ class SurveyResponseDtoTransformer
         return $surveyResponses;
     }
 
-    public function getUser(?User $user): array
+    public function getUser(?Member $member): array
     {
         $fullName = '';
         $mainEmail = '';
-        if ($user instanceof User) {
-            $member = $user->getIdentity();
-            $fullName = sprintf('%s %s', mb_strtoupper($member->getName()), mb_ucfirst($member->getFirstName()));
-            $mainEmail = $user->getMainIdentity()?->getEmail();
+        if ($member instanceof Member) {
+            $identity = $member->getIdentity();
+            $fullName = sprintf('%s %s', mb_strtoupper($identity->getName()), mb_ucfirst($identity->getFirstName()));
+            $mainEmail = $member->getContactEmail();
         }
 
         return [

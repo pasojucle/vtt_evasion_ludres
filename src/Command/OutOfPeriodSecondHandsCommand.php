@@ -65,7 +65,7 @@ class OutOfPeriodSecondHandsCommand extends Command
 
     private function sendMailToSeller(SecondHand $secondHand): void
     {
-        $userDto = $this->userDtoTransformer->identifiersFromEntity($secondHand->getUser());
+        $userDto = $this->userDtoTransformer->identifiersFromEntity($secondHand->getMember());
         $subject = sprintf('Votre annonce %s', $secondHand->getName());
         $content = $this->messageService->getMessageByName('SECOND_HAND_DISABLED_MESSAGE');
         $additionalParams = [

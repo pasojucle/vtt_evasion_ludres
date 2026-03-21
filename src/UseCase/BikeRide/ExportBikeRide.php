@@ -49,7 +49,7 @@ class ExportBikeRide
         if (!empty($sessions)) {
             foreach ($sessions as $session) {
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
-                    $user = $this->userDtoTransformer->fromEntity($session->getUser());
+                    $user = $this->userDtoTransformer->fromEntity($session->getMember());
                     $present = ($session->isPresent()) ? 'oui' : 'non';
                     $row = [
                         $user->licenceNumber,

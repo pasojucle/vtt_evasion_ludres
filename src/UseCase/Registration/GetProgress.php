@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\UseCase\Registration;
 
 use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
-
-;
 use App\Dto\RegistrationProgressDto;
 use App\Entity\Address;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\GardianKindEnum;
-use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
 use App\Entity\Enum\LicenceStateEnum;
@@ -19,8 +16,8 @@ use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\LicenceAgreement;
-use App\Entity\User;
-use App\Entity\UserGardian;
+use App\Entity\Member;
+use App\Entity\MemberGardian;
 use App\Repository\AgreementRepository;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationStepRepository;
@@ -34,7 +31,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetProgress
 {
-    private ?User $user;
+    private ?Member $member;
 
     private int $season;
     private ?Licence $seasonLicence;
@@ -55,11 +52,11 @@ class GetProgress
 
     public function execute(int $step): RegistrationProgressDto
     {
-        /** @var User $user */
+        /** @var Member $user */
         $user = $this->security->getUser();
-        $this->user = $user;
+        $this->member = $user;
 
-        $this->setUser();
+        $this->setMember();
         $this->updateStatus();
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->getState()->isYearly(), DisplayModeEnum::SCREEN);
@@ -67,40 +64,40 @@ class GetProgress
             throw new NotFoundHttpException('The registration step does not exist');
         }
         $this->addLicenceAgreements();
-        $progress = $this->registrationProgressDtoTransformer->fromEntities($steps, $step, $this->user, $this->season);
+        $progress = $this->registrationProgressDtoTransformer->fromEntities($steps, $step, $this->member, $this->season);
         return $progress;
     }
 
-    private function setUser(): void
+    private function setMember(): void
     {
-        if (null === $this->user) {
+        if (null === $this->member) {
             $this->createUser();
         }
 
-        $this->seasonLicence = $this->user->getSeasonLicence($this->season);
+        $this->seasonLicence = $this->member->getSeasonLicence($this->season);
         if (null === $this->seasonLicence) {
             $this->createNewLicence();
         }
 
-        if (null === $this->user->getHealth()) {
+        if (null === $this->member->getHealth()) {
             $this->createHealth();
         }
         
-        $this->healthService->getHealthConsents($this->user);
+        $this->healthService->getHealthConsents($this->member);
 
-        if (null === $this->user->getIdentity()) {
+        if (null === $this->member->getIdentity()) {
             $this->createIdentityMember();
         }
 
         if (LicenceCategoryEnum::SCHOOL === $this->seasonLicence->getCategory()) {
-            if ($this->user->getUserGardians()->isEmpty()) {
+            if ($this->member->getMemberGardians()->isEmpty()) {
                 $this->createGardians();
             }
             if (LicenceStateEnum::TRIAL_FILE_PENDING === $this->seasonLicence->getState()) {
                 $this->setAwaitingLevel();
             }
         } else {
-            if (!$this->user->getUserGardians()->isEmpty()) {
+            if (!$this->member->getMemberGardians()->isEmpty()) {
                 $this->removeGardians();
             }
             if (LicenceStateEnum::TRIAL_FILE_PENDING === $this->seasonLicence->getState()) {
@@ -113,8 +110,8 @@ class GetProgress
     {
         $licence = $this->seasonLicence;
         if (in_array($licence->getState(), [LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED]) &&
-            ((0 < count($this->user->getDoneSessions()) && LicenceCategoryEnum::SCHOOL === $licence->getCategory())
-            || (0 < count($this->user->getSessions()) && LicenceCategoryEnum::ADULT === $licence->getCategory()))) {
+            ((0 < count($this->member->getDoneSessions()) && LicenceCategoryEnum::SCHOOL === $licence->getCategory())
+            || (0 < count($this->member->getSessions()) && LicenceCategoryEnum::ADULT === $licence->getCategory()))) {
             if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_yearly_registration')) {
                 throw new ConflictHttpException('Unable to start yearly registration. The license is not in a valid state for this transition.');
             }
@@ -123,21 +120,21 @@ class GetProgress
 
     private function createUser(): void
     {
-        $this->user = new User();
-        $this->user->setRoles(['ROLE_USER']);
-        $this->entityManager->persist($this->user);
+        $this->member = new Member();
+        $this->member->setRoles(['ROLE_USER']);
+        $this->entityManager->persist($this->member);
     }
 
     private function createNewLicence(): void
     {
         $this->seasonLicence = new Licence();
         $this->seasonLicence->setSeason($this->season);
-        if (!$this->user->getLicences()->isEmpty()) {
+        if (!$this->member->getLicences()->isEmpty()) {
             if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_yearly_registration')) {
                 throw new ConflictHttpException('Unable to start yearly registration. The license is not in a valid state for this transition.');
             }
-            if ($this->user->getLastLicence()->getCoverage()) {
-                $this->seasonLicence->setCoverage($this->user->getLastLicence()->getCoverage());
+            if ($this->member->getLastLicence()->getCoverage()) {
+                $this->seasonLicence->setCoverage($this->member->getLastLicence()->getCoverage());
             }
         } else {
             if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_trial')) {
@@ -146,13 +143,13 @@ class GetProgress
             $this->seasonLicence->setCoverage(Licence::COVERAGE_MINI_GEAR)
             ;
         }
-        if ($this->user->getIdentity()) {
-            $category = $this->licenceService->getCategory($this->user);
+        if ($this->member->getIdentity()) {
+            $category = $this->licenceService->getCategory($this->member);
             $this->seasonLicence->setCategory($category);
         }
 
         $this->entityManager->persist($this->seasonLicence);
-        $this->user->addLicence($this->seasonLicence);
+        $this->member->addLicence($this->seasonLicence);
     }
 
     private function addLicenceAgreements(): void
@@ -213,7 +210,7 @@ class GetProgress
     private function createHealth(): void
     {
         $health = new Health();
-        $this->user->setHealth($health);
+        $this->member->setHealth($health);
         $this->entityManager->persist($health);
     }
 
@@ -221,7 +218,7 @@ class GetProgress
     private function createIdentityMember(): void
     {
         $identity = new Identity();
-        $this->user->setIdentity($identity);
+        $this->member->setIdentity($identity);
         $this->createAddress($identity);
         $this->entityManager->persist($identity);
     }
@@ -236,12 +233,12 @@ class GetProgress
             $this->entityManager->persist($identity);
             $this->createAddress($identity);
 
-            $gardian = new UserGardian();
+            $gardian = new MemberGardian();
             $gardian->setKind($kind)
                 ->setIdentity($identity)
-                ->setUser($this->user);
+                ->setMember($this->member);
             $this->entityManager->persist($gardian);
-            $this->user->addUserGardian($gardian);
+            $this->member->addUserGardian($gardian);
             $identity->addUserGardian($gardian);
         }
     }
@@ -257,19 +254,19 @@ class GetProgress
     private function setAwaitingLevel(): void
     {
         $awaitingEvaluationlevel = $this->levelRepository->findAwaitingEvaluation();
-        $this->user->setLevel($awaitingEvaluationlevel);
+        $this->member->setLevel($awaitingEvaluationlevel);
     }
 
     private function setAdultLevel(): void
     {
         $unframedAdultlevel = $this->levelRepository->findUnframedAdult();
-        $this->user->setLevel($unframedAdultlevel);
+        $this->member->setLevel($unframedAdultlevel);
     }
 
     private function removeGardians(): void
     {
-        /** @var UserGardian $gardian */
-        foreach ($this->user->getUserGardians() as $gardian) {
+        /** @var MemberGardian $gardian */
+        foreach ($this->member->getMemberGardians() as $gardian) {
             $identity = $gardian->getIdentity();
             if (!$identity->getUser()) {
                 $address = $identity->getAddress();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
 
 class GardianService
@@ -14,9 +14,9 @@ class GardianService
     ) {
     }
 
-    public function setAddress(User $user): void
+    public function setAddress(Member $member): void
     {
-        foreach ($user->getUserGardians() as $gardian) {
+        foreach ($member->getMemberGardians() as $gardian) {
             $gardianIdentity = $gardian->getIdentity();
             $gardianAddress = $gardianIdentity->getAddress();
             if (!$gardianIdentity->hasAddress() && null !== $gardianAddress) {

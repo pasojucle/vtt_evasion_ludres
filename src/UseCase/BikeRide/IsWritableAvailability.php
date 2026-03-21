@@ -7,6 +7,7 @@ namespace App\UseCase\BikeRide;
 use App\Entity\BikeRide;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
+use App\Entity\Member;
 use App\Entity\User;
 use App\Service\BikeRideService;
 use DateTimeImmutable;
@@ -20,8 +21,12 @@ class IsWritableAvailability
     ) {
     }
     
-    public function execute(BikeRide $bikeRide, ?User $user): bool
+    public function execute(BikeRide $bikeRide, ?User $member): bool
     {
+        if (!$member instanceof Member) {
+            return false;
+        }
+
         $bikeRideType = $bikeRide->getBikeRideType();
         if (RegistrationEnum::NONE === $bikeRideType->getRegistration()) {
             return false;
@@ -30,11 +35,11 @@ class IsWritableAvailability
         $today = (new DateTimeImmutable())->setTime(0, 0, 0);
         $dateTimerPeriod = $this->bikeRideService->getDateTimePeriod($bikeRide);
         if ($bikeRideType->isNeedFramers()) {
-            return $this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) && Level::TYPE_FRAME === $user?->getLevel()?->getType() && $today <= $dateTimerPeriod['closingAt'];
+            return $this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) && Level::TYPE_FRAME === $member->getLevel()?->getType() && $today <= $dateTimerPeriod['closingAt'];
         }
 
-        $users = $bikeRide->getUsers();
-        if (!$users->isEmpty() && !$users->contains($user)) {
+        $users = $bikeRide->getMembers();
+        if (!$users->isEmpty() && !$users->contains($member)) {
             return false;
         }
 

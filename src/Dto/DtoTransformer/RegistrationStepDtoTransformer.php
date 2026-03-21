@@ -8,9 +8,9 @@ use App\Dto\RegistrationStepDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\RegistrationFormEnum;
+use App\Entity\Member;
 use App\Entity\RegistrationStep;
-use App\Entity\User;
-use App\Form\UserType;
+use App\Form\MemberType;
 use App\Service\ProjectDirService;
 use App\Service\ReplaceKeywordsService;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -31,7 +31,7 @@ class RegistrationStepDtoTransformer
 
     public function fromEntity(
         ?RegistrationStep $registrationStep,
-        ?User $user = null,
+        ?Member $member = null,
         ?UserDto $userDto = null,
         ?int $step = null,
         ?DisplayModeEnum $displayMode = DisplayModeEnum::SCREEN,
@@ -51,7 +51,7 @@ class RegistrationStepDtoTransformer
         }
 
         if (null !== $step) {
-            $registrationStepDto->formObject = $this->getForm($registrationStep, $user, $userDto, $step);
+            $registrationStepDto->formObject = $this->getForm($registrationStep, $member, $userDto, $step);
             $registrationStepDto->template = $this->getTemplate($registrationStep);
             $registrationStepDto->content = $this->getContent($userDto, $displayMode, $registrationStep->getContent());
             $registrationStepDto->overviewTemplate = (DisplayModeEnum::SCREEN === $displayMode)
@@ -63,7 +63,7 @@ class RegistrationStepDtoTransformer
         return $registrationStepDto;
     }
 
-    private function getForm(RegistrationStep $registrationStep, ?User $user, UserDto $userDto, int $step): ?FormInterface
+    private function getForm(RegistrationStep $registrationStep, ?Member $member, UserDto $userDto, int $step): ?FormInterface
     {
         $form = null;
 
@@ -72,7 +72,7 @@ class RegistrationStepDtoTransformer
         $route = ('user_registration_form' === $this->requestStack->getCurrentRequest()->attributes->get('_route')) ? 'user_registration_form' : 'registration_form';
 
         if (null !== $registrationStep->getForm() && RegistrationFormEnum::REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
-            $form = $this->formFactory->create(UserType::class, $user, [
+            $form = $this->formFactory->create(MemberType::class, $member, [
                 'attr' => [
                     'action' => $this->router->generate($route, [
                         'step' => $step,

@@ -12,10 +12,11 @@ use App\Entity\Cluster;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Licence;
+use App\Entity\Member;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
-use App\Entity\Survey;
 use App\Entity\User;
+use App\Entity\Survey;
 use App\Repository\BikeRideRepository;
 use App\Repository\ClusterRepository;
 use App\Repository\NotificationRepository;
@@ -33,7 +34,7 @@ class GetList
 {
     private SessionInterface $session;
 
-    private ?User $user;
+    private ?Member $member;
     private UserDto $userDto;
     private array $routeInfos;
 
@@ -52,13 +53,14 @@ class GetList
         private readonly ClusterRepository $clusterRepository,
         private readonly SeasonService $seasonService,
     ) {
-        /** @var ?User $user */
-        $user = $security->getUser();
-        $this->user = $user;
+        
     }
 
     public function execute(): array
     {
+        /** @var User $member */
+        $member = $this->security->getUser();
+        $this->member = $member instanceof Member ? $member : null;
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
         $this->routeInfos = $this->routerService->getRouteInfos();
         
@@ -68,7 +70,7 @@ class GetList
             return [$this->notificationDtoTransformer->fromEntity($notification), [], false];
         }
 
-        if (null === $this->user) {
+        if (null === $this->member) {
             return $this->getPublicNotifications($notificationsConsumed);
         }
 
@@ -109,7 +111,7 @@ class GetList
             return [null, [], false];
         }
 
-        $this->userDto = $this->userDtoTransformer->fromEntity($this->user);
+        $this->userDto = $this->userDtoTransformer->fromEntity($this->member);
         if (!$this->userDto->lastLicence->isActive) {
             return $this->getPublicNotifications($notificationsConsumed);
         }
@@ -124,7 +126,7 @@ class GetList
         $this->addNewSeasonReRgistrationEnabled($notifications);
         $repeat = $this->addBikeRideClusterExport($notifications);
 
-        $modalNotifications = $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
+        $modalNotifications = $this->notificationRepository->findByUser($this->member, $this->userDto->member->age);
         if (empty($modalNotifications) && empty($notificationsConsumed)) {
             $total = count($notifications);
             $notification = (1 < $total)
@@ -145,7 +147,7 @@ class GetList
 
     private function addSurveys(array &$notifications): void
     {
-        $surveys = $this->surveyRepository->findActiveAndWithoutResponse($this->user);
+        $surveys = $this->surveyRepository->findActiveAndWithoutResponse($this->member);
         foreach ($surveys as $survey) {
             if ('survey' !== $this->routeInfos['_route'] || $survey->getId() !== (int) $this->routeInfos['survey']) {
                 $notifications[] = $survey;
@@ -155,7 +157,7 @@ class GetList
 
     private function addBikeRide(array &$notifications): void
     {
-        $bikeRides = $this->bikeRideRepository->findNotifiable($this->user);
+        $bikeRides = $this->bikeRideRepository->findNotifiable($this->member);
         foreach ($bikeRides as $bikeRide) {
             $notifications[] = $bikeRide;
         };
@@ -168,7 +170,7 @@ class GetList
         };
 
         if ($this->userDto->lastLicence?->state['value']->isPending()) {
-            $notifications[] = $this->user->getLastLicence();
+            $notifications[] = $this->member->getLastLicence();
         }
     }
 
@@ -177,7 +179,7 @@ class GetList
         if (in_array($this->routeInfos['_route'], ['order_edit', 'products'])) {
             return;
         };
-        $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($this->user);
+        $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($this->member);
         if (null !== $orderHeaderToValidate) {
             $notifications[] = $orderHeaderToValidate;
         }
@@ -185,7 +187,7 @@ class GetList
 
     private function addOrderValidatedOrCanceled(array &$notifications): void
     {
-        $orderHeadersValidated = $this->orderHeaderRepository->findValidedOrCanceled($this->user);
+        $orderHeadersValidated = $this->orderHeaderRepository->findValidedOrCanceled($this->member);
         foreach ($orderHeadersValidated as $orderHeader) {
             $notifications[] = $orderHeader;
         }
@@ -203,7 +205,7 @@ class GetList
 
     private function addSurveysChanged(array &$notifications): void
     {
-        $surveysChanged = $this->surveyRepository->findActiveChangedUser($this->user);
+        $surveysChanged = $this->surveyRepository->findActiveChangedUser($this->member);
         /** @var Survey $survey */
         foreach ($surveysChanged as $survey) {
             $notifications[] = $this->notificationService->getSurveyChanged($survey);
@@ -212,10 +214,10 @@ class GetList
 
     private function addBikeRideClusterExport(array &$notifications): bool
     {
-        if (!$this->user->hasPermissions(PermissionEnum::BIKE_RIDE_CLUSTER)) {
+        if (!$this->member->hasPermissions(PermissionEnum::BIKE_RIDE_CLUSTER)) {
             return false;
         }
-        $clusters = $this->clusterRepository->findAvailableByUser($this->user);
+        $clusters = $this->clusterRepository->findAvailableByUser($this->member);
         $hasCompleteCluster = false;
         /** @var Cluster $cluster */
         foreach ($clusters as $cluster) {
@@ -230,7 +232,6 @@ class GetList
     private function fromReferer(): ?array
     {
         $refererNotification = $this->notificationService->sessionToArray('notification');
-        dump($refererNotification);
         if (!$refererNotification) {
             return null;
         }

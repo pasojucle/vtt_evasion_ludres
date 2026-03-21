@@ -6,8 +6,8 @@ namespace App\Controller;
 
 use App\Dto\DtoTransformer\OrderDtoTransformer;
 use App\Entity\Enum\OrderStatusEnum;
+use App\Entity\Member;
 use App\Entity\OrderHeader;
-use App\Entity\User;
 use App\Form\OrderType;
 use App\Repository\OrderHeaderRepository;
 use App\Service\LogService;
@@ -43,9 +43,9 @@ class OrderController extends AbstractController
         OrderEdit $orderEdit,
         Request $request
     ): Response {
-        /** @var ?User $user */
-        $user = $this->getUser();
-        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($user);
+        /** @var ?Member $member */
+        $member = $this->getUser();
+        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($member);
         $form = $this->createForm(OrderType::class, $orderHeader);
 
         $form->handleRequest($request);
@@ -69,7 +69,7 @@ class OrderController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $logService->writeFromEntity($orderHeader, $orderHeader->getUser());
+        $logService->writeFromEntity($orderHeader, $orderHeader->getMember());
         
         return $this->render('order/show.html.twig', [
             'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
@@ -146,9 +146,9 @@ class OrderController extends AbstractController
         PaginatorService $paginator,
         Request $request
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
-        $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);
+        /** @var Member $member */
+        $member = $this->getUser();
+        $query = $this->orderHeaderRepository->findOrdersByMemberQuery($member);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $this->requestStack->getSession()->set('order_return', $this->generateUrl('user_orders'));

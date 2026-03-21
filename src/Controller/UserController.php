@@ -6,7 +6,7 @@ namespace App\Controller;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Identity;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\ChangePasswordFormType;
 use App\Form\EmailMessageType;
 use App\Repository\ContentRepository;
@@ -36,11 +36,11 @@ class UserController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function userAccount(): Response
     {
-        /** @var ?User $user */
-        $user = $this->getUser();
+        /** @var ?Member $member */
+        $member = $this->getUser();
 
         return $this->render('user/account.html.twig', [
-            'user' => $this->userDtoTransformer->fromEntity($user),
+            'user' => $this->userDtoTransformer->fromEntity($member),
         ]);
     }
 
@@ -50,19 +50,20 @@ class UserController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
-        $user = $this->getUser();
+        /** @var Member $member */
+        $member = $this->getUser();
 
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var PasswordAuthenticatedUserInterface&user $user */
+            /** @var PasswordAuthenticatedUserInterface&Member $member */
             $encodedPassword = $passwordHasher->hashPassword(
-                $user,
+                $member,
                 $form->get('plainPassword')->getData()
             );
 
-            $user->setPassword($encodedPassword)
+            $member->setPassword($encodedPassword)
                 ->setPasswordMustBeChanged(false)
             ;
             $this->entityManager->flush();
@@ -86,14 +87,14 @@ class UserController extends AbstractController
         ContentRepository $contentRepository,
         MessageService $messageService,
     ): Response {
-        /** @var ?User $user */
-        $user = $this->getUser();
+        /** @var ?Member $member */
+        $member = $this->getUser();
         $form = $this->createForm(EmailMessageType::class);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $userDto = $this->userDtoTransformer->fromEntity($user);
+            $userDto = $this->userDtoTransformer->fromEntity($member);
             $subject = 'Demande de modification d\'informations personnelles';
             $data['subject'] = $subject;
             $data['name'] = $userDto->member->name;
@@ -133,7 +134,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             if ($identity) {
-                $request->getSession()->set($authenticationUtils->getLastUsername(), $identity->getUser()->getLicenceNumber());
+                $request->getSession()->set($authenticationUtils->getLastUsername(), $identity->getMember()->getLicenceNumber());
             }
             return $this->redirectToRoute('user_account');
         }

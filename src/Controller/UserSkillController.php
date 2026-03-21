@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Entity\UserSkill;
+use App\Entity\Member;
+use App\Entity\MemberSkill;
 use App\Service\LogService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,16 +18,16 @@ class UserSkillController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function list(LogService $logService): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        /** @var Member $member */
+        $member = $this->getUser();
 
-        /** @var UserSkill $userSkill */
-        foreach ($user->getUserSkills() as $userSkill) {
-            $logService->writeFromEntity($userSkill, $user);
+        /** @var MemberSkill $userSkill */
+        foreach ($member->getUserSkills() as $userSkill) {
+            $logService->writeFromEntity($userSkill, $member);
         }
 
         return $this->render('user_skill/list.html.twig', [
-            'user' => $user,
+            'user' => $member,
         ]);
     }
 }

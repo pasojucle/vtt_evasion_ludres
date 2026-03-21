@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\PracticeEnum;
 use App\Repository\SessionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use LogicException;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
 class Session
@@ -61,6 +63,9 @@ class Session
     #[ORM\Column(type: 'Practice')]
     private PracticeEnum $practice = PracticeEnum::VTT;
 
+    #[ORM\Column(length: 255, enumType: BikeTypeEnum::class, options: ['default' => BikeTypeEnum::NONE->value])]
+    private BikeTypeEnum $bikeType = BikeTypeEnum::NONE;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,6 +73,18 @@ class Session
 
     public function getUser(): ?User
     {
+        return $this->user;
+    }
+
+    public function getMember(): Member
+    {
+        if (!$this->user instanceof Member) {
+            throw new LogicException(sprintf(
+                'L\'entité Session (%d) est associée à un user de type "%s", mais un "Member" était attendu.',
+                $this->id,
+                get_debug_type($this->user)
+            ));
+        }
         return $this->user;
     }
 
@@ -122,6 +139,18 @@ class Session
     public function setPractice(PracticeEnum $practice): static
     {
         $this->practice = $practice;
+
+        return $this;
+    }
+
+    public function getBikeType(): BikeTypeEnum
+    {
+        return $this->bikeType;
+    }
+
+    public function setBikeType(BikeTypeEnum $bikeType): static
+    {
+        $this->bikeType = $bikeType;
 
         return $this;
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Form\UserType;
 use Doctrine\DBAL\Schema\Schema;
 use App\Entity\Enum\RegistrationFormEnum;
 use Doctrine\Migrations\AbstractMigration;

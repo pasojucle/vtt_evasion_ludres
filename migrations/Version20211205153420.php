@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Form\UserType;
-use App\Entity\RegistrationStep;
+
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 

@@ -10,7 +10,6 @@ use App\Entity\Session;
 use App\Repository\SessionRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
-use DateTime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class FramerParticipation
@@ -34,7 +33,7 @@ class FramerParticipation
 
             /** @var Session $session */
             foreach ($sessions as $session) {
-                $user = $this->userDtoTransformer->fromEntity($session->getUser());
+                $user = $this->userDtoTransformer->fromEntity($session->getMember());
                 $bikeRideDto = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
                 $params = [
                     '{{ rando }}' => sprintf('%s du %s', $bikeRideDto->title, $bikeRideDto->period),

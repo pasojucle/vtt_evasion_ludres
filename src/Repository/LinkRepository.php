@@ -6,7 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Link;
 use App\Entity\Log;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -73,10 +73,14 @@ class LinkRepository extends ServiceEntityRepository
         return $nexOrder;
     }
 
-    public function quertNoveltiesByUser(User $user): QueryBuilder
+    public function quertNoveltiesByUser(Member $member): QueryBuilder
     {
         return $this->createQueryBuilder('l')
-            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX((new Expr())->eq('l.id', 'log.entityId'), (new Expr())->eq('log.entity', ':entityName'), (new Expr())->eq('log.user', ':user')))
+            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX(
+                    (new Expr())->eq('l.id', 'log.entityId'), 
+                    (new Expr())->eq('log.entity', ':entityName'), 
+                    (new Expr())->eq('log.member', ':member'))
+                )
             ->andWhere(
                 (new Expr())->orX(
                     (new Expr())->isNull('log'),
@@ -86,7 +90,7 @@ class LinkRepository extends ServiceEntityRepository
                 (new Expr())->isNotNull('l.updateAt'),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', 'Link'),
                 new Parameter('position', Link::POSITION_LINK_PAGE),
             ]))
@@ -96,9 +100,9 @@ class LinkRepository extends ServiceEntityRepository
     /**
      * @return Link[] Returns an array of Link objects
      */
-    public function findNoveltiesByUser(User $user): array
+    public function findNoveltiesByUser(Member $member): array
     {
-        return $this->quertNoveltiesByUser($user)
+        return $this->quertNoveltiesByUser($member)
             ->getQuery()
             ->getResult()
        ;
@@ -107,9 +111,9 @@ class LinkRepository extends ServiceEntityRepository
     /**
      * @return int[] Returns an array of integer
      */
-    public function findNoveltiesByUserIds(User $user): array
+    public function findNoveltiesByUserIds(Member $member): array
     {
-        return $this->quertNoveltiesByUser($user)
+        return $this->quertNoveltiesByUser($member)
             ->select('l.id')
             ->getQuery()
             ->getSingleColumnResult()

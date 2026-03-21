@@ -6,6 +6,7 @@ namespace App\Controller\API;
 
 use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Entity\Cluster;
+use App\Entity\MemberSkill;
 use App\Entity\Skill;
 use App\Entity\UserSkill;
 use App\Form\Admin\SkillAddType;
@@ -56,9 +57,9 @@ class ClusterSkillController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            /** @var UserSkill $userSkill */
-            foreach ($data['userSkills'] as $userSkill) {
-                $userSkill->setEvaluateAt(new DateTimeImmutable());
+            /** @var MemberSkill $memberSkill */
+            foreach ($data['memberSkills'] as $memberSkill) {
+                $memberSkill->setEvaluateAt(new DateTimeImmutable());
             }
             $this->entityManager->flush();
 

@@ -86,8 +86,8 @@ class BikeRide
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $deleted = false;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'bikeRides')]
-    private Collection $users;
+    #[ORM\ManyToMany(targetEntity: Member::class, inversedBy: 'bikeRides')]
+    private Collection $members;
 
     private ?int $restriction = null;
 
@@ -132,7 +132,7 @@ class BikeRide
     {
         $this->clusters = new ArrayCollection();
         $this->startAt = new DateTimeImmutable();
-        $this->users = new ArrayCollection();
+        $this->members = new ArrayCollection();
         $this->summaries = new ArrayCollection();
         $this->bikeRideTracks = new ArrayCollection();
     }
@@ -322,32 +322,32 @@ class BikeRide
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Member>
      */
-    public function getUsers(): Collection
+    public function getMembers(): Collection
     {
-        return $this->users;
+        return $this->members;
     }
 
-    public function addUser(User $user): static
+    public function addMember(Member $member): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
+        if (!$this->members->contains($member)) {
+            $this->members->add($member);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeMember(Member $member): static
     {
-        $this->users->removeElement($user);
+        $this->members->removeElement($member);
 
         return $this;
     }
 
-    public function clearUsers(): static
+    public function clearMembers(): static
     {
-        $this->users->clear();
+        $this->members->clear();
 
         return $this;
     }

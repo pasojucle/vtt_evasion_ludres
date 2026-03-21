@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\User;
+use App\Entity\Member;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,7 +24,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class LoginAuthenticator extends AbstractAuthenticator
+class MemberAuthenticator extends AbstractAuthenticator
 {
     use TargetPathTrait;
 
@@ -45,7 +45,6 @@ class LoginAuthenticator extends AbstractAuthenticator
         $licenceNumber = $login['licenceNumber'];
         $csrfToken = $login['_csrf_token'];
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $licenceNumber);
-
 
         if (!$licenceNumber) {
             throw new CustomUserMessageAuthenticationException('Numéro de licence manquant');
@@ -71,15 +70,15 @@ class LoginAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey): ?Response
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        /** @var Member $member */
+        $member = $this->security->getUser();
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $request->getSession()->set('user_fullName', $userDto->member->fullName);
 
         $route = 'home';
         $params = [];
 
-        if ($user instanceof User && $user->isPasswordMustBeChanged()) {
+        if ($member instanceof Member && $member->isPasswordMustBeChanged()) {
             $route = 'change_password';
         }
 

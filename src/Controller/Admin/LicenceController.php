@@ -26,13 +26,13 @@ class LicenceController extends AbstractController
     }
 
     #[Route('/admin/inscription/delete/{licence}', name: 'admin_delete_licence', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'licence')]
+    #[IsGranted('MEMBER_EDIT', 'licence')]
     public function adminDeleteLicence(
         Request $request,
         Licence $licence
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
-        $user = $licence->getUser();
+        $user = $licence->getMember();
         $fullName = $user->getIdentity()->getFullName();
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
@@ -67,13 +67,13 @@ class LicenceController extends AbstractController
     }
 
     #[Route('/admin/inscription/receive/{licence}', name: 'admin_registration_receive', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'licence')]
+    #[IsGranted('MEMBER_EDIT', 'licence')]
     public function adminRegistartionReceive(
         Request $request,
         LicenceService $licenceService,
         Licence $licence
     ): Response {
-        $user = $licence->getUser();
+        $user = $licence->getMember();
         $fullName = $user->getIdentity()->getFullName();
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
@@ -111,7 +111,7 @@ class LicenceController extends AbstractController
 
 
     #[Route('/admin/inscription/reject/{licence}', name: 'admin_registration_reject', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'licence')]
+    #[IsGranted('MEMBER_EDIT', 'licence')]
     public function adminRegistartionReject(
         Request $request,
         LicenceService $licenceService,
@@ -119,7 +119,7 @@ class LicenceController extends AbstractController
         UserDtoTransformer $userDtoTransformer,
         Licence $licence
     ): Response {
-        $user = $licence->getUser();
+        $user = $licence->getMember();
         $fullName = $user->getIdentity()->getFullName();
         $content = 'Le dossier d\'inscription au club est incomplet ou non conforme. Merci de le transmettre à nouveau, signé, en tenant compte des modifications suivantes :';
         $response = new Response("OK", Response::HTTP_OK);
@@ -133,7 +133,7 @@ class LicenceController extends AbstractController
                 $subject = 'Votre inscription au club de Vtt Évasion Ludres';
                 $data = $form->getData();
 
-                $result = $mailerService->sendMailToMember($userDtoTransformer->fromEntity($licence->getUser()), $subject, $data['content']);
+                $result = $mailerService->sendMailToMember($userDtoTransformer->fromEntity($licence->getMember()), $subject, $data['content']);
                 $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
                 if ($result['success'] && $licenceService->applyTransition($licence, $tansition)) {
                     $this->entityManager->persist($licence);
@@ -158,13 +158,13 @@ class LicenceController extends AbstractController
     }
 
     #[Route('/admin/inscription/register/{licence}', name: 'admin_registration_register', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'licence')]
+    #[IsGranted('MEMBER_EDIT', 'licence')]
     public function adminRegistartionRegister(
         Request $request,
         ValidateLicence $validateLicence,
         Licence $licence
     ): Response {
-        $user = $licence->getUser();
+        $user = $licence->getMember();
         $fullName = $user->getIdentity()->getFullName();
         $response = new Response("OK", Response::HTTP_OK);
         $data = [

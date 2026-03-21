@@ -31,7 +31,7 @@ class SecondHand
 
     #[ORM\ManyToOne(inversedBy: 'secondHands')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?Member $member = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -111,14 +111,14 @@ class SecondHand
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): static
+    public function setMember(?Member $member): static
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

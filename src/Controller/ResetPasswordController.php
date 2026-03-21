@@ -6,7 +6,7 @@ namespace App\Controller;
 
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +31,7 @@ class ResetPasswordController extends AbstractController
     public function __construct(
         private ResetPasswordHelperInterface $resetPasswordHelper,
         private EntityManagerInterface $entityManager,
-        private UserRepository $userRepository
+        private MemberRepository $memberRepository
     ) {
     }
 
@@ -85,7 +85,7 @@ class ResetPasswordController extends AbstractController
         }
 
         try {
-            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+            $member = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
             $this->addFlash('reset_password_error', sprintf(
                 'There was a problem validating your reset request - %s',
@@ -105,11 +105,11 @@ class ResetPasswordController extends AbstractController
 
             // Encode the plain password, and set it.
             $encodedPassword = $passwordHasher->hashPassword(
-                $user,
+                $member,
                 $form->get('plainPassword')->getData()
             );
 
-            $user->setPassword($encodedPassword);
+            $member->setPassword($encodedPassword);
             $this->entityManager->flush();
 
             // The session is cleaned up after the password has been changed.
@@ -125,17 +125,17 @@ class ResetPasswordController extends AbstractController
 
     private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
     {
-        $user = $this->userRepository->findOneBy([
+        $member = $this->memberRepository->findOneBy([
             'licenceNumber' => $emailFormData,
         ]);
 
         // Do not reveal whether a user account was found or not.
-        if (!$user) {
+        if (!$member) {
             return $this->redirectToRoute('app_check_email');
         }
 
         try {
-            $resetToken = $this->resetPasswordHelper->generateResetToken($user);
+            $resetToken = $this->resetPasswordHelper->generateResetToken($member);
         } catch (ResetPasswordExceptionInterface $e) {
             // If you want to tell the user why a reset email was not sent, uncomment
             // the lines below and change the redirect to 'app_forgot_password_request'.
@@ -151,7 +151,7 @@ class ResetPasswordController extends AbstractController
 
         $email = (new TemplatedEmail())
             ->from(new Address('contact@vttevasionludres.fr'))
-            ->to($user->getIdentity()->getEmail())
+            ->to($member->getIdentity()->getEmail())
             ->subject('Réinitialiser votre mot de passe')
             ->htmlTemplate('reset_password/email.html.twig')
             ->context([

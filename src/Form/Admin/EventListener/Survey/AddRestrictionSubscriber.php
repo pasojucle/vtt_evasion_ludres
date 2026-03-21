@@ -6,13 +6,13 @@ namespace App\Form\Admin\EventListener\Survey;
 
 use App\Entity\BikeRide;
 use App\Entity\Survey;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\BikeRideAutocompleteField;
 use App\Form\Admin\SurveyType;
 use App\Form\Admin\UsersAutocompleteField;
 use App\Form\HiddenArrayType;
 use App\Repository\BikeRideRepository;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
 use DateInterval;
@@ -30,7 +30,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly LevelService $levelService,
-        private readonly UserRepository $userRepository,
+        private readonly MemberRepository $memberRepository,
         private readonly BikeRideRepository $bikeRideRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -48,7 +48,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $survey = $event->getData();
 
         $memberIds = [];
-        /** @var User $member */
+        /** @var Member $member */
         foreach ($survey->getMembers() as $member) {
             $memberIds[] = $member->getId();
         }
@@ -192,18 +192,18 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         }
 
         foreach ($membersToAdd as $member) {
-            $id = ($member instanceof User) ? $member->getId() : $member;
+            $id = ($member instanceof Member) ? $member->getId() : $member;
             if (!in_array($id, $data['members'])) {
                 $data['members'][] = $id;
             }
         }
 
         foreach ($membresToRemove as $member) {
-            $id = ($member instanceof User) ? $member->getId() : $member;
+            $id = ($member instanceof Member) ? $member->getId() : $member;
             $key = array_search($id, $data['members']);
             if (null !== $key) {
                 unset($data['members'][$key]);
-                $member = ($member instanceof User) ? $member : $this->userRepository->find($id);
+                $member = ($member instanceof Member) ? $member : $this->memberRepository->find($id);
                 $survey->removeMember($member);
             }
         }
@@ -230,7 +230,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 'levels' => $levels,
                 'season' => SeasonService::MIN_SEASON_TO_TAKE_PART,
             ];
-            return $this->userRepository->findMemberQuery($filters)->getQuery()->getResult();
+            return $this->memberRepository->findMemberQuery($filters)->getQuery()->getResult();
         }
         return [];
     }

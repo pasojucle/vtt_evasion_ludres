@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\Log;
+use App\Entity\Member;
 use App\Entity\Summary;
 use App\Entity\User;
 use DateTimeImmutable;
@@ -57,13 +58,13 @@ class SummaryRepository extends ServiceEntityRepository
     /**
      * @return Summary[] Returns an array of Summary objects
      */
-    public function findNotViewedByUser(User $user): array
+    public function findNotViewedByUser(Member $member): array
     {
         $viewed = $this->getEntityManager()->createQueryBuilder()
             ->select('log.entityId')
             ->from(Log::class, 'log')
             ->andWhere(
-                (new Expr())->eq('log.user', ':user'),
+                (new Expr())->eq('log.member', 'member'),
                 (new Expr())->eq('log.entity', ':entityName')
             );
 
@@ -77,7 +78,7 @@ class SummaryRepository extends ServiceEntityRepository
                 (new Expr())->in('br.id', ':bikeRideLatest')
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', 'Summary'),
                 new Parameter('bikeRideLatest', $bikeRideLatest)
             ]))

@@ -2,29 +2,29 @@
 
 namespace App\Entity;
 
-use App\Repository\UserPermissionRepository;
+use App\Repository\MemberPermissionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserPermissionRepository::class)]
-class UserPermission
+#[ORM\Entity(repositoryClass: MemberPermissionRepository::class)]
+class MemberPermission
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(inversedBy: 'userPermissions')]
+    #[ORM\ManyToOne(inversedBy: 'memberPermissions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?Member $member = null;
 
     #[ORM\Id]
     #[ORM\Column(type: 'Permission')]
     private ?object $permission = null;
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): static
+    public function setMember(?Member $member): static
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

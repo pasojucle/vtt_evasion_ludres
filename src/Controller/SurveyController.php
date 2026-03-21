@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
+use App\Entity\Member;
 use App\Entity\Survey;
-use App\Entity\User;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyRepository;
 use App\Service\LogService;
@@ -31,9 +31,9 @@ class SurveyController extends AbstractController
         LogService $logService,
         Survey $survey
     ): Response {
-        /** @var User $user */
-        $user = $security->getUser();
-        list($histories, $respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey, $user);
+        /** @var Member $member */
+        $member = $security->getUser();
+        list($histories, $respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey, $member);
         $logService->writeFromEntity($survey);
 
         return $this->render('survey/survey_responses.html.twig', [
@@ -52,22 +52,22 @@ class SurveyController extends AbstractController
         RespondentRepository $respondentRepository,
         GetResponsesByUser $getResponsesByUser,
     ): Response {
-        /** @var ?User $user */
-        $user = $this->getUser();
+        /** @var ?Member $member */
+        $member = $this->getUser();
 
-        $userSurveys = $respondentRepository->findActiveSurveysByUser($user);
+        $userSurveys = $respondentRepository->findActiveSurveysByUser($member);
         $respondents = [];
 
         foreach ($userSurveys as $userSurvey) {
             $survey = $userSurvey->getSurvey();
             $respondents[$survey->getId()] = [
                 'createdAt' => $userSurvey->getCreatedAt(),
-                'responses' => $getResponsesByUser->execute($survey, $user),
+                'responses' => $getResponsesByUser->execute($survey, $member),
             ];
         }
 
         return $this->render('survey/list.html.twig', [
-            'surveys' => $surveyRepository->findActiveByUser($user),
+            'surveys' => $surveyRepository->findActiveByUser($member),
             'respondents' => $respondents,
         ]);
     }

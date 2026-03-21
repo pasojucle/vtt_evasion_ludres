@@ -9,11 +9,11 @@ use App\Entity\Health;
 use App\Entity\History;
 use App\Entity\Identity;
 use App\Entity\Licence;
+use App\Entity\Member;
 use App\Entity\OrderHeader;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Entity\User;
 use App\Service\SeasonService;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
@@ -67,9 +67,9 @@ class HistoryListener
             $this->addEntityHistory($className, $entity, $changeSet);
         }
         if ($entity instanceof OrderHeader) {
-            /** @var User $user */
-            $user = $this->security->getUser();
-            if ($user !== $entity->getUser()) {
+            /** @var Member $member */
+            $member = $this->security->getUser();
+            if ($member !== $entity->getMember()) {
                 $this->addEntityHistory($className, $entity, $changeSet);
             }
         }
@@ -82,16 +82,16 @@ class HistoryListener
             return;
         }
 
-        $user = match (true) {
-            $reflexionClass->hasMethod('getUserGardians') && !$entity->getUserGardians()->isEmpty() => $entity->getUserGardians()->first()->getUser(),
-            $reflexionClass->hasMethod('getIdentities') => $entity->getIdentities()->first()->getUser(),
-            $reflexionClass->hasMethod('getUser') => $entity->getUser(),
+        $member = match (true) {
+            $reflexionClass->hasMethod('getUserGardians') && !$entity->getUserGardians()->isEmpty() => $entity->getUserGardians()->first()->getMember(),
+            $reflexionClass->hasMethod('getIdentities') => $entity->getIdentities()->first()->getMember(),
+            $reflexionClass->hasMethod('getMember') => $entity->getMember(),
             default => null,
         };
-        if ($user && 1 < $user->getLicences()->count()) {
+        if ($member && 1 < $member->getLicences()->count()) {
             $seasonPeriod = $this->seasonService->getCurrentSeasonPeriod();
-            $history = $this->objectManager->getRepository(History::class)->findOneByRegistrationEntity($user, $className, $entity->getId(), $seasonPeriod['startAt']);
-            $this->addHistory($history, $user, $className, $entity, $changeSet);
+            $history = $this->objectManager->getRepository(History::class)->findOneByRegistrationEntity($member, $className, $entity->getId(), $seasonPeriod['startAt']);
+            $this->addHistory($history, $member, $className, $entity, $changeSet);
         }
     }
 
@@ -114,7 +114,7 @@ class HistoryListener
         $this->addHistory($history, null, $className, $entity, $changeSet);
     }
 
-    private function addHistory(?History $history, ?User $user, string $className, Address|Health|Identity|Licence|Survey|SurveyIssue|OrderHeader $entity, array $changeSet): void
+    private function addHistory(?History $history, ?Member $member, string $className, Address|Health|Identity|Licence|Survey|SurveyIssue|OrderHeader $entity, array $changeSet): void
     {
         if (null === $history) {
             $history = new History();
@@ -124,7 +124,7 @@ class HistoryListener
         $changes = $history->getValue();
         $changes = array_merge($changes, $changeSet);
         
-        $history->setUser($user)
+        $history->setMember($member)
             ->setCreatedAt(new DateTimeImmutable())
             ->setEntity($className)
             ->setEntityId($entity->getId())

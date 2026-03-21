@@ -6,7 +6,6 @@ use App\Repository\BoardRoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Boolean;
 
 #[ORM\Entity(repositoryClass: BoardRoleRepository::class)]
 class BoardRole
@@ -25,12 +24,12 @@ class BoardRole
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
 
-    #[ORM\OneToMany(mappedBy: 'boardRole', targetEntity: User::class)]
-    private Collection $users;
+    #[ORM\OneToMany(mappedBy: 'boardRole', targetEntity: Member::class)]
+    private Collection $members;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     public function __toString()
@@ -80,29 +79,29 @@ class BoardRole
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Member>
      */
-    public function getUsers(): Collection
+    public function getMembers(): Collection
     {
-        return $this->users;
+        return $this->members;
     }
 
-    public function addUser(User $user): self
+    public function addUser(Member $member): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setBoardRole($this);
+        if (!$this->members->contains($member)) {
+            $this->members->add($member);
+            $member->setBoardRole($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeUser(Member $member): self
     {
-        if ($this->users->removeElement($user)) {
+        if ($this->members->removeElement($member)) {
             // set the owning side to null (unless already changed)
-            if ($user->getBoardRole() === $this) {
-                $user->setBoardRole(null);
+            if ($member->getBoardRole() === $this) {
+                $member->setBoardRole(null);
             }
         }
 

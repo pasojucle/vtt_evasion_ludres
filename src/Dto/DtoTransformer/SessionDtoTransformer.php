@@ -9,9 +9,10 @@ use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\PracticeEnum;
 use App\Entity\Session;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
+use App\Service\SessionService;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -24,6 +25,7 @@ class SessionDtoTransformer
         private IndemnityRepository $indemnityRepository,
         private UserDtoTransformer $userDtoTransformer,
         private TranslatorInterface $translator,
+        private SessionService $sessionService,
     ) {
     }
 
@@ -32,13 +34,13 @@ class SessionDtoTransformer
         $sessionDto = new SessionDto();
         if ($session) {
             $sessionDto->id = $session->getId();
-            $sessionDto->availability = $this->getAvailability($session->getAvailability());
+            $sessionDto->availability = $this->sessionService->getAvailability($session->getAvailability());
             $sessionDto->bikeRide = $this->bikeRideDtoTransformer->getHeaderFromEntity(bikeRide: $session->getCluster()->getBikeRide(), availability: $session->getAvailability());
-            $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
+            $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getMember());
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
             $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToHtml($session);
-            $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
+            $sessionDto->indemnity = $this->getIndemnity($session->getMember(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
             $sessionDto->practice = $session->getPractice()->trans($this->translator);
@@ -52,7 +54,7 @@ class SessionDtoTransformer
         $sessionDto = new SessionDto();
         if ($session) {
             $sessionDto->id = $session->getId();
-            $sessionDto->availability = $this->getAvailability($session->getAvailability());
+            $sessionDto->availability = $this->sessionService->getAvailability($session->getAvailability());
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
             $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session);
@@ -66,9 +68,11 @@ class SessionDtoTransformer
     {
         $sessionDto = new SessionDto();
         $sessionDto->id = $session->getId();
-        $member = $session->getUser()->getIdentity();
-        $sessionDto->user = ['id' => $session->getUser()->getId(), 'fullName' => sprintf('%s %s', $member->getname(), $member->getFirstName())];
-
+        $member = $session->getMember()->getIdentity();
+        $sessionDto->user = [
+            'id' => $session->getMember()->getId(), 
+            'fullName' => sprintf('%s %s', $member->getname(), $member->getFirstName())
+        ];
 
         return $sessionDto;
     }
@@ -83,29 +87,10 @@ class SessionDtoTransformer
         return $sessions;
     }
 
-    private function getAvailability(AvailabilityEnum $availability): array
-    {
-        $availbilityClass = [
-            AvailabilityEnum::REGISTERED->name => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>', 'color' => 'success-color'],
-            AvailabilityEnum::AVAILABLE->name => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 'color' => 'warning-color'],
-            AvailabilityEnum::UNAVAILABLE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
-            AvailabilityEnum::NONE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
-        ];
-
-        $availabilityView = [
-            'class' => $availbilityClass[$availability->name],
-            'text' => $availability->trans($this->translator),
-            'value' => $availability->name,
-            'enum' => $availability,
-        ];
-
-        return $availabilityView;
-    }
-
-    private function getIndemnity(User $user, BikeRideType $bikeRideType, bool $userIsOnSite): ?Currency
+    private function getIndemnity(Member $member, BikeRideType $bikeRideType, bool $userIsOnSite): ?Currency
     {
         foreach ($this->indemnityRepository->findAll() as $indemnity) {
-            if ($bikeRideType === $indemnity->getBikeRideType() && $user->getLevel() === $indemnity->getLevel() && $userIsOnSite) {
+            if ($bikeRideType === $indemnity->getBikeRideType() && $member->getLevel() === $indemnity->getLevel() && $userIsOnSite) {
                 $amount = new Currency($indemnity->getAmount());
 
                 return $amount;

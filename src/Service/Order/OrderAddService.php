@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Service\Order;
 
 use App\Entity\Enum\OrderStatusEnum;
+use App\Entity\Member;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use App\Entity\Product;
-use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Form\Form;
 
 class OrderAddService
 {
-    private User $user;
+    private Member $member;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -28,9 +28,9 @@ class OrderAddService
 
     public function execute(Product $product, Form &$form): void
     {
-        /** @var User $userConnected */
+        /** @var Member $userConnected */
         $userConnected = $this->security->getUser();
-        $this->user = $userConnected;
+        $this->member = $userConnected;
         $orderLine = $form->getData();
         $orderHeader = $this->getOrderHeader();
 
@@ -45,10 +45,10 @@ class OrderAddService
 
     private function getOrderHeader(): OrderHeader
     {
-        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($this->user);
+        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($this->member);
         if (null === $orderHeader) {
             $orderHeader = new OrderHeader();
-            $orderHeader->setUser($this->user)
+            $orderHeader->setMember($this->member)
                 ->setCreatedAt(new DateTime())
                 ->setStatus(OrderStatusEnum::IN_PROGRESS)
                 ;

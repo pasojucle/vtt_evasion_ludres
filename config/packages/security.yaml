@@ -6,11 +6,19 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         users_in_memory: { memory: null }
+        user_provider:
+            chain:
+                providers: [app_user_provider, app_guest_provider]
 
         app_user_provider:
             entity:
-                class: App\Entity\User
+                class: App\Entity\Member
                 property: licenceNumber
+
+        app_guest_provider:
+            entity:
+                class: App\Entity\Guest
+                property: email
     role_hierarchy:
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN]
         ROLE_ADMIN: [ROLE_USER, ROLE_ALLOWED_TO_SWITCH]
@@ -29,7 +37,8 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticators:
-                - App\Security\LoginAuthenticator
+                - App\Security\MemberAuthenticator
+                - App\Security\GuestAuthenticator
             form_login:
                 login_path: app_login
                 check_path: app_login

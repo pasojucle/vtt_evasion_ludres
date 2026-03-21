@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Licence;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SessionRepository;
 use DateTime;
 use DateTimeInterface;
@@ -22,9 +22,9 @@ class LicenceService
         private EntityManagerInterface $entityManager,
     ) {
     }
-    public function getCategory(User $user): LicenceCategoryEnum
+    public function getCategory(Member $member): LicenceCategoryEnum
     {
-        return $this->getCategoryByBirthDate($user->getIdentity()->getBirthDate());
+        return $this->getCategoryByBirthDate($member->getIdentity()->getBirthDate());
     }
 
     public function getCategoryByBirthDate(DateTimeInterface $birthDate): LicenceCategoryEnum
@@ -58,13 +58,13 @@ class LicenceService
         return $this->applyTransition($licence, 'receive_trial_file');
     }
 
-    public function applyCompleteTrial(User $user): void
+    public function applyCompleteTrial(Member $member): void
     {
-        $licence = $user->getLastLicence();
+        $licence = $member->getLastLicence();
         if ($licence->getState()->isYearly()) {
             return;
         }
-        if (2 < $this->sessionRepository->findParticipationByUser($licence->getUser())) {
+        if (2 < $this->sessionRepository->findParticipationByUser($licence->getMember())) {
             $this->applyTransition($licence, 'complete_trial_file');
         } else {
             $this->applyTransition($licence, 'uncomplete_trial_file');

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\UseCase\Coverage;
 
-use App\Form\Admin\UserFilterType;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
@@ -25,7 +24,7 @@ class GetCoveragesFiltered extends GetUsersFiltered
 
     public function getQuery(array $filters): QueryBuilder
     {
-        return $this->userRepository->findCoverageQuery($filters);
+        return $this->memberRepository->findCoverageQuery($filters);
     }
 
     public function getStatusChoices(): ?array

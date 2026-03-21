@@ -7,7 +7,7 @@ namespace App\UseCase\Session;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\BikeRide;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SessionRepository;
 use App\Service\MessageService;
 use App\Service\ParameterService;
@@ -33,11 +33,11 @@ class UnregistrableSessionMessage
     ) {
     }
 
-    public function execute(User $user, BikeRide $bikeRide): ?array
+    public function execute(Member $member, BikeRide $bikeRide): ?array
     {
-        $isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
-        $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $isRegistrable = $this->isRegistrable->execute($bikeRide, $member);
+        $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $member);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
 
         $registration = [
             'url' => $this->urlGenerator->generate('user_registration_form', ['step' => 1]),
@@ -65,7 +65,7 @@ class UnregistrableSessionMessage
             ];
         }
 
-        if (null !== $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {
+        if (null !== $this->sessionRepository->findOneByUserAndBikeRide($member, $bikeRide)) {
             return [
                 'message' => 'Votre inscription a déjà été prise en compte !',
             ];
@@ -81,7 +81,7 @@ class UnregistrableSessionMessage
         return null;
     }
 
-    private function checkSeasonLicence(UserDto $user, int $currentSeason): bool
+    private function checkSeasonLicence(UserDto $member, int $currentSeason): bool
     {
         $requirementSeasonLicenceAtParam = $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_AT');
         $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
@@ -93,16 +93,16 @@ class UnregistrableSessionMessage
 
         $requirementSeasonLicenceAt = new DateTime(implode('-', array_reverse($requirementSeasonLicenceAtParam)));
         if ($requirementSeasonLicenceAt <= new DateTime()) {
-            return ($user->lastLicence->isSeasonLicence)
-                ? $user->lastLicence->state['value']->isRegistered()
+            return ($member->lastLicence->isSeasonLicence)
+                ? $member->lastLicence->state['value']->isRegistered()
                 : false;
         }
         return true;
     }
 
-    private function registrationIsComplete(UserDto $user, int $currentSeason): bool
+    private function registrationIsComplete(UserDto $member, int $currentSeason): bool
     {
-        if ($currentSeason === $user->lastLicence->season && $user->lastLicence->state['value']->isPending()) {
+        if ($currentSeason === $member->lastLicence->season && $member->lastLicence->state['value']->isPending()) {
             return false;
         }
 

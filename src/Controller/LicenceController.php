@@ -30,7 +30,7 @@ class LicenceController extends AbstractController
         if ($licence) {
             $results[] = [
                 'value' => $licence->getId(),
-                'text' => $licence->getUser()->getLicenceNumber(),
+                'text' => $licence->getMember()->getLicenceNumber(),
             ];
         }
 

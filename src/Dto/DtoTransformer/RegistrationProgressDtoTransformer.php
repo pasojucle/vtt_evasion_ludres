@@ -7,8 +7,8 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\RegistrationProgressDto;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\RegistrationFormEnum;
+use App\Entity\Member;
 use App\Entity\RegistrationStep;
-use App\Entity\User;
 use App\Repository\HistoryRepository;
 use App\Repository\LicenceRepository;
 use App\Service\ParameterService;
@@ -26,7 +26,7 @@ class RegistrationProgressDtoTransformer
     ) {
     }
 
-    public function fromEntities(array $registrationSteps, int $step, User $user, int $season): RegistrationProgressDto
+    public function fromEntities(array $registrationSteps, int $step, Member $member, int $season): RegistrationProgressDto
     {
         $registrationProgressDto = new RegistrationProgressDto();
         $registrationProgressDto->currentIndex = $step - 1;
@@ -36,13 +36,13 @@ class RegistrationProgressDtoTransformer
 
         /** @var RegistrationStep $currentRegistrationStep */
         $currentRegistrationStep = $registrationSteps[$registrationProgressDto->currentIndex];
-        $histories = (RegistrationFormEnum::OVERVIEW === $currentRegistrationStep->getForm()) ? $this->getChanges($user, $season) : null;
-        $userDto = $this->userDtoTransformer->fromEntity($user, $histories);
+        $histories = (RegistrationFormEnum::OVERVIEW === $currentRegistrationStep->getForm()) ? $this->getChanges($member, $season) : null;
+        $userDto = $this->userDtoTransformer->fromEntity($member, $histories);
         $registrationProgressDto->user = $userDto;
-        $registrationProgressDto->current = $this->registrationStepDtoTransformer->fromEntity($currentRegistrationStep, $user, $userDto, $step, DisplayModeEnum::SCREEN);
+        $registrationProgressDto->current = $this->registrationStepDtoTransformer->fromEntity($currentRegistrationStep, $member, $userDto, $step, DisplayModeEnum::SCREEN);
         $registrationProgressDto->season = $season;
 
-        $registrationProgressDto->redirecToRoute = $this->validate($registrationProgressDto, $user);
+        $registrationProgressDto->redirecToRoute = $this->validate($registrationProgressDto, $member);
 
         return $registrationProgressDto;
     }
@@ -70,14 +70,14 @@ class RegistrationProgressDtoTransformer
         return $progressBar;
     }
 
-    private function getChanges(User $user, int $season): array
+    private function getChanges(Member $member, int $season): array
     {
-        return $this->historyRepository->findBySeason($user, $season);
+        return $this->historyRepository->findBySeason($member, $season);
     }
 
-    private function validate(RegistrationProgressDto $progress, User $user): ?string
+    private function validate(RegistrationProgressDto $progress, Member $member): ?string
     {
-        if (!$this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && $this->isAlreadyBeenRegistered($user)) {
+        if (!$this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && $this->isAlreadyBeenRegistered($member)) {
             return 'unregistrable_new_saison';
         }
         if ($progress->user->lastLicence->state['value']->isRegistered() && RegistrationFormEnum::REGISTRATION_FILE !== $progress->current->form) {
@@ -87,13 +87,13 @@ class RegistrationProgressDtoTransformer
         return null;
     }
 
-    private function isAlreadyBeenRegistered(User $user): bool
+    private function isAlreadyBeenRegistered(Member $member): bool
     {
-        if (!$user->getId()) {
+        if (!$member->getId()) {
             return false;
         }
         
-        return !empty($this->licenceRepository->findByUserAndPeriod($user, 5));
+        return !empty($this->licenceRepository->findByUserAndPeriod($member, 5));
     }
 
     private function getOverviewTemplate(RegistrationFormEnum $form): ?string

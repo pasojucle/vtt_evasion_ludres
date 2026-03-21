@@ -63,8 +63,8 @@ class SessionController extends AbstractController
             $session->setIsPresent($isPresent);
             $this->entityManager->flush();
 
-            $user = $session->getUser();
-            $licenceService->applyCompleteTrial($session->getUser());
+            $user = $session->getMember();
+            $licenceService->applyCompleteTrial($session->getMember());
             
             if (!$user->getLastLicence()->getState()->isYearly()) {
                 $this->sessionService->checkEndTesting($user);
@@ -80,7 +80,7 @@ class SessionController extends AbstractController
                     'availability' => $session->getAvailability(),
                     'userIsOnSite' => $session->isPresent(),
                 ],
-                'user' => $userDtoTransformer->fromEntity($session->getUser()),
+                'user' => $userDtoTransformer->fromEntity($session->getMember()),
                 'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
             ]);
         }
@@ -101,7 +101,7 @@ class SessionController extends AbstractController
         $form->add('sessionId', HiddenType::class, ['data' => $session->getId()]);
 
 
-        $user = $userDtoTransformer->getHeaderFromEntity($session->getUser());
+        $user = $userDtoTransformer->getHeaderFromEntity($session->getMember());
         $message = '';
         if ($user->mustProvideRegistration) {
             $message = $messageService->getMessageByName('BIKE_RIDE_MUST_PROVIDE_REGISTRATION', $user);
@@ -196,7 +196,7 @@ class SessionController extends AbstractController
         UserDtoTransformer $userDtoTransformer,
         Session $session,
     ) {
-        $userDto = $userDtoTransformer->fromEntity($session->getUser());
+        $userDto = $userDtoTransformer->fromEntity($session->getMember());
         $bikeRide = $session->getCluster()->getBikeRide();
         $this->setSession->delete($session);
 

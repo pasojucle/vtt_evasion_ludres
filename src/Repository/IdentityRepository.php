@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
+use App\Entity\Member;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -60,21 +61,21 @@ class IdentityRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findOneKinShipsByUser(User $user): array
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere(
-                (new Expr())->eq('i.user', ':user'),
-                (new Expr())->neq('i.kind', ':member')
-            )
-            ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
-                new Parameter('member', IdentityKindEnum::MEMBER),
-            ]))
-            ->getQuery()
-            ->getResult()
-    ;
-    }
+    // public function findOneKinShipsByUser(Member $member): array
+    // {
+    //     return $this->createQueryBuilder('i')
+    //         ->andWhere(
+    //             (new Expr())->eq('i.user', ':user'),
+    //             (new Expr())->neq('i.kind', ':identity')
+    //         )
+    //         ->setParameters(new ArrayCollection([
+    //             new Parameter('user', $user),
+    //             new Parameter('identity', IdentityKindEnum::MEMBER),
+    //         ]))
+    //         ->getQuery()
+    //         ->getResult()
+    // ;
+    // }
 
     public function findAllBirthplaceToConvert(): array
     {

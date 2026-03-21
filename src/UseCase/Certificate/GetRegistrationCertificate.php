@@ -8,8 +8,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
-use App\Entity\RegistrationStep;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\MessageService;
 use App\Service\PdfService;
 use App\Service\ReplaceKeywordsService;
@@ -31,10 +30,10 @@ class GetRegistrationCertificate
     ) {
     }
 
-    public function execute(Request $request, User $user, ?string $content = null): array
+    public function execute(Request $request, Member $member, ?string $content = null): array
     {
         $filename = null;
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
 
         if (null === $content) {
             $content = $this->getContent($userDto);
@@ -47,13 +46,13 @@ class GetRegistrationCertificate
         return [$content, $filename];
     }
 
-    private function getContent(UserDto $user)
+    private function getContent(UserDto $member)
     {
-        $content = (LicenceCategoryEnum::ADULT === $user->lastLicence->category)
+        $content = (LicenceCategoryEnum::ADULT === $member->lastLicence->category)
             ? $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_ADULT')
             : $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_SCHOOL');
 
-        return $this->replaceKeywordsService->replace($content, $user, DisplayModeEnum::FILE);
+        return $this->replaceKeywordsService->replace($content, $member, DisplayModeEnum::FILE);
     }
     
     private function makePdf(string $content): string

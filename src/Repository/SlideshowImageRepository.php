@@ -3,9 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Log;
-use App\Entity\SlideshowDirectory;
+use App\Entity\Member;
 use App\Entity\SlideshowImage;
-use App\Entity\User;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -93,7 +92,7 @@ class SlideshowImageRepository extends ServiceEntityRepository
     /**
      * @return SlideshowImage[] Returns an array of SlideshowImage objects
      */
-    public function findNotViewedByUser(User $user): array
+    public function findNotViewedByUser(Member $member): array
     {
         $viewed = $this->getEntityManager()->createQueryBuilder()
             ->select('log.entityId')
@@ -120,7 +119,7 @@ class SlideshowImageRepository extends ServiceEntityRepository
                 (new Expr())->gt('i.createdAt', (new Expr())->any($latestView->getDQL())),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('user', $member),
                 new Parameter('entityName', 'SlideshowImage'),
                 new Parameter('today', (new DateTime())),
             ]))

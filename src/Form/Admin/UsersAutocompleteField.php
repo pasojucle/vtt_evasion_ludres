@@ -2,7 +2,7 @@
 
 namespace App\Form\Admin;
 
-use App\Entity\User;
+use App\Entity\Member;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
@@ -14,7 +14,7 @@ class UsersAutocompleteField extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'class' => User::class,
+            'class' => Member::class,
             'placeholder' => 'Sélectionnez un adhérent',
             'multiple' => true,
             'required' => false,

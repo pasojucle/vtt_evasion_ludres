@@ -10,7 +10,7 @@ use App\Dto\RegistrationStepDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\RegistrationFormEnum;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\ContentRepository;
 use App\Repository\HistoryRepository;
 use App\Repository\MembershipFeeRepository;
@@ -19,7 +19,6 @@ use App\Service\HealthService;
 use App\Service\PdfService;
 use App\Service\ProjectDirService;
 use App\Service\SeasonService;
-use DateTime;
 use Twig\Environment;
 
 class GetRegistrationFile
@@ -43,22 +42,22 @@ class GetRegistrationFile
     ) {
     }
 
-    public function execute(User $user): array|false
+    public function execute(Member $member): array|false
     {
         $season = $this->seasonService->getCurrentSeason();
-        $lastLicence = $user->getLastLicence();
+        $lastLicence = $member->getLastLicence();
         if ($season !== $lastLicence->getSeason()) {
             return false;
         }
         $category = $lastLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->getState()->isYearly(), DisplayModeEnum::FILE);
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();
-        $this->healthService->getHealthConsents($user);
+        $this->healthService->getHealthConsents($member);
 
-        $histories = $this->historyRepository->findBySeason($user, $season);
-        $userDto = $this->userDtoTransformer->fromEntity($user, $histories);
+        $histories = $this->historyRepository->findBySeason($member, $season);
+        $userDto = $this->userDtoTransformer->fromEntity($member, $histories);
         foreach ($steps as $step) {
-            $step = $this->registrationStepDtoTransformer->fromEntity($step, $user, $userDto, 1, DisplayModeEnum::FILE);
+            $step = $this->registrationStepDtoTransformer->fromEntity($step, $member, $userDto, 1, DisplayModeEnum::FILE);
             if (null !== $step->pdfFilename) {
                 $this->files[$step->outputFilename][] = [
                     'filename' => $step->pdfPath,
@@ -74,12 +73,12 @@ class GetRegistrationFile
             }
         }
     
-        $this->addRegistrationDocument($user, $userDto);
+        $this->addRegistrationDocument($member, $userDto);
 
         $registrationFiles = [];
         foreach (RegistrationStepDto::OUTPUT_FILENAMES as $key => $outputFilename) {
             $fileTmp = $this->projectDir->path('tmp', $outputFilename);
-            $registrationFiles[] = $this->pdfService->joinPdf($this->files[$key], $user, $key, $fileTmp);
+            $registrationFiles[] = $this->pdfService->joinPdf($this->files[$key], $member, $key, $fileTmp);
         }
         
         return $registrationFiles;
@@ -113,7 +112,7 @@ class GetRegistrationFile
         }
     }
 
-    private function addRegistrationDocument(User $userEntity, UserDto $userDto)
+    private function addRegistrationDocument(Member $userEntity, UserDto $userDto)
     {
         if (!empty($this->registrationDocumentSteps)) {
             $registration = $this->twig->render('registration/registrationPdf.html.twig', [

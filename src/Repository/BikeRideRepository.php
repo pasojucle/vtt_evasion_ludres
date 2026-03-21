@@ -6,9 +6,9 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\Enum\RegistrationEnum;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Entity\Survey;
-use App\Entity\User;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -176,10 +176,10 @@ class BikeRideRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findNotifiable(User $user): array
+    public function findNotifiable(Member $member): array
     {
         $today = (new DateTimeImmutable())->setTime(23, 59, 00);
-        $memberAge = (int) $today->diff($user->getIdentity()->getBirthDate())->format('%Y');
+        $memberAge = (int) $today->diff($member->getIdentity()->getBirthDate())->format('%Y');
 
         $bikeRides = $this->getEntityManager()->createQueryBuilder()
             ->select('bikeRide.id')
@@ -191,12 +191,12 @@ class BikeRideRepository extends ServiceEntityRepository
             );
 
         return $this->createQueryBuilder('br')
-            ->leftJoin('br.users', 'u')
+            ->leftJoin('br.members', 'm')
             ->andWhere(
                 (new Expr())->eq('br.notify', ':notify'),
                 (new Expr())->orX(
-                    (new Expr())->eq('u', ':user'),
-                    (new Expr())->isNull('u'),
+                    (new Expr())->eq('m', ':member'),
+                    (new Expr())->isNull('m'),
                 ),
                 (new Expr())->orX(
                     (new Expr())->lte('br.minAge', ':age'),
@@ -212,7 +212,7 @@ class BikeRideRepository extends ServiceEntityRepository
             ->setParameters(new ArrayCollection([
                 new Parameter('today', $today),
                 new Parameter('notify', true),
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('age', $memberAge),
 
             ]))

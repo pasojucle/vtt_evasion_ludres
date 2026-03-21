@@ -130,7 +130,7 @@ class ExportSurvey
             $content[] = 'Horodateur,Participants - ' . $survey->getRespondents()->count();
             foreach ($survey->getRespondents() as $respondent) {
                 $row = [];
-                $identity = $respondent->getUser()->getIdentity();
+                $identity = $respondent->getMember()->getIdentity();
                 $row[] = $respondent->getCreatedAt()->format('d/m/Y H:i');
                 $row[] = $identity->getFullName();
                 $content[] = implode(',', $row);

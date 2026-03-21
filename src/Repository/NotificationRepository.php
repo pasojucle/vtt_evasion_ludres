@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\UserDto;
 use App\Entity\Log;
+use App\Entity\Member;
 use App\Entity\Notification;
 use App\Entity\User;
 use DateTime;
@@ -41,13 +42,13 @@ class NotificationRepository extends ServiceEntityRepository
     /**
      * @return Notification[] Returns an array of FlashInfo objects
      */
-    public function findByUser(User $user, int $age): array
+    public function findByUser(Member $member, int $age): array
     {
         $viewed = $this->getEntityManager()->createQueryBuilder()
         ->select('log.entityId')
         ->from(Log::class, 'log')
         ->andWhere(
-            (new Expr())->eq('log.user', ':user'),
+            (new Expr())->eq('log.member', ':member'),
             (new Expr())->eq('log.entity', ':entityName')
         );
 
@@ -73,7 +74,7 @@ class NotificationRepository extends ServiceEntityRepository
                 new Parameter('disabled', false),
                 new Parameter('public', false),
                 new Parameter('age', $age),
-                new Parameter('user', $user),
+                new Parameter('member', $member),
                 new Parameter('entityName', 'Notification')
             ]))
             ->orderBy('n.id', 'DESC')

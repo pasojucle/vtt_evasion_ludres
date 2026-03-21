@@ -22,9 +22,9 @@ class OrderHeader
     #[ORM\OneToMany(targetEntity: OrderLine::class, mappedBy: 'orderHeader')]
     private Collection $orderLines;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'orderHeaders')]
+    #[ORM\ManyToOne(targetEntity: Member::class, inversedBy: 'orderHeaders')]
     #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    private Member $member;
 
     #[ORM\Column(type: 'OrderStatus')]
     private OrderStatusEnum $status = OrderStatusEnum::IN_PROGRESS;
@@ -70,14 +70,14 @@ class OrderHeader
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getMember(): ?Member
     {
-        return $this->user;
+        return $this->member;
     }
 
-    public function setUser(?User $user): self
+    public function setMember(?Member $member): self
     {
-        $this->user = $user;
+        $this->member = $member;
 
         return $this;
     }

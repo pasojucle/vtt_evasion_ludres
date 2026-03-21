@@ -10,7 +10,8 @@ use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\LicenceConsent;
-use App\Entity\User;
+use App\Entity\Participant;
+use App\Entity\Member;
 use App\Model\Currency;
 use App\Repository\LicenceRepository;
 use App\Repository\MembershipFeeAmountRepository;
@@ -167,10 +168,10 @@ class LicenceDtoTransformer
         $amount = null;
         $amountToStr = '';
 
-        if ($licence->getState()->isYearly()) {
-            /** @var User $user */
-            $user = $licence->getUser();
-            $isRenovating = $this->isRenovating($user, $currentSeason);
+        /** @var Member $member */
+        $member = $licence->getUser();
+        if ($member instanceOf Member && $licence->getState()->isYearly()) {
+            $isRenovating = $this->isRenovating($member, $currentSeason);
             $membershipFee = (null !== $licence->getCoverage() && $licence->getState()->isYearly())
                 ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), !$isRenovating, $licence->getFamilyMember())
                 : null;
@@ -178,7 +179,7 @@ class LicenceDtoTransformer
                 $membershipFeeAmount = $membershipFee->getAmount();
             }
             $lastSeason = $licence->getSeason() - 1;
-            $indemnities = $this->indemnityService->getUserIndemnities($licence->getUser(), $this->seasonService->getSeasonPeriod($lastSeason));
+            $indemnities = $this->indemnityService->getUserIndemnities($member, $this->seasonService->getSeasonPeriod($lastSeason));
 
             if ($membershipFeeAmount) {
                 $amount = $membershipFeeAmount;
@@ -189,7 +190,7 @@ class LicenceDtoTransformer
                 $amount->sub($indemnities);
 
                 $coveragesToString = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
-                if ($user->getLevel()?->getType() === Level::TYPE_FRAME) {
+                if ($member->getLevel()?->getType() === Level::TYPE_FRAME) {
                     $amountToStr .= sprintf('Le montant des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
                 }
@@ -208,9 +209,9 @@ class LicenceDtoTransformer
         ];
     }
 
-    private function isRenovating(User $user, $currentSeason): bool
+    private function isRenovating(Member $member, $currentSeason): bool
     {
-        $lastLicence = $this->licenceRepository->findOneByUserAndLastSeason($user);
+        $lastLicence = $this->licenceRepository->findOneByUserAndLastSeason($member);
 
         return  $lastLicence
             && ($currentSeason - 1) === $lastLicence->getSeason()
@@ -228,11 +229,11 @@ class LicenceDtoTransformer
 
     private function getFamilyMember(?Licence $familyMember): ?array
     {
-        $user = $familyMember?->getUser();
-        if ($user) {
+        $member = $familyMember?->getUser();
+        if ($member instanceof Member) {
             return [
-                'licenceNumber' => $user->getLicenceNumber(),
-                'fullName' => $user->getIdentity()->getFullName(),
+                'licenceNumber' => $member->getLicenceNumber(),
+                'fullName' => $member->getIdentity()->getFullName(),
             ];
         }
 

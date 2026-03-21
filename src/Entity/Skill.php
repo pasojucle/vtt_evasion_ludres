@@ -34,15 +34,15 @@ class Skill
     private Collection $clusters;
 
     /**
-     * @var Collection<int, UserSkill>
+     * @var Collection<int, MemberSkill>
      */
-    #[ORM\OneToMany(targetEntity: UserSkill::class, mappedBy: 'skill')]
-    private Collection $userSkills;
+    #[ORM\OneToMany(targetEntity: MemberSkill::class, mappedBy: 'skill')]
+    private Collection $memberSkills;
 
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
-        $this->userSkills = new ArrayCollection();
+        $this->memberSkills = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -119,29 +119,29 @@ class Skill
     }
 
     /**
-     * @return Collection<int, UserSkill>
+     * @return Collection<int, MemberSkill>
      */
-    public function getUserSkills(): Collection
+    public function getMemberkills(): Collection
     {
-        return $this->userSkills;
+        return $this->memberSkills;
     }
 
-    public function addUserSkill(UserSkill $userSkill): static
+    public function addMemberSkill(MemberSkill $memberSkill): static
     {
-        if (!$this->userSkills->contains($userSkill)) {
-            $this->userSkills->add($userSkill);
-            $userSkill->setSkill($this);
+        if (!$this->memberSkills->contains($memberSkill)) {
+            $this->memberSkills->add($memberSkill);
+            $memberSkill->setSkill($this);
         }
 
         return $this;
     }
 
-    public function removeUserSkill(UserSkill $userSkill): static
+    public function removeMemberSkill(MemberSkill $memberSkill): static
     {
-        if ($this->userSkills->removeElement($userSkill)) {
+        if ($this->memberSkills->removeElement($memberSkill)) {
             // set the owning side to null (unless already changed)
-            if ($userSkill->getSkill() === $this) {
-                $userSkill->setSkill(null);
+            if ($memberSkill->getSkill() === $this) {
+                $memberSkill->setSkill(null);
             }
         }
 

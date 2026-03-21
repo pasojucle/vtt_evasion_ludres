@@ -6,7 +6,7 @@ namespace App\Form;
 
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\RegistrationFormEnum;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\HealthType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -74,10 +74,10 @@ class UserType extends AbstractType
         }
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-            $user = $event->getData();
+            $member = $event->getData();
             $form = $event->getForm();
 
-            if (empty($user->getLicenceNumber()) && RegistrationFormEnum::MEMBER === $options['current']->getForm()) {
+            if (empty($member->getLicenceNumber()) && RegistrationFormEnum::MEMBER === $options['current']->getForm()) {
                 $form->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'invalid_message' => 'Le mot de passe ne correspond pas.',
@@ -122,7 +122,7 @@ class UserType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => Member::class,
             'current' => null,
             'is_gardian' => false,
             'category' => LicenceCategoryEnum::ADULT,

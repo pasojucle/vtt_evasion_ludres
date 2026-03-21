@@ -8,14 +8,13 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\SessionDto;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\ParticipationFilterType;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\SessionRepository;
 use App\Service\IndemnityService;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
-use DateTime;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -40,12 +39,12 @@ class GetParticipation
     ) {
     }
 
-    public function execute(Request $request, User $user, bool $filtered): array
+    public function execute(Request $request, Member $member, bool $filtered): array
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
 
-        $form = $this->createForm($filters, $user);
+        $form = $this->createForm($filters, $member);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -55,24 +54,24 @@ class GetParticipation
         }
 
         $session->set($this->filterName, $filters);
-        $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
+        $query = $this->sessionRepository->findByUserAndFilters($member, $filters);
 
         $sessions = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return [
-            'user' => $this->userDtoTransformer->fromEntity($user),
+            'user' => $this->userDtoTransformer->fromEntity($member),
             'sessions' => $this->sessionDtoTransformer->fromEntities($sessions),
-            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, $filters),
+            'total_indemnities' => $this->indemnityService->getUserIndemnities($member, $filters),
             'form' => $form->createView(),
-            'paginator' => $this->paginatorDtoTransformer->fromEntities($sessions, ['filtered' => (int) $filtered, 'user' => $user->getId()]),
+            'paginator' => $this->paginatorDtoTransformer->fromEntities($sessions, ['filtered' => (int) $filtered, 'user' => $member->getId()]),
             'referer' => $session->get('admin_user_redirect'),
         ];
     }
 
-    private function createForm(array $filters, ?User $user): FormInterface
+    private function createForm(array $filters, ?Member $member): FormInterface
     {
         return $this->formFactory->create(ParticipationFilterType::class, $filters, [
-            'user' => $user,
+            'user' => $member,
         ]);
     }
 
@@ -93,20 +92,20 @@ class GetParticipation
         ];
     }
 
-    public function export(Request $request, User $user): Response
+    public function export(Request $request, Member $member): Response
     {
         $session = $request->getSession();
         $filters = $session->get($this->filterName);
-        $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
+        $query = $this->sessionRepository->findByUserAndFilters($member, $filters);
         $sessions = $query->getQuery()->getResult();
         $content = [];
-        $this->addExportHeader($content, $user, $filters);
+        $this->addExportHeader($content, $member, $filters);
         $this->addExportContent($content, $sessions);
 
         $response = new Response(implode(PHP_EOL, $content));
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            sprintf('export_participation_%s.csv', $user->getLicenceNumber())
+            sprintf('export_participation_%s.csv', $member->getLicenceNumber())
         );
 
         $response->headers->set('Content-Disposition', $disposition);
@@ -114,9 +113,9 @@ class GetParticipation
         return $response;
     }
 
-    private function addExportHeader(array &$content, User $user, array $filters): void
+    private function addExportHeader(array &$content, Member $member, array $filters): void
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $row = [$userDto->member->fullName, $userDto->licenceNumber];
         $content[] = implode(',', $row);
 

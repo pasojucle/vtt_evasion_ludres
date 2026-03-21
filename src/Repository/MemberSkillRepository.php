@@ -4,9 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Cluster;
 use App\Entity\Log;
+use App\Entity\Member;
+use App\Entity\MemberSkill;
 use App\Entity\Skill;
-use App\Entity\User;
-use App\Entity\UserSkill;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -14,17 +14,17 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<UserSkill>
+ * @extends ServiceEntityRepository<MemberSkill>
  */
-class UserSkillRepository extends ServiceEntityRepository
+class MemberSkillRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, UserSkill::class);
+        parent::__construct($registry, MemberSkill::class);
     }
 
     /**
-     * @return UserSkill[] Returns an array of UserSkill objects
+     * @return MemberSkill[] Returns an array of MemberSkill objects
      */
     public function findByClusterAndSkill(Cluster $cluster, Skill $skill): array
     {
@@ -45,18 +45,18 @@ class UserSkillRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return UserSkill[] Returns an array of UserSkill objects
+     * @return MemberSkill[] Returns an array of MemberSkill objects
      */
-    public function findByUsers(array $users): array
+    public function findByUsers(array $members): array
     {
         return $this->createQueryBuilder('us')
             ->join('us.user', 'u')
             ->join('us.skill', 's')
             ->join('s.category', 'c')
             ->andWhere(
-                (new Expr())->in('u.id', ':users'),
+                (new Expr())->in('u.id', ':members'),
             )
-            ->setParameter('users', $users)
+            ->setParameter('members', $members)
             ->orderBy('u.id', 'ASC')
             ->addOrderBy('c.id', 'ASC')
             ->getQuery()
@@ -66,26 +66,26 @@ class UserSkillRepository extends ServiceEntityRepository
 
 
     /**
-     * @return UserSkill[] Returns an array of UserSkill objects
+     * @return MemberSkill[] Returns an array of MemberSkill objects
      */
-    public function findNotViewedByUser(User $user): array
+    public function findNotViewedByUser(Member $member): array
     {
         $viewed = $this->getEntityManager()->createQueryBuilder()
             ->select('log.entityId')
             ->from(Log::class, 'log')
             ->andWhere(
-                (new Expr())->eq('log.user', ':user'),
+                (new Expr())->eq('log.member', ':member'),
                 (new Expr())->eq('log.entity', ':entityName')
             );
 
         return $this->createQueryBuilder('us')
             ->andWhere(
                 (new Expr())->notIn('us.id', $viewed->getDQL()),
-                (new Expr())->in('us.user', ':user')
+                (new Expr())->in('us.member', ':member')
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
-                new Parameter('entityName', 'UserSkill'),
+                new Parameter('member', $member),
+                new Parameter('entityName', 'MemberSkill'),
             ]))
             ->getQuery()
             ->getResult()

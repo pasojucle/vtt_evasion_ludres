@@ -7,7 +7,7 @@ use App\Entity\Log;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Service\SeasonService;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -52,20 +52,20 @@ class HistoryRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByRegistrationEntity(User $user, string $className, int $entityId, DateTimeImmutable $seasonStartAt): ?History
+    public function findOneByRegistrationEntity(Member $member, string $className, int $entityId, DateTimeImmutable $seasonStartAt): ?History
     {
         try {
             return $this->createQueryBuilder('h')
                 ->andWhere(
                     (new Expr())->eq('h.entity', ':entity'),
                     (new Expr())->eq('h.entityId', ':entityId'),
-                    (new Expr())->eq('h.user', ':user'),
+                    (new Expr())->eq('h.member', ':member'),
                     (new Expr())->eq('h.createdAt', ':seasonStartAt'),
                 )
                 ->setParameters(new ArrayCollection([
                     new Parameter('entity', $className),
                     new Parameter('entityId', $entityId),
-                    new Parameter('user', $user),
+                    new Parameter('member', $member),
                     new Parameter('seasonStartAt', $seasonStartAt),
                 ]))
                 ->getQuery()
@@ -94,17 +94,17 @@ class HistoryRepository extends ServiceEntityRepository
         }
     }
 
-    public function findBySeason(User $user, int $season): array
+    public function findBySeason(Member $member, int $season): array
     {
         $seasonPeriod = $this->seasonService->getSeasonPeriod($season);
         $qb = $this->createQueryBuilder('h')
             ->andWhere(
                 (new Expr())->gte('h.createdAt', ':seasonStarAt'),
-                (new Expr())->eq('h.user', ':user'),
+                (new Expr())->eq('h.member', ':member'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('seasonStarAt', $seasonPeriod['startAt']),
-                new Parameter('user', $user)
+                new Parameter('member', $member)
             ]))
             ->getQuery()
             ->getResult();

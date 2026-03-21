@@ -6,7 +6,7 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BoardRole;
 use App\Form\Admin\BoardRoleType;
 use App\Repository\BoardRoleRepository;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -72,7 +72,7 @@ class BoardRoleController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleDelete(
         Request $request,
-        UserRepository $userRepository,
+        MemberRepository $memberRepository,
         BoardRole $boardRole
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -84,7 +84,7 @@ class BoardRoleController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $userRepository->removeBoardRole($boardRole);
+                $memberRepository->removeBoardRole($boardRole);
                 $this->entityManager->remove($boardRole);
                 $this->entityManager->flush();
 

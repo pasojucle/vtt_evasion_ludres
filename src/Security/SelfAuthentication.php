@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Entity\User;
+use App\Entity\Member;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -21,9 +21,9 @@ class SelfAuthentication
     ) {
     }
 
-    public function authenticate(User $user): void
+    public function authenticate(Member $member): void
     {
-        $token = new UsernamePasswordToken($user, $user->getPassword(), $user->getRoles());
+        $token = new UsernamePasswordToken($member, $member->getPassword(), $member->getRoles());
         $this->tokenStorage->setToken($token);
 
         // $event = new SecurityEvents();

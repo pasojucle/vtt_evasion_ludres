@@ -9,7 +9,7 @@ use App\Entity\Log;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Entity\User;
+use App\Entity\Member;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -38,7 +38,7 @@ class SurveyRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findActiveByUser(User $member): array
+    public function findActiveByUser(Member $member): array
     {
         return $this->createQueryBuilder('s')
             ->leftJoin('s.members', 'm')
@@ -59,13 +59,13 @@ class SurveyRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findActiveAndWithoutResponse(User $member): array
+    public function findActiveAndWithoutResponse(Member $member): array
     {
         $respondents = $this->getEntityManager()->createQueryBuilder()
             ->select('(r.survey)')
             ->from(Respondent::class, 'r')
             ->where(
-                (new Expr())->eq('r.user', ':rMember')
+                (new Expr())->eq('r.member', ':rMember')
             );
 
         return $this->createQueryBuilder('s')
@@ -89,13 +89,16 @@ class SurveyRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findActiveChangedUser(User $member): array
+    public function findActiveChangedUser(Member $member): array
     {
         $surveyHistories = $this->getEntityManager()->createQueryBuilder()
             ->select('sh.entityId')
             ->from(History::class, 'sh')
             ->join(Survey::class, 'survey', 'WITH', (new Expr())->eq('sh.entityId', 'survey.id'))
-            ->join(Log::class, 'slog', 'WITH', (new Expr())->andX((new Expr())->eq('sh.entityId', 'slog.entityId'), (new Expr())->eq('slog.entity', ':survey'), (new Expr())->eq('slog.user', ':member')))
+            ->join(Log::class, 'slog', 'WITH', (new Expr())->andX(
+                (new Expr())->eq('sh.entityId', 'slog.entityId'), 
+                (new Expr())->eq('slog.entity', ':survey'), 
+                (new Expr())->eq('slog.member', ':member')))
             ->andWhere(
                 (new Expr())->eq('sh.entity', ':survey'),
                 (new Expr())->eq('sh.notify', ':notify'),
@@ -106,7 +109,10 @@ class SurveyRepository extends ServiceEntityRepository
             ->select('Isurvey.id')
             ->from(History::class, 'ih')
             ->join(SurveyIssue::class, 'surveyIssue', 'WITH', (new Expr())->eq('ih.entityId', 'surveyIssue.id'))
-            ->join(Log::class, 'ilog', 'WITH', (new Expr())->andX((new Expr())->eq('ih.entityId', 'ilog.entityId'), (new Expr())->eq('ilog.entity', ':issue'), (new Expr())->eq('ilog.user', ':member')))
+            ->join(Log::class, 'ilog', 'WITH', (new Expr())->andX(
+                (new Expr())->eq('ih.entityId', 'ilog.entityId'), 
+                (new Expr())->eq('ilog.entity', ':issue'), 
+                (new Expr())->eq('ilog.member', ':member')))
             ->join('surveyIssue.survey', 'Isurvey')
             ->andWhere(
                 (new Expr())->eq('ih.entity', ':issue'),
@@ -120,7 +126,7 @@ class SurveyRepository extends ServiceEntityRepository
                 (new Expr())->eq('s.disabled', ':disabled'),
                 (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
-                (new Expr())->eq('r.user', ':member'),
+                (new Expr())->eq('r.member', ':member'),
                 (new Expr())->orX(
                     (new Expr())->in('s.id', $surveyHistories->getDQL()),
                     (new Expr())->in('s.id', $issueHistories->getDQL())

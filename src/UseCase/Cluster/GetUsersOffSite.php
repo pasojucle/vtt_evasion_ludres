@@ -35,10 +35,10 @@ class GetUsersOffSite
         $response = null;
         if (!$cluster->isComplete() && RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
             foreach ($cluster->getSessions() as $session) {
-                $level = $session->getUser()->getLevel();
+                $level = $session->getMember()->getLevel();
                 $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
                 if (!$session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $levelType) {
-                    $userIdentifiers = $this->userDtoTransformer->identifiersFromEntity($session->getUser());
+                    $userIdentifiers = $this->userDtoTransformer->identifiersFromEntity($session->getMember());
                     $usersOffSite['users'][] = $userIdentifiers;
                     $usersOffSite['fullnames'][] = $userIdentifiers->member->fullName;
                 }

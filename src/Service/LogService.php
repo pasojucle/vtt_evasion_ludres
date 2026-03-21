@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Log;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\LogType;
 use App\Repository\LogRepository;
 use DateTimeImmutable;
@@ -27,19 +27,19 @@ class LogService
     ) {
     }
 
-    public function write(string $className, int $entityId, ?User $user = null): void
+    public function write(string $className, int $entityId, ?Member $member = null): void
     {
-        if (!$user) {
-            /** @var User $user */
-            $user = $this->security->getUser();
+        if (!$member) {
+            /** @var Member $member */
+            $member = $this->security->getUser();
         }
-        if ($user) {
-            $log = $this->logRepository->findOneByEntityAndUser($className, $entityId, $user);
+        if ($member) {
+            $log = $this->logRepository->findOneByEntityAndUser($className, $entityId, $member);
             if (!$log) {
                 $log = new Log();
                 $log->setEntity($className)
                     ->setEntityId($entityId)
-                    ->setUser($user);
+                    ->setMember($member);
                 $this->entityManager->persist($log);
             }
 
@@ -48,11 +48,11 @@ class LogService
         }
     }
 
-    public function writeFromEntity(object $entity, ?User $user = null): void
+    public function writeFromEntity(object $entity, ?Member $member = null): void
     {
         $className = (new ReflectionClass($entity))->getShortName();
 
-        $this->write($className, $entity->getId(), $user);
+        $this->write($className, $entity->getId(), $member);
     }
 
     public function getForm(?array $data = null): FormInterface

@@ -62,7 +62,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/season/detail', name: '_saison_detail', methods: ['GET'], options:['expose' => true])]
-    #[IsGranted('USER_SHARE')]
+    #[IsGranted('MEMBER_SHARE')]
     public function seasonDetail(
         Request $request,
         GetCurrentSeasonUsers $getCurentSeasonUsers,

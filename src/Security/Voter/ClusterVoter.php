@@ -6,7 +6,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Cluster;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Session;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\SessionRepository;
 use DateTime;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -39,25 +39,25 @@ class ClusterVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        /** @var User $user */
-        $user = $token->getUser();
-        if (!$user instanceof User) {
+        /** @var Member $member */
+        $member = $token->getUser();
+        if (!$member instanceof Member) {
             return false;
         }
 
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->fromEntity($member);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::BIKE_RIDE);
+        $isUserWithPermission = $isActiveUser && $member->hasPermissions(PermissionEnum::BIKE_RIDE);
 
         return match ($attribute) {
-            self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::EDIT, self::ADD => $this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, ?Cluster $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, Member $member, ?Cluster $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
@@ -75,7 +75,7 @@ class ClusterVoter extends Voter
             return false;
         }
 
-        return $isUserWithPermission && $isActiveUser && $this->getSession($subject, $user);
+        return $isUserWithPermission && $isActiveUser && $this->getSession($subject, $member);
     }
 
     private function canList(TokenInterface $token, bool $isActiveUser, bool $isUserWithPermission): bool
@@ -91,8 +91,8 @@ class ClusterVoter extends Voter
         return false;
     }
 
-    private function getSession(?Cluster$subject, User $user): ?Session
+    private function getSession(?Cluster$subject, Member $member): ?Session
     {
-        return $this->sessionRepository->findOneByUserAndCluster($user, $subject);
+        return $this->sessionRepository->findOneByUserAndCluster($member, $subject);
     }
 }

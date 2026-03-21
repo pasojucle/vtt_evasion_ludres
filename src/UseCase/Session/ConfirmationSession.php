@@ -23,15 +23,16 @@ class ConfirmationSession
 
     public function execute(Session $session): void
     {
-        $user = $this->userDtoTransformer->fromEntity($session->getUser());
+        
+        $member = $this->userDtoTransformer->fromEntity($session->getMember());
         $bikeRide = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
 
         $messages = $bikeRide->bikeRideType->messages;
-        $content = (is_string($messages)) ? $messages : $this->getMessageByLevelType($messages, $user->level->type);
+        $content = (is_string($messages)) ? $messages : $this->getMessageByLevelType($messages, $member->level->type);
 
-        // $parameterName = (Licence::CATEGORY_MINOR === $user->lastLicence->category)
+        // $parameterName = (Licence::CATEGORY_MINOR === $member->lastLicence->category)
         //     ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_MINOR'
-        //     : (Level::TYPE_FRAME === $user->level->type && $bikeRide->bikeRideType->isSchool ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
+        //     : (Level::TYPE_FRAME === $member->level->type && $bikeRide->bikeRideType->isSchool ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
         
         $subject = sprintf('Confirmation d\'inscription à %s du %s', $bikeRide->title, $bikeRide->period);
         // $content = $this->parameterService->getParameterByName($parameterName);
@@ -40,7 +41,7 @@ class ConfirmationSession
                 '{{ disponibilite }}' => $this->availabilityToString($session->getAvailability()),
             ];
 
-        $this->mailerService->sendMailToMember($user, $subject, $content, null, $additionalParams);
+        $this->mailerService->sendMailToMember($member, $subject, $content, null, $additionalParams);
     }
 
     private function availabilityToString(AvailabilityEnum $availability): ?string

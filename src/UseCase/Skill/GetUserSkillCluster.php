@@ -8,54 +8,55 @@ use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\Skill;
-use App\Entity\User;
-use App\Entity\UserSkill;
-use App\Repository\UserSkillRepository;
+use App\Entity\Member;
+use App\Entity\Participant;
+use App\Entity\MemberSkill;
+use App\Repository\MemberSkillRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 
 class GetUserSkillCluster
 {
     public function __construct(
-        private readonly UserSkillRepository $userSkillRepository,
+        private readonly MemberSkillRepository $memberSkillRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function execute(Cluster $cluster, Skill $skill): array
     {
-        $userSkills = $this->getUserSkillByUser($cluster, $skill);
+        $memberSkills = $this->getUserSkillByUser($cluster, $skill);
 
-        $clusterUserSkill = [];
+        $clusterMemberkill = [];
         /** @var Session $session */
         foreach ($cluster->getSessions() as $session) {
-            $user = $session->getUser();
-            if ($session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $user->getLevel()->getType()) {
-                $clusterUserSkill[] = (array_key_exists($user->getId(), $userSkills))
-                    ? $userSkills[$user->getId()]
-                    : $this->getNewUserSkill($user, $skill);
+            $member = $session->getUser();
+            if ($member instanceof Member && $session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $member->getLevel()->getType()) {
+                $clusterMemberkill[] = (array_key_exists($member->getId(), $memberSkills))
+                    ? $memberSkills[$member->getId()]
+                    : $this->getNewUserSkill($member, $skill);
             }
         }
 
-        return ['userSkills' => new ArrayCollection($clusterUserSkill)];
+        return ['userSkills' => new ArrayCollection($clusterMemberkill)];
     }
 
     private function getUserSkillByUser(Cluster $cluster, Skill $skill): array
     {
-        $userSkills = [];
-        /** @var UserSkill $userSkill */
-        foreach ($this->userSkillRepository->findByClusterAndSkill($cluster, $skill) as $userSkill) {
-            $userSkills[$userSkill->getUser()->getId()] = $userSkill;
+        $memberSkills = [];
+        /** @var MemberSkill $memberSkill */
+        foreach ($this->memberSkillRepository->findByClusterAndSkill($cluster, $skill) as $memberSkill) {
+            $memberSkills[$memberSkill->getMember()->getId()] = $memberSkill;
         }
 
-        return $userSkills;
+        return $memberSkills;
     }
 
-    private function getNewUserSkill(User $user, Skill $skill): UserSkill
+    private function getNewUserSkill(Member $member, Skill $skill): MemberSkill
     {
-        $userSkill = (new UserSkill())->setUser($user)->setSkill($skill);
-        $this->entityManager->persist($userSkill);
+        $memberSkill = (new MemberSkill())->setMember($member)->setSkill($skill);
+        $this->entityManager->persist($memberSkill);
 
-        return $userSkill;
+        return $memberSkill;
     }
 }

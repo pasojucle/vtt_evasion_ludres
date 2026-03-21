@@ -7,11 +7,11 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Form\Admin\ToolType;
 use App\Form\Admin\UserSearchType;
 use App\Repository\ParameterRepository;
-use App\Repository\UserRepository;
+use App\Repository\MemberRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
@@ -58,22 +58,22 @@ class ToolController extends AbstractController
     public function adminConfirmDeleteUser(
         Request $request,
         UserService $userService,
-        ?User $user,
+        ?Member $member,
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, $user, [
+        $form = $this->createForm(FormType::class, $member, [
             'action' => $request->getUri(),
             'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
-        $fullname = $user->getLicenceNumber();
-        if ($user->getIdentity()) {
-            $fullname .= ' - ' . $user->getIdentity()->getFullName();
+        $fullname = $member->getLicenceNumber();
+        if ($member->getIdentity()) {
+            $fullname .= ' - ' . $member->getIdentity()->getFullName();
         }
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $userService->deleteUser($user);
+                $userService->deleteUser($member);
                 $this->addFlash('success', "Les données de l'utilisateur {$fullname} ont bien été supprimées");
 
                 return $this->redirectToRoute('admin_tool_delete_user');
@@ -104,7 +104,7 @@ class ToolController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $licence = $data['user']->getLastLicence();
-            $user = $userDtoTransformer->identifiersFromEntity($data['user']);
+            $member = $userDtoTransformer->identifiersFromEntity($data['user']);
             /** @var SubmitButton $submit */
             $submit = $form->get('submit');
             $content = ($submit->isClicked())
@@ -117,7 +117,7 @@ class ToolController extends AbstractController
             if ($submit instanceof ClickableInterface && $submit->isClicked()) {
                 $subject = 'Votre inscription au club de Vtt Évasion Ludres';
 
-                $result = $mailerService->sendMailToMember($user, $subject, $content);
+                $result = $mailerService->sendMailToMember($member, $subject, $content);
                 if ($result['success']) {
                     $licence->setState((LicenceStateEnum::TRIAL_FILE_SUBMITTED === $licence->getState())
                         ? LicenceStateEnum::TRIAL_FILE_PENDING
@@ -141,18 +141,18 @@ class ToolController extends AbstractController
     #[Route('/admin/outil/export_email', name: 'admin_export_email', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminExportEmail(
-        UserRepository $userRepository
+        MemberRepository $memberRepository
     ): Response {
-        $users = $userRepository->findMinorAndTesting();
+        $users = $memberRepository->findMinorAndTesting();
         $content = [];
         $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
         if (!empty($users)) {
-            foreach ($users as $user) {
-                $identity = $user->getIdentity();
-                $licence = $user->getLastLicence();
-                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->getState()->isYearly()];
+            foreach ($users as $member) {
+                $identity = $member->getIdentity();
+                $licence = $member->getLastLicence();
+                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $member->getLicenceNumber(), $licence->getSeason(), !$licence->getState()->isYearly()];
                 $content[] = implode(',', $row);
             }
         }

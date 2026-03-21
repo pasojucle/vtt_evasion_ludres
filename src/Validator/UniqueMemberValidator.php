@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\IdentityRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Constraint;
@@ -25,7 +25,7 @@ class UniqueMemberValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, UniqueMember::class);
         }
 
-        /** @var User $user */
+        /** @var Member $user */
         $user = $this->security->getUser();
 
         if (null === $value || '' === $value || null !== $user) {

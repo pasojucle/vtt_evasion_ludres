@@ -6,7 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\IdentityDto;
 use App\Entity\Identity;
-use App\Entity\UserGardian;
+use App\Entity\MemberGardian;
 use App\Service\ProjectDirService;
 use DateTime;
 use DateTimeInterface;
@@ -19,13 +19,13 @@ class IdentityDtoTransformer
     ) {
     }
 
-    private function normamize(Identity|UserGardian $entity): array
+    private function normamize(Identity|MemberGardian $entity): array
     {
-        if ($entity instanceof UserGardian) {
+        if ($entity instanceof MemberGardian) {
             return[
                 $entity->getIdentity(),
                 $entity->getKind(),
-                $entity->getIdentity()->getAddress() ?? $entity->getUser()->getIdentity()->getAddress()
+                $entity->getIdentity()->getAddress() ?? $entity->getMember()->getIdentity()->getAddress()
             ];
         }
         return[
@@ -35,7 +35,7 @@ class IdentityDtoTransformer
         ];
     }
 
-    public function fromEntity(Identity|UserGardian $entity, ?array $histories = null): IdentityDto
+    public function fromEntity(Identity|MemberGardian $entity, ?array $histories = null): IdentityDto
     {
         $identityDto = new IdentityDto();
         [$identity, $kind, $address] = $this->normamize($entity);

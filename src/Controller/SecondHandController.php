@@ -7,8 +7,8 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Member;
 use App\Entity\SecondHand;
-use App\Entity\User;
 use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
 use App\Repository\SecondHandRepository;
@@ -17,7 +17,6 @@ use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
 use App\UseCase\SecondHand\EditSecondHand;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +40,7 @@ class SecondHandController extends AbstractController
         PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request,
     ): Response {
-        /** @var ?User $user */
+        /** @var ?Member $user */
         $user = $this->getUser();
         $novelties = $this->secondHandRepository->findNoveltiesByUserIds($user);
         $query = $this->secondHandRepository->findSecondHandEnabledQuery();
@@ -71,7 +70,7 @@ class SecondHandController extends AbstractController
     public function userList(?SecondHand $secondHand): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        /** @var User $user */
+        /** @var Member $user */
         $user = $this->getUser();
 
         return $this->render('second_hand/user_list.html.twig', [
@@ -191,7 +190,7 @@ class SecondHandController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            /** @var ?User $buyer */
+            /** @var ?Member $buyer */
             $buyer = $this->getUser();
             $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);
             $content = $messageService->getMessageByName('SECOND_HAND_CONTACT');
@@ -201,7 +200,7 @@ class SecondHandController extends AbstractController
                 '{{ email }}' => $buyerDto->mainEmail,
                 '{{ prenom_nom }}' => $buyerDto->member->fullName,
             ];
-            $seller = $secondHand->getUser();
+            $seller = $secondHand->getMember();
             $sellerDto = $userDtoTransformer->identifiersFromEntity($seller);
             $subject = sprintf('Votre annonce %s', $secondHand->GetName());
             

@@ -8,7 +8,7 @@ use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\RegistrationStep;
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
 use App\Security\SelfAuthentication;
@@ -78,14 +78,14 @@ class RegistrationController extends AbstractController
             $this->denyAccessUnlessGranted('ROLE_USER');
         }
         $session = $request->getSession();
-        /** @var User $user */
-        $user = $this->getUser();
+        /** @var Member $member */
+        $member = $this->getUser();
         if ((int) $session->get('registrationMaxStep') < $step) {
             $session->set('registrationMaxStep', $step);
         }
         $progress = $this->getProgress->execute($step);
     
-        if ($user && $progress->nextStep && 'registration_form' === $request->attributes->get('_route')) {
+        if ($member && $progress->nextStep && 'registration_form' === $request->attributes->get('_route')) {
             return $this->redirectToRoute('user_registration_form', ['step' => $step]);
         };
 
@@ -134,11 +134,11 @@ class RegistrationController extends AbstractController
     public function registrationFile(
         GetRegistrationFile $getRegistrationFile,
         ProjectDirService $projectDir,
-        User $user
+        Member $member
     ): Response {
-        if (!$registrationFiles = $getRegistrationFile->execute($user)) {
+        if (!$registrationFiles = $getRegistrationFile->execute($member)) {
             return $this->render('registration/unregistrable.html.twig', [
-                'warning' => sprintf('Le dossier %s ne peux plus être téléchargé.', $user->getLastLicence()->getSeason()),
+                'warning' => sprintf('Le dossier %s ne peux plus être téléchargé.', $member->getLastLicence()->getSeason()),
             ]);
         }
         $zipName = $projectDir->path('tmp', 'inscription_vtt_evasion_ludres.zip');
@@ -197,11 +197,11 @@ class RegistrationController extends AbstractController
     public function registrationDownload(
         GetStatusWarning $getStatusWarning
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
+        /** @var Member $member */
+        $member = $this->getUser();
         return $this->render('registration/unregistrable.html.twig', [
-            'user_id' => $user->getId(),
-            'warning' => $getStatusWarning->execute($user),
+            'user_id' => $member->getId(),
+            'warning' => $getStatusWarning->execute($member),
         ]);
     }
 

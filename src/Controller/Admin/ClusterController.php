@@ -122,7 +122,7 @@ class ClusterController extends AbstractController
     ): Response {
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
-            'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
+            'cluster' => $this->clusterDtoTransformer->detailFromEntity($cluster),
             'cluster_entity' => $cluster,
         ]);
     }
@@ -144,11 +144,10 @@ class ClusterController extends AbstractController
     public function adminClusterDelete(
         Cluster $cluster
     ): Response {
+        $this->cacheService->deleteCacheIndex($cluster);
         $bikeRide = $cluster->getBikeRide();
         $this->entityManager->remove($cluster);
         $this->entityManager->flush();
-
-        $this->cacheService->deleteCacheIndex($cluster);
 
         return $this->redirectToRoute('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),

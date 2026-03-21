@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\Entity\User;
+use App\Entity\Member;
 use App\Repository\CategoryRepository;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,19 +13,19 @@ class SecondHandControllerTest extends AbstractTestController
     public function testAdminSecondHand()
     {
         $name = sprintf('Test occasion %s', time());
-        $user = $this->getUserFromIdentity(self::ADULT);
+        $member = $this->getUserFromIdentity(self::ADULT);
 
-        $this->validateSecondHandList($user);
-        $this->validateAddSecondHand($user, $name);
+        $this->validateSecondHandList($member);
+        $this->validateAddSecondHand($member, $name);
         $this->ValidateSecondHandByAdmin($name);
         $this->validateContactSeller($name);
     }
 
-    private function validateSecondHandList(User $user): void
+    private function validateSecondHandList(Member $member): void
     {
         $this->client->request('GET', '/');
         $this->assertResponseStatusCodeSame(Response::HTTP_MOVED_PERMANENTLY,'Home');
-        $this->loginUser($user);
+        $this->loginUser($member);
         $this->client->request('GET', '/mon-compte/occasions');
         $this->assertResponseRedirects();
         $this->client->followRedirect();
@@ -34,7 +34,7 @@ class SecondHandControllerTest extends AbstractTestController
         $this->client->clickLink('Déposer une annonce');
     }
 
-    private function validateAddSecondHand(User $user, string $name): void
+    private function validateAddSecondHand(Member $member, string $name): void
     {
         $this->assertSelectorTextContains('.wrapper h1', 'Ajouter une annonce');
         $categoryRepository = static::getContainer()->get(CategoryRepository::class);
@@ -67,10 +67,9 @@ class SecondHandControllerTest extends AbstractTestController
         ];
         $this->client->request($form->getMethod(), $form->getUri(), $values, $files);
 
-        $mainIdentity = $user->getMainIdentity();
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailAddressContains($email, 'Reply-To', $mainIdentity->getEmail());
+        $this->assertEmailAddressContains($email, 'Reply-To', $member->getContactEmail());
         $this->assertEmailAddressContains($email, 'To', $this->getClubEmail());
         $this->assertEmailHeaderSame($email, 'Subject', 'Nouvelle Annonce d\'occasion sur le site VTT Evasion Ludres');
 
@@ -116,7 +115,7 @@ class SecondHandControllerTest extends AbstractTestController
         $this->client->request('GET', $this->urlGenerator->generate('second_hand_message', ['secondHand' => $secondHand->getId()]));
         $this->client->submitForm('Contacter');
 
-        $seller = $secondHand->getUser();
+        $seller = $secondHand->getMember();
         $mainIdentity = $seller->getMainIdentity();
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();

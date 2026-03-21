@@ -10,10 +10,15 @@ use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
 use App\Service\CacheService;
 use App\Service\ClusterService;
+use App\Service\LevelService;
+use App\Service\LicenceAgreementService;
+use App\Service\SessionService;
+use App\Service\UserService;
 use DateInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,21 +27,42 @@ use Symfony\Bundle\SecurityBundle\Security;
 class ClusterDtoTransformer
 {
     public function __construct(
-        private SessionDtoTransformer $sessionDtoTransformer,
         private LevelDtoTransformer $levelDtoTransformer,
         private CacheService $cacheService,
         private ClusterService $clusterService,
-        private UserDtoTransformer $userDtoTransformer,
         private SessionRepository $sessionRepository,
         private readonly Security $security,
+        private readonly LevelService $levelService,
+        private readonly LicenceAgreementService $licenceAgreementService,
+        private readonly SessionService $sessionService,
+        private UserService $userService,
     ) {
     }
+
+    public function detailFromEntity(Cluster $cluster): ClusterDto
+    {
+        $clusterDto = new ClusterDto();
+
+        $clusterDto->id = $cluster->getId();
+        $clusterDto->title = $cluster->getTitle();
+        $clusterDto->isComplete = $cluster->isComplete();
+        $sessionEntities = $cluster->getSessions();
+        $clusterDto->sessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()
+            ->getBikeRideType()
+            ->isRequireAvailability());
+        $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
+        $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
+        $clusterDto->isEditable = $this->security->isGranted('CLUSTER_EDIT', $cluster);
+
+        return $clusterDto;
+    }
+
 
     public function fromEntity(Cluster $cluster, $sessionEntities = null): ClusterDto
     {
         $cachePool = $this->cacheService->getCache();
         $clusterCache = $cachePool->getItem($this->cacheService->getCacheIndex($cluster));
-        if (!$clusterCache->isHit()) {
+        // if (!$clusterCache->isHit()) {
             $fromEntities = true;
             if (!$sessionEntities) {
                 $sessionEntities = $cluster->getSessions();
@@ -58,7 +84,7 @@ class ClusterDtoTransformer
             $clusterCache->set($clusterDto);
             $clusterCache->expiresAfter(DateInterval::createFromDateString('1 hour'));
             $cachePool->save($clusterCache);
-        }
+        // }
 
         $clusterDto = $clusterCache->get();
         $clusterDto->isEditable = $this->security->isGranted('CLUSTER_EDIT', $cluster);
@@ -103,19 +129,42 @@ class ClusterDtoTransformer
         $sessions = [];
         /** @var Session $session */
         foreach ($sessionEntities as $session) {
+            $userEntity = $session->getUser();
+            $identity = $userEntity->getIdentity();
+            $user = [
+                'id' => $userEntity->getId(),
+                'fullName' => $identity->getName() . ' ' . $identity->getFirstName(),
+            ];
+            if ($user instanceof Member) {
+                $level = $user->getLevel();
+                $user['level'] = [
+                    'title' => $level->getTitle(),
+                    'colors' => $this->levelService->getColors($level->getColor()),
+                ];
+                $licencesAgreements = [];
+                foreach ($user->getLastLicence()->getLicenceAgreements() as $licenceAgreement) {
+                    $agreement = $licenceAgreement->getAgreement();
+                    $licencesAgreements[$agreement->getId()] = $this->licenceAgreementService->toHtml($licenceAgreement);
+                }
+                $user['agreements'] = $licencesAgreements;
+        // $user['health'] = $this->healthDtoTransformer->fromEntity($member->getHealth());
+            }
+
             $sessions[] = [
-                'user' => ($fromEntities)
-                    ? $this->userDtoTransformer->getSessionHeaderFromEntity($session->getUser())
-                    : $this->userDtoTransformer->fromEntity($session->getUser()),
+                // 'user' => ($fromEntities)
+                //     ? $this->userDtoTransformer->getSessionHeaderFromEntity($session->getUser())
+                //     : $this->userDtoTransformer->fromEntity($session->getUser()),
+                'user' => $user,
                 'availability' => $session->getAvailability(),
                 'isPresent' => $session->isPresent(),
+                'bikeType' => $session->getBikeType(),
             ];
         }
 
         return $sessions;
     }
 
-    private function getAvailableSessions(Collection $sessionEntities, bool $isRequireAvailability): ArrayCollection
+    private function getAvailableSessions(Collection $sessionEntities, bool $isRequireAvailability): array
     {
         $sortedSessions = [];
         $allowedAvailabilities = ($isRequireAvailability)
@@ -125,12 +174,55 @@ class ClusterDtoTransformer
         /** @var Session $session */
         foreach ($sessionEntities as $session) {
             if (in_array($session->getAvailability(), $allowedAvailabilities)) {
-                $sortedSessions[] = $this->sessionDtoTransformer->fromEntity($session);
+                $user = $session->getUser();
+                $identity = $user->getIdentity();
+                $level = $user->getLevel();
+                $lastLicence = $user->getLastLicence();
+                $licencesAgreements = [];
+                $health = null;
+                $isEndTesting = false;
+                $mustProvideRegistration = false;
+
+                if ($user instanceof Member) {
+                    foreach ($user->getLastLicence()->getLicenceAuthorizations() as $licenceAgreement) {
+                        $agreement = $licenceAgreement->getAgreement();
+                        $licencesAgreements[$agreement->getId()]['toHtml'] = $this->licenceAgreementService->toHtml($licenceAgreement);
+                    }
+                    $health = $user->getHealth()->getContent();
+                    $isEndTesting = $this->userService->isEndTesting($lastLicence, $this->userService->trialSessionsPresent($lastLicence, $user));
+                    $mustProvideRegistration = $this->userService->mustProvideRegistration($lastLicence, $user->getLicences()->count());
+                }
+                $sortedSessions[] = [
+                    'id' => $session->getId(),
+                    'availability' => $this->sessionService->getAvailability($session->getAvailability()),
+                    'user' => [
+                        'id' => $user->getId(),
+                        'member' => [
+                            'fullName' => $identity->getName() . ' ' . $identity->getFirstName(),
+                        ],
+                        'level' => [
+                            'colors' => $this->levelService->getColors($level?->getColor()),
+                            'title' => $level?->getTitle(),
+                            'type' => $level?->getType(),
+                            'accompanyingCertificat' => $level?->isAccompanyingCertificat(),
+                        ],
+                        'lastLicence' => [
+                            'authorizations' => $licencesAgreements
+                        ],
+                        'health' => [
+                            'content' => $health,
+                        ],
+                        'isEndTesting' => $isEndTesting,
+                        'mustProvideRegistration' => $mustProvideRegistration,
+                        'licenceNumber' => $user->getLicenceNumber(),
+                    ],
+                    'userIsOnSite' => $session->isPresent()
+                ];
             }
         }
         usort($sortedSessions, function ($a, $b) {
-            $a = strtolower($a->user->member->name);
-            $b = strtolower($b->user->member->name);
+            $a = strtolower($a['user']['member']['fullName']);
+            $b = strtolower($b['user']['member']['fullName']);
 
             if ($a === $b) {
                 return 0;
@@ -139,7 +231,7 @@ class ClusterDtoTransformer
             return ($a < $b) ? -1 : 1;
         });
 
-        return new ArrayCollection($sortedSessions);
+        return $sortedSessions;
     }
 
     private function getUsersOnSiteCount(Collection $sessionEntities, BikeRide $bikeRide): int
@@ -147,7 +239,7 @@ class ClusterDtoTransformer
         $userOnSiteSessions = [];
         foreach ($sessionEntities as $session) {
             if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
-                $level = $session->getUser()->getLevel();
+                $level = $session->getMember()->getLevel();
                 $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
                 if ($session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $levelType) {
                     $userOnSiteSessions[] = $session;

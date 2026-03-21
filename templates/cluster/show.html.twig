@@ -55,9 +55,9 @@
             </div>
         {% endif %}
     </div>
-    {% if cluster.availableSessions | length > 0 %}
+    {% if cluster.sessions | length > 0 %}
         <ul>
-            {% for session in cluster.availableSessions %}             
+            {% for session in cluster.sessions %}   
                 {% include 'session/admin/list.html.twig' with {'user': session.user} %}
             {% endfor %}
         </ul>

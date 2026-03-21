@@ -30,7 +30,7 @@ class OrderDtoTransformer
             $orderDto->id = $orderHeader->getId();
             $createdAt = $orderHeader->getCreatedAt();
             $orderDto->createdAt = $createdAt->format('d/m/Y');
-            $orderDto->user = $this->userDtoTransformer->fromEntity($orderHeader->getUser());
+            $orderDto->user = $this->userDtoTransformer->fromEntity($orderHeader->getMember());
             $orderDto->status = $orderHeader->getStatus();
             $orderDto->statusToString = $this->translator->trans(sprintf('order.status.%s', $orderHeader->getStatus()->value));
             $orderDto->orderLines = $this->orderLineDtoTransformer->fromEntities($orderHeader->getOrderLines(), $orderDto->user, $form?->all()['orderLines']);
