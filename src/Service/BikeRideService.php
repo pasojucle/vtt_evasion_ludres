@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\BikeRide;
 use App\Entity\Level;
 use App\Entity\Member;
+use App\Entity\User;
 use App\Twig\AppExtension;
 use DateInterval;
 use DateTimeImmutable;
@@ -41,13 +42,13 @@ class BikeRideService
         ];
     }
            
-    public function registrationClosed(BikeRide $bikeRide, ?Member $member): bool
+    public function registrationClosed(BikeRide $bikeRide, ?User $user): bool
     {
         if (!$bikeRide->registrationEnabled()) {
             return true;
         }
 
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_ADULT_MEMBER === $member?->getLevel()->getType()) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_ADULT_MEMBER === $user?->getLevel()->getType()) {
             return false;
         }
 

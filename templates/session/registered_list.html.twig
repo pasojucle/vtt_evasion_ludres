@@ -1,19 +1,27 @@
 
     <div>
         <h2>Participants</h2>
-        {% if sessions is not empty %}
+        {% if sessions.rows is not empty %}
             <ul>
                 <li class="row row-list">
                     {% for cluster in sessions.header %}
-                    
                         <div class="col-md-4">{{ cluster }}</div>
-                    
                     {% endfor %}
                 </li>
                 {% for row in sessions.rows %}
                     <li class="row row-list">
-                    {% for session in row %}
-                        <div class="col-md-4">{{ session|raw }}</div>
+                        {% for session in row %}
+                            <div class="col-md-4 flex gap-2">
+                                {% if session %}
+                                    {{ session.fullName}}
+                                    {% if session.practice %}
+                                        {{ include('component/_badge.html.twig', { badge: session.practice }) }}
+                                    {% endif %}
+                                    {% if session.bikeType %}
+                                        {{ include('component/_badge.html.twig', { badge: session.bikeType }) }}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
                         {% endfor %}
                     </li>
                 {% endfor %}

@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
@@ -63,10 +64,10 @@ class SessionController extends AbstractController
             $session->setIsPresent($isPresent);
             $this->entityManager->flush();
 
-            $user = $session->getMember();
-            $licenceService->applyCompleteTrial($session->getMember());
+            $user = $session->getUser();
+            $licenceService->applyCompleteTrial($user);
             
-            if (!$user->getLastLicence()->getState()->isYearly()) {
+            if ($user instanceof Member && !$user->getLastLicence()->getState()->isYearly()) {
                 $this->sessionService->checkEndTesting($user);
             }
 
@@ -80,7 +81,7 @@ class SessionController extends AbstractController
                     'availability' => $session->getAvailability(),
                     'userIsOnSite' => $session->isPresent(),
                 ],
-                'user' => $userDtoTransformer->fromEntity($session->getMember()),
+                'user' => $userDtoTransformer->fromEntity($session->getUser()),
                 'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
             ]);
         }

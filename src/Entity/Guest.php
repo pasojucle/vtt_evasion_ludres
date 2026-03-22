@@ -74,6 +74,11 @@ class Guest extends User
         return $this;
     }
 
+    public function getMainIdentity(): ?Identity
+    {
+        return $this->identity;
+    }
+
     public function getContactEmail(): ?string
     {
         return $this->email;

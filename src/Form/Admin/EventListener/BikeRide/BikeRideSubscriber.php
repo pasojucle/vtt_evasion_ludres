@@ -169,7 +169,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'multiple' => false,
                 'choices' => [
                     'Accessible à tous les membres' => BikeRideType::NO_RESTRICTION,
-                    'Limiter à des participants' => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
+                    'Limiter à des participants' => BikeRideType::RESTRICTION_TO_USER_LIST,
                     'Imposer une tranche d\'âge' => BikeRideType::RESTRICTION_TO_RANGE_AGE,
                 ],
                 'choice_attr' => function () {
@@ -214,7 +214,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
             $form->remove('registrationClosedMessage');
         }
         $disabled = RegistrationEnum::NONE === $bikeRideType->getRegistration();
-        $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
+        $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_USER_LIST !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction;
         $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;
 
@@ -391,7 +391,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
     private function setRestriction(BikeRide &$bikeRide): void
     {
         $restriction = match (true) {
-            !$bikeRide->getMembers()->isEmpty() || !empty($bikeRide->getLevelFilter()) => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
+            !$bikeRide->getMembers()->isEmpty() || !empty($bikeRide->getLevelFilter()) => BikeRideType::RESTRICTION_TO_USER_LIST,
             null !== $bikeRide->getMinAge() => BikeRideType::RESTRICTION_TO_RANGE_AGE,
             default => BikeRideType::NO_RESTRICTION,
         };
@@ -401,7 +401,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
 
     private function cleanData(?int $restriction, array &$data, BikeRide $bikeRide): void
     {
-        if (BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction) {
+        if (BikeRideType::RESTRICTION_TO_USER_LIST !== $restriction) {
             $this->clearUsers($data, $bikeRide);
         }
         if (BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction) {

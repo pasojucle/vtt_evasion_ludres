@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class HealthController extends AbstractController
 {
     #[Route('/admin/sante/edit/{member}', name: 'admin_health_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'member')]
+    #[IsGranted('USER_EDIT', 'member')]
     public function adminEdit(
         Request $request,
         UserDtoTransformer $userDtoTransformer,

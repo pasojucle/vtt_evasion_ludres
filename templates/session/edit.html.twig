@@ -40,8 +40,11 @@
                         {% endif %}
                     </div>
                     {% if form.session.practice is defined %}
-                        {{ form_widget(form.session.practice) }}
+                        {{ form_row(form.session.practice) }}
                     {% endif %}
+                    <div data-id="session-bike-type" data-form-modifier-target="container" class="col-md-12 col-xs-12">
+                        {{ form_row(form.session.bikeType) }}
+                    </div>
                     {% include 'session/survey_responses.html.twig' %}
                     {% if bikeRide.showFramerAndMemberList  %}
                         <div class="separator"></div>

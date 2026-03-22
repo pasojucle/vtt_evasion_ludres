@@ -20,6 +20,12 @@
                             <p>Pensez à vérifier vos courriers indésirables (spams) si vous ne recevez rien d'ici 2 minutes.</p>
                             {{ form_start(form) }}
                             {{ form_row(form.email) }}
+                            <div class="form-group">
+                                {{ form_widget(form.recaptcha) }}
+                                <div class="form-errors">
+                                    {{ form_errors(form.recaptcha) }}
+                                </div>
+                            </div>
                             <div class="content-footer">
                                 {{ form_row(form.submit) }}
                             </div>

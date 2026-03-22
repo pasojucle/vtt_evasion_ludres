@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\SlideshowDirectory;
 use App\Service\UploadService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -41,7 +42,9 @@ class UploadFileType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('directory', HiddenSlideshowDirectoryType::class)
+            ->add('directory', HiddenEntityType::class, [
+                'class' => SlideshowDirectory::class,
+            ])
             ;
     }
 }

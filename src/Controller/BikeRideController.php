@@ -28,7 +28,7 @@ class BikeRideController extends AbstractController
 
 
     #[Route('/member/programme', name: 'member_schedule', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function memberList(): Response
     {
         return $this->redirectToRoute('schedule');

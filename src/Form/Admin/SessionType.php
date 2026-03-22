@@ -4,27 +4,17 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Cluster;
-use App\Entity\Enum\PracticeEnum;
-use App\Entity\Enum\RegistrationEnum;
+
 use App\Entity\Licence;
-use App\Form\HiddenEntityType;
-use App\Form\SurveyResponsesType;
+use App\Form\Admin\EventListener\AddSessionSubscriber;
 use App\Service\SeasonService;
 use App\Service\SessionService;
-use App\Validator\SessionUniqueMember;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SessionType extends AbstractType
 {
@@ -59,72 +49,8 @@ class SessionType extends AbstractType
                     'class' => 'btn btn-primary float-right',
                 ],
             ])
-            ;
-
-        $formModifier = function (FormInterface $form, null|int|string $season) use ($options) {
-            $filters = $options['filters'];
-            $filters['season'] = $season;
-            $form
-                ->add('user', UserAutocompleteField::class, [
-                    'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $filters),
-                    'constraints' => [
-                        new NotBlank(),
-                        new SessionUniqueMember(),
-                    ],
-                    'required' => true,
-                ]);
-        };
-    
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier, $options) {
-            $form = $event->getForm();
-            $data = $event->getData();
-
-            $bikeRide = $options['bikeRide'];
-            if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
-                $form
-                        ->add('cluster', EntityType::class, [
-                            'label' => false,
-                            'class' => Cluster::class,
-                            'choices' => $bikeRide->getClusters(),
-                            'expanded' => true,
-                            'multiple' => false,
-                            'block_prefix' => 'customcheck',
-                        ])
-                    ;
-            } else {
-                $form->add('cluster', HiddenEntityType::class, [
-                            'class' => Cluster::class,
-                        ]);
-                    ;
-            }
-            if (true === $bikeRide->getBikeRideType()->isDisplayBikeKind()) {
-                $form
-                    ->add('practice', EnumType::class, [
-                        'label' => 'Type de vélo',
-                        'class' => PracticeEnum::class,
-                        'expanded' => true,
-                        'multiple' => false,
-                        'block_prefix' => 'customcheck',
-                    ]);
-            }
-
-            if (array_key_exists('responses', $data)) {
-                $form
-                    ->add('responses', SurveyResponsesType::class, [
-                        'label' => false,
-                    ]);
-            }
-
-            $formModifier($form, $data['season']);
-        });
-    
-        $builder->get('season')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
-                $season = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $season, );
-            }
-        );
+            ->addEventSubscriber(new AddSessionSubscriber($this->sessionService, $this->urlGenerator))
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

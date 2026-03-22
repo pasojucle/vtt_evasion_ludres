@@ -105,6 +105,8 @@ abstract class User implements UserInterface
         return $this instanceof Guest;
     }
 
+    abstract public function getMainIdentity(): ?Identity;
+
     abstract public function getContactEmail(): ?string;
 
     public function getLicenceNumber(): ?string

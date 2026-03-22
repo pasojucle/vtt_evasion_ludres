@@ -24,13 +24,16 @@
                 {{ form_widget(form.season)}}
             </div>
             <div class="col-md-12 col-xs-12">
-                {{ form_widget(form.cluster)}}
+                {{ form_row(form.cluster)}}
             </div>
             {% if form.practice is defined %}
                 <div class="col-md-12 col-xs-12">
-                    {{ form_widget(form.practice) }}
+                    {{ form_row(form.practice) }}
                 </div>
             {% endif %}
+            <div data-id="session-bike-type" data-form-modifier-target="container" class="col-md-12 col-xs-12">
+                {{ form_row(form.bikeType) }}
+            </div>
         </div>
         {% include 'session/survey_responses.html.twig' %}
     </div>

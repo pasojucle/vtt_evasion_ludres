@@ -27,7 +27,7 @@ class LicenceAuthorizationController extends AbstractController
     }
 
     #[Route('edit/{licenceAuthorization}', name: 'edit', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'licenceAuthorization')]
+    #[IsGranted('USER_EDIT', 'licenceAuthorization')]
     public function edit(Request $request, LicenceAgreement $licenceAuthorization): Response
     {
         /** @var Member $member */

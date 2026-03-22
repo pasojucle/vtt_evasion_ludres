@@ -127,7 +127,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             ->select('userwithsession.id')
             ->from(Session::class, 'session')
             ->join('session.cluster', 'cluster')
-            ->join('session.member', 'userwithsession')
+            ->join('session.user', 'userwithsession')
             ->join('cluster.bikeRide', 'bikeRide')
             ->andWhere(
                 (new Expr())->eq('bikeRide.id', ':bikeRideId')

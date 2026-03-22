@@ -93,7 +93,7 @@ export default class extends Controller {
     }
 
     updateTotal() {
-        const presents = this.element.querySelectorAll('.btn-success[data-controller="participation"]').length;
+        const presents = this.element.querySelectorAll('[data-on-site="1"]').length;
         if (this.hasCountBadgeTarget) {
             this.countBadgeTarget.textContent = presents;
         }

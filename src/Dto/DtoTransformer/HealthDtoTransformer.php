@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\HealthDto;
-use App\Dto\LicenceDto;
 use App\Entity\Health;
 use DateInterval;
 use DateTime;

@@ -193,7 +193,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/inscription/existante', name: 'registration_existing', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function registrationDownload(
         GetStatusWarning $getStatusWarning
     ): Response {

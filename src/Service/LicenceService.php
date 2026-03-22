@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Guest;
 use App\Entity\Licence;
 use App\Entity\Member;
+use App\Entity\User;
 use App\Repository\SessionRepository;
 use DateTime;
 use DateTimeInterface;
@@ -58,9 +60,12 @@ class LicenceService
         return $this->applyTransition($licence, 'receive_trial_file');
     }
 
-    public function applyCompleteTrial(Member $member): void
+    public function applyCompleteTrial(User $user): void
     {
-        $licence = $member->getLastLicence();
+        if ($user instanceof Guest) {
+            return;
+        }
+        $licence = $user->getLastLicence();
         if ($licence->getState()->isYearly()) {
             return;
         }

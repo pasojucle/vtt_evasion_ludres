@@ -23,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CoverageController extends AbstractController
 {
     #[Route('/current/season/{user}', name: '_current_season_edit', methods: ['GET'])]
-    #[IsGranted('MEMBER_EDIT', 'user')]
+    #[IsGranted('USER_EDIT', 'user')]
     public function currentSeasonEdit(
         RegistrationStepRepository $registrationStepRepository,
         HistoryRepository $historyRepository,

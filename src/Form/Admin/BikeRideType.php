@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints\File;
 class BikeRideType extends AbstractType
 {
     public const NO_RESTRICTION = null;
-    public const RESTRICTION_TO_MEMBER_LIST = 1;
+    public const RESTRICTION_TO_USER_LIST = 1;
     public const RESTRICTION_TO_RANGE_AGE = 2;
 
     public function __construct(

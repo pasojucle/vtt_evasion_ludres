@@ -33,7 +33,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/mon-compte/profil', name: 'user_account', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function userAccount(): Response
     {
         /** @var ?Member $member */
@@ -45,7 +45,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/mon-compte/mot-de-passe', name: 'change_password', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function changePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher
@@ -80,7 +80,7 @@ class UserController extends AbstractController
 
 
     #[Route('/mon-compte/demande/modification', name: 'user_change_infos', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function changeInfos(
         Request $request,
         MailerService $mailerService,

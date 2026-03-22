@@ -27,7 +27,7 @@ class SurveyType extends AbstractType
 {
     public const DISPLAY_ALL_MEMBERS = null;
     public const DISPLAY_BIKE_RIDE = 1;
-    public const DISPLAY_MEMBER_LIST = 2;
+    public const DISPLAY_USER_LIST = 2;
 
     public function __construct(
         private readonly LevelService $levelService,
@@ -92,7 +92,7 @@ class SurveyType extends AbstractType
             $survey = $event->getData();
             $restriction = match (true) {
                 null !== $survey->getBikeRide() => self::DISPLAY_BIKE_RIDE,
-                !$survey->getMembers()->isEmpty() => self::DISPLAY_MEMBER_LIST,
+                !$survey->getMembers()->isEmpty() => self::DISPLAY_USER_LIST,
                 default => self::DISPLAY_ALL_MEMBERS,
             };
             $survey->setRestriction($restriction);
@@ -103,7 +103,7 @@ class SurveyType extends AbstractType
                     'choices' => [
                         'Afficher le sondage à tous les adhérents' => self::DISPLAY_ALL_MEMBERS,
                         'Afficher le sondage à l\'inscription à une sortie' => self::DISPLAY_BIKE_RIDE,
-                        'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_MEMBER_LIST,
+                        'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_USER_LIST,
                     ],
                     'choice_attr' => function () {
                         return [

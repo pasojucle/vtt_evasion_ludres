@@ -64,7 +64,7 @@ class SummaryRepository extends ServiceEntityRepository
             ->select('log.entityId')
             ->from(Log::class, 'log')
             ->andWhere(
-                (new Expr())->eq('log.member', 'member'),
+                (new Expr())->eq('log.member', ':member'),
                 (new Expr())->eq('log.entity', ':entityName')
             );
 

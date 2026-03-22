@@ -60,8 +60,8 @@ class Session
     #[ORM\Column(type: 'Availability', options: ['default' => AvailabilityEnum::NONE->value])]
     private AvailabilityEnum $availability = AvailabilityEnum::NONE;
 
-    #[ORM\Column(type: 'Practice')]
-    private PracticeEnum $practice = PracticeEnum::VTT;
+    #[ORM\Column(length: 255, enumType: PracticeEnum::class)]
+    private PracticeEnum $practice = PracticeEnum::NONE;
 
     #[ORM\Column(length: 255, enumType: BikeTypeEnum::class, options: ['default' => BikeTypeEnum::NONE->value])]
     private BikeTypeEnum $bikeType = BikeTypeEnum::NONE;

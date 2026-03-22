@@ -83,12 +83,12 @@ class HistoryListener
         }
 
         $member = match (true) {
-            $reflexionClass->hasMethod('getUserGardians') && !$entity->getUserGardians()->isEmpty() => $entity->getUserGardians()->first()->getMember(),
+            $reflexionClass->hasMethod('getUserGardians') && !$entity->getMemberGardians()->isEmpty() => $entity->getMemberGardians()->first()->getMember(),
             $reflexionClass->hasMethod('getIdentities') => $entity->getIdentities()->first()->getMember(),
-            $reflexionClass->hasMethod('getMember') => $entity->getMember(),
+            $reflexionClass->hasMethod('getMember') => $entity->getUser(),
             default => null,
         };
-        if ($member && 1 < $member->getLicences()->count()) {
+        if ($member instanceof Member && 1 < $member->getLicences()->count()) {
             $seasonPeriod = $this->seasonService->getCurrentSeasonPeriod();
             $history = $this->objectManager->getRepository(History::class)->findOneByRegistrationEntity($member, $className, $entity->getId(), $seasonPeriod['startAt']);
             $this->addHistory($history, $member, $className, $entity, $changeSet);

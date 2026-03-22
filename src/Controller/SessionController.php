@@ -42,7 +42,7 @@ class SessionController extends AbstractController
 
 
     #[Route('/mon-compte/programme', name: 'user_sessions', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function userBikeRides(
         UserDtoTransformer $userDtoTransformer,
         GetBikeRides $getBikeRides,
@@ -59,7 +59,7 @@ class SessionController extends AbstractController
     }
 
     #[Route('/mon-compte/rando/inscription/{bikeRide}', name: 'session_add', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function sessionAdd(
         Request $request,
         UnregistrableSessionMessage $unregistrableSessionMessage,
@@ -92,7 +92,7 @@ class SessionController extends AbstractController
     }
 
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_EDIT', 'session')]
     public function sessionAvailabilityEdit(
         Request $request,
         Session $session
@@ -111,7 +111,7 @@ class SessionController extends AbstractController
     }
 
     #[Route('/mon-compte/rando/supprime/{session}', name: 'session_delete', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function sessionDelete(
         FormFactoryInterface $formFactory,
         Request $request,
@@ -143,7 +143,7 @@ class SessionController extends AbstractController
     }
 
     #[Route('/programe/inscription/close/{bikeRide}', name: 'registration_closed', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function registrationClosed(
         BikeRideDtoTransformer $bikeRideDtoTransformer,
         MessageService $messageService,

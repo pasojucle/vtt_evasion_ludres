@@ -51,7 +51,9 @@ class SurveyResponseType extends AbstractType
             }
         });
         $builder
-            ->add('surveyIssue', HiddenSurveyIssueType::class)
+            ->add('surveyIssue', HiddenEntityType::class, [
+                'class' => SurveyIssue::class,
+            ])
             ->add('uuid', HiddenType::class)
         ;
     }

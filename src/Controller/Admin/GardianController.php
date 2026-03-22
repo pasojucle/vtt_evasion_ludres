@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class GardianController extends AbstractController
 {
     #[Route('/admin/responsables/edit/{member}', name: 'admin_gardians_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'member')]
+    #[IsGranted('USER_EDIT', 'member')]
     public function adminEdit(
         Request $request,
         UserDtoTransformer $userDtoTransformer,

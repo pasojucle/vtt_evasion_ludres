@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\IdentityDto;
+use App\Entity\Guest;
 use App\Entity\Identity;
 use App\Entity\MemberGardian;
-use App\Service\ProjectDirService;
+use App\Service\IdentityService;
 use DateTime;
 use DateTimeInterface;
 
@@ -15,7 +16,7 @@ class IdentityDtoTransformer
 {
     public function __construct(
         private AddressDtoTransformer $addressDtoTransformer,
-        private ProjectDirService $projectDirService,
+        private IdentityService $identityService,
     ) {
     }
 
@@ -48,15 +49,15 @@ class IdentityDtoTransformer
         }
         $identityDto->kind = $kind;
         $identityDto->birthDate = ($bithDate) ? $bithDate->format('j/n/Y') : null;
-        list($identityDto->birthPlace, $identityDto->birthDepartment, $identityDto->birthCountry) = $this->getBirthplace($identity);
+        list($identityDto->birthPlace, $identityDto->birthDepartment, $identityDto->birthCountry) = $this->identityService->getBirthplace($identity);
         $identityDto->address = $this->addressDtoTransformer->fromEntity($address, $histories);
-        $identityDto->email = $identity->getEmail();
+        $identityDto->email = ($identity->getUser() instanceof Guest) ? $identity->getUser()->getEmail() : $identity->getEmail();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
         $identityDto->emergencyPhone = $identity->getEmergencyPhone();
         $identityDto->emergencyPhoneAnchor = $this->getPhoneAnchor($identity->getEmergencyPhone());
         $identityDto->emergencyContact = $identity->getEmergencyContact();
         $identityDto->phonesAnchor = $this->getPhonesAnchor($identity);
-        $identityDto->picture = $this->getPicture($identity->getPicture());
+        $identityDto->picture = $this->identityService->getPicture($identity->getPicture());
 
         $identityDto->age = $this->getAge($bithDate);
 
@@ -93,11 +94,6 @@ class IdentityDtoTransformer
         return null;
     }
 
-    private function getPicture(?string $picture): string
-    {
-        return (null !== $picture) ? $this->projectDirService->dir('', 'upload', $picture) : '/images/default-user-picture.jpg';
-    }
-
     private function getPhoneAnchor(?string $phone): string
     {
         return ($phone) ? '<a class="phone" href="tel:' . $phone . '">' . $phone . '</a>' : '';
@@ -106,19 +102,6 @@ class IdentityDtoTransformer
     private function getPhonesAnchor(Identity $identity): string
     {
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
-    }
-
-    private function getBirthplace(Identity $identity): array
-    {
-        $birthCommune = $identity->getBirthCommune();
-        if ($birthCommune) {
-            return [
-                $birthCommune->getName(),
-                sprintf('%s - %s', $birthCommune->getDepartment()->getId(), $birthCommune->getDepartment()->getName()),
-                'France'];
-        }
-
-        return [$identity->getBirthPlace(), null, $identity->getBirthCountry()];
     }
 
     private function getDecoratedChanges(array $histories, IdentityDto &$identityDto): void

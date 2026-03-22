@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CoverageController extends AbstractController
 {
     #[Route('s/{filtered}', name: '_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
-    #[IsGranted('MEMBER_LIST')]
+    #[IsGranted('USER_LIST')]
     public function list(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request,
@@ -33,7 +33,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('validate/{licence}', name: '_validate', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'licence')]
+    #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionValidate(
         Request $request,
         ValidateCoverage $validateCoverage,
@@ -70,7 +70,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('/export', name: 's_export', methods: ['GET'])]
-    #[IsGranted('MEMBER_LIST')]
+    #[IsGranted('USER_LIST')]
     public function adminCoveragesExport(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
@@ -79,7 +79,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('/emails', name: 's_email_to_clipboard', methods: ['GET'])]
-    #[IsGranted('MEMBER_LIST')]
+    #[IsGranted('USER_LIST')]
     public function adminEmailCoverages(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
@@ -88,7 +88,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('/autocomplete', name: '_autocomplete', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function memberAutocomplete(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request

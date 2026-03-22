@@ -58,6 +58,7 @@
                         <div class="position-relative"><i class="fas fa-user"></i> {{ user.fullName }}</div>
                     </a>
                 </div>
+                {% if user.menus is not empty %}
                 <div class="block-body">
                     <ul class="dropdown-menu">
                     {% for menu in user.menus %}
@@ -73,6 +74,7 @@
                     {% endfor %}
                     </ul>
                 </div>
+                {% endif %}
             </li>
         {% endif %}
         {% if menu_service.displayCart %}

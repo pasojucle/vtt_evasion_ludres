@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Session;
 use App\Entity\Member;
+use App\Entity\Session;
+use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
 use App\Repository\SessionRepository;
@@ -17,9 +18,9 @@ class IndemnityService
     {
     }
 
-    public function getUserIndemnities(Member $member, array $filters): Currency
+    public function getUserIndemnities(User $user, array $filters): Currency
     {
-        $query = $this->sessionRepository->findByUserAndFilters($member, $filters);
+        $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
         /** @var QueryBuilder $query */
         $sessions = $query->getQuery()->getResult();
 
@@ -47,10 +48,10 @@ class IndemnityService
     {
         if (!empty($allIndemnities)) {
             foreach ($allIndemnities as $indemnity) {
-                $member = $session->getUser();
+                $user = $session->getUser();
                 if ($session->getCluster()->getBikeRide()->getBikeRideType() === $indemnity->getBikeRideType() && 
-                    $member instanceOf Member && 
-                    $member->getLevel() === $indemnity->getLevel() && 
+                    $user instanceOf Member && 
+                    $user->getLevel() === $indemnity->getLevel() && 
                     $session->isPresent()) {
                     $amount = new Currency($indemnity->getAmount());
 

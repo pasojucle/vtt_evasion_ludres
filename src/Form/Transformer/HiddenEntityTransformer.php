@@ -63,7 +63,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
 
         $entity = $this->getObjectManager()
             ->getRepository($this->entityClass)
-            ->find($identifier)
+            ->find((int) $identifier)
         ;
 
         if (null === $entity) {

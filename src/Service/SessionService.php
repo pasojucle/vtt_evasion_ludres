@@ -8,6 +8,8 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\BikeTypeEnum;
+use App\Entity\Enum\PracticeEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -54,50 +56,6 @@ class SessionService
         }
 
         return ['framers' => $framers, 'members' => $members];
-    }
-
-    public function getBikeRideMembers(BikeRide $bikeRide): array
-    {
-        $sessionEntities = $this->sessionRepository->findByBikeRide($bikeRide);
-
-        $sessionsByCluster = [];
-        $bikeRides = [];
-        foreach ($sessionEntities as $sessionEntity) {
-            $sessionDto = $this->sessionDtoTransformer->fromEntity($sessionEntity);
-            $sessions[] = $sessionDto;
-            $cluster = $sessionEntity->getCluster();
-            $sessionsByCluster[$cluster->getId()][] = $sessionDto;
-            $bikeRide = $cluster->getBikeRide();
-            $bikeRides[$bikeRide->getId()] = $bikeRide;
-        }
-
-        $maxCount = 0;
-        $clusters = [];
-        $header = [];
-        $rows = [];
-
-        foreach ($bikeRides as $bikeRide) {
-            foreach ($bikeRide->getClusters() as $cluster) {
-                $header[] = $cluster->getTitle();
-                $clusters[] = $cluster->getId();
-            }
-        }
-        
-        foreach ($sessionsByCluster as $sessions) {
-            if ($maxCount < count($sessions)) {
-                $maxCount = count($sessions);
-            }
-        }
-
-        foreach ($clusters as $cluster) {
-            for ($i = 0; $i < $maxCount; ++$i) {
-                $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))
-                    ? sprintf('%s <span class="badge badge-info small">%s</span>', $sessionsByCluster[$cluster][$i]->user->member->fullName, $sessionsByCluster[$cluster][$i]->practice)
-                    : '';
-                $rows[$i][] = $session;
-            }
-        }
-        return ['header' => $header, 'rows' => $rows];
     }
     
     public function getCluster(BikeRide $bikeRide, Member $member, Collection $clusters): ?Cluster

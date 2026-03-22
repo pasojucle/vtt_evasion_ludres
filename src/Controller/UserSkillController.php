@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserSkillController extends AbstractController
 {
     #[Route(path: '/mon-compte/mon-carnet-de-progression', name: 'user_skill_list', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function list(LogService $logService): Response
     {
         /** @var Member $member */

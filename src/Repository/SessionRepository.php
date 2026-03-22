@@ -146,16 +146,16 @@ class SessionRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByUserAndFilters(Member $member, array $filters): QueryBuilder
+    public function findByUserAndFilters(User $user, array $filters): QueryBuilder
     {
         $qb = $this->createQueryBuilder('s');
         $qb
             ->leftJoin('s.cluster', 'c')
             ->leftJoin('c.bikeRide', 'br')
             ->andWhere(
-                $qb->expr()->eq('s.user', ':member')
+                $qb->expr()->eq('s.user', ':user')
             )
-            ->setParameter('member', $member)
+            ->setParameter('user', $user)
             ->orderBy('br.startAt')
             ;
         if (isset($filters['startAt']) && isset($filters['endAt'])) {

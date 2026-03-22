@@ -61,7 +61,7 @@
                 {% include 'session/admin/list.html.twig' with {'user': session.user} %}
             {% endfor %}
         </ul>
-        {% if cluster.isEditable and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+        {% if not bikeRide.isPublic and cluster.isEditable and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
             <div>
                 {% if not cluster.isComplete %}
                     <a 

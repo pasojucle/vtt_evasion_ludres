@@ -1,0 +1,6 @@
+{# _badge.html.twig #}
+{% if badge %}
+    <div class="flex items-center">
+        <div class="px-1 rounded-sm text-xs text-white" style="background-color: {{ badge.color}}">{{ badge.label}}</div>
+    </div>
+{% endif %}

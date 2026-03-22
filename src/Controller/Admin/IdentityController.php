@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class IdentityController extends AbstractController
 {
     #[Route('/admin/identite/edit/{identity}', name: 'admin_identity_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'identity')]
+    #[IsGranted('USER_EDIT', 'identity')]
     public function adminEdit(
         Request $request,
         UserDtoTransformer $userDtoTransformer,

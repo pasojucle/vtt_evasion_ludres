@@ -187,7 +187,7 @@ class BikeRideRepository extends ServiceEntityRepository
             ->join('s.cluster', 'c')
             ->join('c.bikeRide', 'bikeRide')
             ->andWhere(
-                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->eq('s.user', ':member'),
             );
 
         return $this->createQueryBuilder('br')

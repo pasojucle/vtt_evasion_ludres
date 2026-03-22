@@ -34,7 +34,7 @@
                             <div class="ms-20">{{ survey.bikeRide }}</div>
                         {% endif %}
                     {% endif %}
-                    {% if restriction.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_MEMBER_LIST') %}
+                    {% if restriction.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_USER_LIST') %}
                         {% if form.members is defined %}
                             <div class="row row-align-top">
                                 <div class="form-group radio-group col-md-8">{{ form_row(form.members) }}</div>

@@ -98,7 +98,7 @@ class SlideshowImageRepository extends ServiceEntityRepository
             ->select('log.entityId')
             ->from(Log::class, 'log')
             ->andWhere(
-                (new Expr())->eq('log.user', ':user'),
+                (new Expr())->eq('log.member', ':member'),
                 (new Expr())->eq('log.entity', ':entityName')
             );
 
@@ -108,7 +108,7 @@ class SlideshowImageRepository extends ServiceEntityRepository
             ->select($defaultIfNull)
             ->from(Log::class, 'logMax')
             ->andWhere(
-                (new Expr())->eq('logMax.user', ':user'),
+                (new Expr())->eq('logMax.member', ':member'),
                 (new Expr())->eq('logMax.entity', ':entityName'),
                 (new Expr())->lt('logMax.viewAt', ':today'),
             );
@@ -119,7 +119,7 @@ class SlideshowImageRepository extends ServiceEntityRepository
                 (new Expr())->gt('i.createdAt', (new Expr())->any($latestView->getDQL())),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $member),
+                new Parameter('member', $member),
                 new Parameter('entityName', 'SlideshowImage'),
                 new Parameter('today', (new DateTime())),
             ]))

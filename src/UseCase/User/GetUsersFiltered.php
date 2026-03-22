@@ -104,11 +104,9 @@ abstract class GetUsersFiltered
         $query = $this->getQuery($filters);
         $users = $query->getQuery()->getResult();
         $emails = [];
-
         foreach ($users as $user) {
-            $emails[] = $user->getMainIdentity()->getEmail();
+            $emails[] = $user->getIdentity()->getEmail();
         }
-
 
         return implode(',', $emails);
     }
@@ -118,16 +116,14 @@ abstract class GetUsersFiltered
         if (array_key_exists('user', $filters)) {
             unset($filters['user']);
         }
-        dump($filters);
         $query = $this->getQuery($filters);
         $users = $query->getQuery()->getResult();
-
         $results = [];
         /** @var Member $user */
         foreach ($users as $user) {
             $results[] = [
                 'value' => $user->getId(),
-                'text' => $user->getMainIdentity()->getFullName(),
+                'text' => $user->getIdentity()->getFullName(),
             ];
         }
 

@@ -24,7 +24,7 @@ class UserSkillController extends AbstractController
     }
 
     #[Route('/export', name: 'export', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function export(
         GetUsersSkills $getUsersSkills,
     ): Response {

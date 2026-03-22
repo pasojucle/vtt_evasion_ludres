@@ -11,6 +11,7 @@ use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Member;
 use App\Entity\RegistrationStep;
 use App\Form\MemberType;
+use App\Form\UserType;
 use App\Service\ProjectDirService;
 use App\Service\ReplaceKeywordsService;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -72,7 +73,7 @@ class RegistrationStepDtoTransformer
         $route = ('user_registration_form' === $this->requestStack->getCurrentRequest()->attributes->get('_route')) ? 'user_registration_form' : 'registration_form';
 
         if (null !== $registrationStep->getForm() && RegistrationFormEnum::REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
-            $form = $this->formFactory->create(MemberType::class, $member, [
+            $form = $this->formFactory->create(UserType::class, $member, [
                 'attr' => [
                     'action' => $this->router->generate($route, [
                         'step' => $step,

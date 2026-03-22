@@ -54,7 +54,7 @@ class ExportCluster
                     'user' => $session['user'],
                     'media' => DisplayModeEnum::FILE,
                 ]);
-                $tmp = $session['user']->id . '_tmp';
+                $tmp = $session['user']['id'] . '_tmp';
                 $pdfFilepath = $this->pdfService->makePdf($render, $tmp, $this->dirName, 'B6');
                 $this->files[] = [
                     'filename' => $pdfFilepath,

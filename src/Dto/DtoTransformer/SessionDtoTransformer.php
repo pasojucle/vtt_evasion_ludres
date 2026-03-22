@@ -7,6 +7,7 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\SessionDto;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\PracticeEnum;
 use App\Entity\Session;
 use App\Entity\Member;
@@ -43,7 +44,8 @@ class SessionDtoTransformer
             $sessionDto->indemnity = $this->getIndemnity($session->getMember(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
-            $sessionDto->practice = $session->getPractice()->trans($this->translator);
+            $sessionDto->practice = $session->getPractice()->toBadge($this->translator);
+            $sessionDto->bikeType = $session->getBikeType()->toBadge($this->translator);
         }
 
         return $sessionDto;
@@ -58,7 +60,8 @@ class SessionDtoTransformer
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
             $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session);
-            $sessionDto->practice = $session->getPractice()->trans($this->translator);
+            $sessionDto->practice = $session->getPractice()->toBadge($this->translator);
+            $sessionDto->bikeType = $session->getBikeType()->toBadge($this->translator);
         }
 
         return $sessionDto;

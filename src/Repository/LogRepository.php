@@ -53,7 +53,7 @@ class LogRepository extends ServiceEntityRepository
         try {
             return $this->createQueryBuilder('l')
                 ->andWhere(
-                    (new Expr())->eq('l.user', ':member'),
+                    (new Expr())->eq('l.member', ':member'),
                     (new Expr())->eq('l.entity', ':className'),
                     (new Expr())->eq('l.entityId', ':entityId'),
                 )

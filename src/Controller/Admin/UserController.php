@@ -36,7 +36,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherents/{filtered}', name: 'users', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
-    #[IsGranted('MEMBER_LIST')]
+    #[IsGranted('USER_LIST')]
     public function adminUsers(
         GetMembersFiltered $getMembersFiltered,
         MessageService $messageService,
@@ -55,14 +55,14 @@ class UserController extends AbstractController
             'messages' => $messageService->getMessagesBySectionName('USER'),
         ];
         if ($request->isMethod('POST')) {
-            return $this->render('user/admin/_member_list.html.twig', $params);
+            return $this->render('user/admin/_user_list.html.twig', $params);
         }
         
         return $this->render('user/admin/users.html.twig', $params);
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function adminUsersExport(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -71,7 +71,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function adminEmailUsers(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -83,7 +83,7 @@ class UserController extends AbstractController
     #[Route('/inscription/adherent/{user}', name: 'registration_user', requirements:['user' => '\d+'], methods: ['GET'])]
     #[Route('/adherent/calendrier/{user}', name: 'bike_rides_user', requirements:['user' => '\d+'], methods: ['GET'])]
     #[Route('/adherent/assurance/{user}', name: 'coverage_user', requirements:['user' => '\d+'], methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE', 'user')]
+    #[IsGranted('USER_SHARE', 'user')]
     public function adminUser(
         User $user,
         Request $request
@@ -97,7 +97,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], requirements: ['user' => '\d+'], defaults:['filtered' => false])]
-    #[IsGranted('MEMBER_VIEW', 'user')]
+    #[IsGranted('USER_VIEW', 'user')]
     public function adminUserParticipation(
         GetParticipation $getParticipation,
         Request $request,
@@ -108,7 +108,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/participation/export/{user}', name: 'user_participation_export', methods: ['GET', 'POST'], requirements: ['user' => '\d+'])]
-    #[IsGranted('MEMBER_VIEW', 'user')]
+    #[IsGranted('USER_VIEW', 'user')]
     public function adminUserParticipationExeport(
         GetParticipation $getParticipation,
         Request $request,
@@ -118,7 +118,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/edit/{user}', name: 'user_edit', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'user')]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminUserEdit(
         Request $request,
         User $user
@@ -147,7 +147,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/role/{user}', name: 'user_board_role', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'user')]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminUserRole(
         Request $request,
         User $user
@@ -171,7 +171,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
-    #[IsGranted('MEMBER_EDIT', 'user')]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminSendLicence(
         MailerService $mailerService,
         MessageService $messageService,
@@ -189,7 +189,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/autocomplete', name: 'member_autocomplete', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function memberAutocomplete(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -198,7 +198,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/encadrant/autocomplete', name: 'framer_autocomplete', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function framerAutocomplete(
         GetFramersFiltered $getFramersFiltered,
         Request $request
@@ -212,7 +212,7 @@ class UserController extends AbstractController
 
     
     #[Route('/all/user/autocomplete', name: 'all_user_autocomplete', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function allUserAutocomplete(
         Request $request,
         MemberRepository $memberRepository,
@@ -237,7 +237,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/synthese/saison/{filtered}/{tab}', name: 'overview_season', defaults:['filtered' => false, 'tab' => GetOverviewSeason::TAB_NEW_REGISTRATIONS], methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function overviewSeasonMembers(
         Request $request,
         bool $filtered,
@@ -247,7 +247,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/export/synthese/saison', name: 'overview_season_export', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function exportOverviewSeason(
         Request $request,
     ): Response {
@@ -255,7 +255,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/emails/synthese/saison', name: 'overview_season_email_to_clipboard', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function overviewSeasonToClicpboard(
         Request $request
     ): JsonResponse {

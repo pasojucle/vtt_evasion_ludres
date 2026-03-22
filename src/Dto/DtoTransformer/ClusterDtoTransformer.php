@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\ClusterDto;
+use App\Entity\Address;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\GardianKindEnum;
 use App\Entity\Enum\RegistrationEnum;
+use App\Entity\Guest;
 use App\Entity\Level;
+use App\Entity\Licence;
 use App\Entity\Member;
+use App\Entity\MemberGardian;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
 use App\Service\CacheService;
 use App\Service\ClusterService;
+use App\Service\IdentityService;
 use App\Service\LevelService;
 use App\Service\LicenceAgreementService;
 use App\Service\SessionService;
@@ -23,6 +29,7 @@ use DateInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ClusterDtoTransformer
 {
@@ -36,6 +43,8 @@ class ClusterDtoTransformer
         private readonly LicenceAgreementService $licenceAgreementService,
         private readonly SessionService $sessionService,
         private UserService $userService,
+        private IdentityService $identityService,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -50,6 +59,22 @@ class ClusterDtoTransformer
         $clusterDto->sessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()
             ->getBikeRideType()
             ->isRequireAvailability());
+        $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
+        $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
+        $clusterDto->isEditable = $this->security->isGranted('CLUSTER_EDIT', $cluster);
+
+        return $clusterDto;
+    }
+
+    public function exportFromEntity(Cluster $cluster): ClusterDto
+    {
+        $clusterDto = new ClusterDto();
+
+        $clusterDto->id = $cluster->getId();
+        $clusterDto->title = $cluster->getTitle();
+        $clusterDto->isComplete = $cluster->isComplete();
+        $sessionEntities = $cluster->getSessions();
+        $clusterDto->sessions = $this->getSessions($sessionEntities, false);
         $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
         $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
         $clusterDto->isEditable = $this->security->isGranted('CLUSTER_EDIT', $cluster);
@@ -131,29 +156,54 @@ class ClusterDtoTransformer
         foreach ($sessionEntities as $session) {
             $userEntity = $session->getUser();
             $identity = $userEntity->getIdentity();
+            $bithDate = $identity->getBirthDate();
+            list($birthPlace, $birthDepartment, $birthCountry) = $this->identityService->getBirthplace($identity);
+            $userAddress = $this->addressToArray($identity->getAddress());
+            $userLicence = $userEntity->getLastLicence();
             $user = [
                 'id' => $userEntity->getId(),
                 'fullName' => $identity->getName() . ' ' . $identity->getFirstName(),
+                'birthDate' => ($bithDate) ? $bithDate->format('j/n/Y') : null,
+                'address' => $userAddress,
+                'birthPlace' => $birthPlace,
+                'birthDepartment' => $birthDepartment,
+                'birthCountry' => $birthCountry,
+                'email' => ($userEntity instanceof Guest) ? $userEntity->getEmail() : $identity->getEmail(),
+                'phone' => implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()])),
+                'emergencyPhone' => $identity->getEmergencyPhone(),
+                'emergencyContact' => $identity->getEmergencyContact(),
+                'picture' => $this->identityService->getPicture($identity->getPicture()),
             ];
-            if ($user instanceof Member) {
-                $level = $user->getLevel();
+            if ($userEntity instanceof Member) {
+                $level = $userEntity->getLevel();
                 $user['level'] = [
                     'title' => $level->getTitle(),
                     'colors' => $this->levelService->getColors($level->getColor()),
                 ];
                 $licencesAgreements = [];
-                foreach ($user->getLastLicence()->getLicenceAgreements() as $licenceAgreement) {
+                foreach ($userEntity->getLastLicence()->getLicenceAgreements() as $licenceAgreement) {
                     $agreement = $licenceAgreement->getAgreement();
                     $licencesAgreements[$agreement->getId()] = $this->licenceAgreementService->toHtml($licenceAgreement);
                 }
                 $user['agreements'] = $licencesAgreements;
-        // $user['health'] = $this->healthDtoTransformer->fromEntity($member->getHealth());
+                foreach([$userEntity->getLegalGardian(),$userEntity->getSecondContact()] as $gardian) {
+                    $this->addGardian($gardian, $user, $userAddress);
+                }
+                $user['health'] = [
+                    'content' => $userEntity->getHealth()?->getContent()
+                ];
+                $user['lastLicence'] = [
+                    'coverageStr' => (!empty($userLicence->getCoverage())) 
+                        ? $this->translator->trans(Licence::COVERAGES[$userLicence->getCoverage()]) 
+                        : null
+                ];
             }
 
             $sessions[] = [
                 // 'user' => ($fromEntities)
                 //     ? $this->userDtoTransformer->getSessionHeaderFromEntity($session->getUser())
                 //     : $this->userDtoTransformer->fromEntity($session->getUser()),
+                'id' => $session->getId(),
                 'user' => $user,
                 'availability' => $session->getAvailability(),
                 'isPresent' => $session->isPresent(),
@@ -162,6 +212,31 @@ class ClusterDtoTransformer
         }
 
         return $sessions;
+    }
+
+    private function addGardian(?MemberGardian $gardian, array &$user, array $userAddress): void
+    {
+        if ($gardian) {
+            $key = GardianKindEnum::LEGAL_GARDIAN === $gardian->getKind() ? 'legalGardian' : 'secondKinship';
+            $gardianIdentity = $gardian->getIdentity();
+            $gardianAddress = $gardianIdentity->getAddress();
+            $user[$key] = [
+                'kind' => $gardian->getKind(),
+                'fullName' => $gardianIdentity->getFullName(),
+                'phone' =>  implode(' - ', array_filter([$gardianIdentity->getMobile(), $gardianIdentity->getPhone()])),
+                'address' => $gardianAddress ? $this->addressToArray($gardianAddress) : $userAddress,
+                'email' => $gardianIdentity->getEmail(),
+            ];
+        }
+    }
+
+    private function addressToArray(Address $address): array
+    {
+        return [
+            'street' => $address->getStreet(),
+            'postalCode' => $address->getPostalCode(),
+            'town' => $address->getCommune()?->getName() ?? $address->getTown(),
+        ];
     }
 
     private function getAvailableSessions(Collection $sessionEntities, bool $isRequireAvailability): array
@@ -216,7 +291,9 @@ class ClusterDtoTransformer
                         'mustProvideRegistration' => $mustProvideRegistration,
                         'licenceNumber' => $user->getLicenceNumber(),
                     ],
-                    'userIsOnSite' => $session->isPresent()
+                    'userIsOnSite' => $session->isPresent(),
+                    'practice' => $session->getPractice()->toBadge($this->translator),
+                    'bikeType' => $session->getBikeType()->toBadge($this->translator),
                 ];
             }
         }
@@ -250,7 +327,7 @@ class ClusterDtoTransformer
                 }
             }
         }
-
+        dump($userOnSiteSessions);
         return count($userOnSiteSessions);
     }
 }

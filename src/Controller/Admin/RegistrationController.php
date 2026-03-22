@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class RegistrationController extends AbstractController
 {
     #[Route('/inscriptions/{filtered}', name: 's', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
-    #[IsGranted('MEMBER_LIST')]
+    #[IsGranted('USER_LIST')]
     public function adminRegistrations(
         GetRegistrationsFiltered $getRegistrationsFiltered,
         ParameterService $parameterService,
@@ -44,7 +44,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/export/inscription', name: 's_export', methods: ['GET'])]
-    #[IsGranted('MEMBER_LIST')]
+    #[IsGranted('USER_LIST')]
     public function adminRegistrationsExport(
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
@@ -53,7 +53,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/emails/inscriptions', name: 's_email_to_clipboard', methods: ['GET'])]
-    #[IsGranted('MEMBER_LIST')]
+    #[IsGranted('USER_LIST')]
     public function adminEmailRegistrations(
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
@@ -62,7 +62,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/inscription/autocomplete', name: '_autocomplete', methods: ['GET'])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function memberAutocomplete(
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request

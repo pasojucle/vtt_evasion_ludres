@@ -8,14 +8,14 @@ use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Entity\Session;
 use App\Entity\Member;
 use App\Repository\SessionRepository;
-use App\Service\SessionService;
+use App\UseCase\Session\GetFormSession;
 
 class GetBikeRides
 {
     public function __construct(
         private SessionDtoTransformer $sessionDtoTransformer,
-        private SessionService $sessionService,
         private SessionRepository $sessionRepository,
+        private GetFormSession $getFormSession,
     ) {
     }
 
@@ -31,8 +31,9 @@ class GetBikeRides
                 'bikeRide' => $sessionDto->bikeRide,
                 'availability' => $sessionDto->availability,
                 'sessionId' => $sessionDto->id,
-                'memberList' => $this->sessionService->getBikeRideMembers($session->getCluster()->getBikeRide()),
+                'memberList' => $this->getFormSession->getBikeRideMembers($session->getCluster()->getBikeRide()),
                 'practice' => $sessionDto->practice,
+                'bikeType' => $sessionDto->bikeType,
                 'cluster' => $sessionDto->cluster,
             ];
         }

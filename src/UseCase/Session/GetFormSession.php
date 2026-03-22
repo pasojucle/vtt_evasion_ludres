@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Session;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Member;
@@ -33,6 +34,7 @@ class GetFormSession
         private readonly IsWritableAvailability $isWritableAvailability,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
         private readonly SurveyService $surveyService,
+        private SessionDtoTransformer $sessionDtoTransformer,
     ) {
     }
 
@@ -43,7 +45,7 @@ class GetFormSession
         $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $userSession->getUser());
         $sessions = ($isWritableAvailability)
             ? $this->sessionService->getSessionsBytype($bikeRide)
-            : $this->sessionService->getBikeRideMembers($bikeRide);
+            : $this->getBikeRideMembers($bikeRide);
 
         $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyService->getResponsesByUserAndSurvey($member, $bikeRide->getSurvey()) : null;
 
@@ -52,6 +54,53 @@ class GetFormSession
         $this->setParams($form, $bikeRide, $sessions);
 
         return $form;
+    }
+
+    public function getBikeRideMembers(BikeRide $bikeRide): array
+    {
+        $sessionEntities = $this->sessionRepository->findByBikeRide($bikeRide);
+
+        $sessionsByCluster = [];
+        $bikeRides = [];
+        foreach ($sessionEntities as $sessionEntity) {
+            $sessionDto = $this->sessionDtoTransformer->fromEntity($sessionEntity);
+            $sessions[] = $sessionDto;
+            $cluster = $sessionEntity->getCluster();
+            $sessionsByCluster[$cluster->getId()][] = $sessionDto;
+            $bikeRide = $cluster->getBikeRide();
+            $bikeRides[$bikeRide->getId()] = $bikeRide;
+        }
+
+        $maxCount = 0;
+        $clusters = [];
+        $header = [];
+        $rows = [];
+
+        foreach ($bikeRides as $bikeRide) {
+            foreach ($bikeRide->getClusters() as $cluster) {
+                $header[] = $cluster->getTitle();
+                $clusters[] = $cluster->getId();
+            }
+        }
+        
+        foreach ($sessionsByCluster as $sessions) {
+            if ($maxCount < count($sessions)) {
+                $maxCount = count($sessions);
+            }
+        }
+
+        foreach ($clusters as $cluster) {
+            for ($i = 0; $i < $maxCount; ++$i) {
+                $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))
+                    ? [
+                        'fullName' => $sessionsByCluster[$cluster][$i]->user->member->fullName,
+                        'practice' => $sessionsByCluster[$cluster][$i]->practice,
+                        'bikeType' => $sessionsByCluster[$cluster][$i]->bikeType,
+                    ]: null;
+                $rows[$i][] = $session;
+            }
+        }
+        return ['header' => $header, 'rows' => $rows];
     }
 
     public function toEdit(Session $session): FormInterface

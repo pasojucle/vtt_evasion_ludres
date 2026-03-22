@@ -62,14 +62,11 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/season/detail', name: '_saison_detail', methods: ['GET'], options:['expose' => true])]
-    #[IsGranted('MEMBER_SHARE')]
+    #[IsGranted('USER_SHARE')]
     public function seasonDetail(
-        Request $request,
         GetCurrentSeasonUsers $getCurentSeasonUsers,
         ParameterService $parameterService,
     ): Response {
-        $season = $request->getSession()->get('currentSeason');
-
         $parameters = [
             [
                 'label' => 'Inscription séances d\'essai (Ecole Vtt)',

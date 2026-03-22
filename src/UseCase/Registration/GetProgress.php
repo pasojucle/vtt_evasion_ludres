@@ -239,7 +239,7 @@ class GetProgress
                 ->setMember($this->member);
             $this->entityManager->persist($gardian);
             $this->member->addUserGardian($gardian);
-            $identity->addUserGardian($gardian);
+            $identity->addMemberGardian($gardian);
         }
     }
 

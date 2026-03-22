@@ -27,8 +27,15 @@
                                         {% if session.availability.enum != enum('App\\Entity\\Enum\\AvailabilityEnum').NONE %}
                                             <p class="{{ session.availability.class.color }}">{{ session.availability.class.icon|raw }} {{ session.availability.enum|trans }}</p>
                                         {% endif %}
-                                        {% if session.bikeRide.bikeRideType.displayPractice %}
-                                            <p class="badge badge-info small">{{ session.practice|trans }}</p>
+                                        {% if session.practice or session.bikeType %}
+                                            <div class="flex gap-2">
+                                                {% if session.practice %}
+                                                    {{ include('component/_badge.html.twig', { badge: session.practice }) }}
+                                                {% endif %}
+                                                {% if session.bikeType %}
+                                                    {{ include('component/_badge.html.twig', { badge: session.bikeType }) }}
+                                                {% endif %}
+                                            </div>
                                         {% endif %}
                                         {% if not session.bikeRide.bikeRideType.isSchool and session.bikeRide.isMultiClusters %}
                                             <p> {{ session.cluster }}</p>

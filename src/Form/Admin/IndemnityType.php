@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\BikeRideType;
 use App\Entity\Indemnity;
-use App\Form\HiddenBikeRideTypeType;
-use App\Form\HiddenLevelType;
+use App\Entity\Level;
+use App\Form\HiddenEntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,8 +28,12 @@ class IndemnityType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ->add('level', HiddenLevelType::class)
-            ->add('bikeRideType', HiddenBikeRideTypeType::class)
+            ->add('level', HiddenEntityType::class, [
+                'class' => Level::class,
+            ])
+            ->add('bikeRideType', HiddenEntityType::class, [
+                'class' => BikeRideType::class,
+            ])
         ;
     }
 

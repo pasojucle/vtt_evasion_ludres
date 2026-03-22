@@ -88,6 +88,6 @@ class UserService
     {
         $currentSeason = $this->seasonService->getCurrentSeason();
 
-        return 1 === $licencesTotal && $lastLicence?->getSeason() === $currentSeason && LicenceStateEnum::YEARLY_FILE_SUBMITTED === $lastLicence?->getState();
+        return 1 === $licencesTotal && $lastLicence?->getSeason() === $currentSeason && LicenceStateEnum::YEARLY_FILE_SUBMITTED === $lastLicence->getState();
     }
 }

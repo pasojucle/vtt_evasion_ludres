@@ -12,19 +12,19 @@
                        data-turbo-frame="modal_content">
                         <i class="fas fa-question-circle"></i>
                     </a>
-                {% elseif session.availability.enum != enum('App\\Entity\\Enum\\AvailabilityEnum').UNAVAILABLE %}
+                {% elseif session.availability != enum('App\\Entity\\Enum\\AvailabilityEnum').UNAVAILABLE %}
                     <button data-action="click->participation#toggle" class="btn btn-light">
                         <i class="fas fa-check"></i>
                     </button>
                 {% endif %}
             {% else %}
-                <button data-action="click->participation#toggle" class="btn btn-success">
+                <button data-action="click->participation#toggle" class="btn btn-success" data-on-site="1">
                     <i class="fas fa-check-circle"></i>
                 </button>
             {% endif %}
         {% else %}
             {% if session.userIsOnSite %}
-                <div id="session-present-{{ session.id }}" class="success-ico xl-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
+                <div id="session-present-{{ session.id }}" data-on-site="1" class="success-ico xl-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
             {% endif %}
         {% endif %}
     </div>

@@ -49,6 +49,7 @@ class AddGuestSession
     {
         $session = $form->getData();
         $user = $session->getUser();
+        $session->setPractice($session->getCluster()->getPractice());
         $licence = $user->getLastLicence();
         if (!$licence->isFFVelo()) {
             $this->entityManager->remove($licence);

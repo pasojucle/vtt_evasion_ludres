@@ -18,7 +18,7 @@
             <div class="block background-ligth">
                 <div class="block-title">
                     <h2>Adhérent</h2>
-                    {% if is_granted('MEMBER_EDIT', user) %}
+                    {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
                             <a href="{{ path('admin_identity_edit', {'identity': user.member.id}) }}"
                                 class="btn" title="Modifier">
@@ -52,20 +52,20 @@
 
                     </div>
                 </div>
-                    {% if user.lastLicence.category == enum('App\\Entity\\Enum\\LicenceCategoryEnum').ADULT %}
-                        <div class="separator"></div>
-                        <ul>
-                            <li><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhoneAnchor|raw }}</li>
-                            <li><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</li>
-                        </ul>
-                    {% endif %}
-                </div>
+                {% if user.lastLicence and user.lastLicence.category == enum('App\\Entity\\Enum\\LicenceCategoryEnum').ADULT %}
+                    <div class="separator"></div>
+                    <ul>
+                        <li><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhoneAnchor|raw }}</li>
+                        <li><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</li>
+                    </ul>
+                {% endif %}
+            </div>
 
             {% if user.legalGardian is not empty and user.secondKinship is not empty %}
                 <div class="block background-ligth">
                     <div class="block-title">
                         <h2>Parents</h2>
-                        {% if is_granted('MEMBER_EDIT', user) and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                        {% if is_granted('USER_EDIT', user) and (user.secondKinship is not empty or user.secondKinship is not empty) %}
                             <div class="tools">
                             <a href="{{ path('admin_gardians_edit', {'user': user.id}) }}"
                                     class="btn" title="Modifier">
@@ -91,12 +91,13 @@
                     </ul>
                 </div>
             {% endif %}
+            {% if user.level is not null %}
             <div class="block background-ligth">
                 <div class="block-title">
                     {% if user.level.type %}
                         <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
                     {% endif %}
-                    {% if is_granted('MEMBER_EDIT', user) %}
+                    {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
                             <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
@@ -119,104 +120,108 @@
                     </ul>
                 </div>
             </div>
-            <div class="block background-ligth">
-                <div class="block-title d-flex align-items-center">
-                    <h2>Licence </h2>
-                    {% if user.isEndTesting %}
-                        <span class="bs-badge text-bg-danger mx-20">{{ 'Période d\'essai terminée'}}</span>
-                    {% else %}
-                        <span class="bs-badge text-bg-info mx-20">{{ licence.isYearly ? licence.shortSeason : 'Période d\'essai'}}</span>
-                    {% endif %}
-                    {% if is_granted('MEMBER_EDIT', user)%}
-                        <div class="tools">
-                        <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
-                                class="btn" title="Modifier">
-                                <i class="fas fa-edit"></i> 
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="block-body">
-                    <ul>
-                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Numéro</b></div><div class="col-md-8 col-xs-6">{{ user.licenceNumber }}</div></div></li>
-                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Saison</b></div><div class="col-md-8 col-xs-6">{{ licence.shortSeason }}</div></div></li>
-                        {% if licence.createdAt is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription</b></div><div class="col-md-8 col-xs-6" title="{{ licence.createdAtLong }}">{{ licence.createdAt }}</div></div></li>
-                        {% endif %}
-                        {% if licence.testingAt is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription à la période d'éssaie</b></div><div class="col-md-8 col-xs-6" title="{{ licence.testingAtLong }}">{{ licence.testingAt }}</div></div></li>
-                        {% endif %}
-                        {% if licence.state is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.state.value|trans }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">
-                            {% if licence.isSeasonLicence %}
-                                {% if not licence.currentSeasonForm %}
-                                    <span class="success"></span><span>Assurance {{ app.session.get('currentSeason')}} validée</span>
-                                {% else %}
-                                    <span class="danger"></span><span>Assurance {{ app.session.get('currentSeason')}} manquante</span>
-                                {% endif %}
-                            {% endif %}
-                            </div></div></li>
-                        {% endif %}
-                        {% if licence.isYearly is same as(false) %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6"> {{ user.trialSessionsPresent }} / {{ user.testingBikeRides }} sortie(s)</div></div></li>
-                        {% endif %}
-                        {% if licence.coverage is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
-                        {% endif %}
-                        {% if licence.familyMember is not null %}
-                            <li><div class="mt-10 row"><div class="col-md-4 col-xs-6"><b>Membre de la famille </b></div><div class="col-md-8 col-xs-6">{{ licence.familyMember.licenceNumber }} - {{ licence.familyMember.fullName }}</div></div></li>
-                        {% endif %}
-                        {% if licence.isVae is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-            <div class="block background-ligth">
-                <div class="block-title">
-                    <h2>Authorisations</h2>
-                </div>
-                <div class="block-body">
-                    <ul>
-                        {% for licenceAuthorization in licence.authorizations %}
-                            <li style="position: relative">
-                                <div> 
-                                    <span class="bs-badge rounded-circle border border-white d-flex align-items-center mx-1 align-content-center text-bg-{{ licenceAuthorization.toHtml.color }}">
-                                        {{ licenceAuthorization.toHtml.icon|raw }}
-                                    </span>
-                                    <b>{{ licenceAuthorization.toHtml.message }}</b>
-                                </div>
-                                <div style="position: absolute; right: 0; top: 0;">
-                                    <a href="{{ path('admin_licence_authorization_edit', {'licenceAuthorization': licenceAuthorization.id}) }}" class="btn" style="padding: unset; font-size: 20px" title="Modifier"><i class="fas fa-edit"></i></a>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            {% if licence.isYearly and user.health is not empty %}
+            {% endif %}
+            {% if licence is not null %}
                 <div class="block background-ligth">
-                <div class="block-title">
-                    <h2>Informations sanitaires</h2>
-                    {% if is_granted('MEMBER_EDIT', user) %}
-                        <div class="tools">
-                        <a href="{{ path('admin_health_edit', {'user': user.id}) }}"
-                                class="btn" title="Modifier">
-                                <i class="fas fa-edit"></i> 
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="block-body">
-                    <div class="col-md-6 col-xs-12">
+                    <div class="block-title d-flex align-items-center">
+                        <h2>Licence </h2>
+                        {% if user.isEndTesting %}
+                            <span class="bs-badge text-bg-danger mx-20">{{ 'Période d\'essai terminée'}}</span>
+                        {% else %}
+                            <span class="bs-badge text-bg-info mx-20">{{ licence.isYearly ? licence.shortSeason : 'Période d\'essai'}}</span>
+                        {% endif %}
+                        {% if is_granted('USER_EDIT', user)%}
+                            <div class="tools">
+                            <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
+                                    class="btn" title="Modifier">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="block-body">
                         <ul>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Certificat médical :</b></div><div class="col-md-8 col-xs-6">{{ user.health.medicalCertificateDate}}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Pathologie</b></div><div class="col-md-8 col-xs-6">{{ user.health.content}}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Numéro</b></div><div class="col-md-8 col-xs-6">{{ user.licenceNumber }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Saison</b></div><div class="col-md-8 col-xs-6">{{ licence.shortSeason }}</div></div></li>
+                            {% if licence.createdAt is not null %}
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription</b></div><div class="col-md-8 col-xs-6" title="{{ licence.createdAtLong }}">{{ licence.createdAt }}</div></div></li>
+                            {% endif %}
+                            {% if licence.testingAt is not null %}
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription à la période d'éssaie</b></div><div class="col-md-8 col-xs-6" title="{{ licence.testingAtLong }}">{{ licence.testingAt }}</div></div></li>
+                            {% endif %}
+                            {% if licence.state is not null %}
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.state.value|trans }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">
+                                {% if licence.isSeasonLicence %}
+                                    {% if not licence.currentSeasonForm %}
+                                        <span class="success"></span><span>Assurance {{ app.session.get('currentSeason')}} validée</span>
+                                    {% else %}
+                                        <span class="danger"></span><span>Assurance {{ app.session.get('currentSeason')}} manquante</span>
+                                    {% endif %}
+                                {% endif %}
+                                </div></div></li>
+                            {% endif %}
+                            {% if licence.isYearly is same as(false) %}
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6"> {{ user.trialSessionsPresent }} / {{ user.testingBikeRides }} sortie(s)</div></div></li>
+                            {% endif %}
+                            {% if licence.coverage is not null %}
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
+                            {% endif %}
+                            {% if licence.familyMember is not null %}
+                                <li><div class="mt-10 row"><div class="col-md-4 col-xs-6"><b>Membre de la famille </b></div><div class="col-md-8 col-xs-6">{{ licence.familyMember.licenceNumber }} - {{ licence.familyMember.fullName }}</div></div></li>
+                            {% endif %}
+                            {% if licence.isVae is not null %}
+                                <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
+                            {% endif %}
                         </ul>
                     </div>
+                </div>
+                <div class="block background-ligth">
+                    <div class="block-title">
+                        <h2>Authorisations</h2>
+                    </div>
+                    <div class="block-body">
+                        <ul>
+                            {% for licenceAuthorization in licence.authorizations %}
+                                <li style="position: relative">
+                                    <div> 
+                                        <span class="bs-badge rounded-circle border border-white d-flex align-items-center mx-1 align-content-center text-bg-{{ licenceAuthorization.toHtml.color }}">
+                                            {{ licenceAuthorization.toHtml.icon|raw }}
+                                        </span>
+                                        <b>{{ licenceAuthorization.toHtml.message }}</b>
+                                    </div>
+                                    <div style="position: absolute; right: 0; top: 0;">
+                                        <a href="{{ path('admin_licence_authorization_edit', {'licenceAuthorization': licenceAuthorization.id}) }}" class="btn" style="padding: unset; font-size: 20px" title="Modifier"><i class="fas fa-edit"></i></a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% if licence.isYearly and user.health is not empty %}
+                    <div class="block background-ligth">
+                        <div class="block-title">
+                            <h2>Informations sanitaires</h2>
+                            {% if is_granted('USER_EDIT', user) %}
+                                <div class="tools">
+                                    <a href="{{ path('admin_health_edit', {'member': user.id}) }}"
+                                        class="btn" title="Modifier">
+                                        <i class="fas fa-edit"></i> 
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="block-body">
+                            <div class="col-md-6 col-xs-12">
+                                <ul>
+                                    <li><div class="row"><div class="col-md-4 col-xs-6"><b>Certificat médical :</b></div><div class="col-md-8 col-xs-6">{{ user.health.medicalCertificateDate}}</div></div></li>
+                                    <li><div class="row"><div class="col-md-4 col-xs-6"><b>Pathologie</b></div><div class="col-md-8 col-xs-6">{{ user.health.content}}</div></div></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 {% endif %}
-            </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

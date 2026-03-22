@@ -11,9 +11,9 @@ use App\Entity\Enum\PermissionEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\Member;
+use App\Entity\User;
 use App\Repository\IdentityRepository;
 use App\Repository\LicenceRepository;
-use App\Repository\SessionRepository;
 use App\Service\ParameterService;
 use App\Service\SeasonService;
 use App\Service\UserService;
@@ -42,67 +42,68 @@ class UserDtoTransformer
     ) {
     }
 
-    public function fromEntity(Member $member, ?array $histories = null): UserDto
+    public function fromEntity(User $user, ?array $histories = null): UserDto
     {
         $userDto = new UserDto();
-        $mainIdentity = $member->getMainIdentity();
-        $userDto->id = $member->getId();
-        $userDto->licenceNumber = $member->getLicenceNumber();
-        $userDto->member = $this->identityDtoTransformer->fromEntity($member->getIdentity());
-        $userDto->legalGardian = ($member->getLegalGardian()) ? $this->identityDtoTransformer->fromEntity($member->getLegalGardian()) : null;
-        $userDto->secondKinship = ($member->getSecondContact()) ? $this->identityDtoTransformer->fromEntity($member->getSecondContact()) : null;
-        $userDto->lastLicence = $this->getLastLicence($member, $histories);
-        $userDto->prevLicence = $this->getPrevLicence($member);
-        $userDto->health = $this->healthDtoTransformer->fromEntity($member->getHealth());
-        $userDto->level = $this->levelDtoTransformer->fromEntity($member->getLevel());
+        $mainIdentity = $user->getMainIdentity();
+        $userDto->id = $user->getId();
+        $userDto->licenceNumber = $user->getLicenceNumber();
+        $userDto->member = $this->identityDtoTransformer->fromEntity($user->getIdentity());
+        if ($user instanceof Member) {
+            $userDto->legalGardian = ($user->getLegalGardian()) ? $this->identityDtoTransformer->fromEntity($user->getLegalGardian()) : null;
+            $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
+            $userDto->boardRole = $user->getBoardRole()?->getName();
+            $userDto->isBoardMember = null !== $user->getBoardRole();
+            $userDto->secondKinship = ($user->getSecondContact()) ? $this->identityDtoTransformer->fromEntity($user->getSecondContact()) : null;
+            $userDto->lastLicence = $this->getLastLicence($user, $histories);
+            $userDto->prevLicence = $this->getPrevLicence($user);
+            $userDto->permissions = $this->getPermissions($user);
+            $userDto->trialSessionsPresent = $this->userService->trialSessionsPresent($user->getLastLicence(), $user);
+            $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
+            $userDto->agreements = $this->licenceAgreeementDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAgreements());
+            $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $user->getSessions()->count());
+            $userDto->isEndTesting = $this->userService->isEndTesting($user->getLastLicence(), $userDto->trialSessionsPresent);
+            $userDto->mustProvideRegistration = $this->userService->mustProvideRegistration($user->getLastLicence(), $user->getLicences()->count());
+            $userDto->canRenewRegistration = $this->canRenewRegistration($userDto->lastLicence);
+        }
+        $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $mainIdentity?->getEmail();
         $userDto->mainFullName = $mainIdentity?->getFullName();
-        $userDto->boardRole = $member->getBoardRole()?->getName();
-        $userDto->isBoardMember = null !== $member->getBoardRole();
-        $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
-        $userDto->agreements = $this->licenceAgreeementDtoTransformer->fromEntities($member->getLastLicence()->getLicenceAgreements());
-        $userDto->permissions = $this->getPermissions($member);
 
-        $userDto->trialSessionsPresent = $this->userService->trialSessionsPresent($member->getLastLicence(), $member);
-        $userDto->isEndTesting = $this->userService->isEndTesting($member->getLastLicence(), $userDto->trialSessionsPresent);
-        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $member->getSessions()->count());
-        $userDto->mustProvideRegistration = $this->userService->mustProvideRegistration($member->getLastLicence(), $member->getLicences()->count());
-        $userDto->canRenewRegistration = $this->canRenewRegistration($userDto->lastLicence);
-         
         return $userDto;
     }
 
-    public function getHeaderFromEntity(Member $member, ?array $histories = null, ?Identity $identity = null): UserDto
+    public function getHeaderFromEntity(Member $user, ?array $histories = null, ?Identity $identity = null): UserDto
     {
         $userDto = new UserDto();
         if (!$identity) {
-            $identity = $member->getIdentity();
+            $identity = $user->getIdentity();
         }
-        $userDto->id = $member->getId();
-        $userDto->licenceNumber = $member->getLicenceNumber();
+        $userDto->id = $user->getId();
+        $userDto->licenceNumber = $user->getLicenceNumber();
         $userDto->member = $this->identityDtoTransformer->fromEntity($identity, $histories);
-        $userDto->level = $this->levelDtoTransformer->fromEntity($member->getLevel());
-        $userDto->lastLicence = $this->getLastLicence($member, $histories);
-        $userDto->seasons = $this->getSeasons($member->getLicences());
-        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $member->getSessions()->count());
-        $userDto->trialSessionsPresent = $this->userService->trialSessionsPresent($member->getLastLicence(), $member);
-        $userDto->mustProvideRegistration = $this->userService->mustProvideRegistration($member->getLastLicence(), $member->getLicences()->count());
-        $userDto->isEndTesting = $this-> userService->isEndTesting($member->getLastLicence(), $userDto->trialSessionsPresent);
+        $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
+        $userDto->lastLicence = $this->getLastLicence($user, $histories);
+        $userDto->seasons = $this->getSeasons($user->getLicences());
+        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $user->getSessions()->count());
+        $userDto->trialSessionsPresent = $this->userService->trialSessionsPresent($user->getLastLicence(), $user);
+        $userDto->mustProvideRegistration = $this->userService->mustProvideRegistration($user->getLastLicence(), $user->getLicences()->count());
+        $userDto->isEndTesting = $this-> userService->isEndTesting($user->getLastLicence(), $userDto->trialSessionsPresent);
 
         return $userDto;
     }
 
-    public function getSessionHeaderFromEntity(Member $member, ?array $histories = null, ?Identity $identity = null): UserDto
+    public function getSessionHeaderFromEntity(Member $user, ?array $histories = null, ?Identity $identity = null): UserDto
     {
         $userDto = new UserDto();
         if (!$identity) {
-            $identity = $member->getIdentity();
+            $identity = $user->getIdentity();
         }
-        $userDto->id = $member->getId();
+        $userDto->id = $user->getId();
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($identity, $histories);
-        $userDto->level = $this->levelDtoTransformer->fromEntity($member->getLevel());
-        $userDto->agreements = $this->licenceAgreeementDtoTransformer->fromEntities($member->getLastLicence()->getLicenceAgreements());
-        $userDto->health = $this->healthDtoTransformer->fromEntity($member->getHealth());
+        $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
+        $userDto->agreements = $this->licenceAgreeementDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAgreements());
+        $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
 
         return $userDto;
     }
@@ -116,8 +117,8 @@ class UserDtoTransformer
             $members[$identity->getUser()->getId()] = $identity;
         }
         foreach ($userEntities as $userEntity) {
-            $member = (array_key_exists($userEntity->getId(), $members)) ? $members[$userEntity->getId()] : null;
-            $users[] = $this->getHeaderFromEntity($userEntity, null, $member);
+            $user = (array_key_exists($userEntity->getId(), $members)) ? $members[$userEntity->getId()] : null;
+            $users[] = $this->getHeaderFromEntity($userEntity, null, $user);
         }
 
         $this->sortByFullName($users);
@@ -132,7 +133,7 @@ class UserDtoTransformer
         });
     }
 
-    public function identifiersFromEntity(Member $userEntity): UserDto
+    public function identifiersFromEntity(User $userEntity): UserDto
     {
         $userDto = new UserDto();
         /** @var Identity $mainIdentity */
@@ -143,9 +144,12 @@ class UserDtoTransformer
         $userDto->mainEmail = $mainIdentity->getEmail();
         $userDto->mainFullName = $mainIdentity->getFullName();
         $userDto->licenceNumber = $userEntity->getLicenceNumber();
-        $userDto->lastLicence = $this->getLastLicence($userEntity, null);
-        $userDto->trialSessionsPresent = $this->userService->trialSessionsPresent($userEntity->getLastLicence(), $userEntity);
-        $userDto->isEndTesting = $this->userService->isEndTesting($userEntity->getLastLicence(), $userDto->trialSessionsPresent);
+        if ($userEntity instanceof Member) {
+            $userDto->lastLicence = $this->getLastLicence($userEntity, null);
+            $userDto->trialSessionsPresent = $this->userService->trialSessionsPresent($userEntity->getLastLicence(), $userEntity);
+            $userDto->isEndTesting = $this->userService->isEndTesting($userEntity->getLastLicence(), $userDto->trialSessionsPresent);
+        }
+
         return $userDto;
     }
 
@@ -158,31 +162,31 @@ class UserDtoTransformer
         return 0;
     }
 
-    private function getLastLicence(Member $member, ?array $histories): LicenceDto
+    private function getLastLicence(Member $user, ?array $histories): LicenceDto
     {
-        $licence = $member->getLastLicence();
+        $licence = $user->getLastLicence();
 
         return $this->licenceDtoTransformer->fromEntity($licence, $histories);
     }
 
-    private function getPrevLicence(Member $member): ?LicenceDto
+    private function getPrevLicence(Member $user): ?LicenceDto
     {
-        if (!$member->getId()) {
+        if (!$user->getId()) {
             return null;
         }
-        return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($member));
+        return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($user));
     }
 
-    private function getPermissions(Member $member): ?string
+    private function getPermissions(Member $user): ?string
     {
-        $token = new UsernamePasswordToken($member, 'none', $member->getRoles());
+        $token = new UsernamePasswordToken($user, 'none', $user->getRoles());
                             
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return 'Accès total au menu admin';
         }
         $permissions = [];
         /** @var PermissionEnum $permission */
-        foreach ($member->getPermissions() as $permission) {
+        foreach ($user->getPermissions() as $permission) {
             $permissions[] = (PermissionEnum::BIKE_RIDE_CLUSTER === $permission)
                 ? $permission->trans($this->translator)
                 : sprintf('Accès à l\'admin pour gérer %s', $permission->trans($this->translator));

@@ -2,89 +2,90 @@
 
 {% block body %}
 <main class="minimize">
-        <h2>{{ user.member.fullName }}</h2>
-        <div>
-            <br>
-            <table class="table-fixed">
+    {% dump(user) %}
+    <h2>{{ user.fullName }}</h2>
+    <div>
+        <br>
+        <table class="table-fixed">
+            <tr>
+                <td rowspan="8" style="width: 150px">
+                    {% if user.picture %}
+                        <img src="{{ user.picture|imgPath(media) }}" style="width: 80px;">
+                    {% endif %}
+                </td>
+                <td colspan="3" ><b>Date naissance : </b>{{ user.birthDate }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" ><b>Lieu de naissance : </b>{{ user.birthPlace }}</td>
+            </tr>
+            {% if user.birthDepartment %}
                 <tr>
-                    <td rowspan="8" style="width: 150px">
-                        {% if user.member.picture %}
-                            <img src="{{ user.member.picture|imgPath(media) }}" style="width: 80px;">
-                        {% endif %}
-                    </td>
-                    <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+                    <td colspan="3" ><b>Déprtement de naissance : </b>{{ user.birthDepartment }}</td>
                 </tr>
+            {% endif %}
+            <tr>
+                <td colspan="3" ><b>Pays de naissance : </b>{{ user.birthCountry }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" ><b>Adresse : </b> {{ user.address.street }} {{ user.address.postalCode }} {{ user.address.town }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" ><b>Courriel : </b>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" ><b>Téléphone : </b>{{ user.phone}}</td>
+            </tr>
+            {% if user.emergencyPhone is not null %}
                 <tr>
-                    <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
+                    <td colspan="3"><b>Personne à prévenir en cas d'urgence: </b>{{ user.emergencyPhone}}</td>
                 </tr>
-                {% if user.member.birthDepartment %}
-                    <tr>
-                        <td colspan="3" ><b>Déprtement de naissance : </b>{{ user.member.birthDepartment }}</td>
-                    </tr>
-                {% endif %}
+            {% endif %}
+            {% if user.emergencyContact is not null %}
                 <tr>
-                    <td colspan="3" ><b>Pays de naissance : </b>{{ user.member.birthCountry }}</td>
+                    <td colspan="3"><b>Lien de parenté: </b>{{ user.emergencyContact}}</td>
                 </tr>
-                <tr>
-                    <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
-                </tr>
-                {% if user.member.emergencyPhone is not null %}
-                    <tr>
-                        <td colspan="3"><b>Personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</td>
-                    </tr>
-                {% endif %}
-                {% if user.member.emergencyContact is not null %}
-                    <tr>
-                        <td colspan="3"><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</td>
-                    </tr>
-                {% endif %}
-            </table>
-        </div>
-        {% if user.legalGardian %}
-            <table class="table-border table-fixed">
-                <tr>
-                    <td></td>
-                    <td><b>{{ user.legalGardian.kind | trans  }}</b></td>
-                    <td><b>{{ user.secondKinship.kind|trans}}</b></td>
-                </tr>
-                <tr>
-                    <td style="width: 150px">Nom et prénom</td>
-                    <td>{{ user.legalGardian.fullName }}</td>
-                    <td>{{ user.secondKinship.fullName}}</td>
-                </tr>
-                <tr>
-                    <td>Téléphone</td>
-                    <td>{{ user.legalGardian.phone}}</td>
-                    <td>{{ user.secondKinship.phone}}</td>
-                </tr>
-                <tr>
-                    <td>Adresse</td>
-                    <td colspan="2">
-                        {{ user.legalGardian.address.street }}<br>{{ user.legalGardian.address.postalCode }} {{ user.legalGardian.address.town }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Courriel</td>
-                    <td colspan="2">{{ user.legalGardian.email }}</td>
-                </tr>
-            </table>
-        {% endif %}
-        {% if user.health.content is not null %}
+            {% endif %}
+        </table>
+    </div>
+    {% if user.legalGardian %}
+        <table class="table-border table-fixed">
+            <tr>
+                <td></td>
+                <td><b>{{ user.legalGardian.kind | trans  }}</b></td>
+                <td><b>{{ user.secondKinship.kind|trans}}</b></td>
+            </tr>
+            <tr>
+                <td style="width: 150px">Nom et prénom</td>
+                <td>{{ user.legalGardian.fullName }}</td>
+                <td>{{ user.secondKinship.fullName}}</td>
+            </tr>
+            <tr>
+                <td>Téléphone</td>
+                <td>{{ user.legalGardian.phone}}</td>
+                <td>{{ user.secondKinship.phone}}</td>
+            </tr>
+            <tr>
+                <td>Adresse</td>
+                <td colspan="2">
+                    {{ user.legalGardian.address.street }}<br>{{ user.legalGardian.address.postalCode }} {{ user.legalGardian.address.town }}
+                </td>
+            </tr>
+            <tr>
+                <td>Courriel</td>
+                <td colspan="2">{{ user.legalGardian.email }}</td>
+            </tr>
+        </table>
+    {% endif %}
+    {% if user.health.content is not null %}
         <table class="table-background table-fixed">
             <tr>
                 <td colspan="7">{{ user.health.content }}</td>
             </tr>
         </table>
-        {% endif %}
+    {% endif %}
         <ul>
             <li><b>Type d'assurance : </b>{{ user.lastLicence.coverageStr|trans }}</li>
         </ul>
-        </div>
-        </main>
+    </div>
+</main>
 {% endblock %}

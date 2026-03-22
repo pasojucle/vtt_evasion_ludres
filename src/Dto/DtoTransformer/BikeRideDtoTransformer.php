@@ -103,6 +103,7 @@ class BikeRideDtoTransformer
             }
             $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
             $bikeRideDto->showFramerAndMemberList = $this->getShowFramerAndMemberList($bikeRide);
+            $bikeRideDto->isPublic = $bikeRide->getBikeRideType()->isPublic();
         }
 
         return $bikeRideDto;

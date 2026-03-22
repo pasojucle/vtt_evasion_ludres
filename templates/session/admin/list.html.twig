@@ -13,8 +13,20 @@
             <div class="row">
                 <div class="col-md-9 col-xs-10">
                     <div class="row">
-                        <div class="col-md-6 col-xs-12{% if session.availability.enum == unavailable %} line-through{% endif %}">
-                            {{ user.member.fullName }}
+                        <div class="{% if bikeRide.bikeRideType.useLevels %}col-md-6 col-xs-12{% else %}flex gap-2 w-full flex-col xl:flex-row{% endif %}
+                            {% if session.availability.enum == unavailable %} line-through{% endif %}"
+                        >
+                            <div class="w-full xl:w-fit">
+                                {{ user.member.fullName }}
+                            </div>
+                            <div class="flex gap-2 ml-0 xl:ml-auto">
+                                {% if session.practice %}
+                                    {{ include('component/_badge.html.twig', { badge: session.practice }) }}
+                                {% endif %}
+                                {% if session.bikeType %}
+                                    {{ include('component/_badge.html.twig', { badge: session.bikeType }) }}
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="col-md-6 col-xs-12">
                         {% if user.level.title is not null and bikeRide.bikeRideType.useLevels %}

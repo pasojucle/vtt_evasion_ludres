@@ -26,7 +26,7 @@ class SetSurvey
         if (SurveyType::DISPLAY_BIKE_RIDE !== $survey->getRestriction()) {
             $survey->setBikeRide(null);
         }
-        if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getRestriction()) {
+        if (SurveyType::DISPLAY_USER_LIST !== $survey->getRestriction()) {
             $survey->removeMembers();
         }
 

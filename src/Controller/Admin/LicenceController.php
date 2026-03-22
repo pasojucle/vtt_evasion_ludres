@@ -26,7 +26,7 @@ class LicenceController extends AbstractController
     }
 
     #[Route('/admin/inscription/delete/{licence}', name: 'admin_delete_licence', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'licence')]
+    #[IsGranted('USER_EDIT', 'licence')]
     public function adminDeleteLicence(
         Request $request,
         Licence $licence
@@ -67,7 +67,7 @@ class LicenceController extends AbstractController
     }
 
     #[Route('/admin/inscription/receive/{licence}', name: 'admin_registration_receive', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'licence')]
+    #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionReceive(
         Request $request,
         LicenceService $licenceService,
@@ -111,7 +111,7 @@ class LicenceController extends AbstractController
 
 
     #[Route('/admin/inscription/reject/{licence}', name: 'admin_registration_reject', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'licence')]
+    #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionReject(
         Request $request,
         LicenceService $licenceService,
@@ -158,7 +158,7 @@ class LicenceController extends AbstractController
     }
 
     #[Route('/admin/inscription/register/{licence}', name: 'admin_registration_register', methods: ['GET', 'POST'])]
-    #[IsGranted('MEMBER_EDIT', 'licence')]
+    #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionRegister(
         Request $request,
         ValidateLicence $validateLicence,

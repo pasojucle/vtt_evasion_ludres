@@ -12,7 +12,7 @@ class UserDto
 
     public ?array $lines;
 
-    public ?LicenceDto $lastLicence;
+    public ?LicenceDto $lastLicence = null;
 
     public ?LicenceDto $prevLicence = null;
 
@@ -20,7 +20,7 @@ class UserDto
 
     public ?IdentityDto $member;
 
-    public ?IdentityDto $legalGardian;
+    public ?IdentityDto $legalGardian = null;
 
     public ?IdentityDto $secondKinship;
 
@@ -28,9 +28,9 @@ class UserDto
 
     public ?HealthDto $health;
 
-    public ?LevelDto $level;
+    public ?LevelDto $level = null;
 
-    public ?string $boardRole;
+    public ?string $boardRole = null;
 
     public ?string $mainEmail;
 

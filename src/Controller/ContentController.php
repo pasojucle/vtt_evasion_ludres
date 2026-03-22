@@ -244,7 +244,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function slideshow(): Response
     {
         /** @var Member $member */
@@ -258,7 +258,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/images/{latestView}', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function slideshowImages(
         SlideshowImageRepository $slideshowImageRepository,
         int $latestView,
@@ -282,7 +282,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/image/{filename}', name: 'slideshow_image', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function slideshowImage(
         ProjectDirService $projectDir,
         string $filename,
@@ -299,7 +299,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/actualites', name: 'club_summary', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('USER_LIST')]
     public function summary(
         SummaryRepository $summaryRepository,
         SummaryDtoTransformer $summaryDtoTransformer,

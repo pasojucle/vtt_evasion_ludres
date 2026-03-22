@@ -40,7 +40,7 @@ class GetSurvey
     {
         return match (true) {
             null !== $survey->getBikeRide() => SurveyType::DISPLAY_BIKE_RIDE,
-            !$survey->getMembers()->isEmpty() => SurveyType::DISPLAY_MEMBER_LIST,
+            !$survey->getMembers()->isEmpty() => SurveyType::DISPLAY_USER_LIST,
             default => SurveyType::DISPLAY_ALL_MEMBERS
         };
     }

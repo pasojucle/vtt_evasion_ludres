@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form\EventListener;
 
-use App\Entity\Cluster;
-use App\Entity\Enum\BikeTypeEnum;
-use App\Entity\Enum\PracticeEnum;
-use App\Form\HiddenEnumType;
-use App\Repository\ClusterRepository;
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\ChoiceList\ChoiceList;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;

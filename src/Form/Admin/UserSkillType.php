@@ -4,8 +4,9 @@ namespace App\Form\Admin;
 
 use App\Entity\Enum\EvaluationEnum;
 use App\Entity\MemberSkill;
-use App\Form\HiddenMemberType;
-use App\Form\HiddenSkillType;
+use App\Entity\Skill;
+use App\Entity\User;
+use App\Form\HiddenEntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -45,8 +46,12 @@ class UserSkillType extends AbstractType
                         'class' => 'col-md-6',
                     ],
                 ])
-                ->add('skill', HiddenSkillType::class)
-                ->add('user', HiddenMemberType::class)
+                ->add('skill', HiddenEntityType::class, [
+                    'class' => User::class,
+                ])
+                ->add('user', HiddenEntityType::class, [
+                    'class' => Skill::class,
+                ])
             ;
         });
     }
