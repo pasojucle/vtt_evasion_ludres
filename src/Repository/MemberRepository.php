@@ -498,7 +498,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
     {
         try {
             $result = $this->createQueryBuilder('m')
-                ->select('u, MAX(m.id) as idMax')
+                ->select('m, MAX(m.id) as idMax')
                 ->getQuery()
                 ->getSingleResult()
             ;

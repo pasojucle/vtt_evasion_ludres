@@ -15,7 +15,7 @@
             </div>
             {{ form_start(form) }}
             <div class="wrapper-body">
-                {% for gardian in form.children.userGardians %}
+                {% for gardian in form.children.memberGardians %}
                     <b>{{ gardian.vars.value.kind|trans }}</b>
                     {% if gardian.kinship is defined %}
                         <div class="form-group">{{ form_row(gardian.kinship) }}</div>

@@ -52,7 +52,7 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                     new NotBlank(),
                     new UniqueMember()
                 ],
-                'attr' => ['data-constraint' => ''],
+                'attr' => ['data-constraint' => '', 'data-form-validator-target' => 'field'],
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
@@ -64,7 +64,7 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                     new NotBlank(),
                     new UniqueMember()
                 ],
-                'attr' => ['data-constraint' => '', 'autocomplete' => 'off', ],
+                'attr' => ['data-constraint' => '', 'autocomplete' => 'off', 'data-form-validator-target' => 'field'],
             ])
             ->add('mobile', TextType::class, [
                 'label' => 'Téléphone mobile',
@@ -77,6 +77,7 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                 'attr' => [
                     'data-constraint' => 'app-Phone',
                     'autocomplete' => 'off',
+                    'data-form-validator-target' => 'field',
                     'class' => 'phone-number',
                 ],
             ])
@@ -90,7 +91,8 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-constraint' => 'symfony-Email',
-                    'autocomplete' => 'off',
+                    'autocomplete' => 'off', 
+                    'data-form-validator-target' => 'field'
                 ],
             ])
             ->add('otherAddress', CheckboxType::class, [
@@ -99,7 +101,8 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                 'mapped' => false,
                 'attr' => [
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => sprintf('address-container-%s', $options['gardian']->value)
+                    'data-container-id' => sprintf('address-container-%s', $options['gardian']->value),
+                    'data-form-validator-target' => 'field'
                 ],
                 'data' => $otherAddress,
             ])
@@ -120,6 +123,7 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                         'data-constraint' => 'app-Phone',
                         'autocomplete' => 'off',
                         'class' => 'phone-number',
+                        'data-form-validator-target' => 'field'
                     ],
                 ])
                 ->add('birthDate', DateType::class, [
@@ -132,6 +136,7 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                         'data-year-range' => $dateMin->format('Y') . ':' . $dateMax->format('Y'),
                         'autocomplete' => 'off',
                         'data-constraint' => 'app-BirthDate',
+                        'data-form-validator-target' => 'field'
                     ],
                     'row_attr' => [
                         'class' => 'form-group-inline',
@@ -163,7 +168,8 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
             ->add('address', AddressType::class, [
                 'row_class' => ($otherAddress) ? 'identity-address' : 'identity-address hidden',
                 'required' => $otherAddress,
-                'gardian' => $form->getConfig()->getOption('gardian')->value
+                'gardian' => $form->getConfig()->getOption('gardian')->value,
+                'attr' => ['data-gardian' => $form->getConfig()->getOption('gardian')->value],
             ]);
     }
 }

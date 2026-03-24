@@ -30,6 +30,7 @@ class AddressType extends AbstractType
                 ],
                 'attr' => [
                     'data-constraint' => '',
+                    'data-form-validator-target' => 'field'
                 ],
                 'required' => $required,
             ])

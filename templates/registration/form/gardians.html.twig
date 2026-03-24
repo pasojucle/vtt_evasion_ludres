@@ -1,5 +1,5 @@
 <div>
-    {% for gardian in form.userGardians %}
+    {% for gardian in form.memberGardians %}
         <b>{{ gardian.vars.value.kind|trans }}</b>
         <div class="form-group">{{ form_row(gardian.kinship) }}</div>
         {% include'identity/identity.html.twig' with {'identity': gardian.identity, 'gardian': gardian.vars.value.kind.value} %}

@@ -10,6 +10,8 @@ export default class extends Controller {
     connect() {
         this.openWithContentHandler = this.openWithContent.bind(this);
         document.addEventListener("modal:openWithContent", this.openWithContentHandler);
+        this.openFromUrlHandler = this.openFromUrl.bind(this);
+        document.addEventListener("modal:openFromUrl", this.openFromUrlHandler);
 
         this.dialogTarget.addEventListener('click', (event) => {
             if (event.target === this.dialogTarget) {
@@ -20,6 +22,7 @@ export default class extends Controller {
 
     disconnect() {
         document.removeEventListener("modal:openWithContent", this.openWithContentHandler);
+        document.removeEventListener("modal:openFromUrl", this.openFromUrlHandler);
     }
 
     open() {
@@ -41,6 +44,24 @@ export default class extends Controller {
         if (content) {
             this.frameTarget.removeAttribute('src'); 
             this.frameTarget.innerHTML = content;
+        }
+
+        this.open();
+    }
+
+    async openFromUrl(event) {
+        const { url } = event.detail;
+        console.log("openFromUrl modal")
+
+        const response = await fetch(url);
+
+        const html = await response.text();
+        const parser = new DOMParser();
+        const content = parser.parseFromString(html, 'text/html');
+
+        if (content) {
+            this.frameTarget.removeAttribute('src'); 
+            this.frameTarget.innerHTML = html;
         }
 
         this.open();

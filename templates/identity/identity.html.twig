@@ -59,7 +59,8 @@
             <div class="form-group">{{ form_row(identity.email) }}</div>
         {% endif %}
     </div>
-    <div id="address-container-{{ identity.vars.name}}" data-form-modifier-target="container">
+    {% set gardian = identity.address.vars.attr['data-gardian']%}
+    <div data-id="address-container-{{ gardian }}" data-form-modifier-target="container">
         {% if identity.otherAddress is defined %}
             <div class="form-group">
                 <div class="inputGroup long check">
@@ -68,10 +69,14 @@
                 </div>
             </div>
         {% endif %}
-        <div {% if gardian is defined %}id="address-container-{{ gardian }}" data-form-modifier-target="container"{% endif %} class="address-group">
+        <div 
+            {# data-id="commune-container-{% if gardian is defined %}{{ gardian }}{% else %}member{% endif %}" 
+            data-form-modifier-target="container"  #}
+            class="address-group"
+        >
             {% if identity.address is defined %}
                 <div class="form-group">{{ form_row(identity.address.street) }}</div>
-                <div class="form-group">
+                <div data-id="comune-container-{{ gardian }}" data-form-modifier-target="container" class="form-group">
                     {{ form_row(identity.address.postalCode) }}
                     {{ form_row(identity.address.commune) }}
                 </div>

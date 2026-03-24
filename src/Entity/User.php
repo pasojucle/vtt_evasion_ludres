@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Licence;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -37,6 +38,9 @@ abstract class User implements UserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     protected ?Identity $identity = null;
 
+    /**
+     * @var ArrayCollection <Licence>
+     */
     #[ORM\OneToMany(targetEntity: Licence::class, mappedBy: 'user')]
     protected Collection $licences;
 
@@ -47,7 +51,7 @@ abstract class User implements UserInterface
     protected Collection $sessions;
 
     #[ORM\ManyToOne(targetEntity: Level::class, inversedBy: 'users')]
-    private ?Level $level = null;
+    protected ?Level $level = null;
     
     public function __construct()
     {

@@ -123,6 +123,7 @@ class Member extends User implements PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        parent::__construct();
         $this->bikeRides = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
         $this->respondents = new ArrayCollection();
@@ -549,7 +550,7 @@ class Member extends User implements PasswordAuthenticatedUserInterface
     }
 
 
-    public function addUserGardian(MemberGardian $memberGardian): static
+    public function addMemberGardian(MemberGardian $memberGardian): static
     {
         if (!$this->memberGardians->contains($memberGardian)) {
             $this->memberGardians->add($memberGardian);
@@ -559,7 +560,7 @@ class Member extends User implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeUserGardian(MemberGardian $memberGardian): static
+    public function removeMemberGardian(MemberGardian $memberGardian): static
     {
         if ($this->memberGardians->removeElement($memberGardian)) {
             // set the owning side to null (unless already changed)

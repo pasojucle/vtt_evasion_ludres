@@ -103,12 +103,12 @@ class MenuService
             [
                 'label' => 'Mes infos',
                 'route' => 'user_account',
-                'role' => 'USER_LIST',
+                'role' => 'IS_MEMBER',
             ],
             [
                 'label' => 'Mon carnet de progression',
                 'route' => 'user_skill_list',
-                'role' => 'USER_LIST',
+                'role' => 'IS_MEMBER',
                 'badge' => 'notification_user_skill_list',
             ],
             [

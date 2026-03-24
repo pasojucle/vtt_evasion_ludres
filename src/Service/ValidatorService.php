@@ -30,6 +30,7 @@ class ValidatorService
             $violations[] = [
                 'message' => $violation->getMessage(),
                 'constraint' => sprintf('%s-%s', strtolower($nameSpace[0]), $constraint->getShortName()),
+                'dialogRoute' => $constraint->hasConstant('DIALOGUE_ROUTE') ? $constraint->getConstant('DIALOGUE_ROUTE') : null,
             ];
         }
 

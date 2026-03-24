@@ -7,8 +7,9 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\RegistrationFormEnum;
-use App\Entity\RegistrationStep;
 use App\Entity\Member;
+use App\Entity\RegistrationStep;
+use App\Entity\User;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
 use App\Security\SelfAuthentication;
@@ -20,9 +21,11 @@ use App\UseCase\Registration\GetProgress;
 use App\UseCase\Registration\GetRegistrationFile;
 use App\UseCase\Registration\GetStatusWarning;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use ZipArchive;
@@ -131,14 +134,18 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
+    #[IsGranted('IS_MEMBER')]
     public function registrationFile(
         GetRegistrationFile $getRegistrationFile,
         ProjectDirService $projectDir,
-        Member $member
+        User $user
     ): Response {
-        if (!$registrationFiles = $getRegistrationFile->execute($member)) {
+        if (!$user instanceof Member) {
+            throw new NotFoundHttpException();
+        }
+        if (!$registrationFiles = $getRegistrationFile->execute($user)) {
             return $this->render('registration/unregistrable.html.twig', [
-                'warning' => sprintf('Le dossier %s ne peux plus être téléchargé.', $member->getLastLicence()->getSeason()),
+                'warning' => sprintf('Le dossier %s ne peux plus être téléchargé.', $user->getLastLicence()->getSeason()),
             ]);
         }
         $zipName = $projectDir->path('tmp', 'inscription_vtt_evasion_ludres.zip');
@@ -193,7 +200,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/inscription/existante', name: 'registration_existing', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('IS_MEMBER')]
     public function registrationDownload(
         GetStatusWarning $getStatusWarning
     ): Response {
@@ -214,16 +221,27 @@ class RegistrationController extends AbstractController
          ]);
     }
 
-    #[Route('/inscription/school/testing/disabled', name: 'registration_scholl_testing_disabled', methods: ['GET'], options:['expose' => true])]
+    #[Route('/inscription/school/testing/disabled', name: 'registration_scholl_testing_disabled', methods: ['GET', 'POST'], options:['expose' => true])]
     public function schollTestingDisabled(
         ParameterService $parameterService,
+        Request $request,
     ): Response {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $request->getUri(),
+            'attr'=> ['data-turbo-frame'=> '_top']
+        ]);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+
+            return $this->redirectToRoute('contact', [], Response::HTTP_SEE_OTHER);
+        }
+    
         return $this->render('component/alert.modal.html.twig', [
-            'form' => null,
+            'form' => $form->createView(),
             'title' => 'Inscription école vtt',
             'message' => $parameterService->getSchoolTestingRegistration()['message'],
-            'url' => 'contact',
-            'anchor_text' => 'Nous contacter',
+            'btn_label' => 'Nous contacter',
+            'icon' => 'lucide:mail',
         ]);
     }
 

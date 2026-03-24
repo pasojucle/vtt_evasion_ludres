@@ -64,8 +64,8 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     new UniqueMember()
                 ],
                 'attr' => ($isYearly)
-                    ? ['data-constraint' => '']
-                    : ['data-constraint' => 'app-UniqueMember', ],
+                    ? ['data-constraint' => '', 'data-form-validator-target' => 'field',]
+                    : ['data-constraint' => 'app-UniqueMember', 'data-form-validator-target' => 'field',],
                 'disabled' => $isYearly,
             ])
             ->add('firstName', TextType::class, [
@@ -79,17 +79,20 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     new UniqueMember()
                 ],
                 'attr' => $isYearly
-                    ? ['data-constraint' => '', 'autocomplete' => 'off']
+                    ? ['data-constraint' => '', 'autocomplete' => 'off', 'data-form-validator-target' => 'field',]
                     : [
                         'data-constraint' => 'app-UniqueMember',
                         'data-multiple-fields' => 1,
                         'data-alert-route' => 'unique_member',
                         'autocomplete' => 'off',
+                        'data-form-validator-target' => 'field',
                     ],
                 'disabled' => $isYearly,
             ])
             ->add('address', AddressType::class, [
                 'required' => true,
+                'gardian' => 'member',
+                'attr' => ['data-gardian' => 'member'],
             ])
             ->add('phone', TextType::class, [
                 'label' => 'Téléphone fixe',
@@ -104,6 +107,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-constraint' => 'app-Phone',
                     'autocomplete' => 'off',
                     'class' => 'phone-number',
+                    'data-form-validator-target' => 'field',
                 ],
             ])
             ->add('foreignBorn', CheckboxType::class, [
@@ -115,7 +119,8 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-action' => 'click->form-modifier#change',
-                    'data-container-id' => 'birth-place'
+                    'data-container-id' => 'birth-place',
+                    'data-form-validator-target' => 'field',
                 ],
                 'data' => $foreignBorn,
             ])
@@ -185,7 +190,8 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-extra-value' => (int) $isYearly,
                     'data-alert-route' => 'registration_scholl_testing_disabled',
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'category-container'
+                    'data-container-id' => 'category-container',
+                    'data-form-validator-target' => 'field',
                 ],
                 'row_attr' => [
                     'class' => 'form-group',
@@ -202,6 +208,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-constraint' => '',
+                    'data-form-validator-target' => 'field',
                 ],
                 'required' => !$foreignBorn,
             ])
@@ -212,6 +219,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-constraint' => '',
+                    'data-form-validator-target' => 'field',
                 ],
                 'required' => $foreignBorn,
             ])
@@ -222,6 +230,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-constraint' => '',
+                    'data-form-validator-target' => 'field',
                 ],
                 'required' => $foreignBorn,
             ])
@@ -239,6 +248,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 'attr' => [
                     'data-constraint' => 'symfony-Email',
                     'autocomplete' => 'off',
+                    'data-form-validator-target' => 'field',
                 ],
             ])
             ->add('mobile', TextType::class, [
@@ -255,6 +265,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-constraint' => 'app-Phone',
                     'autocomplete' => 'off',
                     'class' => 'phone-number',
+                    'data-form-validator-target' => 'field',
                 ],
             ])
             ->add('profession', TextType::class, [
@@ -264,6 +275,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-constraint' => '',
+                    'data-form-validator-target' => 'field',
                 ],
                 'required' => false,
             ])
@@ -280,6 +292,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-multiple-fields' => 1,
                     'autocomplete' => 'off',
                     'class' => 'phone-number',
+                    'data-form-validator-target' => 'field',
                 ],
                 'required' => !$hidden,
             ])
@@ -290,6 +303,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-constraint' => '',
+                    'data-form-validator-target' => 'field',
                 ],
                 'required' => !$hidden,
             ])

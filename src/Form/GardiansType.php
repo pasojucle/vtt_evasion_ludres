@@ -16,7 +16,7 @@ class GardiansType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('userGardians', CollectionType::class, [
+            ->add('memberGardians', CollectionType::class, [
                 'label' => false,
                 'entry_type' => GardianType::class,
                 'entry_options' => [

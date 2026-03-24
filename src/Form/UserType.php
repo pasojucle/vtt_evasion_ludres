@@ -50,7 +50,7 @@ class UserType extends AbstractType
         }
         if (RegistrationFormEnum::GARDIANS === $options['current']->getForm()) {
             $builder
-                ->add('userGardians', CollectionType::class, [
+                ->add('memberGardians', CollectionType::class, [
                     'label' => false,
                     'entry_type' => GardianType::class,
                     'entry_options' => [
@@ -89,6 +89,7 @@ class UserType extends AbstractType
                             'data-constraint' => 'app-Password',
                             'data-multiple-fields' => 1,
                             'autocomplete' => 'new-password',
+                            'data-form-validator-target' => 'field',
                         ],
                     ],
                     'required' => true,

@@ -12,4 +12,6 @@ use Symfony\Component\Validator\Constraint;
 class UniqueMember extends Constraint
 {
     public $message = 'Un compte avec le nom {{ name }} {{ firstName }} existe déjà';
+
+    public const string DIALOGUE_ROUTE = 'unique_member';
 }

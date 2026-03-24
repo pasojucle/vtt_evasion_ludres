@@ -48,7 +48,8 @@ class AddressSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?string $postalCode): void
     {
         $options = $form->getConfig()->getOptions();
-        $communeId = sprintf('commune-%s', $options['gardian']);
+
+        $communeId = sprintf('comune-container-%s', $options['gardian']);
         $form
             ->add('postalCode', TextType::class, [
                 'label' => 'Code postal',
@@ -65,7 +66,8 @@ class AddressSubscriber implements EventSubscriberInterface
                 'attr' => [
                     'data-constraint' => 'app-PostalCode',
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => $communeId,
+                    'data-container-id' => $communeId, 
+                    'data-form-validator-target' => 'field'
                 ],
                 'required' => $options['required'],
             ])
@@ -82,6 +84,7 @@ class AddressSubscriber implements EventSubscriberInterface
                 'attr' => [
                     'data-constraint' => 'app-PostalCode',
                     'data-multiple-fields' => 1,
+                    'data-form-validator-target' => 'field'
                 ],
                 'required' => $options['required'],
             ])

@@ -119,7 +119,8 @@
             "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "@php -r \"copy('assets/styles/exportPdf.css', 'public/pdf.css');\""
         ],
         "post-update-cmd": [
             "@auto-scripts"

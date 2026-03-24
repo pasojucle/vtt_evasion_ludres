@@ -12,4 +12,6 @@ use Symfony\Component\Validator\Constraint;
 class SchoolTestingRegistration extends Constraint
 {
     public $message = '{{ message }}';
+
+    public const string DIALOGUE_ROUTE = 'registration_scholl_testing_disabled';
 }

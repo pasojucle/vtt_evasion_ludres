@@ -18,7 +18,12 @@ class Guest extends User
     #[ORM\Column]
     private ?DateTimeImmutable $tokenExpiresAt = null;
 
-        /**
+    public function __construct()
+    {
+        parent::__construct();
+    }
+    
+    /**
      * A visual identifier that represents this user.
      *
      * @see UserInterface

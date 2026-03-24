@@ -30,7 +30,7 @@ class UserService
         $allData = [
             [
                 'entity' => $member,
-                'methods' => ['getSessions', 'getLicences', 'getIdentity', 'getUserGardians', 'getOrderHeaders', 'getRespondents'],
+                'methods' => ['getSessions', 'getLicences', 'getIdentity', 'getmemberGardians', 'getOrderHeaders', 'getRespondents'],
             ],
         ];
         foreach ($allData as $data) {

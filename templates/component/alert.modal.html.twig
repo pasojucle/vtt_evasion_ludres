@@ -1,12 +1,16 @@
-{% extends 'base_modal.html.twig' %}
-{% block form %}{% set form = form %}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = 'destructive' %}
 {% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
-    <div class="alert alert-danger">{{ message|raw }}</div>
+    <p>{{ message|raw }}</p>
 {% endblock %}
-{% block footer %}
-    {% if cancel is defined %}
-        {% set cancel_route = path(cancel) %}
-    {% endif %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+        <div class="flex gap-3 items-center ">
+            {{ ux_icon(icon, {class: 'size-6'}) }} {{ btn_label }}
+        </div>
+    </button>
 {% endblock %}

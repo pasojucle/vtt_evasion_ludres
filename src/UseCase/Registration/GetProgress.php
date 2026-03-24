@@ -238,7 +238,7 @@ class GetProgress
                 ->setIdentity($identity)
                 ->setMember($this->member);
             $this->entityManager->persist($gardian);
-            $this->member->addUserGardian($gardian);
+            $this->member->addMemberGardian($gardian);
             $identity->addMemberGardian($gardian);
         }
     }

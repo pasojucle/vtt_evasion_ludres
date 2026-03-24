@@ -74,18 +74,18 @@ class RegistrationSchoolControllerTest extends AbstractTestController
     private function fillGardianIdentitiesStep(): void
     {
         $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
-        $form['user[userGardians][0][kinship]'] = KinshipEnum::KINSHIP_FATHER->value;
-        $form['user[userGardians][0][identity][name]'] = 'Hydraullique';
-        $form['user[userGardians][0][identity][firstName]'] = 'Fourche';
-        $form['user[userGardians][0][identity][birthDate]'] = (new DateTime())->sub(new DateInterval('P30Y'))->format('Y-m-d');
-        $form['user[userGardians][0][identity][mobile]'] = '06 00 00 00 00';
-        $form['user[userGardians][0][identity][email]'] = 'fourche.hydraulique@test.fr';
+        $form['user[memberGardians][0][kinship]'] = KinshipEnum::KINSHIP_FATHER->value;
+        $form['user[memberGardians][0][identity][name]'] = 'Hydraullique';
+        $form['user[memberGardians][0][identity][firstName]'] = 'Fourche';
+        $form['user[memberGardians][0][identity][birthDate]'] = (new DateTime())->sub(new DateInterval('P30Y'))->format('Y-m-d');
+        $form['user[memberGardians][0][identity][mobile]'] = '06 00 00 00 00';
+        $form['user[memberGardians][0][identity][email]'] = 'fourche.hydraulique@test.fr';
 
-        $form['user[userGardians][1][kinship]'] = KinshipEnum::KINSHIP_MOTHER->value;
-        $form['user[userGardians][1][identity][name]'] = 'Indexée';
-        $form['user[userGardians][1][identity][firstName]'] = 'Vitesse';
-        $form['user[userGardians][1][identity][mobile]'] = '06 00 00 00 00';
-        $form['user[userGardians][1][identity][email]'] = 'vitesse.indexee@test.fr';
+        $form['user[memberGardians][1][kinship]'] = KinshipEnum::KINSHIP_MOTHER->value;
+        $form['user[memberGardians][1][identity][name]'] = 'Indexée';
+        $form['user[memberGardians][1][identity][firstName]'] = 'Vitesse';
+        $form['user[memberGardians][1][identity][mobile]'] = '06 00 00 00 00';
+        $form['user[memberGardians][1][identity][email]'] = 'vitesse.indexee@test.fr';
  
         $this->client->submit($form);
     

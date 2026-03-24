@@ -33,7 +33,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/mon-compte/profil', name: 'user_account', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('IS_MEMBER')]
     public function userAccount(): Response
     {
         /** @var ?Member $member */
@@ -45,7 +45,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/mon-compte/mot-de-passe', name: 'change_password', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('IS_MEMBER')]
     public function changePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher
@@ -80,7 +80,7 @@ class UserController extends AbstractController
 
 
     #[Route('/mon-compte/demande/modification', name: 'user_change_infos', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('IS_MEMBER')]
     public function changeInfos(
         Request $request,
         MailerService $mailerService,
@@ -128,7 +128,8 @@ class UserController extends AbstractController
         /** @var Identity $identity */
         $identity = $identityRepository->findOneByNameAndFirstName($name, $firstName);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params')),
+            'action' => $request->getUri(),
+            'attr'=> ['data-turbo-frame'=> '_top']
         ]);
         $form->handleRequest($request);
 
@@ -136,14 +137,16 @@ class UserController extends AbstractController
             if ($identity) {
                 $request->getSession()->set($authenticationUtils->getLastUsername(), $identity->getMember()->getLicenceNumber());
             }
-            return $this->redirectToRoute('user_account');
+
+            return $this->redirectToRoute('user_account', [], Response::HTTP_SEE_OTHER);
         }
-        
+    
         return $this->render('component/alert.modal.html.twig', [
             'form' => $form->createView(),
             'title' => 'Compte existant',
             'message' => sprintf('Le compte %s %s exite déjà', $name, $firstName),
-            'button_text' => '<i class="fas fa-sign-in-alt"></i> Se connecter',
+            'btn_label' => 'Se connecter',
+            'icon' => 'lucide:log-in',
         ]);
     }
 }

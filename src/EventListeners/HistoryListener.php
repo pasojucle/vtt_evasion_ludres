@@ -83,7 +83,7 @@ class HistoryListener
         }
 
         $member = match (true) {
-            $reflexionClass->hasMethod('getUserGardians') && !$entity->getMemberGardians()->isEmpty() => $entity->getMemberGardians()->first()->getMember(),
+            $reflexionClass->hasMethod('getmemberGardians') && !$entity->getMemberGardians()->isEmpty() => $entity->getMemberGardians()->first()->getMember(),
             $reflexionClass->hasMethod('getIdentities') => $entity->getIdentities()->first()->getMember(),
             $reflexionClass->hasMethod('getMember') => $entity->getUser(),
             default => null,

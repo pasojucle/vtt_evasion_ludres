@@ -10,7 +10,6 @@ use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Member;
 use App\Entity\RegistrationStep;
-use App\Form\MemberType;
 use App\Form\UserType;
 use App\Service\ProjectDirService;
 use App\Service\ReplaceKeywordsService;
@@ -78,7 +77,7 @@ class RegistrationStepDtoTransformer
                     'action' => $this->router->generate($route, [
                         'step' => $step,
                     ]),
-                    'data-controller' => 'form-modifier'
+                    'data-controller' => 'form-modifier form-validator'
                 ],
                 'current' => $registrationStep,
                 'is_gardian' => RegistrationFormEnum::GARDIANS === $registrationStep->getForm(),

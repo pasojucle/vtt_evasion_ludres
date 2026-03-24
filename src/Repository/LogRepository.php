@@ -119,7 +119,7 @@ class LogRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('l')
             ->select((new Expr())->max('l.viewAt'))
             ->andWhere(
-                (new Expr())->eq('l.user', ':user'),
+                (new Expr())->eq('l.member', ':member'),
                 (new Expr())->eq('l.entity', ':entityName'),
                 (new Expr())->lt('l.viewAt', ':today'),
             )

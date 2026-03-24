@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\Agreement;
 use App\Entity\Enum\PermissionEnum;
-use App\Entity\Guest;
 use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
@@ -25,6 +26,7 @@ class UserVoter extends Voter
     public const LIST = 'USER_LIST';
     public const EDIT = 'USER_EDIT';
     public const VIEW = 'USER_VIEW';
+    public const IS_MEMBER = 'IS_MEMBER';
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
@@ -38,7 +40,7 @@ class UserVoter extends Voter
             return true;
         }
 
-        if ($attribute === self::LIST && !$subject) {
+        if (in_array($attribute, [self::LIST, self::IS_MEMBER]) && !$subject) {
             return true;
         }
 
@@ -67,6 +69,7 @@ class UserVoter extends Voter
         $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::USER);
 
         return match ($attribute) {
+            self::IS_MEMBER => true,
             self::EDIT, self::VIEW => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isUserWithPermission),
             self::SHARE => $this->canShare($token, $user, $subject, $isActiveUser, $isUserWithPermission, $isUserWithSharePermission),

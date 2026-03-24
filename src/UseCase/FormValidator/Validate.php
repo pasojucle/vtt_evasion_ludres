@@ -8,6 +8,8 @@ use App\Service\ValidatorService;
 use App\Validator\NotEmpty;
 use DateTime;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Twig\Environment;
 
@@ -20,7 +22,8 @@ class Validate
 
     public function __construct(
         private ValidatorService $validator,
-        private Environment $twig
+        private Environment $twig,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -57,7 +60,7 @@ class Validate
                 'filled' => $filled,
             ];
 
-            $this->addAlert($id, $violations, $alerts);
+            $this->addAlert($id, $violations, $alerts, $value);
         }
 
         return ['constraintsValidator' => $constraintsValidator, 'alert' => array_shift($alerts)];
@@ -92,11 +95,20 @@ class Validate
         };
     }
 
-    private function addAlert(string $id, array $violations, array &$alerts): void
+    private function addAlert(string $id, array $violations, array &$alerts, array|string|null|DateTime $value): void
     {
         foreach ($violations as $violation) {
-            if (array_key_exists('constraint', $violation) && in_array(in_array($violation['constraint'], self::ALERT_CONSTRAINT), self::ALERT_CONSTRAINT)) {
-                $alerts[$violation['constraint']] = ['id' => $id, 'constraint' => $violation['constraint']];
+            // if (array_key_exists('constraint', $violation) && in_array(in_array($violation['constraint'], self::ALERT_CONSTRAINT), self::ALERT_CONSTRAINT)) {
+            //     $alerts[$violation['constraint']] = ['id' => $id, 'constraint' => $violation['constraint']];
+            // }
+            if (array_key_exists('constraint', $violation) && in_array($violation['constraint'], self::ALERT_CONSTRAINT)) {
+                $alerts[$violation['constraint']] = [
+                    'id' => $id,
+                    'constraint' => $violation['constraint'],
+                    'dialogRoute' => null !== $violation['dialogRoute']
+                        ? $this->urlGenerator->generate($violation['dialogRoute'], $value)
+                        : null,
+                ];
             }
         }
     }
