@@ -23,7 +23,6 @@ class GetSchoolBikeRideClusters
     {
         $isSchoolBikeRide = RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration();
         $sessionsByClusters = [];
-        dump($this->sessionRepository->findByBikeRideId($bikeRide->getId()) );
         /** @var Session $session */
         foreach ($this->sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
             $clusterId = ($isSchoolBikeRide && Level::TYPE_FRAME === $session->getMember()->getLevel()->getType())
@@ -31,7 +30,6 @@ class GetSchoolBikeRideClusters
                 : $session->getCluster()->getId();
             $sessionsByClusters[$clusterId][] = $session;
         }
-        dump($sessionsByClusters);
         $clusters = [];
         foreach ($bikeRide->getClusters() as $clusterEntity) {
             $clusterId = ($isSchoolBikeRide && !$clusterEntity->getLevel())

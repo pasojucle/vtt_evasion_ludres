@@ -726,12 +726,6 @@ button[type=submit].btn.btn-primary:disabled, button.add-item-file:disabled {
 .form-group-small {
     width: 100px;
 }
-.form-group-medium-width {
-    width: 100%;
-    margin: unset;
-    padding: 5% 20%;
-    box-sizing: border-box;
-}
 .hidden, .form-group-inline.hidden, .d-none {
     display: none !important;
 }

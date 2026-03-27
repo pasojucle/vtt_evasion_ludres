@@ -30,6 +30,9 @@ class IdentityController extends AbstractController
             'category' => $licence->getCategory(),
             'is_yearly' => $licence->getState()->isYearly(),
             'is_gardian' => false,
+            'attr' => [
+                'data-controller' => 'form-modifier form-validator',
+            ],
         ]);
         $form->handleRequest($request);
 

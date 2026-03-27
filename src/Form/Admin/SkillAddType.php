@@ -5,56 +5,61 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Level;
-use App\Entity\Skill;
 use App\Entity\SkillCategory;
-use App\Form\Type\VueChoiceFilteredType;
-use App\Form\Type\VueChoiceFilterType;
+use App\Form\Admin\EventListener\Skill\AddClusterSkillSubscriber;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SkillAddType extends AbstractType
 {
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator
+    )
+    {
+
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('skillCategory', VueChoiceFilterType::class, [
+            ->add('skillCategory', EntityType::class, [
                 'label' => 'Categorie',
                 'class' => SkillCategory::class,
                 'placeholder' => 'Séléctionner une catégorie',
-                'field' => 'category',
-                'mapped' => false,
                 'required' => false,
+                'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'col-md-6',
+                    'class' => 'form-group-inline',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'skills-container',
                 ],
             ])
-            ->add('level', VueChoiceFilterType::class, [
+            ->add('level', EntityType::class, [
                 'label' => 'Niveau',
                 'class' => Level::class,
                 'placeholder' => 'Séléctionner un niveau',
-                'field' => 'level',
-                'mapped' => false,
                 'required' => false,
+                'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'col-md-6',
+                    'class' => 'form-group-inline',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'skills-container',
                 ],
             ])
-            ->add('skill', VueChoiceFilteredType::class, [
-                'label' => 'Compétences',
-                'class' => Skill::class,
-                'exclude' => $options['exclude'],
-                'row_attr' => [
-                    'class' => 'col-md-12',
-                ],
-            ])
+            ->addEventSubscriber(new AddClusterSkillSubscriber($this->urlGenerator))
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'exclude' => null,
+            'clusterId' => null,
+            'attr' => [
+                'data-controller' => 'form-modifier',
+                'data-turbo-action'=> 'replace',
+            ]
         ]);
     }
 }

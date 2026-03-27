@@ -10,8 +10,12 @@ export default class extends Controller {
     async change(event) {
         const form = this.element;
         const data = new FormData(form, event.submitter);
-        console.log("event.target", event.target)
-        const containerId = event.target.dataset.containerId;
+        let containerId = event.target.dataset.containerId;
+        if (!containerId && event.target.dataset.controller === "symfony--ux-autocomplete--autocomplete") {
+            const parent = event.target.closest("[data-container-id]")
+
+            containerId = parent.dataset.containerId;
+        }
         data.append(`${form.name}[handler]`, event.target.name)
         if (event.target.type === 'button') {
             data.append(event.target.name, 1)

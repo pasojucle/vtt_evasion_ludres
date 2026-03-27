@@ -14,10 +14,20 @@
         </div>
     </div>
     <div class="wrapper-body">
-        <ul class="list-group" {{ vue_component('ClusterSkill', {'cluster': cluster.id, 'canEdit': canEdit}) }}>
-            <div class="loader-container">
-                <div class="loader"></div>
-            </div>
+        {% if canEdit %}
+            <a 
+            class="btn btn-primary" 
+            href="{{path('admin_cluster_evaluation_add', {'cluster': cluster.id})}}" 
+            title="Ajouter"
+            data-turbo-frame="modal_content"
+        > 
+            Ajouter
+        </a>
+        {% endif %}
+        <ul id="skills-list-container" class="list-group">
+            {% for skill in clusterSkills %}
+                {% include 'cluster/admin/_skill_item.html.twig' %}
+            {% endfor %}
         </ul>
     </div>
 </div>

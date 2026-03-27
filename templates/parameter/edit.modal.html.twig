@@ -1,7 +1,7 @@
 {% extends 'base_modal_stimulus.html.twig' %}
 {% block modal_title %}Modifier un paramètre{% endblock %}
 {% block body %}
-    <div class="form-group-medium-width">
+    <div class="w-full m-0 py-2 px-4">
         {% if form.vars.value.type == constant('App\\Entity\\parameter::TYPE_BOOL') %}
             <div class="switch-group">
                 {{ form_row(form.value) }}

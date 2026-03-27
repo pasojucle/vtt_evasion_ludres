@@ -92,7 +92,7 @@ class RegistrationProgressDtoTransformer
         if (!$member->getId()) {
             return false;
         }
-        
+
         return !empty($this->licenceRepository->findByUserAndPeriod($member, 5));
     }
 

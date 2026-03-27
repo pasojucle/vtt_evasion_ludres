@@ -53,7 +53,6 @@ class ClusterSkillController extends AbstractController
             'action' => $request->getUri(),
             'text_type' => UserSkillType::BY_USERS,
         ]);
-
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();

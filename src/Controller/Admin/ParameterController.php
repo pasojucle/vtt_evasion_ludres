@@ -63,6 +63,8 @@ class ParameterController extends AbstractController
             if ($request->isMethod('POST') && $form->isSubmitted()) {
                 if ($form->isValid()) {
                     $entityManager->flush();
+                    $request->getSession()->set($parameter->getName(), $parameter->getValue());
+
                     return $this->redirect($request->request->all('parameter')['referer']);
                 }
                 $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);

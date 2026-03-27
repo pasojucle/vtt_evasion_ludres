@@ -2,7 +2,7 @@
 {% set title = 'Modifier' %}
 {% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
-    <div class="form-group-medium-width">
+    <div class="w-full m-0 py-2 px-4">
         <h3>{{ amount.membershipFee.title }}
             {% if amount.coverage is not null %}
                 <br>{{ constant('App\\Entity\\Licence::COVERAGES')[amount.coverage]|trans }}

@@ -29,13 +29,7 @@ class ConfirmationSession
 
         $messages = $bikeRide->bikeRideType->messages;
         $content = (is_string($messages)) ? $messages : $this->getMessageByLevelType($messages, $member->level->type);
-
-        // $parameterName = (Licence::CATEGORY_MINOR === $member->lastLicence->category)
-        //     ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_MINOR'
-        //     : (Level::TYPE_FRAME === $member->level->type && $bikeRide->bikeRideType->isSchool ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
-        
         $subject = sprintf('Confirmation d\'inscription à %s du %s', $bikeRide->title, $bikeRide->period);
-        // $content = $this->parameterService->getParameterByName($parameterName);
         $additionalParams = [
                 '{{ bikeRideTitleAndPeriod }}' => sprintf('%s du %s', $bikeRide->title, $bikeRide->period),
                 '{{ disponibilite }}' => $this->availabilityToString($session->getAvailability()),
