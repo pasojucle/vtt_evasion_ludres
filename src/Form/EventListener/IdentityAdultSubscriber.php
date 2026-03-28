@@ -64,8 +64,8 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     new UniqueMember()
                 ],
                 'attr' => ($isYearly)
-                    ? ['data-constraint' => '', 'data-form-validator-target' => 'field',]
-                    : ['data-constraint' => 'app-UniqueMember', 'data-form-validator-target' => 'field',],
+                    ? ['data-constraint' => '', 'data-form-validator-target' => 'field', ]
+                    : ['data-constraint' => 'app-UniqueMember', 'data-form-validator-target' => 'field', ],
                 'disabled' => $isYearly,
             ])
             ->add('firstName', TextType::class, [
@@ -79,7 +79,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     new UniqueMember()
                 ],
                 'attr' => $isYearly
-                    ? ['data-constraint' => '', 'autocomplete' => 'off', 'data-form-validator-target' => 'field',]
+                    ? ['data-constraint' => '', 'autocomplete' => 'off', 'data-form-validator-target' => 'field', ]
                     : [
                         'data-constraint' => 'app-UniqueMember',
                         'data-multiple-fields' => 1,

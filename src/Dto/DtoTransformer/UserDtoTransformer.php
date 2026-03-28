@@ -38,7 +38,7 @@ class UserDtoTransformer
         private IdentityRepository $identityRepository,
         private SeasonService $seasonService,
         private ParameterService $parameterService,
-        private UserService $userService, 
+        private UserService $userService,
     ) {
     }
 

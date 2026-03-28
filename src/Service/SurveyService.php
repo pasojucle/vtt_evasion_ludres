@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\BikeRide;
+use App\Entity\Member;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
-use App\Entity\Member;
 use App\Repository\HistoryRepository;
 use App\Repository\LogRepository;
 use App\Repository\RespondentRepository;

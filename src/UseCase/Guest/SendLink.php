@@ -55,7 +55,7 @@ class SendLink
         $content = $this->replaceKeywords->replaceWhithParams($this->messageService->getMessageByName('GUEST_LINK_AUTHENTIFICATION'), [
             '{{ lien_inscription }}' => sprintf('<a href="%s">%s</a>', $link, $link),
         ]);
-        $attachments = $bikeRide->getRules() 
+        $attachments = $bikeRide->getRules()
             ? [$this->projectDirService->dir('upload', $bikeRide->getRules())]
             : [];
 

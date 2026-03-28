@@ -124,8 +124,9 @@ class OrderHeaderRepository extends ServiceEntityRepository
             ->join(OrderHeader::class, 'orderH', 'WITH', (new Expr())->eq('h.entityId', 'orderH.id'))
             ->join(Log::class, 'slog', 'WITH', (new Expr())->andX(
                 (new Expr())->eq('h.entityId', 'slog.entityId'),
-                (new Expr())->eq('slog.entity', ':entity'), 
-                (new Expr())->eq('slog.member', ':member')))
+                (new Expr())->eq('slog.entity', ':entity'),
+                (new Expr())->eq('slog.member', ':member')
+            ))
             ->andWhere(
                 (new Expr())->eq('h.entity', ':entity'),
                 (new Expr())->lt('slog.viewAt', 'h.createdAt'),

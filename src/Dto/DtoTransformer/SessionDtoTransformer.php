@@ -9,8 +9,8 @@ use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\PracticeEnum;
-use App\Entity\Session;
 use App\Entity\Member;
+use App\Entity\Session;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
 use App\Service\SessionService;
@@ -73,7 +73,7 @@ class SessionDtoTransformer
         $sessionDto->id = $session->getId();
         $member = $session->getMember()->getIdentity();
         $sessionDto->user = [
-            'id' => $session->getMember()->getId(), 
+            'id' => $session->getMember()->getId(),
             'fullName' => sprintf('%s %s', $member->getname(), $member->getFirstName())
         ];
 

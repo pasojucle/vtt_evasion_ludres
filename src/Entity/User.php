@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[ORM\Entity]
 #[ORM\Table(name: 'user')]
 #[ORM\InheritanceType('SINGLE_TABLE')]
@@ -64,9 +63,9 @@ abstract class User implements UserInterface
         return $this->id;
     }
 
-   /**
-     * @see UserInterface
-     */
+    /**
+      * @see UserInterface
+      */
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -103,9 +102,12 @@ abstract class User implements UserInterface
         return $this;
     }
 
-    public function eraseCredentials(): void {}
+    public function eraseCredentials(): void
+    {
+    }
 
-    public function isGuest(): bool {
+    public function isGuest(): bool
+    {
         return $this instanceof Guest;
     }
 

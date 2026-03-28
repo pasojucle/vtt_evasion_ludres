@@ -10,8 +10,8 @@ use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\LicenceConsent;
-use App\Entity\Participant;
 use App\Entity\Member;
+use App\Entity\Participant;
 use App\Model\Currency;
 use App\Repository\LicenceRepository;
 use App\Repository\MembershipFeeAmountRepository;
@@ -170,7 +170,7 @@ class LicenceDtoTransformer
 
         /** @var Member $member */
         $member = $licence->getUser();
-        if ($member instanceOf Member && $licence->getState()->isYearly()) {
+        if ($member instanceof Member && $licence->getState()->isYearly()) {
             $isRenovating = $this->isRenovating($member, $currentSeason);
             $membershipFee = (null !== $licence->getCoverage() && $licence->getState()->isYearly())
                 ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), !$isRenovating, $licence->getFamilyMember())

@@ -66,7 +66,7 @@ class BikeRideController extends AbstractController
         $form = $this->createForm(GuestRegistryType::class);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()){
+            if ($form->isValid()) {
                 $email = trim($form->getData()->getEmail());
                 $result = $sendLink->execute($email, $bikeRide);
                 if ($result['success']) {

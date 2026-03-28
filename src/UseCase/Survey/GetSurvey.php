@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\UseCase\Survey;
 
+use App\Entity\Member;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Entity\Member;
 use App\Form\Admin\SurveyType;
 use App\Service\SeasonService;
 use DateTimeImmutable;

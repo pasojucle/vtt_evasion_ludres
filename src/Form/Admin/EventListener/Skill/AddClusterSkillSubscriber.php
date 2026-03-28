@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form\Admin\EventListener\Skill;
 
-
 use App\Form\Admin\SkillAutocompleteField;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
@@ -16,9 +15,7 @@ class AddClusterSkillSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator
-    )
-    {
-
+    ) {
     }
        
     public static function getSubscribedEvents(): array
@@ -59,7 +56,7 @@ class AddClusterSkillSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
         dump($data);
-        [$categoryId, $levelId] = ($data) 
+        [$categoryId, $levelId] = ($data)
             ? [
                 array_key_exists('skillCategory', $data) && "" !== $data['skillCategory'] ? $data['skillCategory'] : null,
                 array_key_exists('level', $data) && "" !== $data['level'] ? $data['level'] : null

@@ -47,11 +47,16 @@ class ClusterRepository extends ServiceEntityRepository
     public function findAvailableByUser(Member $member): array
     {
         return $this->createQueryBuilder('c')
-            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX(
-                    (new Expr())->eq('c.id', 'log.entityId'), 
-                    (new Expr())->eq('log.entity', ':entityName'), 
-                    (new Expr())->eq('log.member', ':member'))
+            ->leftjoin(
+                Log::class,
+                'log',
+                'WITH',
+                (new Expr())->andX(
+                    (new Expr())->eq('c.id', 'log.entityId'),
+                    (new Expr())->eq('log.entity', ':entityName'),
+                    (new Expr())->eq('log.member', ':member')
                 )
+            )
             ->join('c.bikeRide', 'br')
             ->join('c.sessions', 's')
             ->andWhere(

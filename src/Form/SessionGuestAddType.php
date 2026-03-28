@@ -23,8 +23,7 @@ class SessionGuestAddType extends AbstractType
 {
     public function __construct(
         private ClusterRepository $clusterRepository,
-    )
-    {
+    ) {
     }
 
     private const array ALLOWED_PRACTICES = [PracticeEnum::VTT, PracticeEnum::GRAVEL];
@@ -77,7 +76,7 @@ class SessionGuestAddType extends AbstractType
                 $attr['class'] = 'btn btn-primary disabled';
             }
             [$choices, $hidden] = (in_array($cluster?->getPractice(), self::ALLOWED_PRACTICES))
-                ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC,], '']
+                ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC, ], '']
                 : [[BikeTypeEnum::NONE], 'hidden'];
             $form
                 ->add('bikeType', EnumType::class, [

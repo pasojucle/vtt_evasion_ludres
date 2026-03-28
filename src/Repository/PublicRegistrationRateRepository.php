@@ -44,7 +44,7 @@ class PublicRegistrationRateRepository extends ServiceEntityRepository
                 ->setParameter('practice', $practice)
                 ->setParameter('age', $age)
                 ->setParameter('isFFVelo', $isFFVelo)
-                ->orderBy('prr.maxAge','ASC')
+                ->orderBy('prr.maxAge', 'ASC')
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getOneOrNullResult();

@@ -23,7 +23,6 @@ class ConfirmationSession
 
     public function execute(Session $session): void
     {
-        
         $member = $this->userDtoTransformer->fromEntity($session->getMember());
         $bikeRide = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
 

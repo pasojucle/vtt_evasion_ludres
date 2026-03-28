@@ -45,11 +45,12 @@ class UserVoter extends Voter
         }
 
         return in_array($attribute, [self::EDIT, self::VIEW])
-        && ($subject instanceof User || 
-            $subject instanceof UserDto || 
-            $subject instanceof Licence || 
-            $subject instanceof Identity || 
-            $subject instanceof Health || 
+        && (
+            $subject instanceof User ||
+            $subject instanceof UserDto ||
+            $subject instanceof Licence ||
+            $subject instanceof Identity ||
+            $subject instanceof Health ||
             $subject instanceof LicenceAgreement ||
             $subject instanceof Session
         );

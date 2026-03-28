@@ -6,10 +6,10 @@ namespace App\Repository;
 
 use App\Entity\History;
 use App\Entity\Log;
+use App\Entity\Member;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Entity\Member;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -96,9 +96,10 @@ class SurveyRepository extends ServiceEntityRepository
             ->from(History::class, 'sh')
             ->join(Survey::class, 'survey', 'WITH', (new Expr())->eq('sh.entityId', 'survey.id'))
             ->join(Log::class, 'slog', 'WITH', (new Expr())->andX(
-                (new Expr())->eq('sh.entityId', 'slog.entityId'), 
-                (new Expr())->eq('slog.entity', ':survey'), 
-                (new Expr())->eq('slog.member', ':member')))
+                (new Expr())->eq('sh.entityId', 'slog.entityId'),
+                (new Expr())->eq('slog.entity', ':survey'),
+                (new Expr())->eq('slog.member', ':member')
+            ))
             ->andWhere(
                 (new Expr())->eq('sh.entity', ':survey'),
                 (new Expr())->eq('sh.notify', ':notify'),
@@ -110,9 +111,10 @@ class SurveyRepository extends ServiceEntityRepository
             ->from(History::class, 'ih')
             ->join(SurveyIssue::class, 'surveyIssue', 'WITH', (new Expr())->eq('ih.entityId', 'surveyIssue.id'))
             ->join(Log::class, 'ilog', 'WITH', (new Expr())->andX(
-                (new Expr())->eq('ih.entityId', 'ilog.entityId'), 
-                (new Expr())->eq('ilog.entity', ':issue'), 
-                (new Expr())->eq('ilog.member', ':member')))
+                (new Expr())->eq('ih.entityId', 'ilog.entityId'),
+                (new Expr())->eq('ilog.entity', ':issue'),
+                (new Expr())->eq('ilog.member', ':member')
+            ))
             ->join('surveyIssue.survey', 'Isurvey')
             ->andWhere(
                 (new Expr())->eq('ih.entity', ':issue'),

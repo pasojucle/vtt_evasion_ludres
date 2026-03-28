@@ -19,33 +19,33 @@ class GuestRepository extends ServiceEntityRepository
         parent::__construct($registry, Guest::class);
     }
 
-       public function findOneByValidToken(string $token): ?Guest
-       {
-           return $this->createQueryBuilder('g')
+    public function findOneByValidToken(string $token): ?Guest
+    {
+        return $this->createQueryBuilder('g')
                ->andWhere(
-                    (new Expr())->eq('g.token', ':token'),
-                    (new Expr())->gte('g.tokenExpiresAt', ':now'),
+                   (new Expr())->eq('g.token', ':token'),
+                   (new Expr())->gte('g.tokenExpiresAt', ':now'),
                )
                ->setParameter('token', $token)
                ->setParameter('now', (new DateTime())->format(DateTime::ATOM))
                ->getQuery()
                ->getOneOrNullResult()
            ;
-       }
+    }
 
-       public function findOneByEmail(string $email): ?Guest
-       {
-            try {
-                return $this->createQueryBuilder('g')
+    public function findOneByEmail(string $email): ?Guest
+    {
+        try {
+            return $this->createQueryBuilder('g')
                     ->andWhere(
-                            (new Expr())->eq('g.email', ':email'),
+                        (new Expr())->eq('g.email', ':email'),
                     )
                     ->setParameter('email', $email)
                     ->getQuery()
                     ->getOneOrNullResult()
                 ;
-            } catch (NonUniqueResultException) {
-                return null;
-            }
-       }
+        } catch (NonUniqueResultException) {
+            return null;
+        }
+    }
 }

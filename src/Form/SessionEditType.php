@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-
 use App\Entity\Session;
 use App\Entity\User;
 use App\Form\EventListener\SessionSubscriber;

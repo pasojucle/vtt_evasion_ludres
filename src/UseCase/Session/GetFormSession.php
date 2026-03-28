@@ -96,7 +96,7 @@ class GetFormSession
                         'fullName' => $sessionsByCluster[$cluster][$i]->user->member->fullName,
                         'practice' => $sessionsByCluster[$cluster][$i]->practice,
                         'bikeType' => $sessionsByCluster[$cluster][$i]->bikeType,
-                    ]: null;
+                    ] : null;
                 $rows[$i][] = $session;
             }
         }

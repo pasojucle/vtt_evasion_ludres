@@ -66,7 +66,7 @@ class AddressSubscriber implements EventSubscriberInterface
                 'attr' => [
                     'data-constraint' => 'app-PostalCode',
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => $communeId, 
+                    'data-container-id' => $communeId,
                     'data-form-validator-target' => 'field'
                 ],
                 'required' => $options['required'],

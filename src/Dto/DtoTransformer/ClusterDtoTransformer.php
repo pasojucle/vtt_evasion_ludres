@@ -88,27 +88,27 @@ class ClusterDtoTransformer
         $cachePool = $this->cacheService->getCache();
         $clusterCache = $cachePool->getItem($this->cacheService->getCacheIndex($cluster));
         // if (!$clusterCache->isHit()) {
-            $fromEntities = true;
-            if (!$sessionEntities) {
-                $sessionEntities = $cluster->getSessions();
-                $fromEntities = false;
-            }
+        $fromEntities = true;
+        if (!$sessionEntities) {
+            $sessionEntities = $cluster->getSessions();
+            $fromEntities = false;
+        }
 
-            $clusterDto = new ClusterDto();
-            $clusterDto->id = $cluster->getId();
-            $clusterDto->title = $cluster->getTitle();
-            $clusterDto->level = $this->levelDtoTransformer->fromEntity($cluster->getLevel());
-            $clusterDto->sessions = $this->getSessions($sessionEntities, $fromEntities);
-            $clusterDto->maxUsers = $cluster->getMaxUsers();
-            $clusterDto->role = $cluster->getRole();
-            $clusterDto->isComplete = $cluster->isComplete();
-            $clusterDto->memberSessions = $this->clusterService->getMemberSessions($cluster);
-            $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()->getBikeRideType()->isRequireAvailability());
-            $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
-            $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
-            $clusterCache->set($clusterDto);
-            $clusterCache->expiresAfter(DateInterval::createFromDateString('1 hour'));
-            $cachePool->save($clusterCache);
+        $clusterDto = new ClusterDto();
+        $clusterDto->id = $cluster->getId();
+        $clusterDto->title = $cluster->getTitle();
+        $clusterDto->level = $this->levelDtoTransformer->fromEntity($cluster->getLevel());
+        $clusterDto->sessions = $this->getSessions($sessionEntities, $fromEntities);
+        $clusterDto->maxUsers = $cluster->getMaxUsers();
+        $clusterDto->role = $cluster->getRole();
+        $clusterDto->isComplete = $cluster->isComplete();
+        $clusterDto->memberSessions = $this->clusterService->getMemberSessions($cluster);
+        $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()->getBikeRideType()->isRequireAvailability());
+        $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
+        $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
+        $clusterCache->set($clusterDto);
+        $clusterCache->expiresAfter(DateInterval::createFromDateString('1 hour'));
+        $cachePool->save($clusterCache);
         // }
 
         $clusterDto = $clusterCache->get();
@@ -186,15 +186,15 @@ class ClusterDtoTransformer
                     $licencesAgreements[$agreement->getId()] = $this->licenceAgreementService->toHtml($licenceAgreement);
                 }
                 $user['agreements'] = $licencesAgreements;
-                foreach([$userEntity->getLegalGardian(),$userEntity->getSecondContact()] as $gardian) {
+                foreach ([$userEntity->getLegalGardian(), $userEntity->getSecondContact()] as $gardian) {
                     $this->addGardian($gardian, $user, $userAddress);
                 }
                 $user['health'] = [
                     'content' => $userEntity->getHealth()?->getContent()
                 ];
                 $user['lastLicence'] = [
-                    'coverageStr' => (!empty($userLicence->getCoverage())) 
-                        ? $this->translator->trans(Licence::COVERAGES[$userLicence->getCoverage()]) 
+                    'coverageStr' => (!empty($userLicence->getCoverage()))
+                        ? $this->translator->trans(Licence::COVERAGES[$userLicence->getCoverage()])
                         : null
                 ];
             }
@@ -223,7 +223,7 @@ class ClusterDtoTransformer
             $user[$key] = [
                 'kind' => $gardian->getKind(),
                 'fullName' => $gardianIdentity->getFullName(),
-                'phone' =>  implode(' - ', array_filter([$gardianIdentity->getMobile(), $gardianIdentity->getPhone()])),
+                'phone' => implode(' - ', array_filter([$gardianIdentity->getMobile(), $gardianIdentity->getPhone()])),
                 'address' => $gardianAddress ? $this->addressToArray($gardianAddress) : $userAddress,
                 'email' => $gardianIdentity->getEmail(),
             ];
@@ -327,7 +327,7 @@ class ClusterDtoTransformer
                 }
             }
         }
-        dump($userOnSiteSessions);
+        
         return count($userOnSiteSessions);
     }
 }

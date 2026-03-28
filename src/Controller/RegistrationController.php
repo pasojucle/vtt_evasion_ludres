@@ -228,11 +228,10 @@ class RegistrationController extends AbstractController
     ): Response {
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
-            'attr'=> ['data-turbo-frame'=> '_top']
+            'attr' => ['data-turbo-frame' => '_top']
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-
             return $this->redirectToRoute('contact', [], Response::HTTP_SEE_OTHER);
         }
     

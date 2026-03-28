@@ -11,12 +11,12 @@ use App\Form\Admin\SkillAddType;
 use App\Repository\SkillRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
-
 
 class ClusterSkillController extends AbstractController
 {
@@ -79,13 +79,44 @@ class ClusterSkillController extends AbstractController
         ], $response);
     }
 
-    #[Route('/admin/groupe/evaluation/delete/{skill}', name: 'admin_cluster_evaluation_delete', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/evaluation/delete/{cluster}/{skill}', name: 'admin_cluster_evaluation_delete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluationdDelete(
+        Cluster $cluster,
         Skill $skill,
         Request $request,
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
+        ]);
 
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $skillId = $skill->getId();
+                $cluster->removeSkill($skill);
+                $this->entityManager->flush();
+                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
+                    return $this->render('cluster/admin/skill_deleted.stream.html.twig', [
+                        'skillId' => $skillId,
+                    ]);
+                }
+
+                return $this->redirectToRoute('admin_cluster_evaluations', ['cluster' => $cluster->getId()]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer une commande',
+            'content' => sprintf('Etes vous certain de supprimer l\'évaluation %s ?', $skill->getContent()),
+            'btn_label' => 'Supprimer',
+            'form' => $form->createView(),
+        ], $response);
     }
 
     #[Route('/admin/groupe/evaluation/eval/{skill}', name: 'admin_cluster_evaluation_eval', methods: ['GET', 'POST'])]
@@ -94,6 +125,5 @@ class ClusterSkillController extends AbstractController
         Skill $skill,
         Request $request,
     ): Response {
-
     }
 }

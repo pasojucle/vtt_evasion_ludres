@@ -91,7 +91,7 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                 ],
                 'attr' => [
                     'data-constraint' => 'symfony-Email',
-                    'autocomplete' => 'off', 
+                    'autocomplete' => 'off',
                     'data-form-validator-target' => 'field'
                 ],
             ])

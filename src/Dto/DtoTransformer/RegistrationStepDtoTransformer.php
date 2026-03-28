@@ -69,8 +69,8 @@ class RegistrationStepDtoTransformer
 
         $seasonLicence = ($userDto->lastLicence->isSeasonLicence) ? $userDto->lastLicence : null;
 
-        $route = ('user_registration_form' === $this->requestStack->getCurrentRequest()->attributes->get('_route')) 
-            ? 'user_registration_form' 
+        $route = ('user_registration_form' === $this->requestStack->getCurrentRequest()->attributes->get('_route'))
+            ? 'user_registration_form'
             : 'registration_form';
 
         if (null !== $registrationStep->getForm() && RegistrationFormEnum::REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {

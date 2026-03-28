@@ -76,11 +76,16 @@ class LinkRepository extends ServiceEntityRepository
     public function quertNoveltiesByUser(Member $member): QueryBuilder
     {
         return $this->createQueryBuilder('l')
-            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX(
-                    (new Expr())->eq('l.id', 'log.entityId'), 
-                    (new Expr())->eq('log.entity', ':entityName'), 
-                    (new Expr())->eq('log.member', ':member'))
+            ->leftjoin(
+                Log::class,
+                'log',
+                'WITH',
+                (new Expr())->andX(
+                    (new Expr())->eq('l.id', 'log.entityId'),
+                    (new Expr())->eq('log.entity', ':entityName'),
+                    (new Expr())->eq('log.member', ':member')
                 )
+            )
             ->andWhere(
                 (new Expr())->orX(
                     (new Expr())->isNull('log'),

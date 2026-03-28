@@ -1,15 +1,26 @@
-<li class="list-group-item">
+<li class="list-group-item" id="skill_item_{{ skill.id }}">
     <div>{{ skill.content|raw}}</div>
     {% if canEdit %}
         <div class="dropdown">
             <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
             <div class="dropdown-menu" data-target="dropdown-tools">
                 <ul class="dropdown-body">
-                    <li><a class="dropdown-item" href="{{path('admin_cluster_evaluation_eval', {'skill': skill.id })}}" title="Évaluations">
-                        <i class="fa-solid fa-graduation-cap"></i> Évaluer
-                    </a></li>
-                    <li><a class="dropdown-item" href="{{path('admin_cluster_evaluation_delete', {'skill': skill.id })}}" title="Supprimer" data-type="danger">
-                        <i class="fas fa-times"></i> Supprimer</a>
+                    <li>
+                        <a 
+                            class="dropdown-item" href="{{path('admin_cluster_evaluation_eval', {'skill': skill.id, 'cluster': cluster.id })}}" 
+                            title="Évaluations"
+                            data-turbo-frame="modal_content"
+                        >
+                            <i class="fa-solid fa-graduation-cap"></i> Évaluer
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{path('admin_cluster_evaluation_delete', {'skill': skill.id, 'cluster': cluster.id })}}" 
+                            title="Supprimer" 
+                            data-turbo-frame="modal_content"
+                        >
+                            <i class="fas fa-times"></i> Supprimer
+                        </a>
                     </li>
                 </ul>
             </div>

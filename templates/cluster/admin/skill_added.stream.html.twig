@@ -1,6 +1,6 @@
 <turbo-stream action="append" target="skills-list-container">
     <template>
-        {{ include('cluster/admin/_skill_item.html.twig', {skill: skill, canEdit: canEdit}) }}
+        {{ include('cluster/admin/_skill_item.html.twig', {skill: skill, canEdit: canEdit, cluster: cluster}) }}
     </template>
 </turbo-stream>
 

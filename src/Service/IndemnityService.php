@@ -49,9 +49,9 @@ class IndemnityService
         if (!empty($allIndemnities)) {
             foreach ($allIndemnities as $indemnity) {
                 $user = $session->getUser();
-                if ($session->getCluster()->getBikeRide()->getBikeRideType() === $indemnity->getBikeRideType() && 
-                    $user instanceOf Member && 
-                    $user->getLevel() === $indemnity->getLevel() && 
+                if ($session->getCluster()->getBikeRide()->getBikeRideType() === $indemnity->getBikeRideType() &&
+                    $user instanceof Member &&
+                    $user->getLevel() === $indemnity->getLevel() &&
                     $session->isPresent()) {
                     $amount = new Currency($indemnity->getAmount());
 

@@ -10,8 +10,7 @@ class IdentityService
 {
     public function __construct(
         private ProjectDirService $projectDirService
-    )
-    {
+    ) {
     }
 
     public function getPicture(?string $picture): string

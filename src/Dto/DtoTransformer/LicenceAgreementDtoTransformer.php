@@ -12,9 +12,8 @@ use Doctrine\Common\Collections\Collection;
 class LicenceAgreementDtoTransformer
 {
     public function __construct(
-        Private LicenceAgreementService $licenceAgreementService
-    )
-    {
+        private LicenceAgreementService $licenceAgreementService
+    ) {
     }
 
     public function fromEntity(?LicenceAgreement $licenceAgreement): LicenceAgreementDto

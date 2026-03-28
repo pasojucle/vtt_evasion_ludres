@@ -21,8 +21,7 @@ class SkillController extends AbstractController
 {
     public function __construct(
         private SkillRepository $skillRepository
-    )
-    {
+    ) {
     }
 
     #[Route(path: '/list', name: 'list', methods: ['GET'])]
@@ -64,18 +63,18 @@ class SkillController extends AbstractController
     public function adminSkillAutocomplete(
         Request $request
     ): JsonResponse {
-        $cluster = $request->query->get('cluster');
-        $category = $request->query->get('category');
-        $level = $request->query->get('level');
+        $clusterId = $request->query->get('cluster');
+        $categoryId = $request->query->get('category');
+        $levelId = $request->query->get('level');
+        $isFiltered = !empty($categoryId) || !empty($levelId) || !empty($clusterId);
 
         $results = [];
-        $skills = ($category || $level)
-            ? $this->skillRepository->findFiltered($category, $level)
+        $skills = ($isFiltered)
+            ? $this->skillRepository->findFiltered($categoryId, $levelId, $clusterId)
             : $this->skillRepository->findAllOrdered();
 
-        dump($level, $skills);
-        /** @var Skill $kill */
-        foreach($skills as $skill) {
+        /** @var Skill $skill */
+        foreach ($skills as $skill) {
             $results[] = [
                 'value' => $skill->getId(),
                 'text' => $skill->getContent(),

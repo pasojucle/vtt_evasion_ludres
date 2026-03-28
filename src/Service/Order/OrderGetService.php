@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
+use App\Entity\Member;
 use App\Entity\OrderHeader;
 use App\Entity\User;
-use App\Entity\Member;
 use App\Repository\OrderHeaderRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 

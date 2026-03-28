@@ -4,8 +4,8 @@ namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\PermissionEnum;
-use App\Entity\SecondHand;
 use App\Entity\Member;
+use App\Entity\SecondHand;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;

@@ -129,7 +129,7 @@ class UserController extends AbstractController
         $identity = $identityRepository->findOneByNameAndFirstName($name, $firstName);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
-            'attr'=> ['data-turbo-frame'=> '_top']
+            'attr' => ['data-turbo-frame' => '_top']
         ]);
         $form->handleRequest($request);
 

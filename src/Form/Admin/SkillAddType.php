@@ -17,9 +17,7 @@ class SkillAddType extends AbstractType
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator
-    )
-    {
-
+    ) {
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -58,7 +56,7 @@ class SkillAddType extends AbstractType
             'clusterId' => null,
             'attr' => [
                 'data-controller' => 'form-modifier',
-                'data-turbo-action'=> 'replace',
+                'data-turbo-action' => 'replace',
             ]
         ]);
     }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Form\Admin\EventListener\Survey;
 
 use App\Entity\BikeRide;
-use App\Entity\Survey;
 use App\Entity\Member;
+use App\Entity\Survey;
 use App\Form\Admin\BikeRideAutocompleteField;
 use App\Form\Admin\SurveyType;
 use App\Form\Admin\UsersAutocompleteField;

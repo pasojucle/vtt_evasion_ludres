@@ -9,8 +9,8 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Guest;
 use App\Entity\Member;
-use App\Entity\User;
 use App\Entity\Session;
+use App\Entity\User;
 use App\Form\SessionGuestAddType;
 use App\Repository\ContentRepository;
 use App\Service\MessageService;
@@ -36,7 +36,6 @@ class SessionController extends AbstractController
         private readonly GetFormSession $getFormSession,
         private readonly SetSession $setSession,
         private readonly AddGuestSession $addGuestSession,
-
     ) {
     }
 
@@ -185,7 +184,7 @@ class SessionController extends AbstractController
         }
 
         return $this->render('session/guest_add.html.twig', [
-            'bikeRide' =>  $bikeRideDtoTransformer->fromEntity($bikeRide),
+            'bikeRide' => $bikeRideDtoTransformer->fromEntity($bikeRide),
             'form' => $form->createView(),
             'publicRegistrationRate' => $this->addGuestSession->getPublicRegistrationRate(),
         ], $response);
@@ -210,7 +209,7 @@ class SessionController extends AbstractController
         }
 
         return $this->render('session/guest_participation.html.twig', [
-            'bikeRide' =>  $bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide()),
+            'bikeRide' => $bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide()),
             'amount' => 0 < $amount ? sprintf('%s €', $amount / 100) : 'Gratuit',
             'email' => $guest->getContactEmail(),
             'session' => $session,

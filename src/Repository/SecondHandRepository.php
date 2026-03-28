@@ -128,9 +128,10 @@ class SecondHandRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('s')
             ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX(
-                (new Expr())->eq('s.id', 'log.entityId'), 
-                (new Expr())->eq('log.entity', ':entityName'), 
-                (new Expr())->eq('log.member', ':member')))
+                (new Expr())->eq('s.id', 'log.entityId'),
+                (new Expr())->eq('log.entity', ':entityName'),
+                (new Expr())->eq('log.member', ':member')
+            ))
             ->andWhere(
                 (new Expr())->orX(
                     (new Expr())->isNull('log'),

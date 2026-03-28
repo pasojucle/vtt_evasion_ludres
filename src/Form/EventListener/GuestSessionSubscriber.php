@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form\EventListener;
 
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -61,6 +60,5 @@ class GuestSessionSubscriber implements EventSubscriberInterface
                     'data' => null,
                 ]);
         }
-
     }
 }

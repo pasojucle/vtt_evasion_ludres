@@ -29,8 +29,7 @@ class AddSessionSubscriber implements EventSubscriberInterface
     public function __construct(
         private SessionService $sessionService,
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -62,7 +61,7 @@ class AddSessionSubscriber implements EventSubscriberInterface
             $form->add('cluster', HiddenEntityType::class, [
                         'class' => Cluster::class,
                     ]);
-                ;
+            ;
         }
         if (true === $bikeRide->getBikeRideType()->isDisplayBikeKind()) {
             $form
@@ -97,7 +96,7 @@ class AddSessionSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
         $season = array_key_exists('season', $data) ? $data['season'] : null;
-        $practice= array_key_exists('practice', $data) ? PracticeEnum::tryFrom($data['practice']) : PracticeEnum::NONE;
+        $practice = array_key_exists('practice', $data) ? PracticeEnum::tryFrom($data['practice']) : PracticeEnum::NONE;
 
         $this->modifier($event->getForm(), $season, $practice);
     }
@@ -118,7 +117,7 @@ class AddSessionSubscriber implements EventSubscriberInterface
             ]);
 
         [$choices, $hidden] = (in_array($practice, self::ALLOWED_PRACTICES))
-            ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC,], '']
+            ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC, ], '']
             : [[BikeTypeEnum::NONE], 'hidden'];
         $form
             ->add('bikeType', EnumType::class, [

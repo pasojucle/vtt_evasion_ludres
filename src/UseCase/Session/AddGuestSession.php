@@ -20,9 +20,7 @@ class AddGuestSession
         private EntityManagerInterface $entityManager,
         private SessionRepository $sessionRepository,
         private PublicRegistrationRateRepository $publicRegistrationRateRepository,
-    )
-    {
-    
+    ) {
     }
 
     public function getExistingSession(Guest $guest, BikeRide $bikeRide): ?Session
@@ -63,10 +61,10 @@ class AddGuestSession
     public function getPublicRegistrationRate(): array
     {
         $publicRegistrationRate = [];
-        foreach($this->publicRegistrationRateRepository->findAllOrdered() as $line) {
+        foreach ($this->publicRegistrationRateRepository->findAllOrdered() as $line) {
             $key = sprintf('%s-%s', $line->getPractice()->value, $line->isFFVelo());
-            $publicRegistrationRate[$key][] = sprintf('%s : %s', $line->getLabel(), 0 < $line->getAmount() 
-                ? sprintf('%s €',$line->getAmount() / 100) 
+            $publicRegistrationRate[$key][] = sprintf('%s : %s', $line->getLabel(), 0 < $line->getAmount()
+                ? sprintf('%s €', $line->getAmount() / 100)
                 : 'gratuit');
         }
         

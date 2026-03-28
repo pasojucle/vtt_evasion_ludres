@@ -6,11 +6,11 @@ namespace App\UseCase\Skill;
 
 use App\Entity\Cluster;
 use App\Entity\Level;
+use App\Entity\Member;
+use App\Entity\MemberSkill;
+use App\Entity\Participant;
 use App\Entity\Session;
 use App\Entity\Skill;
-use App\Entity\Member;
-use App\Entity\Participant;
-use App\Entity\MemberSkill;
 use App\Repository\MemberSkillRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;

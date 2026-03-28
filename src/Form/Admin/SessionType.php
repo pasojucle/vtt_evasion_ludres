@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-
 use App\Entity\Licence;
 use App\Form\Admin\EventListener\AddSessionSubscriber;
 use App\Service\SeasonService;

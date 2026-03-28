@@ -15,8 +15,8 @@ use App\Entity\Licence;
 use App\Entity\Member;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
-use App\Entity\User;
 use App\Entity\Survey;
+use App\Entity\User;
 use App\Repository\BikeRideRepository;
 use App\Repository\ClusterRepository;
 use App\Repository\NotificationRepository;
@@ -53,7 +53,6 @@ class GetList
         private readonly ClusterRepository $clusterRepository,
         private readonly SeasonService $seasonService,
     ) {
-        
     }
 
     public function execute(): array

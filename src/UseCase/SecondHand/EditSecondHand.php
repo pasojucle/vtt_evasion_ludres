@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\UseCase\SecondHand;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\SecondHand;
 use App\Entity\Member;
+use App\Entity\SecondHand;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
 use App\Service\UploadService;

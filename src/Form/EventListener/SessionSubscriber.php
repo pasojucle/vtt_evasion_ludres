@@ -93,16 +93,16 @@ class SessionSubscriber implements EventSubscriberInterface
     public function preSubmit(FormEvent $event): void
     {
         $data = $event->getData();
-        $practice= array_key_exists('practice', $data) ? PracticeEnum::tryFrom($data['practice']) : PracticeEnum::NONE;
+        $practice = array_key_exists('practice', $data) ? PracticeEnum::tryFrom($data['practice']) : PracticeEnum::NONE;
 
         $this->modifier($event->getForm(), $practice);
     }
 
-    private function modifier(FormInterface $form,  ?PracticeEnum $practice): void
+    private function modifier(FormInterface $form, ?PracticeEnum $practice): void
     {
         $displayBikeKind = $form->getConfig()->getOption('display_bike_kind');
         [$choices, $hidden] = ($displayBikeKind && in_array($practice, self::ALLOWED_PRACTICES))
-            ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC,], '']
+            ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC, ], '']
             : [[BikeTypeEnum::NONE], 'hidden'];
         $form
             ->add('bikeType', EnumType::class, [
