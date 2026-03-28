@@ -55,7 +55,6 @@ class AddClusterSkillSubscriber implements EventSubscriberInterface
     private function modify(FormEvent $event): void
     {
         $data = $event->getData();
-        dump($data);
         [$categoryId, $levelId] = ($data)
             ? [
                 array_key_exists('skillCategory', $data) && "" !== $data['skillCategory'] ? $data['skillCategory'] : null,

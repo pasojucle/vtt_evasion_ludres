@@ -10,7 +10,6 @@ class MemberPermission
 {
     #[ORM\Id]
     #[ORM\ManyToOne(inversedBy: 'memberPermissions')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Member $member = null;
 
     #[ORM\Id]

@@ -10,8 +10,8 @@ use App\Entity\MemberSkill;
 use App\Entity\Skill;
 use App\Entity\UserSkill;
 use App\Form\Admin\SkillAddType;
-use App\Form\Admin\UserSkillCollectionType;
-use App\Form\Admin\UserSkillType;
+use App\Form\Admin\MemberSkillCollectionType;
+use App\Form\Admin\MemberSkillType;
 use App\Service\ApiService;
 use App\Service\CacheService;
 use App\UseCase\Skill\GetUserSkillCluster;
@@ -49,9 +49,9 @@ class ClusterSkillController extends AbstractController
     #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function eval(Request $request, Cluster $cluster, Skill $skill): JsonResponse
     {
-        $form = $this->createForm(UserSkillCollectionType::class, $this->getUserSkillCluster->execute($cluster, $skill), [
+        $form = $this->createForm(MemberSkillCollectionType::class, $this->getUserSkillCluster->execute($cluster, $skill), [
             'action' => $request->getUri(),
-            'text_type' => UserSkillType::BY_USERS,
+            'text_type' => MemberSkillType::BY_USERS,
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {

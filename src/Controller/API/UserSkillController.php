@@ -9,7 +9,7 @@ use App\Entity\Member;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
 use App\Form\Admin\SkillAddType;
-use App\Form\Admin\UserSkillType;
+use App\Form\Admin\MemberSkillType;
 use App\Service\ApiService;
 use App\Service\UserSkillService;
 use DateTimeImmutable;
@@ -49,8 +49,8 @@ class UserSkillController extends AbstractController
     #[Route(path: '/edit/{memberSkill}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function edit(Request $request, MemberSkill $memberSkill): JsonResponse
     {
-        $form = $this->api->createForm($request, UserSkillType::class, $memberSkill, [
-            'text_type' => UserSkillType::BY_SKILLS,
+        $form = $this->api->createForm($request, MemberSkillType::class, $memberSkill, [
+            'text_type' => MemberSkillType::BY_SKILLS,
         ]);
         
         $form->handleRequest($request);
@@ -90,8 +90,8 @@ class UserSkillController extends AbstractController
             $this->entityManager->persist($userSkill);
             $this->entityManager->flush();
 
-            $form = $this->createForm(UserSkillType::class, $userSkill, [
-                'text_type' => UserSkillType::BY_SKILLS,
+            $form = $this->createForm(MemberSkillType::class, $userSkill, [
+                'text_type' => MemberSkillType::BY_SKILLS,
                 'action' => $this->generateUrl('api_user_skill_edit', ['userSkill' => $userSkill->getId()])
             ]);
 

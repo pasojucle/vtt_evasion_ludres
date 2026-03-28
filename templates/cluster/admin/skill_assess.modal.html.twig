@@ -1,0 +1,26 @@
+{% extends 'base_modal_stimulus.html.twig' %}
+{% block modal_title %}Ajouter une compétence{% endblock %}
+{% block body %}
+    <div class="w-full m-0 py-2 px-4">
+        <div>{{ content|raw }}</div>
+        <div data-id="user_skill_container" data-form-modifier-target="container">
+            {% for memberSkill in form.memberSkills %}
+            <div class="form-group flex items-center gap-2">
+                {{ form_row(memberSkill.user) }}
+                {{ form_row(memberSkill.evaluation) }}
+                {{ form_row(memberSkill.skill) }}
+                {{ form_row(memberSkill.member) }}
+            </div>
+            {% endfor %}
+        </div>
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+{% block action %}
+    <button 
+        type="submit"
+        class="btn text-primary bg-neutral-200"
+    >
+        <i class="fas fa-check"></i> Enregistrer
+    </button>
+{% endblock %}

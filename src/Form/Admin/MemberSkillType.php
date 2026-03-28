@@ -3,9 +3,9 @@
 namespace App\Form\Admin;
 
 use App\Entity\Enum\EvaluationEnum;
+use App\Entity\Member;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
-use App\Entity\User;
 use App\Form\HiddenEntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserSkillType extends AbstractType
+class MemberSkillType extends AbstractType
 {
     public const BY_USERS = 1;
     public const BY_SKILLS = 2;
@@ -28,29 +28,42 @@ class UserSkillType extends AbstractType
             $form = $event->getForm();
   
             list($name, $content) = $this->getText($options['text_type'], $memberSkill);
+            $attrClass = [
+                'data-action' => 'change->form-modifier#change',
+                'data-container-id' => 'user_skill_container'
+            ];
 
             $form
                 ->add($name, TextType::class, [
+                    'label' => false,
                     'mapped' => false,
                     'disabled' => true,
-                    'block_prefix' => 'vueText',
                     'data' => $content,
+                    'attr' => [
+                        'class' => 'w-full',
+                    ],
                     'row_attr' => [
-                        'class' => 'col-md-6 text-label',
+                        'class' => 'w-1/2 text-sm',
                     ],
                 ])
                 ->add('evaluation', EnumType::class, [
+                    'label' => false,
                     'class' => EvaluationEnum::class,
-                    'block_prefix' => 'vueRadio',
+                    'expanded' => true,
+                    'multiple' => false,
                     'row_attr' => [
-                        'class' => 'col-md-6',
+                        'class' => 'w-1/2',
                     ],
+                    'block_prefix' => 'btn_radio',
+                    'choice_attr' => function ($choice, string $key, mixed $value) use ($attrClass) {
+                        return array_merge($attrClass, ['data-color' => $choice->color()]);
+                    }
                 ])
                 ->add('skill', HiddenEntityType::class, [
-                    'class' => User::class,
-                ])
-                ->add('user', HiddenEntityType::class, [
                     'class' => Skill::class,
+                ])
+                ->add('member', HiddenEntityType::class, [
+                    'class' => Member::class,
                 ])
             ;
         });
@@ -60,7 +73,7 @@ class UserSkillType extends AbstractType
     {
         if (self::BY_USERS === $type) {
             $member = $memberSkill->getMember()->getIdentity();
-            return ['member', sprintf('%s %s', $member->getName(), $member->getFirstName())];
+            return ['user', sprintf('%s %s', $member->getName(), $member->getFirstName())];
         }
 
         return ['content', $memberSkill->getSkill()->getContent()];

@@ -29,9 +29,9 @@ enum EvaluationEnum: string implements TranslatableInterface
     public function color(): string
     {
         return match ($this) {
-            self::ACQUIRED => '#4caf50',
-            self::PENDING => '#f89c37',
-            default => '#d9534f'
+            self::ACQUIRED => 'success-color',
+            self::PENDING => 'primary-color',
+            default => 'danger-color'
         };
     }
 }

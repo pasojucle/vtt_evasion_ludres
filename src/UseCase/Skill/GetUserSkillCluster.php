@@ -8,7 +8,6 @@ use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\Member;
 use App\Entity\MemberSkill;
-use App\Entity\Participant;
 use App\Entity\Session;
 use App\Entity\Skill;
 use App\Repository\MemberSkillRepository;
@@ -38,7 +37,7 @@ class GetUserSkillCluster
             }
         }
 
-        return ['userSkills' => new ArrayCollection($clusterMemberkill)];
+        return ['memberSkills' => new ArrayCollection($clusterMemberkill)];
     }
 
     private function getUserSkillByUser(Cluster $cluster, Skill $skill): array

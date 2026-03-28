@@ -6,9 +6,13 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Entity\Cluster;
+use App\Entity\MemberSkill;
 use App\Entity\Skill;
+use App\Form\Admin\MemberSkillCollectionType;
+use App\Form\Admin\MemberSkillType;
 use App\Form\Admin\SkillAddType;
-use App\Repository\SkillRepository;
+use App\UseCase\Skill\GetUserSkillCluster;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -23,6 +27,7 @@ class ClusterSkillController extends AbstractController
     public function __construct(
         private SkillDtoTransformer $skillDtoTransformer,
         private EntityManagerInterface $entityManager,
+        private readonly GetUserSkillCluster $getUserSkillCluster,
     ) {
     }
 
@@ -54,7 +59,6 @@ class ClusterSkillController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
                 $skill = $form->get('skill')->getData();
-                dump($skill);
                 $cluster->addSkill($skill);
                 $this->entityManager->flush();
 
@@ -119,11 +123,37 @@ class ClusterSkillController extends AbstractController
         ], $response);
     }
 
-    #[Route('/admin/groupe/evaluation/eval/{skill}', name: 'admin_cluster_evaluation_eval', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/evaluation/assess/{cluster}/{skill}', name: 'admin_cluster_evaluation_assess', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
-    public function adminClusterEvaluationdEval(
+    public function adminClusterEvaluationdAssess(
+        Cluster $cluster,
         Skill $skill,
         Request $request,
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
+        $form = $this->createForm(MemberSkillCollectionType::class, $this->getUserSkillCluster->execute($cluster, $skill), [
+            'action' => $request->getUri(),
+            'text_type' => MemberSkillType::BY_USERS,
+        ]);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $data = $form->getData();
+                /** @var MemberSkill $memberSkill */
+                foreach ($data['memberSkills'] as $memberSkill) {
+                    $memberSkill->setEvaluateAt(new DateTimeImmutable());
+                }
+                $this->entityManager->flush();
+
+                return $this->redirectToRoute('admin_cluster_evaluations', ['cluster' => $cluster->getId()]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return $this->render('cluster/admin/skill_assess.modal.html.twig', [
+            'title' => 'Évaluations',
+            'content' => $skill->getContent(),
+            'form' => $form->createView(),
+        ], $response);
     }
 }
