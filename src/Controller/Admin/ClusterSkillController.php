@@ -31,7 +31,7 @@ class ClusterSkillController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/groupe/evaluations/{cluster}', name: 'admin_cluster_evaluations', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/evaluations/{cluster}', name: 'admin_cluster_skills', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluations(
         Cluster $cluster,
@@ -43,7 +43,7 @@ class ClusterSkillController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/groupe/evaluation/add/{cluster}', name: 'admin_cluster_evaluation_add', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/evaluation/add/{cluster}', name: 'admin_cluster_skill_add', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluationAdd(
         Cluster $cluster,
@@ -72,7 +72,7 @@ class ClusterSkillController extends AbstractController
                     ]);
                 }
 
-                return $this->redirectToRoute('admin_cluster_evaluations', ['cluster' => $cluster->getId()]);
+                return $this->redirectToRoute('admin_cluster_skills', ['cluster' => $cluster->getId()]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -83,7 +83,7 @@ class ClusterSkillController extends AbstractController
         ], $response);
     }
 
-    #[Route('/admin/groupe/evaluation/delete/{cluster}/{skill}', name: 'admin_cluster_evaluation_delete', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/evaluation/delete/{cluster}/{skill}', name: 'admin_cluster_skill_delete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluationdDelete(
         Cluster $cluster,
@@ -110,20 +110,20 @@ class ClusterSkillController extends AbstractController
                     ]);
                 }
 
-                return $this->redirectToRoute('admin_cluster_evaluations', ['cluster' => $cluster->getId()]);
+                return $this->redirectToRoute('admin_cluster_skills', ['cluster' => $cluster->getId()]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
         return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une commande',
+            'title' => 'Supprimer une évaluation',
             'content' => sprintf('Etes vous certain de supprimer l\'évaluation %s ?', $skill->getContent()),
             'btn_label' => 'Supprimer',
             'form' => $form->createView(),
         ], $response);
     }
 
-    #[Route('/admin/groupe/evaluation/assess/{cluster}/{skill}', name: 'admin_cluster_evaluation_assess', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/evaluation/assess/{cluster}/{skill}', name: 'admin_cluster_skill_assess', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluationdAssess(
         Cluster $cluster,
@@ -145,7 +145,7 @@ class ClusterSkillController extends AbstractController
                 }
                 $this->entityManager->flush();
 
-                return $this->redirectToRoute('admin_cluster_evaluations', ['cluster' => $cluster->getId()]);
+                return $this->redirectToRoute('admin_cluster_skills', ['cluster' => $cluster->getId()]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }

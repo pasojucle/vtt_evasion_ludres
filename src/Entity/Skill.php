@@ -36,7 +36,7 @@ class Skill
     /**
      * @var Collection<int, MemberSkill>
      */
-    #[ORM\OneToMany(targetEntity: MemberSkill::class, mappedBy: 'skill')]
+    #[ORM\OneToMany(targetEntity: MemberSkill::class, mappedBy: 'skill', cascade: ['remove'])]
     private Collection $memberSkills;
 
     public function __construct()

@@ -1,0 +1,27 @@
+<li class="list-group-item" id="skill_item_{{ skill.id }}">
+    <div>{{ skill.content|raw}}</div>
+        <div class="dropdown">
+        <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+        <div class="dropdown-menu" data-target="dropdown-tools">
+            <ul class="dropdown-body">
+                <li>
+                    <a 
+                        class="dropdown-item" href="{{path('admin_skill_edit', {'skill': skill.id} | merge(app.request.query.all))}}" 
+                        title="Modifier"
+                        data-turbo-frame="modal_content"
+                    >
+                        <i class="fa-solid fa-graduation-cap"></i> Modifier
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{path('admin_skill_delete', {'skill': skill.id} | merge(app.request.query.all))}}" 
+                        title="Supprimer" 
+                        data-turbo-frame="modal_content"
+                    >
+                        <i class="fas fa-times"></i> Supprimer
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</li>

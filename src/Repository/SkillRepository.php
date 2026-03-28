@@ -22,30 +22,17 @@ class SkillRepository extends ServiceEntityRepository
     /**
      * @return Skill[] Returns an array of Skill objects
      */
-    public function findAllOrdered(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->join('s.category', 'c')
-           ->orderBy('c.name', 'ASC')
-           ->getQuery()
-           ->getResult()
-       ;
-    }
-
-    /**
-     * @return Skill[] Returns an array of Skill objects
-     */
-    public function findFiltered(?string $category, ?string $level, ?string $cluster): array
+    public function findFiltered(?int $category, ?int $level, ?int $cluster = null): array
     {
         $andX = (new Expr())->andX();
         $parameters = [];
         if (null !== $category) {
             $andX->add((new Expr())->eq('s.category', ':category'));
-            $parameters[] = new Parameter('category', (int) $category);
+            $parameters[] = new Parameter('category', $category);
         }
         if (null !== $level) {
             $andX->add((new Expr())->eq('s.level', ':level'));
-            $parameters[] = new Parameter('level', (int) $level);
+            $parameters[] = new Parameter('level', $level);
         }
         if (null !== $cluster) {
             $clusterSkills = $this->createQueryBuilder('cs')
@@ -56,12 +43,17 @@ class SkillRepository extends ServiceEntityRepository
             );
 
             $andX->add((new Expr())->notIn('s.id', $clusterSkills->getDQL()));
-            $parameters[] = new Parameter('cluster', (int) $cluster);
+            $parameters[] = new Parameter('cluster', $cluster);
         }
 
-        return $this->createQueryBuilder('s')
+        $qb = $this->createQueryBuilder('s');
+        if (0 < $andX->count()) {
+            $qb
             ->andWhere($andX)
-            ->setParameters(new ArrayCollection($parameters))
+            ->setParameters(new ArrayCollection($parameters));
+        }
+        return $qb
+            ->orderBy('s.content', 'ASC')
             ->getQuery()
             ->getResult()
        ;

@@ -1,43 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Admin;
 
 use App\Entity\Level;
-use App\Entity\Skill;
 use App\Entity\SkillCategory;
-use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SkillType extends AbstractType
+class SkillFilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('category', EntityType::class, [
-                'label' => 'Catégorie',
+            ->add('skillCategory', EntityType::class, [
+                'label' => 'Categorie',
                 'class' => SkillCategory::class,
-                'choice_label' => 'name',
+                'placeholder' => 'Séléctionner une catégorie',
+                'required' => false,
                 'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'w-full',
+                    'class' => 'form-group-inline',
+                    'data-action' => 'change->form-filter#submit',
                 ],
             ])
             ->add('level', EntityType::class, [
                 'label' => 'Niveau',
                 'class' => Level::class,
+                'placeholder' => 'Séléctionner un niveau',
+                'required' => false,
                 'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'w-ful',
-                ],
-            ])
-            ->add('content', TiptapType::class, [
-                'label' => 'Descriptif',
-                'config_name' => 'base',
-                'row_attr' => [
-                    'class' => 'w-ful',
+                    'class' => 'form-group-inline',
+                    'data-action' => 'change->form-filter#submit',
                 ],
             ])
         ;
@@ -46,11 +44,13 @@ class SkillType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Skill::class,
+            'method' => 'GET',
+            'csrf_protection' => false,
             'attr' => [
+                'data-controller' => 'form-filter',
                 'data-turbo-frame' => 'skills-list-frame',
-                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
-            ],
+                'data-turbo-action' => 'advance',
+            ]
         ]);
     }
 }

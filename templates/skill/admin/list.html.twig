@@ -23,12 +23,31 @@
         </div>
     </div>
     <div class="wrapper-body">
-        <div class="row">
+        <div class="w-full m-0 py-2 px-4">
+            {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_row(form.skillCategory) }}
+                    {{ form_row(form.level) }}
+                </div>
+            {{ form_end(form) }}
         </div>
-        <ul class="list-group">
-            
-        </ul>
+        <turbo-frame id="skills-list-frame">
+            <a 
+                class="btn btn-primary" 
+                href="{{path('admin_skill_add', app.request.query.all)}}" 
+                title="Ajouter"
+                data-turbo-frame="modal_content"
+            > 
+                Ajouter
+            </a>
+            <ul id="skills-list-container" class="list-group">
+                {% for skill in skills %}
+                    {{ include('skill/admin/_skill_item.html.twig', {skill: skill}) }}
+                {% else %}
+                    <li class="list-group-item">Aucune compétence trouvée.</li>
+                {% endfor %}
+            </ul>
+        </turbo-frame>
     </div>
 </div>
 {% endblock %}
-
