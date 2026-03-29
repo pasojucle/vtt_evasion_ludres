@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compétences{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <div class="wrapper-title">
+        <h1 class="font-bold text-3xl">{{ member.identity.fullName}}</h1>
+        <div class="tool-group">
+            <a href="{{ app.session.get('last_list_url', path('admin_user_list')) }}"
+                class="btn btn-ico" title="Retour à la liste des inscriptions">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+    </div>
+    <div class="wrapper-body">
+        <div class="w-full m-0 py-2">
+            {{ form_start(formFilter) }}
+                <div class="form-group">
+                    {{ form_row(formFilter.skillCategory) }}
+                    {{ form_row(formFilter.level) }}
+                </div>
+            {{ form_end(formFilter) }}
+        </div>
+        <turbo-frame id="member_skills_list_frame">
+            <a 
+                class="btn btn-primary mb-2" 
+                href="{{path('admin_member_skill_add', {'member': member.id} | merge (app.request.query.all))}}" 
+                title="Ajouter"
+                data-turbo-frame="modal_content"
+            > 
+                Ajouter
+            </a>
+            <ul id="skills-list-container" class="list-group">
+            {{ form_start(form) }}
+                {% for memberSkill in form.memberSkills %}
+                    <li class="form-group flex items-center gap-2">
+                        {{ form_row(memberSkill.content) }}
+                        {{ form_row(memberSkill.evaluation) }}
+                        {{ form_row(memberSkill.skill) }}
+                        {{ form_row(memberSkill.member) }}
+                    </li>
+                {% else %}
+                    <li class="list-group-item">Aucune compétence trouvée.</li>
+                {% endfor %}
+            {{ form_end(form) }}
+
+            </ul>
+        </turbo-frame>
+    </div>
+</div>
+{% endblock %}

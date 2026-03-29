@@ -15,7 +15,7 @@ class DefaultController extends AbstractController
     public function adminHome(): Response
     {
         if ($this->isGranted('USER_LIST') && !$this->isGranted('ROLE_ADMIN')) {
-            return $this->redirectToRoute('admin_users');
+            return $this->redirectToRoute('admin_user_list');
         }
         if ($this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('admin_dashboard');

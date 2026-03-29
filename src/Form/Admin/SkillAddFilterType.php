@@ -6,19 +6,12 @@ namespace App\Form\Admin;
 
 use App\Entity\Level;
 use App\Entity\SkillCategory;
-use App\Form\Admin\EventListener\Skill\AddClusterSkillSubscriber;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SkillAddType extends AbstractType
+class SkillAddFilterType extends AbstractType
 {
-    public function __construct(
-        private UrlGeneratorInterface $urlGenerator
-    ) {
-    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -46,18 +39,6 @@ class SkillAddType extends AbstractType
                     'data-container-id' => 'skills-container',
                 ],
             ])
-            ->addEventSubscriber(new AddClusterSkillSubscriber($this->urlGenerator))
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'clusterId' => null,
-            'attr' => [
-                'data-controller' => 'form-modifier',
-                'data-turbo-action' => 'replace',
-            ]
-        ]);
     }
 }

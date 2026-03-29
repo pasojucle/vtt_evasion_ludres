@@ -28,20 +28,22 @@ class MemberSkillType extends AbstractType
             $form = $event->getForm();
   
             list($name, $content) = $this->getText($options['text_type'], $memberSkill);
+            // $attrClass = [
+            //     'data-action' => 'change->form-modifier#change',
+            //     'data-container-id' => 'user_skill_container'
+            // ];
             $attrClass = [
-                'data-action' => 'change->form-modifier#change',
-                'data-container-id' => 'user_skill_container'
+                'data-action' => 'change->form-filter#submit',
             ];
+            // $form->getConfig()->getOptions()->set
 
             $form
                 ->add($name, TextType::class, [
-                    'label' => false,
+                    'label' => $content,
+                    'label_html' => true,
                     'mapped' => false,
-                    'disabled' => true,
-                    'data' => $content,
-                    'attr' => [
-                        'class' => 'w-full',
-                    ],
+                    'required' => false,
+                    'block_prefix' => 'label_only',
                     'row_attr' => [
                         'class' => 'w-1/2 text-sm',
                     ],

@@ -64,7 +64,7 @@ class MenuAdminService
             ],
             [
                 'label' => 'Adhérents',
-                'route' => 'admin_users',
+                'route' => 'admin_user_list',
                 'pattern' => '/^admin_user/',
                 'role' => 'USER_LIST',
             ],
@@ -76,7 +76,7 @@ class MenuAdminService
             ],
             [
                 'label' => 'Inscriptions',
-                'route' => 'admin_registrations',
+                'route' => 'admin_registration_list',
                 'pattern' => '/^admin_registration/',
                 'role' => 'USER_LIST',
             ],

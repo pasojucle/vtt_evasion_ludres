@@ -8,9 +8,9 @@ use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Entity\Cluster;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
+use App\Form\Admin\ClusterSkillAddType;
 use App\Form\Admin\MemberSkillCollectionType;
 use App\Form\Admin\MemberSkillType;
-use App\Form\Admin\SkillAddType;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,7 +50,7 @@ class ClusterSkillController extends AbstractController
         Request $request,
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(SkillAddType::class, null, [
+        $form = $this->createForm(ClusterSkillAddType::class, null, [
             'action' => $request->getUri(),
             'clusterId' => $cluster->getId(),
         ]);
@@ -130,30 +130,24 @@ class ClusterSkillController extends AbstractController
         Skill $skill,
         Request $request,
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(MemberSkillCollectionType::class, $this->getUserSkillCluster->execute($cluster, $skill), [
             'action' => $request->getUri(),
             'text_type' => MemberSkillType::BY_USERS,
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $data = $form->getData();
-                /** @var MemberSkill $memberSkill */
-                foreach ($data['memberSkills'] as $memberSkill) {
-                    $memberSkill->setEvaluateAt(new DateTimeImmutable());
-                }
-                $this->entityManager->flush();
-
-                return $this->redirectToRoute('admin_cluster_skills', ['cluster' => $cluster->getId()]);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            /** @var MemberSkill $memberSkill */
+            foreach ($data['memberSkills'] as $memberSkill) {
+                $memberSkill->setEvaluateAt(new DateTimeImmutable());
             }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->entityManager->flush();
         }
 
         return $this->render('cluster/admin/skill_assess.modal.html.twig', [
             'title' => 'Évaluations',
             'content' => $skill->getContent(),
             'form' => $form->createView(),
-        ], $response);
+        ]);
     }
 }

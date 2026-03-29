@@ -22,7 +22,7 @@ class UserSkillController extends AbstractController
         $member = $this->getUser();
 
         /** @var MemberSkill $userSkill */
-        foreach ($member->getUserSkills() as $userSkill) {
+        foreach ($member->getMemberSkills() as $userSkill) {
             $logService->writeFromEntity($userSkill, $member);
         }
 

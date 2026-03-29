@@ -5,7 +5,7 @@
 {% block body %}
 <div class="wrapper">
     <div class="wrapper-title">
-        <h1>Gestion des compétences</h1>
+        <h1 class="font-bold text-3xl">Gestion des compétences</h1>
         <div class="tool-group">
             {% include 'component/dropdown_settings.html.twig' %}
             <div class="dropdown">
@@ -16,14 +16,14 @@
                         </ul>
                     </div>
                 </div>
-            <a href="{{ path('admin_users', {'filtered': 1}) }}"
+            <a href="{{ path('admin_user_list', {'filtered': 1}) }}"
                 class="btn btn-ico" title="Retour à la liste des adhérents">
                 <i class="fas fa-chevron-left"></i>
             </a>
         </div>
     </div>
     <div class="wrapper-body">
-        <div class="w-full m-0 py-2 px-4">
+        <div class="w-full m-0 py-2">
             {{ form_start(form) }}
                 <div class="form-group">
                     {{ form_row(form.skillCategory) }}

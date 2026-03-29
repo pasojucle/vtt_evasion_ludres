@@ -14,11 +14,23 @@
         </div>
     </div>
     <div class="wrapper-body">
-        <div {{ vue_component('SkillCategory') }}>
-            <div class="loader-container">
-                <div class="loader"></div>
-            </div>
-        </ul>
+        <turbo-frame id="skill-category-list-frame">
+            <a 
+                class="btn btn-primary" 
+                href="{{path('admin_skill_category_add', app.request.query.all)}}" 
+                title="Ajouter"
+                data-turbo-frame="modal_content"
+            > 
+                Ajouter
+            </a>
+            <ul class="list-group">
+                {% for skillCategory in skillCategories %}
+                    {{ include('skill_category/admin/_skill_category_item.html.twig', {skillCategory: skillCategory}) }}
+                {% else %}
+                    <li class="list-group-item">Aucune categorie trouvée.</li>
+                {% endfor %}
+            </ul>
+        </turbo-frame>
     </div>
 </div>
 {% endblock %}

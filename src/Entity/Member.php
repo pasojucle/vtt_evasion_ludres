@@ -433,12 +433,12 @@ class Member extends User implements PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, MemberSkill>
      */
-    public function getUserSkills(): Collection
+    public function getMemberSkills(): Collection
     {
         return $this->memberSkills;
     }
 
-    public function addUserSkill(MemberSkill $memberSkill): static
+    public function addMemberSkill(MemberSkill $memberSkill): static
     {
         if (!$this->memberSkills->contains($memberSkill)) {
             $this->memberSkills->add($memberSkill);
@@ -448,7 +448,7 @@ class Member extends User implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeUserSkill(MemberSkill $memberSkill): static
+    public function removeMemberSkill(MemberSkill $memberSkill): static
     {
         if ($this->memberSkills->removeElement($memberSkill)) {
             // set the owning side to null (unless already changed)

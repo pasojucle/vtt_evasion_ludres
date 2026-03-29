@@ -6,6 +6,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Member;
 use App\Entity\Skill;
+use App\Entity\SkillCategory;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -29,7 +30,7 @@ class SkillVoter extends Voter
             return true;
         }
 
-        return self::EDIT === $attribute && $subject instanceof Skill;
+        return self::EDIT === $attribute && ($subject instanceof Skill || $subject instanceof SkillCategory);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool

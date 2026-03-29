@@ -27,8 +27,12 @@ class MemberSkillCollectionType extends AbstractType
     {
         $resolver->setDefaults([
             'text_type' => MemberSkillType::BY_USERS,
+            // 'attr' => [
+            //     'data-controller' => "form-modifier",
+            // ],
             'attr' => [
-                'data-controller' => "form-modifier",
+                'data-controller' => 'form-filter',
+                'data-turbo-frame' => 'member_skills_list_frame',
             ]
         ]);
     }

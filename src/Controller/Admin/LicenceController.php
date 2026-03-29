@@ -50,7 +50,7 @@ class LicenceController extends AbstractController
 
                 $this->addFlash('success', "La licence de l'utilisateur {$fullName} a bien été supprimée");
 
-                return $this->redirectToRoute('admin_registrations', [
+                return $this->redirectToRoute('admin_registration_list', [
                     'filtered' => true,
                     'p' => $request->query->get('p'),
                 ]);
@@ -89,7 +89,7 @@ class LicenceController extends AbstractController
 
                     $this->addFlash('success', "Le dossier de {$fullName} a bien été reçu");
 
-                    return $this->redirectToRoute('admin_registrations', [
+                    return $this->redirectToRoute('admin_registration_list', [
                         'filtered' => true,
                         'p' => $request->query->get('p'),
                     ]);
@@ -142,7 +142,7 @@ class LicenceController extends AbstractController
                 } else {
                     $this->addFlash('danger', "Une erreur est survenue");
                 }
-                return $this->redirectToRoute('admin_registrations', [
+                return $this->redirectToRoute('admin_registration_list', [
                     'filtered' => true,
                     'p' => $request->query->get('p'),
                 ]);
@@ -183,7 +183,7 @@ class LicenceController extends AbstractController
 
                 $this->addFlash('success', "Le dossier de {$fullName} a bien été inscrit à la fédération");
 
-                return $this->redirectToRoute('admin_registrations', [
+                return $this->redirectToRoute('admin_registration_list', [
                     'filtered' => true,
                     'p' => $request->query->get('p'),
                 ]);

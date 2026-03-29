@@ -39,7 +39,7 @@
         <li>
           <a 
             class="dropdown-item" 
-            href="{{ path('admin_user_skill_edit', {'user': user.id}) }}"
+            href="{{ path('admin_member_skill_edit', {'member': user.id}) }}"
             data-turbo-frame="_top"
           >
             <i class="fa-solid fa-graduation-cap"></i> Compétences
@@ -87,7 +87,7 @@
           </a>
         </li>
       {% endif %}
-      {% if app.request.get('_route') == 'admin_registrations' and user.lastLicence.toValidate %}
+      {% if app.request.get('_route') == 'admin_registration_list' and user.lastLicence.toValidate %}
         <li><a class="dropdown-item" href="{{ path('admin_registration_reject', {'licence': user.lastLicence.id})}}" data-turbo-frame="modal_content"><i class="fa-solid fa-circle-exclamation"></i> Inscription incompète</a></li>
         <li><a class="dropdown-item" href="{{ path('admin_delete_licence', {'licence': user.lastLicence.id})}}" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Supprimer l'inscription</a></li>
       {% endif %}

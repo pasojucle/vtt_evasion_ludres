@@ -16,11 +16,6 @@
         {{ form_errors(form) }}
     </div>
 {% endblock %}
-{% block action %}
-    <button 
-        type="submit"
-        class="btn text-primary bg-neutral-200"
-    >
-        <i class="fas fa-check"></i> Enregistrer
-    </button>
+{% block action %}        
+    <button type="button" data-action="click->modal#close" class="btn text-primary bg-neutral-200">Fermer</button>
 {% endblock %}

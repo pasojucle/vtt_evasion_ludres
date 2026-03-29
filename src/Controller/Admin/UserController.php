@@ -35,7 +35,7 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/adherents/{filtered}', name: 'users', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[Route('/adherents/{filtered}', name: 'user_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     #[IsGranted('USER_LIST')]
     public function adminUsers(
         GetMembersFiltered $getMembersFiltered,

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\EventListeners;
+declare(strict_types=1);
+
+namespace App\EventSubscriber;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Member;

@@ -15,9 +15,8 @@ class SkillCategoryType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'block_prefix' => 'vueText',
                 'row_attr' => [
-                    'class' => 'col-md-12',
+                    'class' => 'form-group',
                 ],
             ])
         ;
@@ -27,6 +26,10 @@ class SkillCategoryType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SkillCategory::class,
+            'attr' => [
+                'data-turbo-frame' => 'skill-category-list-frame',
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ],
         ]);
     }
 }

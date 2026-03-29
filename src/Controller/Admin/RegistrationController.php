@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin', name:'admin_registration')]
 class RegistrationController extends AbstractController
 {
-    #[Route('/inscriptions/{filtered}', name: 's', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[Route('/inscriptions/{filtered}', name: '_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     #[IsGranted('USER_LIST')]
     public function adminRegistrations(
         GetRegistrationsFiltered $getRegistrationsFiltered,

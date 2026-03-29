@@ -1,0 +1,9 @@
+{% block label_only_row %}
+    <div class="only-container {{ row_attr.class|default('') }}">
+        {{ form_label(form) }}
+    </div>
+{% endblock %}
+
+{% block display_label_only_widget %}
+    {# Vide #}
+{% endblock %}

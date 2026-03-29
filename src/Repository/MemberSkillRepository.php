@@ -3,10 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Cluster;
+use App\Entity\Level;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
+use App\Entity\SkillCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -59,6 +61,34 @@ class MemberSkillRepository extends ServiceEntityRepository
             ->setParameter('members', $members)
             ->orderBy('u.id', 'ASC')
             ->addOrderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return MemberSkill[] Returns an array of MemberSkill objects
+     */
+    public function findByMember(Member $member, ?SkillCategory $category, ?Level $level): array
+    {
+        $andX = (new Expr())->andX();
+        $andX->add((new Expr())->eq('us.member', ':member'));
+        $parameters = [new Parameter('member', $member)];
+        if (null !== $category) {
+            $andX->add((new Expr())->eq('s.category', ':category'));
+            $parameters[] = new Parameter('category', $category);
+        }
+        if (null !== $level) {
+            $andX->add((new Expr())->eq('s.level', ':level'));
+            $parameters[] = new Parameter('level', $level);
+        }
+
+        return $this->createQueryBuilder('us')
+            ->join('us.skill', 's')
+            ->join('s.category', 'c')
+            ->andWhere($andX)
+            ->setParameters(new ArrayCollection($parameters))
+            ->orderBy('c.id', 'ASC')
             ->getQuery()
             ->getResult()
         ;

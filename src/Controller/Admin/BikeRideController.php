@@ -119,9 +119,7 @@ class BikeRideController extends AbstractController
         BikeRide $bikeRide,
     ): Response {
         $filters = $request->getSession()->get('admin_bike_rides_filters');
-        $request->getSession()->set('admin_user_redirect', $this->generateUrl('admin_bike_ride_cluster_show', [
-            'bikeRide' => $bikeRide->getId(),
-        ]));
+        $request->getSession()->set("last_list_url", $request->getUri());
 
         return $this->render('bike_ride/admin/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),

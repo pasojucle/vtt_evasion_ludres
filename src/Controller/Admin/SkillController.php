@@ -35,8 +35,7 @@ class SkillController extends AbstractController
     #[IsGranted('SKILL_LIST')]
     public function list(
         Request $request,
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(SkillFilterType::class);
         $form->handleRequest($request);
 
@@ -88,7 +87,7 @@ class SkillController extends AbstractController
 
         $skills = $this->skillRepository->findFiltered($categoryId, $levelId, $clusterId);
 
-        $results = array_map(fn(Skill $skill) => [
+        $results = array_map(fn (Skill $skill) => [
             'value' => $skill->getId(),
             'text' => $skill->getContent(),
         ], $skills);
@@ -96,7 +95,7 @@ class SkillController extends AbstractController
         return new JsonResponse(['results' => $results]);
     }
 
-    #[Route(path: '/add', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[Route(path: '/add', name: 'add', methods: ['GET', 'POST'])]
     #[IsGranted('SKILL_ADD')]
     public function add(Request $request): Response
     {
@@ -119,20 +118,19 @@ class SkillController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('skill/admin/skill_add.modal.html.twig', [
+        return $this->render('skill/admin/skill_edit.modal.html.twig', [
             'form' => $form->createView(),
             'title' => 'Ajouter une compétence',
             'btn' => ['label' => 'Ajouter', 'icon' => 'lucide:plus'],
         ], $response);
     }
 
-    #[Route(path: '/edit/{skill}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[Route(path: '/edit/{skill}', name: 'edit', methods: ['GET', 'POST'])]
     #[IsGranted('SKILL_EDIT', 'skill')]
     public function edit(
-        Request $request, 
+        Request $request,
         Skill $skill
-    ): Response
-    {
+    ): Response {
         $queryParams = $request->query->all();
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(SkillType::class, $skill, [
@@ -150,7 +148,7 @@ class SkillController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('skill/admin/skill_add.modal.html.twig', [
+        return $this->render('skill/admin/skill_edit.modal.html.twig', [
             'form' => $form->createView(),
             'title' => 'Modifier une compétence',
             'btn' => ['label' => 'Modifier', 'icon' => 'lucide:pen'],
@@ -182,7 +180,7 @@ class SkillController extends AbstractController
                     ]);
                 }
 
-                return $this->redirectToRoute('admin_skills', $queryParams);
+                return $this->redirectToRoute('admin_skill_list', $queryParams);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
