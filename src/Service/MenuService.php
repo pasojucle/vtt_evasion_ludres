@@ -301,12 +301,17 @@ class MenuService
                 $priority = ('menus' === $type) ? 1 : 0.5;
                 if (empty($menu['subMenus'])) {
                     $routes[] = [
-                        'route' => $menu['route'],
-                        'params' => array_key_exists('params', $menu) ? $menu['params'] : [],
-                        'priority' => $priority
+                        'route' => $menu['route'], 
+                        'priority' => $priority,
+                        'params' => array_key_exists('params', $menu) ? $menu['params'] : []
                     ];
                 } else {
                     foreach ($menu['subMenus'] as $subMenu) {
+                        $routes[] = [
+                            'route' => $subMenu['route'],
+                            'params' => array_key_exists('params', $subMenu) ? $subMenu['params'] : [],
+                            'priority' => $priority
+                        ];
                         $routes[] = [
                             'route' => $subMenu['route'],
                             'params' => array_key_exists('params', $subMenu) ? $subMenu['params'] : [],
