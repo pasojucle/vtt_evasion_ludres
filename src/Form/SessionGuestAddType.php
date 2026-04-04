@@ -16,7 +16,7 @@ class SessionGuestAddType extends AbstractType
     {
         $builder
             ->add('rulesApproval', CheckboxType::class, [
-                'label' => 'J\'accepte le règlement de la randonnée inscrit ci-contre.',
+                'label' => 'J\'accepte le règlement de la randonnée inscrit ci-dessus.',
                 'block_prefix' => 'customsimplecheck',
                 'mapped' => false,
                 'attr' => [
@@ -44,7 +44,8 @@ class SessionGuestAddType extends AbstractType
             }
             $form
                 ->add('link', ButtonType::class, [
-                    'label' => 'S\'inscrire',
+                    'label' => '<i class="fa-regular fa-circle-right"></i> S\'inscrire',
+                    'label_html' => true,
                     'attr' => $attr,
                 ]);
         };
