@@ -117,7 +117,7 @@ ul.dropdown-menu {
     box-sizing: border-box;
 }
 ul.dropdown-menu a {
-    color: var(--background-color);
+    /* color: var(--background-color); */
     display: inline-block;
     width: 100%;
     box-sizing: border-box;

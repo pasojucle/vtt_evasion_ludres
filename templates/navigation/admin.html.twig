@@ -1,26 +1,27 @@
 {% set groups = menu_admin_service.menuGroupsAdmin() %}
 {% set menu_actived = menu_admin_service.menuActived() %}
 <div class="nav-bar">
-    <a href="" class="btn btn-ico"></a>
-    <img src="/logos/logo.jpg" alt="VTT EVASION LUDRES">
+    <a href="" class="btn btn-ico" data-action="click->nav-sm#toggle" data-nav-sm-target="trigger"></a>
+    <img class="mx-auto" src="/logos/logo.jpg" alt="VTT EVASION LUDRES">
+    <div></div>
 </div>
 
-<nav class="admin" data-controller="nav-groups">
+<nav class="admin" data-nav-sm-target="container">
     {% for key, group in groups %}
         {% if group.subMenus is not empty %}
             {% set body_class = (key == menu_actived) ? 'down' : 'up' %}
-            <div class="nav-group block" data-group="{{ key }}" data-nav-groups-target="group">
-            <a href="" data-action="click->nav-groups#toggle">
+            <div class="nav-group block" data-group="{{ key }}" data-controller="collapse" data-context-item>
+            <a href="" data-collapse-target="trigger" data-action="click->collapse#toggle">
                 <div class="block-title flex items-center">
                     <h2>{{ group.label|trans }}</h2>
                     <span
-                        data-nav-groups-target="chevron"
+                        data-collapse-target="chevron"
                         {% if key == menu_actived%}class="ml-auto rotate-90"{% else %}class="ml-auto rotate-0"{% endif %}
                     >
                         {{ ux_icon('lucide:chevron-down', {class: 'size-6'}) }}
                     </span>
                 </div></a>
-                <div class="block-body {{ body_class }}" data-nav-groups-target="content">
+                <div class="block-body {{ body_class }}" data-collapse-target="content">
                     <ul>
                     {% for menu in group.subMenus %}
                         <li>

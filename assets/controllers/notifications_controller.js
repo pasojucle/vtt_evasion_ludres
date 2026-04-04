@@ -1,6 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { disableScroll, enableScroll } from '../js/toggleScroll.js';
-import { hideNav} from '../js/navigation.js';
+import { disableScroll, enableScroll } from '../utils/toggleScroll.js';
 
 export default class extends Controller {
     static targets = ["dropdown"];
@@ -12,11 +11,14 @@ export default class extends Controller {
     connect() {
         this.toggleHandler = this.toggleNotifications.bind(this);
         document.addEventListener("notifications:toggleNotifications", this.toggleHandler);
+        this.hideHandler = this.hideNotifications.bind(this);
+        document.addEventListener("notifications:hideNotifications", this.hideHandler);
         this.fetchList();
     }
 
     disconnect() {
         document.removeEventListener("notifications:toggleNotifications", this.toggleHandler);
+        document.removeEventListener("notifications:hideNotifications", this.hideHandler);
     }
 
     async fetchList() {
@@ -58,7 +60,7 @@ export default class extends Controller {
         let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
         if (1024 < vw) {
             const nav = document.querySelector('nav');
-            document.querySelector('div.dropdown-notifications').style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
+            this.dropdownTarget.style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
         }
     }
 
@@ -71,5 +73,12 @@ export default class extends Controller {
             return;
         }
         enableScroll();
+    }
+
+    hideNotifications = () => {
+        const notifications = document.querySelector(('div.dropdown-notifications'))
+        if (notifications) {
+            notifications.classList.remove('active');
+        }
     }
 }

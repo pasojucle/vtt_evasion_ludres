@@ -78,12 +78,10 @@ class NotificationController extends AbstractController
         $slideshowImages = $this->getNews->getSlideShowImages();
 
         return $this->render('notification/_frame_novelty.html.twig', [
-            'hasNewItem' => !empty($summaries) && !empty($slideshowImages),
+            'hasNewItem' => !empty($summaries) || !empty($slideshowImages),
             'route' => 'notification_club_menu',
         ]);
     }
-
-
 
     #[Route('/user/skill/list', name: 'user_skill_list', methods: ['GET'], options:['expose' => true])]
     public function userSkillList(): Response

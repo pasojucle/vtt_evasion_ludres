@@ -18,7 +18,12 @@
             <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         {% endblock %}
     </head>
-    <body {% if parameter_service.getParameterByName('TEST_MODE') %}class="testing"{% endif %}>
+    <body 
+        data-controller="nav-sm context-collapse"
+        data-action="collapse:opened->context-collapse#closeOthers"
+        data-context-collapse-collapse-outlet="[data-context-item]"
+        {% if parameter_service.getParameterByName('TEST_MODE') %}class="testing"{% endif %}
+    >
         <turbo-frame 
             id="notifications" 
             data-controller="notifications"

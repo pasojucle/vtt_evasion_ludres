@@ -1,0 +1,147 @@
+<ul class="md:hidden">
+    <li>
+        <a 
+            href="{{ path('home') }}" 
+            title="Accueil"
+            class="flex items-center p-2 {% if app.request.get('_route') matches '/home/' %}bg-primary text-white{% else %}bg-background{% endif %}" 
+        >
+            <div class="position-relative">Accueil</div>
+        </a>
+    </li>
+    {% for menu in menus %}
+        <li class="nav-bar-xs" data-controller="collapse" data-context-item>
+            <a {% if menu.route is not null %}href="{{ path(menu.route) }}" {% endif %}
+                class="flex items-center p-2 {% if app.request.get('_route') matches menu.pattern %}bg-primary text-white{% else %}bg-background{% endif %}" 
+                {% if menu.subMenus is not empty %}
+                    data-collapse-target="trigger" 
+                    data-action="click->collapse#toggle"
+                {% endif %}
+            >
+                <div class="position-relative">
+                    {{ menu.label }}
+                    {% if menu.badge is defined and menu.badge is not null %}
+                        <turbo-frame id="notification-{{ menu.badge }}" src="{{ path(menu.badge) }}"></turbo-frame>
+                    {% endif %}
+                </div>
+                {% if menu.subMenus is not empty %}
+                    <div class="ml-auto mr-2 hover:cursor-pointer rotate-0"
+                        data-collapse-target="chevron"
+                        >
+                            {{ ux_icon('lucide:chevron-down', {class: 'size-6'}) }}
+                    </div>
+                {% endif %}
+            </a>
+            {% if menu.subMenus is not empty %}
+                <div class="dropdown-toggle up" data-collapse-target="content">
+                    <ul class="[&>*:not(:first-child)]:border-t-2 [&>*:not(:first-child)]:border-white">
+                        {% for sub_menu in menu.subMenus %}
+                            <li class="nav-sub">
+                                <a {% if sub_menu.class is defined %}
+                                        class="{{ sub_menu.class }}"
+                                    {% else %}
+                                        href="{{ path(sub_menu.route, sub_menu.params) }}"
+                                        class="block"
+                                    {% endif %}
+                                    {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
+                                    <div class="position-relative">
+                                        {{ sub_menu.label }}
+                                        {% if sub_menu.badge is defined and sub_menu.badge is not null %}
+                                            <turbo-frame id="notification-{{ sub_menu.badge }}" src="{{ path(sub_menu.badge) }}"></turbo-frame>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </li>
+    {% endfor %}
+    {% if user.fullName is not null %}
+        <li class="nav-bar-xs" data-controller="collapse" data-context-item>
+            <a 
+                class="bloc bg-black text-primary flex items-center p-2" 
+                data-collapse-target="trigger" 
+                data-action="click->collapse#toggle"
+            >
+                <div><i class="fas fa-user"></i> {{ user.fullName }}</div>
+                <div 
+                    class="ml-auto mr-2 hover:cursor-pointer rotate-0"
+                    data-collapse-target="chevron"
+                    >
+                        {{ ux_icon('lucide:chevron-down', {class: 'size-6'}) }}
+                </div>
+            </a>
+            {% if user.menus is not empty %}
+            <div class="dropdown-toggle up" data-collapse-target="content">
+                <ul class="[&>*:not(:first-child)]:border-t-2 [&>*:not(:first-child)]:border-white">
+                {% for menu in user.menus %}
+                    <li class="nav-sub{% if app.request.get('_route') == menu.route %} bg-primary text-white{% endif %}">
+                        <a 
+                            href="{{ path(menu.route) }}" 
+                            
+                        >
+                            <div class="position-relative w-full">{{ menu.label }}
+                                {% if menu.badge is defined and menu.badge is not null %}
+                                    <turbo-frame id="notification-{{ menu.badge }}" src="{{ path(menu.badge) }}"></turbo-frame>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </li>
+    {% endif %}
+    {% if menu_service.displayCart %}
+        <li class="nav-bar-xs">
+            <div class="nav-bar-title">
+                <a class="btn-logger" href="{{ path('order_edit') }}" title="Mon panier">
+                    <div class="position-relative"><i class="fas fa-shopping-cart"></i> <span class="xs-display">Mon panier</span></div>
+                </a>
+            </div>
+        </li>
+    {% endif %}
+    {% if menu_service.accessAdmin %}
+        <li class="nav-bar-xs">
+            <div class="nav-bar-title">
+                <a class="btn-logger" href="{{ path('admin_home') }}" title="Admin">
+                    <div class="position-relative">admin</div>
+                </a>
+            </div>
+        </li>
+    {% endif %}
+    {% if app.user is not null %}
+        {% if is_granted('IS_IMPERSONATOR') %}
+            <li class="nav-bar-xs">
+                <div class="nav-bar-title">
+                <a  class="btn-logger" href="{{ impersonation_exit_path(path('admin_user_list') ) }}">
+                    <div class="position-relative"><i class="fas fa-exchange-alt"></i></div>
+                </a>
+                </div>
+            </li>
+        {% else %}
+            <li class="nav-bar-xs">
+                <div class="nav-bar-title">
+                <a 
+                    class="btn-logger modal-trigger" 
+                    href="{{ path('check_logout') }}" 
+                    title="Se déconnecter" 
+                    data-turbo-frame="modal_content"
+                >
+                    <div class="position-relative"><i class="fas fa-power-off"></i> <span class="xs-display">Se connecter</span></div>
+                </a>
+                </div>
+            </li>
+        {% endif %}
+    {% else %}
+        <li class="nav-bar-xs">
+            <div class="nav-bar-title">
+            <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter">
+                <div class="position-relative"><i class="fas fa-sign-in-alt"></i> <span class="xs-display">Se connecter</span></div>
+            </a>
+            </div>
+        </li>
+    {% endif %}
+</ul>

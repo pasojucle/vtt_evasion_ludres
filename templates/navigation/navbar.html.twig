@@ -1,5 +1,9 @@
 <div class="nav-bar">
-    <a href="" class="btn btn-ico"></a>
+    <a 
+        href="" class="btn btn-ico" 
+        data-nav-sm-target="trigger"
+        data-action="click->nav-sm#toggle" 
+    ></a>
     <img src="/logos/logo.jpg" alt="VTT EVASION LUDRES">
     {% include 'navigation/notifications.html.twig' with {'dimention': 'xs'} %}
 </div>
