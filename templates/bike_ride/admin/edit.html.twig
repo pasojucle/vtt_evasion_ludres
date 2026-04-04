@@ -19,12 +19,43 @@
                 {{ form_row(form.bikeRideTypeChanged) }}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
-                <div class="form-group form-group-file">
-                    {{ form_row(form.file) }}
-                        <div class="form-group-inline">
-                        <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">   
+                <div class="form-group">
+                    <div class="form-group-file">
+                        {{ form_row(form.file) }}
+                        <div class="">
+                            <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">   
+                        </div>
                     </div>
+                    {% if form.rulesFile is defined %}
+                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
+                            <object class="sizing"  type="application/pdf" data="{{ bikeRide.rules }}">
+                                <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
+                            </object>
+                            {{ form_row(form.rulesFile) }}
+                        </div>
+                    {% endif %}
+                    {% if form.rulesFileThumbnail is defined %}
+                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
+                            <img class="user-picture" src="{{ bikeRide.rulesThumbnail }}" alt="{{ bikeRide.title }}">   
+                            {{ form_row(form.rulesFileThumbnail) }}
+                        </div>
+                    {% endif %}
+                    {% if form.securityGuidelinesFile is defined %}
+                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
+                            <object class="sizing" type="application/pdf" data="{{ bikeRide.securityGuidelines }}">
+                                <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
+                            </object>
+                            {{ form_row(form.securityGuidelinesFile) }}
+                        </div>
+                    {% endif %}
+                    {% if form.securityGuidelinesFileThumbnail is defined %}
+                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
+                            <img class="user-picture" src="{{ bikeRide.securityGuidelinesThumbnail }}" alt="{{ bikeRide.title }}">   
+                            {{ form_row(form.securityGuidelinesFileThumbnail) }}
+                        </div>
+                    {% endif %}
                 </div>
+                
             <div class="form-group">
                 {{ form_row(form.private) }}
             </div>

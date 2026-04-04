@@ -8,17 +8,35 @@
             <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}"/>
         </div>
         <div class="wrapper-content">
-            <div class="reveal">
+            <div class="reveal" data-reveal-threshold="0.05">
                 <h1>{{ bikeRide.title }}</h1>
                 <h2>{{ bikeRide.period }}</h2>
                 {{ bikeRide.content | raw}}
-                <div class="content-footer">
-                    {% if isRegistrationEnabled %}
-                        <a href="#" class="btn btn-primary">S'incrire</a>
-                    {% else %}
+                <br>
+                {% if isRegistrationEnabled %}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-6 d-flex flex-col align-items-center" >
+                            <img class="user-picture" src="{{ bikeRide.rulesThumbnail }}" alt="{{ bikeRide.title }}">
+                            <a href="{{ bikeRide.rules }}" target="_blank" class="btn btn-primary"><i class="fa-solid fa-download"></i> Réglement</a>
+                        </div>
+                        <div class="col-md-4 col-xs-6 d-flex flex-col align-items-center">
+                            <img class="user-picture" src="{{ bikeRide.securityGuidelinesThumbnail }}" alt="{{ bikeRide.title }}">   
+                            <a href="{{ bikeRide.securityGuidelines }}" target="_blank" class="btn btn-primary"><i class="fa-solid fa-download"></i> Sécurité à vélo</a>
+                        </div>
+                    </div>
+                    <br>
+                    {{ form_start(form)}}
+                    {{ form_row(form.rulesApproval)}}
+                    {{ form_row(form.healthApproval)}}
+                    <div id="link_container" class="content-footer">
+                        {{ form_row(form.link)}}
+                    </div>
+                    {{ form_end(form)}}
+                {% else %}
+                    <div class="content-footer">
                         <p><b>Inscription prochainement</b></p>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

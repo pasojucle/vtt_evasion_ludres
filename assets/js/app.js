@@ -274,12 +274,16 @@ function addUp(e) {
     $(this).closest('div.block').find('i').addClass('fa-caret-square-up').removeClass('fa-caret-square-down');
 }
 
-function resize(object) {
-    const parent = object.parentNode;
-    const computedStyle = getComputedStyle(parent);
-    const width = parent.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
-    object.width = width;
-    object.height = parent.dataset.ratio * width;
+export function resize(object) {
+    if (object.getAttribute('data')) {
+        const parent = object.parentNode;
+        const computedStyle = getComputedStyle(parent);
+        const width = parent.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
+        object.width = width;
+        object.height = parent.dataset.ratio * width;
+        return;
+    }
+    object.height = 0;
 }
 
 const addBikeRideTypeChangeListener = () => {

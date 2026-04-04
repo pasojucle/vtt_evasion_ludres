@@ -110,6 +110,18 @@ class BikeRide
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $registrationClosedMessage = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $rules = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $securityGuidelines = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $rulesThumbnail = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $securityGuidelinesThumbnail = null;
+
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
@@ -431,6 +443,54 @@ class BikeRide
     public function setRegistrationClosedMessage(?string $registrationClosedMessage): static
     {
         $this->registrationClosedMessage = $registrationClosedMessage;
+
+        return $this;
+    }
+
+    public function getRules(): ?string
+    {
+        return $this->rules;
+    }
+
+    public function setRules(?string $rules): static
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function getSecurityGuidelines(): ?string
+    {
+        return $this->securityGuidelines;
+    }
+
+    public function setSecurityGuidelines(?string $securityGuidelines): static
+    {
+        $this->securityGuidelines = $securityGuidelines;
+
+        return $this;
+    }
+
+    public function getRulesThumbnail(): ?string
+    {
+        return $this->rulesThumbnail;
+    }
+
+    public function setRulesThumbnail(?string $rulesThumbnail): static
+    {
+        $this->rulesThumbnail = $rulesThumbnail;
+
+        return $this;
+    }
+
+    public function getSecurityGuidelinesThumbnail(): ?string
+    {
+        return $this->securityGuidelinesThumbnail;
+    }
+
+    public function setSecurityGuidelinesThumbnail(?string $securityGuidelinesThumbnail): static
+    {
+        $this->securityGuidelinesThumbnail = $securityGuidelinesThumbnail;
 
         return $this;
     }

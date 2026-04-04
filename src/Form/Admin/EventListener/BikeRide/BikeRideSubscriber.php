@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form\Admin\EventListener\BikeRide;
 
 use App\Entity\BikeRide;
-
 use App\Entity\BikeRideType as BikeRideKind;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\User;
@@ -22,6 +21,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,6 +29,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\File;
 
 class BikeRideSubscriber implements EventSubscriberInterface
 {
@@ -73,6 +74,9 @@ class BikeRideSubscriber implements EventSubscriberInterface
     public function preSubmit(FormEvent $event): void
     {
         $data = $event->getData();
+        if (!$data) {
+            return;
+        }
         $bikeRide = $event->getForm()->getData();
         $bikeRideTypeId = (array_key_exists('bikeRideType', $data)) ? (int)$data['bikeRideType'] : null;
         $registrationEnabled = (array_key_exists('registrationEnabled', $data) ? (bool) $data['registrationEnabled'] : true);
@@ -280,6 +284,92 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 ],
             ])
             ;
+        if ($bikeRideType->isPublic()) {
+            $form
+                ->add('rulesFile', FileType::class, [
+                    'label' => 'Règlement de la randonnée (optionnel)',
+                    'mapped' => false,
+                    'required' => false,
+                    'block_prefix' => 'custom_file',
+                    'attr' => [
+                        'accept' => '.pdf',
+                    ],
+                    'constraints' => [
+                        new File([
+                            'maxSize' => '12M',
+                            'mimeTypes' => [
+                                'application/pdf',
+                            ],
+                            'mimeTypesMessage' => 'Format pdf autorisé',
+                        ]),
+                    ],
+                ])
+                ->add('rulesFileThumbnail', FileType::class, [
+                    'label' => 'Règlement de la randonnée - mignature (optionnel)',
+                    'mapped' => false,
+                    'required' => false,
+                    'block_prefix' => 'custom_file',
+                    'attr' => [
+                        'accept' => '.bmp,.jpeg,.jpg,.png',
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'constraints' => [
+                        new File([
+                            'maxSize' => '2048k',
+                            'mimeTypes' => [
+                                'image/bmp',
+                                'image/jpeg',
+                                'image/png',
+                            ],
+                            'mimeTypesMessage' => 'Format image bmp, jpeg, png autorisé',
+                        ]),
+                    ],
+                ])
+                ->add('securityGuidelinesFile', FileType::class, [
+                    'label' => 'Guide de la sécurité (optionnel)',
+                    'mapped' => false,
+                    'required' => false,
+                    'block_prefix' => 'custom_file',
+                    'attr' => [
+                        'accept' => '.pdf',
+                    ],
+                    'constraints' => [
+                        new File([
+                            'maxSize' => '12M',
+                            'mimeTypes' => [
+                                'application/pdf',
+                            ],
+                            'mimeTypesMessage' => 'Format pdf autorisé',
+                        ]),
+                    ],
+                ])
+                ->add('securityGuidelinesFileThumbnail', FileType::class, [
+                    'label' => 'Guide de la sécurité  - mignature (optionnel)',
+                    'mapped' => false,
+                    'required' => false,
+                    'block_prefix' => 'custom_file',
+                    'attr' => [
+                        'accept' => '.bmp,.jpeg,.jpg,.png',
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'constraints' => [
+                        new File([
+                            'maxSize' => '2048k',
+                            'mimeTypes' => [
+                                'image/bmp',
+                                'image/jpeg',
+                                'image/png',
+                            ],
+                            'mimeTypesMessage' => 'Format image bmp, jpeg, png autorisé',
+                        ]),
+                    ],
+                ])
+            ;
+        }
     }
 
     private function setRestriction(BikeRide &$bikeRide): void

@@ -35,6 +35,26 @@ class EditBikeRide
             $bikeRide->setFileName($this->uploadService->uploadFile($file));
         }
 
+        $rules = $request->files->get('bike_ride')['rulesFile'] ?? null;
+        if ($rules) {
+            $bikeRide->setRules($this->uploadService->uploadFile($rules));
+        }
+
+        $securityGuidelines = $request->files->get('bike_ride')['securityGuidelinesFile'] ?? null;
+        if ($securityGuidelines) {
+            $bikeRide->setSecurityGuidelines($this->uploadService->uploadFile($securityGuidelines));
+        }
+
+        $rulesThumbnail = $request->files->get('bike_ride')['rulesFileThumbnail'] ?? null;
+        if ($rulesThumbnail) {
+            $bikeRide->setRulesThumbnail($this->uploadService->uploadFile($rulesThumbnail));
+        }
+
+        $securityGuidelinesThumbnail = $request->files->get('bike_ride')['securityGuidelinesFileThumbnail'] ?? null;
+        if ($securityGuidelinesThumbnail) {
+            $bikeRide->setSecurityGuidelinesThumbnail($this->uploadService->uploadFile($securityGuidelinesThumbnail));
+        }
+
         if ($persist) {
             $this->entityManager->persist($bikeRide);
         }

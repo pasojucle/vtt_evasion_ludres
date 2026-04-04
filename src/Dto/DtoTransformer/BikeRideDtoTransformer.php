@@ -68,6 +68,10 @@ class BikeRideDtoTransformer
             $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
 
             $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
+            $bikeRideDto->rules = $this->getFilename($bikeRide->getRules());
+            $bikeRideDto->securityGuidelines = $this->getFilename($bikeRide->getSecurityGuidelines());
+            $bikeRideDto->rulesThumbnail = $this->getFilename($bikeRide->getRulesThumbnail());
+            $bikeRideDto->securityGuidelinesThumbnail = $this->getFilename($bikeRide->getSecurityGuidelinesThumbnail());
             $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user, $dateTimePeriod);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
             $bikeRideDto->btnRegistration = $this->getBtnRegistration($bikeRide, $user, $userAvailableSessions);

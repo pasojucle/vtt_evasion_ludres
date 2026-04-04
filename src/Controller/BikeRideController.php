@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
+use App\Form\SessionGuestAddType;
 use App\UseCase\BikeRide\GetSchedule;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,15 +47,20 @@ class BikeRideController extends AbstractController
     }
 
 
-    #[Route('/randonnee/{bikeRide}/{slug}', name: 'bike_ride_detail', methods: ['GET'])]
+    #[Route('/randonnee/{bikeRide}/{slug}', name: 'bike_ride_detail', methods: ['GET', 'POST'])]
     public function detail(
+        Request $request,
         BikeRide $bikeRide,
         string $slug,
         BikeRideDtoTransformer $bikeRideDtoTransformer
     ): Response {
+        $form = $this->createForm(SessionGuestAddType::class);
+        $form->handleRequest($request);
+
         return $this->render('bike_ride/detail.html.twig', [
             'bikeRide' => $bikeRideDtoTransformer->fromEntity($bikeRide),
             'isRegistrationEnabled' => $bikeRide->registrationEnabled(),
+            'form' => $form->createView()
         ]);
     }
 }

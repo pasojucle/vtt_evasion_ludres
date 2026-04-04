@@ -47,6 +47,14 @@ class BikeRideDto
 
     public ?string $filename = null;
 
+    public ?string $rules = null;
+
+    public ?string $securityGuidelines = null;
+
+    public ?string $rulesThumbnail = null;
+
+    public ?string $securityGuidelinesThumbnail = null;
+
     public string $members = '';
 
     public bool $display = false;

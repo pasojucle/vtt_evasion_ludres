@@ -1,3 +1,5 @@
+import {resize} from './app';
+
 document.addEventListener("DOMContentLoaded", () => {
     initInputFile();
 });
@@ -30,6 +32,7 @@ export const previewFile = (event) => {
             if (element instanceof HTMLObjectElement && 'application/pdf' === file.type) {
                 element.classList.remove('hidden');
                 element.data = fileUrl;
+                resize(element);
             }
             if (element instanceof HTMLVideoElement && 'video/mp4' === file.type) {
                 element.classList.remove('hidden');
@@ -47,7 +50,8 @@ const getFile = (event) => {
         inputFile.click();
         inputFile.addEventListener('change', (event) => {
             let filename = event.currentTarget.value.split('\\').pop();
-            formGroupFile.querySelector('#filename').textContent = filename;
+            const filenameEl = formGroupFile.querySelector('#filename');
+            if (filenameEl) filenameEl.textContent = filename;
         });
     }
 
