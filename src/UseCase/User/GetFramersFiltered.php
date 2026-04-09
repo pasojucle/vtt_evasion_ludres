@@ -12,6 +12,7 @@ use App\Entity\Enum\AvailabilityEnum;
 use App\Form\Admin\FramerFilterType;
 use App\Repository\MemberRepository;
 use App\Repository\SessionRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -150,5 +151,10 @@ class GetFramersFiltered
             'availability' => null,
             'bikeRideId' => $bikeRide->getId(),
         ];
+    }
+
+    public function listFromEntities(Paginator $users): array
+    {
+        return $this->userDtoTransformer->listFromEntities($users);
     }
 }

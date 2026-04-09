@@ -7,6 +7,7 @@ namespace App\UseCase\User;
 use App\Entity\Member;
 use App\Service\LevelService;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class GetMembersFiltered extends GetUsersFiltered
 {
@@ -35,5 +36,10 @@ class GetMembersFiltered extends GetUsersFiltered
     public function getPermissionChoices(): ?array
     {
         return array_flip(Member::PERMISSIONS);
+    }
+
+    public function listFromEntities(Paginator $users): array
+    {
+        return $this->userDtoTransformer->listFromEntities($users);
     }
 }

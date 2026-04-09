@@ -51,13 +51,20 @@
                                 {% endif %}
                             </div>
                         </a>
-                        {% include('user/admin/dropdown.html.twig') %}
+                        {% include 'component/dropdown.html.twig' with {dropdown: user.dropdown} %}
                     </div>
-                    {% if user.lastLicence.toValidate %}
-                        <a class="btn btn-success" href="{{ path('admin_registration_receive', {'licence': user.lastLicence.id})}}" title="Réceptionner le dossier d'inscription" data-turbo-frame="modal_content"><i class="fas fa-check"></i> Reçu</a>
-                    {% endif %}
-                    {% if user.lastLicence.toRegister %}
-                        <a class="btn btn-success" href="{{ path('admin_registration_register', {'licence': user.lastLicence.id})}}" title="Inscrire à la FFvélo" data-turbo-frame="modal_content"><i class="fas fa-check"></i> Inscrit</a>
+                    {% if user.lastLicence.stateAction %}
+                        <a 
+                            class="{{ user.lastLicence.stateAction.className }}" 
+                            href="{{ user.lastLicence.stateAction.url }}" 
+                            title="{{ user.lastLicence.stateAction.title }}" 
+                            data-turbo-frame="{{ user.lastLicence.stateAction.target }}"
+                        >
+                            <div class="flex items-center gap-2 justify-center">
+                                {{ ux_icon(user.lastLicence.stateAction.icon) }}
+                                <div>{{ user.lastLicence.stateAction.label }}</div>
+                            </div> 
+                        </a>
                     {% endif %}
                 </li>
             {% endfor %}

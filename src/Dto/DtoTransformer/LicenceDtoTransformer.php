@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use App\Dto\ButtonDto;
 use App\Dto\LicenceDto;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Entity\LicenceConsent;
 use App\Entity\Member;
-use App\Entity\Participant;
 use App\Model\Currency;
 use App\Repository\LicenceRepository;
 use App\Repository\MembershipFeeAmountRepository;
@@ -22,6 +21,7 @@ use App\Service\SeasonService;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
@@ -35,6 +35,7 @@ class LicenceDtoTransformer
         private readonly LicenceService $licenceService,
         private readonly LicenceRepository $licenceRepository,
         private readonly LicenceAgreementDtoTransformer $licenceAgreementDtoTransformer,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -92,6 +93,54 @@ class LicenceDtoTransformer
         }
 
         return $licences;
+    }
+
+    public function registrationFromEntity(Licence $licence): LicenceDto
+    {
+        $licenceDto = new LicenceDto();
+        $licenceDto->id = $licence->getId();
+        $state = $licence->getState();
+        $licenceDto->stateAction = match(true) {
+            $state->toValidate() => new ButtonDto(
+                'Reçu',
+                'lucide:square-check-big',
+                $this->urlGenerator->generate('admin_registration_receive', ['licence' => $licence->getId()]),
+                ButtonDto::MODAL_CONTENT,
+                'btn btn-success',
+                'Réceptionner le dossier d\'inscription'
+            ),
+            $state->toRegister() => new ButtonDto(
+                'Inscrit',
+                'lucide:square-check-big',
+                $this->urlGenerator->generate('admin_registration_register', ['licence' => $licence->getId()]),
+                ButtonDto::MODAL_CONTENT,
+                'btn btn-success',
+                'Inscrire à la FFvélo'
+            ),
+            default => null
+        };
+        $licenceDto->isYearly = $licence->getState()->isYearly();
+
+        return $licenceDto;
+    }
+
+
+    public function coverageFromEntity(Licence $licence): LicenceDto
+    {
+        $licenceDto = new LicenceDto();
+        // $licenceDto->id = $licence->getId();
+        $licenceDto->stateAction = new ButtonDto(
+            'Valider',
+            'lucide:square-check-big',
+            $this->urlGenerator->generate('admin_coverage_validate', ['licence' => $licence->getId()]),
+            ButtonDto::MODAL_CONTENT,
+            'btn btn-success',
+            'Valider l\'assurance ffvélo'
+        );
+
+        $licenceDto->isYearly = $licence->getState()->isYearly();
+
+        return $licenceDto;
     }
 
     public function getRegistrationTitle(Licence $licence): string

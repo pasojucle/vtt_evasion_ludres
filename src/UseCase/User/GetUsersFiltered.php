@@ -13,6 +13,7 @@ use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use ReflectionClass;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -35,7 +36,7 @@ abstract class GetUsersFiltered
         protected SeasonService $seasonService,
         private readonly FormFactoryInterface $formFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly UserDtoTransformer $userDtoTransformer,
+        protected UserDtoTransformer $userDtoTransformer,
         protected MemberRepository $memberRepository,
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
@@ -47,6 +48,8 @@ abstract class GetUsersFiltered
     abstract protected function getStatusChoices(): ?array;
 
     abstract protected function getPermissionChoices(): ?array;
+
+    abstract protected function listFromEntities(Paginator $users): array;
 
     public function list(Request $request, bool $filtered): array
     {
@@ -71,7 +74,7 @@ abstract class GetUsersFiltered
         $paginator = $this->paginatorDtoTransformer->fromEntities($users, ['filtered' => (int) $filtered]);
 
         return [
-            'users' => $this->userDtoTransformer->fromEntities($users),
+            'users' => $this->listFromEntities($users),
             'paginator' => $paginator,
             'form' => $form->createView(),
             'count' => $paginator->total,

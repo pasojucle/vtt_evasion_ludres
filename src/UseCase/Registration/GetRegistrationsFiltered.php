@@ -8,6 +8,8 @@ use App\Entity\Licence;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 
 class GetRegistrationsFiltered extends GetUsersFiltered
 {
@@ -54,5 +56,10 @@ class GetRegistrationsFiltered extends GetUsersFiltered
             'status' => Licence::FILTER_NEW,
             'levels' => null,
         ];
+    }
+
+    public function listFromEntities(Paginator $users): array
+    {
+        return $this->userDtoTransformer->registrationListFromEntities($users);
     }
 }

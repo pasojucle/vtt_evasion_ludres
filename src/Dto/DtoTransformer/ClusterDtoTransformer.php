@@ -7,6 +7,7 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\ClusterDto;
 use App\Entity\Address;
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\GardianKindEnum;
@@ -35,6 +36,7 @@ class ClusterDtoTransformer
 {
     public function __construct(
         private LevelDtoTransformer $levelDtoTransformer,
+        private DropdownDtoTransformer $dropdownDtoTransformer,
         private CacheService $cacheService,
         private ClusterService $clusterService,
         private SessionRepository $sessionRepository,
@@ -56,9 +58,7 @@ class ClusterDtoTransformer
         $clusterDto->title = $cluster->getTitle();
         $clusterDto->isComplete = $cluster->isComplete();
         $sessionEntities = $cluster->getSessions();
-        $clusterDto->sessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()
-            ->getBikeRideType()
-            ->isRequireAvailability());
+        $clusterDto->sessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()->getBikeRideType());
         $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
         $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
         $clusterDto->isEditable = $this->security->isGranted('CLUSTER_EDIT', $cluster);
@@ -103,7 +103,7 @@ class ClusterDtoTransformer
         $clusterDto->role = $cluster->getRole();
         $clusterDto->isComplete = $cluster->isComplete();
         $clusterDto->memberSessions = $this->clusterService->getMemberSessions($cluster);
-        $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()->getBikeRideType()->isRequireAvailability());
+        $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()->getBikeRideType());
         $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
         $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
         $clusterCache->set($clusterDto);
@@ -239,10 +239,10 @@ class ClusterDtoTransformer
         ];
     }
 
-    private function getAvailableSessions(Collection $sessionEntities, bool $isRequireAvailability): array
+    private function getAvailableSessions(Collection $sessionEntities, BikeRideType $bikeRideType): array
     {
         $sortedSessions = [];
-        $allowedAvailabilities = ($isRequireAvailability)
+        $allowedAvailabilities = ($bikeRideType->isRequireAvailability())
             ? [AvailabilityEnum::UNAVAILABLE, AvailabilityEnum::REGISTERED]
             : [AvailabilityEnum::NONE, AvailabilityEnum::AVAILABLE, AvailabilityEnum::REGISTERED];
 
@@ -290,9 +290,10 @@ class ClusterDtoTransformer
                         'isEndTesting' => $isEndTesting,
                         'mustProvideRegistration' => $mustProvideRegistration,
                         'licenceNumber' => $user->getLicenceNumber(),
+                        'dropdown' => $this->dropdownDtoTransformer->fromSession($session),
                     ],
                     'userIsOnSite' => $session->isPresent(),
-                    'practice' => $session->getPractice()->toBadge($this->translator),
+                    'practice' => $bikeRideType->isDisplayBikeKind() ? $session->getPractice()->toBadge($this->translator) : null,
                     'bikeType' => $session->getBikeType()->toBadge($this->translator),
                 ];
             }

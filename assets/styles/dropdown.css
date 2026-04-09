@@ -5,10 +5,8 @@
     display: flex;
     align-items: center;
     height: 100%;
-    // z-index: 99;
     .dropdown {
         position: relative;
-        // z-index: 999;
     }
     .btn-wiki {
         display: block;
@@ -29,12 +27,10 @@
     height: 100%;
     right: 0;
     top: 0;
-    // z-index: 99;
     button.dropdown-toggle {
         width: 100%;
         height: 100%;
         border: none;
-        background-color: transparent;
         cursor: pointer;
         z-index: 99;
         &::after {

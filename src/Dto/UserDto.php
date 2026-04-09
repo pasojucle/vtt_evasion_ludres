@@ -12,13 +12,13 @@ class UserDto
 
     public ?array $lines;
 
-    public ?LicenceDto $lastLicence = null;
+    public LicenceDto | array | null $lastLicence = null;
 
     public ?LicenceDto $prevLicence = null;
 
     public ?LicenceDto $seasonLicence;
 
-    public ?IdentityDto $member;
+    public IdentityDto | array | null $member;
 
     public ?IdentityDto $legalGardian = null;
 
@@ -28,7 +28,7 @@ class UserDto
 
     public ?HealthDto $health;
 
-    public ?LevelDto $level = null;
+    public LevelDto | array | null $level = null;
 
     public ?string $boardRole = null;
 
@@ -55,4 +55,6 @@ class UserDto
     public string $seasons = '';
 
     public bool $canRenewRegistration = false;
+
+    public ?DropdownDto $dropdown = null;
 }

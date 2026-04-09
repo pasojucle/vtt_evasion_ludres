@@ -46,7 +46,7 @@
                             </div>
                         </div>
                     </a> 
-                    {% include('user/admin/dropdown.html.twig') %}
+                    {% include 'component/dropdown.html.twig' with {dropdown: user.dropdown} %}
                 </li>
             {% endfor %}
         </ul>

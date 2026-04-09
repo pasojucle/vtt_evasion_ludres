@@ -7,6 +7,8 @@ namespace App\UseCase\Coverage;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 
 class GetCoveragesFiltered extends GetUsersFiltered
 {
@@ -35,5 +37,10 @@ class GetCoveragesFiltered extends GetUsersFiltered
     public function getPermissionChoices(): ?array
     {
         return null;
+    }
+
+    public function listFromEntities(Paginator $users): array
+    {
+        return $this->userDtoTransformer->coverageListFromEntities($users);
     }
 }

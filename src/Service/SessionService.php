@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
-use App\Entity\Enum\BikeTypeEnum;
-use App\Entity\Enum\PracticeEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -25,12 +22,12 @@ class SessionService
 
     public function __construct(
         private SessionRepository $sessionRepository,
-        private UserDtoTransformer $userDtoTransformer,
         private MailerService $mailerService,
         private ParameterService $parameterService,
         private MessageService $messageService,
         private ClusterService $clusterService,
         private TranslatorInterface $translator,
+        private UserService $userService,
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
@@ -42,14 +39,19 @@ class SessionService
         $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
 
         foreach ($sessions as $session) {
+            $user = $session->getUser();
             if (AvailabilityEnum::NONE === $session->getAvailability()) {
                 $level = $session->getUser()->getLevel();
                 $levelId = (null !== $level) ? $level->getId() : 0;
                 $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';
-                $members[$levelId]['members'][] = $session->getUser();
+                $members[$levelId]['members'][] = $user;
                 $members[$levelId]['title'] = $levelTitle;
             } else {
                 if ($member !== $session->getUser()) {
+                    $framers[] = [
+                        'availability' => $this->getAvailability($session->getAvailability()),
+                        'fullName' => $user->getIdentity()->getFullName(),
+                    ];
                     // $framers[] = $this->sessionDtoTransformer->fromEntity($session);
                 }
             }
@@ -114,10 +116,13 @@ class SessionService
 
     public function checkEndTesting(Member $member): void
     {
-        $userDto = $this->userDtoTransformer->identifiersFromEntity($member);
-        if ($userDto->isEndTesting) {
+        $trialSessionsPresent = $this->userService->trialSessionsPresent($member->getLastLicence(), $member);
+        $isEndTesting = $this->userService->isEndTesting($member->getLastLicence(), $trialSessionsPresent);
+        $identity = $member->getIdentity();
+        $user = ['email' => $member->getContactEmail(), 'name' => $identity->getName(), 'firstName' => $identity->getFirstName()];
+        if ($isEndTesting) {
             $subject = 'Fin de la période d\'essai';
-            $this->mailerService->sendMailToMember($userDto, $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
+            $this->mailerService->sendMailToMember($user, $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
         }
     }
 
@@ -151,10 +156,30 @@ class SessionService
     public function getAvailability(AvailabilityEnum $availability): array
     {
         $availbilityClass = [
-            AvailabilityEnum::REGISTERED->name => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>', 'color' => 'success-color'],
-            AvailabilityEnum::AVAILABLE->name => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 'color' => 'warning-color'],
-            AvailabilityEnum::UNAVAILABLE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
-            AvailabilityEnum::NONE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
+            AvailabilityEnum::REGISTERED->name => [
+                'badge' => 'person person-check',
+                'icon' => '<i class="fa-solid fa-person-circle-check"></i>',
+                'ux_icon' => 'lucide:user-check',
+                'color' => 'success-color'
+            ],
+            AvailabilityEnum::AVAILABLE->name => [
+                'badge' => 'person person-question', 
+                'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 
+                'ux_icon' => 'lucide:user-plus',
+                'color' => 'warning-color'
+            ],
+            AvailabilityEnum::UNAVAILABLE->name => [
+                'badge' => 'person person-xmark', 
+                'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 
+                'ux_icon' => 'lucide:user-x',
+                'color' => 'alert-danger-color'
+            ],
+            AvailabilityEnum::NONE->name => [
+                'badge' => 'person person-xmark', 
+                'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>',
+                'ux_icon' => 'lucide:user-x', 
+                'color' => 'alert-danger-color'
+            ],
         ];
 
         $availabilityView = [

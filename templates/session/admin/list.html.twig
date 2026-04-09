@@ -38,7 +38,9 @@
                 <div class="col-md-3 col-xs-2">
                     <div class="row">
                         {% for authorization in user.lastLicence.authorizations %}
-                            <div class="bs-badge rounded-circle border border-white d-flex align-items-center mx-1 align-content-center text-bg-{{ authorization.toHtml.color }}">{{ authorization.toHtml.icon|raw }}</div>
+                            <div class="size-8 rounded-circle border text-white border-white flex items-center justify-center text-bg-{{ authorization.toHtml.color }}">
+                                {{ ux_icon(authorization.toHtml.icon, {class: 'size-5'}) }}
+                            </div>
                         {% endfor %}
                         {% if user.health.content is not null %}
                             <div class="medical-plus"></div>
@@ -53,7 +55,9 @@
                 </div>
             </div>
         </a>
-        {% include 'user/admin/dropdown.html.twig' with {'session' : session} %}
+        {% include 'component/dropdown.html.twig' with {dropdown: user.dropdown} %}
+
+        {# {% include 'user/admin/dropdown.html.twig' with {'session' : session} %} #}
     </div>
     {% include 'session/admin/_present.html.twig' %}
 </li>

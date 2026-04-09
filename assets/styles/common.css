@@ -726,7 +726,7 @@ button[type=submit].btn.btn-primary:disabled, button.add-item-file:disabled {
 .form-group-small {
     width: 100px;
 }
-.hidden, .form-group-inline.hidden, .d-none {
+.form-group-inline.hidden, .d-none {
     display: none !important;
 }
 .ms-20 {

@@ -1,13 +1,16 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static outlets = ["collapse"];
+    static outlets = ["collapse", "dropdown"];
 
     closeOthers(event) {
         const openedElement = event.target;
 
-        this.collapseOutlets.forEach(outlet => {
-            console.log("collapseOutlet", outlet)
+        const outlets = event.type === "collapse:opened" 
+            ? [...this.collapseOutlets, ...this.dropdownOutlets] 
+            : this.dropdownOutlets;
+
+        outlets.forEach(outlet => {
             if (outlet.element !== openedElement) {
                 outlet.close();
             }

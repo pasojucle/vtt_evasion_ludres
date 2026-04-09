@@ -14,6 +14,8 @@ use App\Entity\Member;
 use App\Entity\User;
 use App\Repository\IdentityRepository;
 use App\Repository\LicenceRepository;
+use App\Service\DropdownService;
+use App\Service\LevelService;
 use App\Service\ParameterService;
 use App\Service\SeasonService;
 use App\Service\UserService;
@@ -39,6 +41,8 @@ class UserDtoTransformer
         private SeasonService $seasonService,
         private ParameterService $parameterService,
         private UserService $userService,
+        private LevelService $levelService,
+        private DropdownDtoTransformer $dropdownDtoTransformer,
     ) {
     }
 
@@ -122,6 +126,74 @@ class UserDtoTransformer
         }
 
         $this->sortByFullName($users);
+
+        return $users;
+    }
+
+    public function listFromEntities(Paginator $userEntities): array
+    {
+        $users = [];
+        foreach ($userEntities as $userEntity) {
+            $userDto = new UserDto();
+            $userDto->id = $userEntity->getId();
+            $userDto->member = ['fullName' => $userEntity->getIdentity()->getFullName()];
+            $level = $userEntity->getLevel();
+            $userDto->level = [
+                'title' => $level->getTitle(),
+                'colors' => $this->levelService->getColors($level->getColor()),
+                // 'type' => $level->getType(),
+            ];
+            $lastLicence = $userEntity->getLastLicence();
+            $userDto->lastLicence = [
+                'isYearly' => $lastLicence->getState()->isYearly(),
+            ];
+            $userDto->dropdown = $this->dropdownDtoTransformer->fromUser($userEntity);
+            $users[] = $userDto;
+        }
+
+        return $users;
+    }
+
+
+    public function registrationListFromEntities(Paginator $userEntities): array
+    {
+        $users = [];
+        foreach ($userEntities as $userEntity) {
+            $userDto = new UserDto();
+            $userDto->id = $userEntity->getId();
+            $userDto->member = ['fullName' => $userEntity->getIdentity()->getFullName()];
+            $level = $userEntity->getLevel();
+            $userDto->level = [
+                'title' => $level->getTitle(),
+                'colors' => $this->levelService->getColors($level->getColor()),
+                // 'type' => $level->getType(),
+            ];
+            $lastLicence = $userEntity->getLastLicence();
+            $userDto->lastLicence = $this->licenceDtoTransformer->registrationFromEntity($lastLicence);
+            $userDto->dropdown = $this->dropdownDtoTransformer->fromLastLicence($lastLicence);
+            $users[] = $userDto;
+        }
+
+        return $users;
+    }
+    public function coverageListFromEntities(Paginator $userEntities): array
+    {
+        $users = [];
+        foreach ($userEntities as $userEntity) {
+            $userDto = new UserDto();
+            $userDto->id = $userEntity->getId();
+            $userDto->member = ['fullName' => $userEntity->getIdentity()->getFullName()];
+            $level = $userEntity->getLevel();
+            $userDto->level = [
+                'title' => $level->getTitle(),
+                'colors' => $this->levelService->getColors($level->getColor()),
+                // 'type' => $level->getType(),
+            ];
+            $lastLicence = $userEntity->getLastLicence();
+            $userDto->lastLicence = $this->licenceDtoTransformer->coverageFromEntity($lastLicence);
+            $userDto->dropdown = $this->dropdownDtoTransformer->fromUser($userEntity);
+            $users[] = $userDto;
+        }
 
         return $users;
     }

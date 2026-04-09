@@ -3,7 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\LicenceAgreement;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +21,24 @@ class LicenceAgreementRepository extends ServiceEntityRepository
         parent::__construct($registry, LicenceAgreement::class);
     }
 
-//    /**
-//     * @return LicenceAgreement[] Returns an array of LicenceAgreement objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('l.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?LicenceAgreement
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByUserAndAggrementId(User $user, string $agreement): ?LicenceAgreement
+    {
+        try {
+            return $this->createQueryBuilder('la')
+                ->join('la.agreement', 'a')
+                ->join('la.licence', 'l')
+                ->andWhere(
+                    (new Expr())->eq('a.id', ':agreement'),
+                    (new Expr())->eq('l.user', ':user')
+                )
+                ->setParameters(new ArrayCollection([
+                    new Parameter('user', $user),
+                    new Parameter('agreement', $agreement)
+                ]))
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch(NonUniqueResultException) {
+            return null;
+        }
+    }
 }

@@ -139,7 +139,7 @@ export default class extends Controller {
         const menuItem = document.createElement('button');
         menuItem.type = 'button';
         menuItem.className = `w-full text-left px-3 py-1 text-xs transition-colors disabled:text-neutral-200 ${
-            item.isActive ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-blue-50'
+            item.isActive ? 'bg-blue-500 text-white' : 'text-neutral-700 hover:bg-blue-50'
         }`;
         if (item.icon) {
             const icon = ICONS[item.icon];           
