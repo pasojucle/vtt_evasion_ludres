@@ -113,12 +113,13 @@ class SessionRepository extends ServiceEntityRepository
                 (new Expr())->eq('b.id', ':bikeRideId'),
                 (new Expr())->orX(
                     (new Expr())->eq('s.availability', ':registered'),
-                    (new Expr())->isNull('s.availability'),
+                    (new Expr())->eq('s.availability', ':none'),
                 )
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('bikeRideId', $bikeRideId),
                 new Parameter('registered', AvailabilityEnum::REGISTERED),
+                new Parameter('none', AvailabilityEnum::NONE),
             ]))
             ->getQuery()
             ->getResult()
