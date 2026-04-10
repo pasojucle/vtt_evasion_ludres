@@ -300,10 +300,10 @@ class MenuService
             foreach ($menus as $menu) {
                 $priority = ('menus' === $type) ? 1 : 0.5;
                 if (empty($menu['subMenus'])) {
-                    $routes[] = ['route' => $menu['route'], 'priority' => $priority];
+                    $routes[] = ['route' => $menu['route'], 'params' => [], 'priority' => $priority];
                 } else {
                     foreach ($menu['subMenus'] as $subMenu) {
-                        $routes[] = ['route' => $subMenu['route'], 'priority' => $priority];
+                        $routes[] = ['route' => $subMenu['route'], 'params' => $subMenu['params'], 'priority' => $priority];
                     }
                 }
             }
