@@ -1,30 +1,30 @@
 {% if session is defined or is_granted('ROLE_ADMIN') %}
-<div class="absolute h-full w-8 right-0 top-0" data-controller="dropdown">
+<div class="{{ dropdown.position }} h-full w-8 text-foreground" data-controller="dropdown">
   <button 
-    class="group absolute bg-transparent flex justify-center items-center h-full w-full hover:bg-neutral-300 hover:z-50" 
+    class="group text-foreground lg:text-muted flex justify-center items-center h-full w-full lg:hover:text-foreground hover:z-50" 
     type="button" 
     data-dropdown-target="trigger" 
     data-action="click->dropdown#toggle"
   >
     <div data-dropdown-target="icon">
-        {{ ux_icon('lucide:ellipsis-vertical', { class: 'w-5 h-5 text-neutral-500' }) }}
+        {{ ux_icon(dropdown.trigger, { class: 'w-5 h-5' }) }}
     </div>
     <div class="hidden" data-dropdown-target="activeIcon">
-        {{ ux_icon('lucide:x', { class: 'w-5 h-5 text-neutral-500' }) }}
+        {{ ux_icon('lucide:x', { class: 'w-5 h-5' }) }}
     </div>
   </button>
   <div 
-    class="hidden absolute mt-0! top-0 right-8 bg-neutral-200 border-2 border-white w-max max-w-80 z-50" 
+    class="hidden absolute mt-0! top-0 right-8 bg-white rounded-sm border border-border w-max max-w-80 z-50" 
     data-dropdown-target="content"
   >
     {% if dropdown.title is not null %}
-    <div class="p-3 bg-neutral-400 [&>*:not(:first-child)]:border-t-2 [&>*:not(:first-child)]:border-white">
-      {{ user.member.fullName }}
+    <div class="px-3 py-2 bg-neutral-200 [&>*:not(:first-child)]:border-t-1 [&>*:not(:first-child)]:border-border border-b-1 border-border">
+      {{ dropdown.title }}
     </div>
     {% endif %}
-    <ul class="[&>*:not(:first-child)]:border-t-2 [&>*:not(:first-child)]:border-white">
+    <ul class="[&>*:not(:first-child)]:border-t-1 [&>*:not(:first-child)]:border-border">
       {% for item in dropdown.infoItems %}
-          <li class="px-3 py-2 bg-neutral-300 flex items-center gap-2">
+          <li class="px-3 py-2 text-primary italic flex items-center gap-2">
             {{ ux_icon(item.icon) }} {{ item.label }}
           </li>
       {% endfor %}
@@ -32,16 +32,32 @@
       {% for item in dropdown.menuItems %}
           <li>
             <a 
-              class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+              class="block px-3 py-2 text-foreground lg:text-muted lg:hover:text-foreground"
               href="{{ item.url }}" 
               title="{{ item.label }}"
               data-turbo-frame="{{ item.target}}"
+              data-action="click->dropdown#close"
             >
               <div class="flex items-center gap-2">
-                {{ ux_icon(item.icon) }} {{ item.label}}
+                {{ ux_icon(item.icon) }} <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ item.label}}</div>
               </div>
             </a>
           </li>
+      {% endfor %}
+      {% for item in dropdown.actionItems %}
+        <li>
+          <div
+            class="hover:cursor-pointer block px-3 py-2 text-foreground lg:text-muted lg:hover:text-foreground"
+            title="{{ item.label }}"
+            {% for data in item.data %}
+                {{ data }}
+            {% endfor %}
+          >
+            <div class="flex items-center gap-2">
+              {{ ux_icon(item.icon) }} <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ item.label}}</div>
+            </div>
+          </div>
+        </li>
       {% endfor %}
     </ul>
   </div>

@@ -12,9 +12,9 @@ readonly class ButtonDto
 
     public function __construct(
         public string $label,
-        public string $icon,
         public string $url,
         public string $target = self::TOP,
+        public ?string $icon = null,
         public ?string $className = null,
         public ?string $title = null,
     ) 

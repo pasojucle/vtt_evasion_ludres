@@ -4,11 +4,13 @@
 
 {% block body %}
     <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Gestion des types de randos</h1>
-            <div class="tool-group">
-                {% include 'component/dropdown_settings.html.twig' %}
-                <a href="{{ path('admin_bike_rides') }}" class="btn btn-ico" title="Retour à la liste des randos"><i class="fas fa-chevron-left"></i></a>
+        <div class="bg-primary text-white flex">
+            <div class="px-3 py-2">
+                <h1 class="font-bold text-3xl">Gestion des types de randos</h1>
+            </div>
+            <div class="ml-auto flex gap-2 items-center">
+                <a href="{{ path('admin_bike_rides') }}" class="text-foreground lg:text-muted lg:hover:text-foreground" title="Retour à la liste des randos">{{ ux_icon('lucide:chevron-left', { class: 'w-6 h-6' }) }}</a>
+                {% include 'component/dropdown.html.twig' with {'dropdown': settings} %}
             </div>
         </div>
         <div class="wrapper-body">
@@ -18,20 +20,7 @@
                 {% for bikeRideType in bikeRideTypes %}     
                     <li class="list-group-item">
                         <div>{{ bikeRideType.name }}</div>
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                            <div class="dropdown-menu" data-target="dropdown-tools">
-                                <ul class="dropdown-body">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ path('admin_bike_ride_type_edit', {'bikeRideType': bikeRideType.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i>Modifier</a>
-                                    </li>
-                                    <li>
-                             {# {% if not bikeRideType.isProtected %}
-                                    <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_bikeRideType_delete', {'bikeRideType': bikeRideType.id})}}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i></a>
-                                {% endif %} #}                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        {% include 'component/dropdown.html.twig' with {'dropdown': bikeRideType.dropdown} %} 
                     </li>
                 {% endfor %}
             </ul>

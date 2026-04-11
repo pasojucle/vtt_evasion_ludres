@@ -4,9 +4,13 @@
 
 {% block body %}
     <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Programme des sorties</h1>
-            {% include 'component/dropdown_settings.html.twig' %}
+        <div class="bg-primary text-white flex">
+            <div class="px-3 py-2">
+                <h1 class="font-bold text-3xl">Programme des sorties</h1>
+            </div>
+            <div class="ml-auto flex gap-2 items-center">
+                {% include 'component/dropdown.html.twig' with {'dropdown': settings} %}
+            </div>
         </div>
         <div class="wrapper-body">
             <div class="row">
@@ -35,61 +39,7 @@
                             <div class="list-item">{{ bikeRide_content }}</div>
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN') or is_granted('SUMMARY_LIST') %}
-                            <div class="dropdown">
-                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ bikeRide.id }}"></button>
-                                <div class="dropdown-menu" data-target="dropdown-{{ bikeRide.id }}">
-                                    <div class="dropdown-title">{{ bikeRide.startAt | date('d/m/y') }} - {{ bikeRide.title }}</div>
-                                    <ul class="dropdown-body">
-                                        {% if is_granted('ROLE_ADMIN') %}
-                                            <li>
-                                                <a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
-                                                    <i class="fas fa-pencil-alt"></i> Modifier
-                                                </a>
-                                            </li>
-                                            {% if bikeRide.startAt > date() %}
-                                            <li>
-                                                <a class="dropdown-item  modal-trigger" data-turbo-frame="modal_content" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
-                                                    <i class="fas fa-times"></i> Annuler
-                                                </a>
-                                            </li>
-                                            {% endif %}
-                                            <li>
-                                                <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Exporter la séance">
-                                                    <i class="fas fa-file-download"></i> Exporter la séance
-                                                </a>
-                                            </li>
-                                        {% endif %}
-                                        {% if is_granted('SUMMARY_LIST') %}
-                                            <li><a href="{{ path('admin_summary_list', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Actualités"><i class="fa-solid fa-rectangle-list"></i> Actualités</a></li>
-                                        {% endif %}
-                                        {% if bikeRide.isPublic %}
-                                            <li>
-                                                <a 
-                                                    href=""
-                                                    class="dropdown-item" 
-                                                    data-clipboard-url-value="{{ absolute_url(path('bike_ride_detail', {'bikeRide': bikeRide.id, 'slug': bikeRide.title|slug} ))}}" 
-                                                    title="Copier l'url" 
-                                                    data-controller="clipboard"
-                                                >
-                                                    <i class="fas fa-clipboard"></i> Copier l'url
-                                                </a>
-                                            </li>                                        
-                                        {% endif %}
-                                        {% if 0 < bikeRide.tracks|length %}
-                                            <li>
-                                                <a 
-                                                    class="dropdown-item" 
-                                                    href="{{ absolute_url(path('bike_ride_tracks', {'bikeRide': bikeRide.id, 'slug': bikeRide.title|slug} ))}}" 
-                                                    title="Copier l'url des parcours" 
-                                                    data-clipboard="1"
-                                                >
-                                                    <i class="fas fa-clipboard"></i> Copier l'url des parcours
-                                                </a>
-                                            </li>                                        
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                            </div>
+                            {% include 'component/dropdown.html.twig' with {'dropdown': bikeRide.dropdown} %}    
                         {% endif %}
                     </li>
                 {% endfor %}

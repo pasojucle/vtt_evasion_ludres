@@ -6,14 +6,20 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
+use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
+use App\Entity\Parameter;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\LicenceAgreementRepository;
+use App\Repository\ParameterRepository;
 use App\Service\LicenceAgreementService;
+use App\Service\MessageService;
 use App\Service\SessionService;
+use DateTimeImmutable;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -23,6 +29,8 @@ class DropdownDtoTransformer
         private SessionService $sessionService,
         private LicenceAgreementRepository $licenceAgreementRepository,
         private LicenceAgreementService $licenceAgreementService,
+        private ParameterRepository $parameterRepository,
+        private MessageService $messageService,
         private Security $security,
         private UrlGeneratorInterface $urlGenerator,
     )
@@ -33,7 +41,7 @@ class DropdownDtoTransformer
         $dropdown = new DropdownDto();
         $dropdown->title = $user->getIdentity()->getFullName();
         $level = $user->getLevel();
-        if ($this->security->isGranted('USER_LIST') && $level->getType() === Level::TYPE_SCHOOL_MEMBER) {
+        if ($this->security->isGranted('USER_LIST') && $level?->getType() === Level::TYPE_SCHOOL_MEMBER) {
             $dropdown->addMenuItem(
                 'Compétences',
                 'lucide:graduation-cap',
@@ -51,7 +59,7 @@ class DropdownDtoTransformer
                 'lucide:file-user',
                 $this->urlGenerator->generate('admin_user_certificate', ['member' => $user->getId()]),
             );
-            if ($level->isAccompanyingCertificat()) {
+            if ($level?->isAccompanyingCertificat()) {
                 $dropdown->addMenuItem(
                     'Attestation adulte accompagnateur',
                     'lucide:file-terminal',
@@ -130,5 +138,125 @@ class DropdownDtoTransformer
         }
         
         return $dropdown;
+    }
+
+    public function fromBikeRide(BikeRide $bikeRide): DropdownDto
+    {
+        $dropdown = new DropdownDto();
+        $dropdown->title = $bikeRide->__toString();
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $dropdown->addMenuItem(
+                'Modifier',
+                'lucide:pencil',
+                $this->urlGenerator->generate('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()]),
+            );
+            if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
+                $dropdown->addMenuItem(
+                    'Annuler',
+                    'lucide:delete',
+                    $this->urlGenerator->generate('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()]),
+                    ButtonDto::MODAL_CONTENT,
+                );
+            }
+            $dropdown->addMenuItem(
+                'Exporter la séance',
+                'lucide:file-down',
+                $this->urlGenerator->generate('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
+            );
+        }
+        if ($this->security->isGranted('SUMMARY_LIST')) {
+            $dropdown->addMenuItem(
+                'Actualités',
+                'lucide:image',
+                $this->urlGenerator->generate('admin_summary_list', ['bikeRide' => $bikeRide->getId()]),
+            );
+        }
+        if ($bikeRide->getBikeRideType()->isPublic()) {
+            $dropdown->addActionItem(
+                'Copier l\'url',
+                'lucide:clipboard-copy',
+                [
+                    sprintf('data-clipboard-url-value=%s', $this->urlGenerator->generate('bike_ride_detail',
+                        ['bikeRide' => $bikeRide->getId(), 'slug' => $bikeRide->getTitle()],
+                        UrlGeneratorInterface::ABSOLUTE_URL)
+                    ),
+                    'data-controller=clipboard'
+                ]
+            );
+        }
+                                                         
+        return $dropdown;
+    }
+
+        public function fromBikeRideType(BikeRideType $bikeRideType): DropdownDto
+    {
+        $dropdown = new DropdownDto();
+        $dropdown->addMenuItem(
+            'Modifier',
+            'lucide:pencil',
+            $this->urlGenerator->generate('admin_bike_ride_type_edit', ['bikeRideType' => $bikeRideType->getId()]),
+        );
+
+        return $dropdown;
+    }
+
+    public function fromSettings(string $sectionName, array $routes = [], array $actions = []): DropdownDto
+    {
+        $dropdown = new DropdownDto();
+        $dropdown->trigger = 'lucide:sliders-horizontal';
+        $dropdown->position = 'relative';
+        $this->addParameters($dropdown, $this->parameterRepository->findByParameterGroupName($sectionName));
+        $this->addRoutes($dropdown, $routes);
+        $this->addMessages($dropdown, $this->messageService->getMessagesBySectionName($sectionName));
+        $this->addActions($dropdown, $actions);
+
+        return $dropdown;
+    }
+    
+    private function addRoutes(DropdownDto $dropdown, array $routes): void
+    {
+        foreach($routes as $route) {
+            $dropdown->addMenuItem(
+                $route['label'],
+                'lucide:settings-2',
+                $this->urlGenerator->generate($route['name']),
+            );
+        }
+    }
+    
+    private function addActions(DropdownDto $dropdown, array $actions): void
+    {
+        foreach($actions as $action) {
+            $dropdown->addMenuItem(
+                $action['label'],
+                $action['icon'],
+                $this->urlGenerator->generate($action['name'], $action['params']),
+            );
+        }
+    }
+
+    private function addParameters(DropdownDto $dropdown, array $parameters): void
+    {
+        /** @var Parameter $parameter */
+        foreach($parameters as $parameter) {
+            $dropdown->addMenuItem(
+                $parameter->getLabel(),
+                'lucide:settings-2',
+                $this->urlGenerator->generate('admin_parameter_edit', ['parameter' => $parameter->getName()]),
+                ButtonDto::MODAL_CONTENT,
+            );
+        }
+    }
+
+    private function addMessages(DropdownDto $dropdown, array $messages): void
+    {
+        foreach($messages as $message) {
+            $dropdown->addMenuItem(
+                $message['label'],
+                'lucide:message-circle',
+                $this->urlGenerator->generate('admin_message_edit_content', ['message' => $message['id']]),
+                ButtonDto::MODAL_CONTENT,
+            );
+        }
     }
 }

@@ -8,13 +8,21 @@ use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Message;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class BikeRideTypeDtoTransformer
 {
+    public function __construct(
+        private DropdownDtoTransformer $dropdownDtoTransformer,
+    )
+    {
+
+    }
+
     public function fromEntity(BikeRideType $bikeRideType): BikeRideTypeDto
     {
         $bikeRideTypeDto = new BikeRideTypeDto();
-        $bikeRideTypeDto->entity = $bikeRideType;
+        $bikeRideTypeDto->name = $bikeRideType->getName();
         $bikeRideTypeDto->content = $bikeRideType->getContent();
         $bikeRideTypeDto->useLevels = $bikeRideType->isUseLevels();
         $bikeRideTypeDto->isShowMemberList = $bikeRideType->isShowMemberList();
@@ -23,6 +31,25 @@ class BikeRideTypeDtoTransformer
         $bikeRideTypeDto->isNeedFramers = $bikeRideType->isNeedFramers();
         $bikeRideTypeDto->messages = $this->getMessages($bikeRideType);
         $bikeRideTypeDto->displayPractice = $bikeRideType->isDisplayBikeKind();
+        $bikeRideTypeDto->dropdown = $this->dropdownDtoTransformer->fromBikeRideType($bikeRideType);
+
+        return $bikeRideTypeDto;
+    }
+
+    public function fromEntities(Paginator | array $entities): array
+    {
+        $bikeRideTypes = [];
+        foreach ($entities as $entity) {
+            $bikeRideTypes[] = $this->fromEntity($entity);
+        }
+
+        return $bikeRideTypes;
+    }
+
+    public function shedulefromEntity(BikeRideType $bikeRideType): BikeRideTypeDto
+    {
+        $bikeRideTypeDto = new BikeRideTypeDto();
+        $bikeRideTypeDto->isRegistrable = RegistrationEnum::NONE !== $bikeRideType->getRegistration();
 
         return $bikeRideTypeDto;
     }

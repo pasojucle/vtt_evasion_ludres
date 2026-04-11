@@ -14,8 +14,8 @@ export default class extends Controller {
 
     open() {
         this.dispatch("opened", { bubbles: true });
-        if (this.hasTriggerTarget && this.triggerTarget.classList.contains("bg-transparent")) {
-            this.triggerTarget.classList.replace("bg-transparent", "bg-neutral-300");
+        if (this.hasTriggerTarget && this.triggerTarget.classList.contains("lg:text-muted")) {
+            this.triggerTarget.classList.replace("lg:text-muted", "lg:text-foreground");
             this.triggerTarget.classList.remove("group");
         }
         if (this.hasContentTarget) {
@@ -40,8 +40,8 @@ export default class extends Controller {
     }
 
     close() {
-        if (this.hasTriggerTarget && this.triggerTarget.classList.contains("bg-neutral-300")) {
-            this.triggerTarget.classList.replace("bg-neutral-300", "bg-transparent");
+        if (this.hasTriggerTarget && this.triggerTarget.classList.contains("lg:text-foreground")) {
+            this.triggerTarget.classList.replace("lg:text-foreground", "lg:text-muted");
             this.triggerTarget.classList.add("group");
         }
         if (this.hasContentTarget) {

@@ -9,6 +9,7 @@ readonly class DropdownItemDto
     public function __construct(
         public string $label,
         public string $icon,
+        public array $data = [],
     ) 
     {
 

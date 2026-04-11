@@ -38,6 +38,7 @@ class BikeRideDtoTransformer
         private SessionRepository $sessionRepository,
         private BikeRideService $bikeRideService,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private DropdownDtoTransformer $dropdownDtoTransformer,
     ) {
     }
 
@@ -117,6 +118,26 @@ class BikeRideDtoTransformer
         $userAvailableSessions = ($user instanceof Member) ? $this->sessionRepository->findAvailableByUser($user) : null;
         foreach ($bikeRideEntities as $bikeRideEntity) {
             $bikeRides[] = $this->fromEntity($bikeRideEntity, $userAvailableSessions);
+        }
+
+        return $bikeRides;
+    }
+
+    public function shedulefromEntities(Paginator|Collection|array $bikeRideEntities): array
+    {
+        $bikeRides = [];
+        /** @var User $user */
+        $user = $this->security->getUser();
+        foreach ($bikeRideEntities as $bikeRideEntity) {
+            $bikeRideDto = new BikeRideDto();
+            $bikeRideDto->id = $bikeRideEntity->getId();
+            $bikeRideDto->startAt = $bikeRideEntity->getStartAt();
+            $bikeRideDto->title = $bikeRideEntity->getTitle();
+            $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->shedulefromEntity($bikeRideEntity->getBikeRideType());
+
+            $bikeRideDto->dropdown = $this->dropdownDtoTransformer->fromBikeRide($bikeRideEntity);
+
+            $bikeRides[] = $bikeRideDto;
         }
 
         return $bikeRides;

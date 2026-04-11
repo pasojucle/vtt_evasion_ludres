@@ -319,7 +319,7 @@ class ClusterDtoTransformer
             if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
                 $level = $session->getMember()->getLevel();
                 $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
-                if ($session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $levelType) {
+                if ($session->isPresent() && Level::TYPE_FRAME !== $levelType) {
                     $userOnSiteSessions[] = $session;
                 }
             } else {

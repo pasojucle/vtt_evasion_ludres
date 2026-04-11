@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\BikeRideTypeDtoTransformer;
+use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
@@ -32,21 +34,23 @@ class BikeRideTypeController extends AbstractController
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
-        MessageRepository $messageRepository,
+        DropdownDtoTransformer $dropdownDtoTransformer,
+        BikeRideTypeDtoTransformer $bigikeRideTypeDtoTransformer,
         Request $request
     ): Response {
         $query = $this->bikeRideTypeRepository->findBikeRideTypeQuery();
         $bikeRideTypes = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('bike_ride_type/admin/list.html.twig', [
-            'bikeRideTypes' => $bikeRideTypes,
+            'bikeRideTypes' => $bigikeRideTypeDtoTransformer->fromEntities($bikeRideTypes),
             'paginator' => $paginatorDtoTransformer->fromEntities($bikeRideTypes),
-            'settings' => [
-                'actions' => [
-                    ['name' => 'admin_message_add', 'params' => ['sectionName' => 'BIKE_RIDE_TYPE'], 'label' => '<i class="fa-solid fa-square-plus"></i> Ajouter un message'],
+            'settings' => $dropdownDtoTransformer->fromSettings(
+                'BIKE_RIDE_TYPE',
+                [],
+                [
+                    ['name' => 'admin_message_add', 'params' => ['sectionName' => 'BIKE_RIDE_TYPE'], 'icon' => 'lucide:message-circle-plus', 'label' => 'Ajouter un message'],
                 ],
-                'messages' => $messageRepository->findBySectionNameAndQuery('BIKE_RIDE_TYPE'),
-            ],
+            )
         ]);
     }
 

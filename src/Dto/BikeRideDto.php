@@ -71,4 +71,6 @@ class BikeRideDto
     public bool $showFramerAndMemberList = false;
 
     public array $tracks = [];
+
+    public ?DropdownDto $dropdown = null;
 }

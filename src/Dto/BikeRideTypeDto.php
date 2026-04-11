@@ -28,4 +28,6 @@ class BikeRideTypeDto
     public array|string $messages;
 
     public bool $displayPractice = false;
+
+    public ?DropdownDto $dropdown = null;
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\BikeRide;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
@@ -27,6 +28,7 @@ class GetSchedule
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private DropdownDtoTransformer $dropdownDtoTransformer,
         private BikeRideRepository $bikeRideRepository,
         private ContentRepository $contentRepository,
         private ParameterRepository $parameterRepository,
@@ -80,17 +82,16 @@ class GetSchedule
 
         $parameters += [
             'form' => $form->createView(),
-            'bikeRides' => $this->bikeRideDtoTransformer->fromEntities($bikeRides),
+            'bikeRides' => $this->bikeRideDtoTransformer->shedulefromEntities($bikeRides),
             'backgrounds' => $this->contentRepository->findOneByRoute('schedule')?->getBackgrounds(),
             'current_filters' => $filters,
-            'settings' => [
-                'parameters' => $this->parameterRepository->findByParameterGroupName('BIKE_RIDE'),
-                'routes' => [
+            'settings' => $this->dropdownDtoTransformer->fromSettings(
+                'BIKE_RIDE',
+                [
                     ['name' => 'admin_bike_ride_types', 'label' => 'Types de rando'],
                     ['name' => 'admin_indemnity_list', 'label' => 'Indemnités'],
-                ],
-                'messages' => $this->messageService->getMessagesBySectionName('BIKE_RIDE'),
-            ],
+                ]
+            )
         ];
 
         return [

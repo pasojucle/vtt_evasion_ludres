@@ -103,17 +103,17 @@ class LicenceDtoTransformer
         $licenceDto->stateAction = match(true) {
             $state->toValidate() => new ButtonDto(
                 'Reçu',
-                'lucide:square-check-big',
                 $this->urlGenerator->generate('admin_registration_receive', ['licence' => $licence->getId()]),
                 ButtonDto::MODAL_CONTENT,
+                'lucide:square-check-big',
                 'btn btn-success',
                 'Réceptionner le dossier d\'inscription'
             ),
             $state->toRegister() => new ButtonDto(
                 'Inscrit',
-                'lucide:square-check-big',
                 $this->urlGenerator->generate('admin_registration_register', ['licence' => $licence->getId()]),
                 ButtonDto::MODAL_CONTENT,
+                'lucide:square-check-big',
                 'btn btn-success',
                 'Inscrire à la FFvélo'
             ),
