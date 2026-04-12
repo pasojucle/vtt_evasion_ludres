@@ -34,6 +34,7 @@ data/documentation
 data/licences
 data/slideshow
 data/crontab.log
+data/bike_ride_track
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 npm-debug.log

@@ -7,10 +7,14 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\SessionGuestAddType;
+use App\Service\ProjectDirService;
 use App\UseCase\BikeRide\GetSchedule;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -62,5 +66,26 @@ class BikeRideController extends AbstractController
             'isRegistrationEnabled' => $bikeRide->registrationEnabled(),
             'form' => $form->createView()
         ]);
+    }
+        
+    #[Route('/bikeride/track/{filename}', name: 'bike_ride_track', methods: ['GET'])]
+    public function getTrack(
+        ProjectDirService $projectDirService,
+        string $filename
+    ): Response {
+        $filename = base64_decode($filename);
+        $path = $projectDirService->path('data', 'bike_ride_track', $filename);
+
+        if (!file_exists($path)) {
+            throw new NotFoundHttpException();
+        }
+        
+        $response = new BinaryFileResponse($path);
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $filename
+        );
+
+        return $response;
     }
 }
