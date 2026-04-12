@@ -81,6 +81,8 @@ class BikeRideController extends AbstractController
         }
         
         $response = new BinaryFileResponse($path);
+        $response->headers->set('Content-Type', 'application/force-download');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $filename
