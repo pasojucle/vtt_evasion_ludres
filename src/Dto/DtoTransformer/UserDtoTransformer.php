@@ -137,12 +137,7 @@ class UserDtoTransformer
             $userDto = new UserDto();
             $userDto->id = $userEntity->getId();
             $userDto->member = ['fullName' => $userEntity->getIdentity()->getFullName()];
-            $level = $userEntity->getLevel();
-            $userDto->level = [
-                'title' => $level->getTitle(),
-                'colors' => $this->levelService->getColors($level->getColor()),
-                // 'type' => $level->getType(),
-            ];
+            $userDto->level = $this->levelDtoTransformer->fromEntity($userEntity->getLevel());
             $lastLicence = $userEntity->getLastLicence();
             $userDto->lastLicence = [
                 'isYearly' => $lastLicence->getState()->isYearly(),
@@ -162,12 +157,7 @@ class UserDtoTransformer
             $userDto = new UserDto();
             $userDto->id = $userEntity->getId();
             $userDto->member = ['fullName' => $userEntity->getIdentity()->getFullName()];
-            $level = $userEntity->getLevel();
-            $userDto->level = [
-                'title' => $level->getTitle(),
-                'colors' => $this->levelService->getColors($level->getColor()),
-                // 'type' => $level->getType(),
-            ];
+            $userDto->level = $this->levelDtoTransformer->fromEntity($userEntity->getLevel());
             $lastLicence = $userEntity->getLastLicence();
             $userDto->lastLicence = $this->licenceDtoTransformer->registrationFromEntity($lastLicence);
             $userDto->dropdown = $this->dropdownDtoTransformer->fromLastLicence($lastLicence);
@@ -183,12 +173,7 @@ class UserDtoTransformer
             $userDto = new UserDto();
             $userDto->id = $userEntity->getId();
             $userDto->member = ['fullName' => $userEntity->getIdentity()->getFullName()];
-            $level = $userEntity->getLevel();
-            $userDto->level = [
-                'title' => $level->getTitle(),
-                'colors' => $this->levelService->getColors($level->getColor()),
-                // 'type' => $level->getType(),
-            ];
+            $userDto->level = $this->levelDtoTransformer->fromEntity($userEntity->getLevel());
             $lastLicence = $userEntity->getLastLicence();
             $userDto->lastLicence = $this->licenceDtoTransformer->coverageFromEntity($lastLicence);
             $userDto->dropdown = $this->dropdownDtoTransformer->fromUser($userEntity);

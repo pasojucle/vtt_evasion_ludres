@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\ProductDtoTransformer;
 use App\Entity\Product;
 use App\Form\Admin\ProductType;
-use App\Repository\ProductRepository;
-use App\Service\PaginatorService;
 use App\Service\Product\ProductEditService;
+use App\UseCase\Product\GetProductList;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -30,18 +28,10 @@ class ProductController extends AbstractController
     #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminList(
-        PaginatorService $paginator,
-        PaginatorDtoTransformer $paginatorDtoTransformer,
-        ProductRepository $productRepository,
+        GetProductList $getProductList,
         Request $request
     ): Response {
-        $query = $productRepository->findAllQuery();
-        $products = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-
-        return $this->render('product/admin/list.html.twig', [
-            'products' => $products,
-            'paginator' => $paginatorDtoTransformer->fromEntities($products),
-        ]);
+        return $this->render('product/admin/list.html.twig', $getProductList->execute($request));
     }
 
     #[Route('/admin/produit', name: 'admin_product_add', methods: ['GET', 'POST'])]

@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\UseCase\User;
 
 use App\Dto\BikeRideDto;
+use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\RouteDto;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
 use App\Entity\Guest;
@@ -42,6 +45,7 @@ class GetParticipations
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LevelService $levelService,
         private readonly TranslatorInterface $translator,
+        private readonly DropdownDtoTransformer $dropdownDtoTransformer,
     ) {
     }
 
@@ -73,6 +77,7 @@ class GetParticipations
             ],
             'form' => $form->createView(),
             'referer' => $session->get('admin_user_redirect'),
+            'tools' => $this->tools(),
         ];
     }
 
@@ -175,13 +180,12 @@ class GetParticipations
         
         $participationsByBikeRide = $this->getParticipationsByBikeRide($users, $sessions);
 
-        /** @var BikeRideDto $bikeRide */
         foreach ($participationsByBikeRide as $bikeRide) {
             $row = [$bikeRide['entity']->period . ' - ' . $bikeRide['entity']->title];
             foreach ($bikeRide['sessions'] as $session) {
                 $participation = '-';
                 if ($session instanceof SessionDto) {
-                    $participation = ($session->userIsOnSite) ? $session->practice['label'] : $session->userIsOnSiteToStr;
+                    $participation = ($session->userIsOnSite && $session->practice) ? $session->practice['label'] : $session->userIsOnSiteToStr;
                 }
                 $row[] = $participation;
             }
@@ -238,5 +242,18 @@ class GetParticipations
         usort($bikeRides, function ($a, $b) {
             return $a['entity']->startAt < $b['entity']->startAt ? -1 : 1;
         });
+    }
+
+    public function tools(): ?DropdownDto
+    {
+        $dropdown = $this->dropdownDtoTransformer->fromTools();
+
+        $dropdown->addMenuItem(
+            'Exporter la sélection',
+            new RouteDto('admin_participations_export'),
+            'lucide:file-down',
+        );
+
+        return $dropdown;
     }
 }

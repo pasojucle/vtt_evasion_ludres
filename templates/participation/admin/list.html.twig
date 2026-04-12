@@ -4,19 +4,20 @@
 
 {% block body %}
     <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Participation</h1>
-             <div class="tool-group">
-            <a href="{{ referer is defined ? referer : path('admin_user_list', {'filtered': 1}) }}" class="btn btn-ico" title="Retour à la liste des adhérents"><i class="fas fa-chevron-left"></i></a>
-            <div class="dropdown">
-                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                <div class="dropdown-menu" data-target="dropdown-tools">
-                    <ul class="dropdown-body">
-                        <li><a href="{{ path('admin_participations_export') }}" class="dropdown-item" title="Exporter"<i class="fas fa-file-download"></i> Exporter la sélection</a></li>
-                    </ul>
-                </div>
+        <div class="bg-primary text-white flex">
+            <div class="px-3 py-2">
+                <h1 class="font-bold text-3xl">Participation</h1>
             </div>
-        </div>
+            <div class="ml-auto flex gap-2 items-center">
+                <a 
+                    href="{{ referer is defined ? referer : path('admin_user_list', {'filtered': 1}) }}" 
+                    class="text-foreground lg:text-muted lg:hover:text-foreground" 
+                    title="Retour à la liste des adhérents"
+                >
+                    {{ ux_icon('lucide:chevron-left', { class: 'w-6 h-6' }) }}
+                </a>
+                {% include 'component/dropdown.html.twig' with {dropdown: tools}%}
+            </div>
         </div>
         <div class="wrapper-body">
             {% include('participation/admin/_frame_list.html.twig') %}

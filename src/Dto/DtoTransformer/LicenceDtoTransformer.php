@@ -128,12 +128,11 @@ class LicenceDtoTransformer
     public function coverageFromEntity(Licence $licence): LicenceDto
     {
         $licenceDto = new LicenceDto();
-        // $licenceDto->id = $licence->getId();
         $licenceDto->stateAction = new ButtonDto(
             'Valider',
-            'lucide:square-check-big',
             $this->urlGenerator->generate('admin_coverage_validate', ['licence' => $licence->getId()]),
             ButtonDto::MODAL_CONTENT,
+            'lucide:square-check-big',
             'btn btn-success',
             'Valider l\'assurance ffvélo'
         );

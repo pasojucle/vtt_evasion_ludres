@@ -13,6 +13,7 @@ use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Parameter;
+use App\Entity\Product;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\LicenceAgreementRepository;
@@ -191,7 +192,7 @@ class DropdownDtoTransformer
         return $dropdown;
     }
 
-        public function fromBikeRideType(BikeRideType $bikeRideType): DropdownDto
+    public function fromBikeRideType(BikeRideType $bikeRideType): DropdownDto
     {
         $dropdown = new DropdownDto();
         $dropdown->setUrlGenerator($this->urlGenerator);
@@ -199,6 +200,36 @@ class DropdownDtoTransformer
             'Modifier',
             new RouteDto('admin_bike_ride_type_edit', ['bikeRideType' => $bikeRideType->getId()]),
             'lucide:pencil',
+        );
+
+        return $dropdown;
+    }
+
+    public function fromProduct(Product $product): DropdownDto
+    {
+        $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
+        if ($product->isDisabled()) {
+        $dropdown->addMenuItem(
+            'Activer',
+            new RouteDto('admin_product_disable', ['product' => $product->getId()]),
+            'lucide:toggle-left',
+            ButtonDto::MODAL_CONTENT,
+        );
+        } else {
+            $dropdown->addMenuItem(
+                'Désactiver',
+                new RouteDto('admin_product_disable', ['product' => $product->getId()]),
+                'lucide:toggle-right',
+                ButtonDto::MODAL_CONTENT,
+            );
+        }
+
+        $dropdown->addMenuItem(
+            'Supprimer',
+            new RouteDto('admin_product_delete', ['product' => $product->getId()]),
+            'lucide:delete',
+            ButtonDto::MODAL_CONTENT,
         );
 
         return $dropdown;
@@ -231,7 +262,7 @@ class DropdownDtoTransformer
         foreach($parameters as $parameter) {
             $dropdown->addSectionItem(
                 $parameter->getLabel(),
-                new RouteDto('admin_parameter_edit', ['parameter' => $parameter->getName()]),
+                new RouteDto('admin_parameter_edit', ['name' => $parameter->getName()]),
                 'lucide:settings-2',
                 ButtonDto::MODAL_CONTENT,
             );

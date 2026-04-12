@@ -33,4 +33,6 @@ class ProductDto
     public array $sizes = [];
 
     public bool $isDisabled = false;
+
+    public ?DropdownDto $dropdown = null;
 }

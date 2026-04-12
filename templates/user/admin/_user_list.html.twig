@@ -1,17 +1,19 @@
 <turbo-frame id="member-list">
-    <div class="wrapper-title">
-        <h1 class="font-bold text-3xl">Gestion des adhérents - <span class="badge badge-info">{{ paginator.total }}</span></h1>
-        <div class="tool-group">
+    <div class="bg-primary text-white flex">
+        <div class="px-3 py-2">
+            <h1 class="font-bold text-3xl flex items-center gap-2">Gestion des adhérents - <span class="bg-white text-base text-primary flex justify-center size-6 rounded-full">{{ paginator.total }}</span></h1>
+        </div>
+        <div class="ml-auto flex gap-2 items-center">
             <a 
-                href="{{ path('wiki_show', {'directory': 'adhérents'})}}" 
-                target="_blank" 
-                title="wiki"
-                class="text-foreground lg:text-muted lg:hover:text-foreground"
-            >
-                {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
-            </a>
-            {% include 'component/dropdown.html.twig' with {dropdown: settings}%}
-            {% include 'component/dropdown.html.twig' with {dropdown: tools}%}
+            href="{{ path('wiki_show', {'directory': 'adhérents'})}}" 
+            target="_blank" 
+            title="wiki"
+            class="text-foreground lg:text-muted lg:hover:text-foreground"
+        >
+            {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
+        </a>
+        {% include 'component/dropdown.html.twig' with {dropdown: settings}%}
+        {% include 'component/dropdown.html.twig' with {dropdown: tools}%}
         </div>
     </div>
     {% include('user/admin/filters.html.twig') %}

@@ -28,14 +28,6 @@ class RegistrationController extends AbstractController
     ): Response {
         $params = $getRegistrationsFiltered->list($request, $filtered);
 
-        $params['settings'] = [
-            'parameters' => $parameterService->getParametersByParameterGroupName('REGISTRATION'),
-            'routes' => [
-                ['name' => 'admin_registration_step_list', 'label' => 'Étapes des inscriptions'],
-                ['name' => 'admin_agreement_list', 'label' => 'Gestions des autorisations'],
-            ],
-            'messages' => $messageService->getMessagesBySectionName('REGISTRATION'),
-        ];
         if ($request->isMethod('POST')) {
             return $this->render('user/admin/_registration_list.html.twig', $params);
         }

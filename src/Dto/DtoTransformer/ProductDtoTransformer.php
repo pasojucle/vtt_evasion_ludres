@@ -19,7 +19,8 @@ class ProductDtoTransformer
     public function __construct(
         private UserDtoTransformer $userDtoTransformer,
         private Security $security,
-        private ProjectDirService $projectDirService
+        private ProjectDirService $projectDirService,
+        private DropdownDtoTransformer $dropdownDtoTransformer,
     ) {
     }
 
@@ -67,6 +68,21 @@ class ProductDtoTransformer
         $products = [];
         foreach ($productEntities as $productEntity) {
             $products[] = $this->fromEntity($productEntity);
+        }
+
+        return $products;
+    }
+
+    public function listFromEntities(Paginator|array|Collection $productEntities): array
+    {
+        $products = [];
+        foreach ($productEntities as $productEntity) {
+            $productDto = new ProductDto();
+            $productDto->id = $productEntity->getId();
+            $productDto->name = $productEntity->getName();
+            $productDto->isDisabled = $productEntity->isDisabled();
+            $productDto->dropdown = $this->dropdownDtoTransformer->fromProduct($productEntity);
+            $products[] = $productDto;
         }
 
         return $products;

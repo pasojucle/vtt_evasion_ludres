@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Registration;
 
 use App\Dto\DropdownDto;
+use App\Dto\RouteDto;
 use App\Entity\Licence;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
@@ -66,11 +67,33 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 
     public function settings(): ?DropdownDto
     {
-        return null;
-    }
+        $dropdown = $this->dropdownDtoTransformer->fromSettings('REGISTRATION');
+        $dropdown->addMenuItem('Étapes des inscriptions', new RouteDto('admin_registration_step_list'));
+        $dropdown->addMenuItem('Gestions des autorisations', new RouteDto('admin_agreement_list'));
 
+        return $dropdown;
+    }
+    
     public function tools(): ?DropdownDto
     {
-        return null;
+        $dropdown = $this->dropdownDtoTransformer->fromTools();
+
+        $dropdown->addActionItem(
+            'Copier les emails de la séléction',
+            'lucide:clipboard-type',
+            [
+                'data-controller=email-to-clipboard',
+                'data-action=click->email-to-clipboard#emailToClipboard',
+                sprintf('data-email-to-clipboard-url-value=%s', $this->urlGenerator->generate('admin_registrations_email_to_clipboard')),
+            ],
+        );
+
+        $dropdown->addMenuItem(
+            'Exporter la sélection',
+            new RouteDto('admin_registrations_export'),
+            'lucide:file-down',
+        );
+
+        return $dropdown;
     }
 }

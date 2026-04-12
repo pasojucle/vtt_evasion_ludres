@@ -748,7 +748,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         $currentSeasonUsers = $this->getEntityManager()->createQueryBuilder()
             ->select('lcsu.id')
             ->from(Licence::class, 'lcs')
-            ->leftJoin('lcs.member', 'lcsu')
+            ->leftJoin('lcs.user', 'lcsu')
             ->andWhere(
                 (new Expr())->eq('lcs.season', ':season'),
                 (new Expr())->orX(
@@ -761,7 +761,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         $lastSeasonUsers = $this->getEntityManager()->createQueryBuilder()
             ->select('llsu.id')
             ->from(Licence::class, 'lls')
-            ->leftJoin('lls.member', 'llsu')
+            ->leftJoin('lls.user', 'llsu')
             ->andWhere(
                 (new Expr())->eq('lls.season', ':lastSeason'),
             );
@@ -789,7 +789,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         $currentSeasonUsers = $this->getEntityManager()->createQueryBuilder()
         ->select('lcsu.id')
         ->from(Licence::class, 'lcs')
-        ->leftJoin('lcs.member', 'lcsu')
+        ->leftJoin('lcs.user', 'lcsu')
         ->andWhere(
             (new Expr())->eq('lcs.season', ':season'),
         );
@@ -797,7 +797,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         $lastSeasonUsers = $this->getEntityManager()->createQueryBuilder()
         ->select('llsu.id')
         ->from(Licence::class, 'lls')
-        ->leftJoin('lls.member', 'llsu')
+        ->leftJoin('lls.user', 'llsu')
         ->andWhere(
             (new Expr())->eq('lls.season', ':lastSeason'),
             (new Expr())->orX(
@@ -815,7 +815,6 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
                 (new Expr())->in('m.id', $lastSeasonUsers->getDQL()),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('kind', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
                 new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
@@ -835,7 +834,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         $currentSeasonUsers = $this->getEntityManager()->createQueryBuilder()
         ->select('lcsu.id')
         ->from(Licence::class, 'lcs')
-        ->leftJoin('lcs.member', 'lcsu')
+        ->leftJoin('lcs.user', 'lcsu')
         ->andWhere(
             (new Expr())->eq('lcs.season', ':season'),
         );
@@ -843,7 +842,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         $lastSeasonUsers = $this->getEntityManager()->createQueryBuilder()
         ->select('llsu.id')
         ->from(Licence::class, 'lls')
-        ->leftJoin('lls.member', 'llsu')
+        ->leftJoin('lls.user', 'llsu')
         ->andWhere(
             (new Expr())->eq('lls.season', ':lastSeason'),
             (new Expr())->orX(

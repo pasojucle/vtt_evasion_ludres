@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Coverage;
 
 use App\Dto\DropdownDto;
+use App\Dto\RouteDto;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
@@ -46,13 +47,33 @@ class GetCoveragesFiltered extends GetUsersFiltered
         return $this->userDtoTransformer->coverageListFromEntities($users);
     }
 
+    
     public function settings(): ?DropdownDto
     {
         return null;
     }
-
+    
     public function tools(): ?DropdownDto
     {
-        return null;
+        $dropdown = $this->dropdownDtoTransformer->fromTools();
+
+        $dropdown->addActionItem(
+            'Copier les emails de la séléction',
+            'lucide:clipboard-type',
+            [
+                'data-controller=email-to-clipboard',
+                'data-action=click->email-to-clipboard#emailToClipboard',
+                sprintf('data-email-to-clipboard-url-value=%s', $this->urlGenerator->generate('admin_coverages_email_to_clipboard')),
+            ],
+        );
+
+        $dropdown->addMenuItem(
+            'Exporter la sélection',
+            new RouteDto('admin_coverages_export'),
+            'lucide:file-down',
+        );
+     
+
+        return $dropdown;
     }
 }
