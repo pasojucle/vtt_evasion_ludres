@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Dto\DropdownDto;
+use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Member;
@@ -35,11 +37,12 @@ abstract class GetUsersFiltered
         private readonly PaginatorService $paginator,
         protected SeasonService $seasonService,
         private readonly FormFactoryInterface $formFactory,
-        private readonly UrlGeneratorInterface $urlGenerator,
+        protected UrlGeneratorInterface $urlGenerator,
         protected UserDtoTransformer $userDtoTransformer,
         protected MemberRepository $memberRepository,
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
+        protected DropdownDtoTransformer $dropdownDtoTransformer,
     ) {
     }
 
@@ -50,6 +53,10 @@ abstract class GetUsersFiltered
     abstract protected function getPermissionChoices(): ?array;
 
     abstract protected function listFromEntities(Paginator $users): array;
+
+    abstract protected function settings(): ?DropdownDto;
+
+    abstract protected function tools(): ?DropdownDto;
 
     public function list(Request $request, bool $filtered): array
     {
@@ -78,6 +85,8 @@ abstract class GetUsersFiltered
             'paginator' => $paginator,
             'form' => $form->createView(),
             'count' => $paginator->total,
+            'settings' => $this->settings(),
+            'tools' => $this->tools(),
         ];
     }
 

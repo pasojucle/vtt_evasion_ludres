@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Parameter;
 use App\Entity\User;
 use App\Form\Admin\MemberType;
 use App\Form\Admin\UserBoardRoleType;
@@ -39,21 +39,12 @@ class UserController extends AbstractController
     #[IsGranted('USER_LIST')]
     public function adminUsers(
         GetMembersFiltered $getMembersFiltered,
-        MessageService $messageService,
+        DropdownDtoTransformer $dropdownDtoTransformer,
         Request $request,
         bool $filtered
     ): Response {
         $params = $getMembersFiltered->list($request, $filtered);
-
-        $params['settings'] = [
-            'parameters' => $this->entityManager->getRepository(Parameter::class)->findByParameterGroupName('USER'),
-            'routes' => [
-                ['name' => 'admin_levels', 'label' => 'Niveaux'],
-                ['name' => 'admin_skill_list', 'label' => 'Compétences'],
-                ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
-            ],
-            'messages' => $messageService->getMessagesBySectionName('USER'),
-        ];
+        
         if ($request->isMethod('POST')) {
             return $this->render('user/admin/_user_list.html.twig', $params);
         }

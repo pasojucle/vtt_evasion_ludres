@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
+use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\RouteDto;
 use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
@@ -80,18 +82,13 @@ class GetSchedule
             $parameters['paginator'] = null;
         }
 
+
         $parameters += [
             'form' => $form->createView(),
             'bikeRides' => $this->bikeRideDtoTransformer->shedulefromEntities($bikeRides),
             'backgrounds' => $this->contentRepository->findOneByRoute('schedule')?->getBackgrounds(),
             'current_filters' => $filters,
-            'settings' => $this->dropdownDtoTransformer->fromSettings(
-                'BIKE_RIDE',
-                [
-                    ['name' => 'admin_bike_ride_types', 'label' => 'Types de rando'],
-                    ['name' => 'admin_indemnity_list', 'label' => 'Indemnités'],
-                ]
-            )
+            'settings' => $this->settings(),
         ];
 
         return [
@@ -124,5 +121,14 @@ class GetSchedule
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
 
         return $this->getFilters->execute($period, $date, $direction);
+    }
+
+    private function settings(): DropdownDto
+    {
+        $dropdown = $this->dropdownDtoTransformer->fromSettings('BIKE_RIDE');
+        $dropdown->addMenuItem('Types de rando', new RouteDto('admin_bike_ride_types'));
+        $dropdown->addMenuItem('Indemnités',new RouteDto('admin_indemnity_list'));
+
+        return $dropdown;  
     }
 }

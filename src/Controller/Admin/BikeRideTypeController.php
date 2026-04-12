@@ -13,6 +13,8 @@ use App\Form\Admin\BikeRideTypeType;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\MessageRepository;
 use App\Service\PaginatorService;
+use App\UseCase\BikeRideType\GetBikeRideTypeList;
+use App\UseCase\BikeRideType\GetList;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,26 +34,12 @@ class BikeRideTypeController extends AbstractController
     #[Route('/types-rando', name: 'bike_ride_types', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminList(
-        PaginatorService $paginator,
-        PaginatorDtoTransformer $paginatorDtoTransformer,
-        DropdownDtoTransformer $dropdownDtoTransformer,
-        BikeRideTypeDtoTransformer $bigikeRideTypeDtoTransformer,
-        Request $request
+        Request $request,
+        GetBikeRideTypeList $bikeRideTypeList,
     ): Response {
-        $query = $this->bikeRideTypeRepository->findBikeRideTypeQuery();
-        $bikeRideTypes = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        
 
-        return $this->render('bike_ride_type/admin/list.html.twig', [
-            'bikeRideTypes' => $bigikeRideTypeDtoTransformer->fromEntities($bikeRideTypes),
-            'paginator' => $paginatorDtoTransformer->fromEntities($bikeRideTypes),
-            'settings' => $dropdownDtoTransformer->fromSettings(
-                'BIKE_RIDE_TYPE',
-                [],
-                [
-                    ['name' => 'admin_message_add', 'params' => ['sectionName' => 'BIKE_RIDE_TYPE'], 'icon' => 'lucide:message-circle-plus', 'label' => 'Ajouter un message'],
-                ],
-            )
-        ]);
+        return $this->render('bike_ride_type/admin/list.html.twig', $bikeRideTypeList->execute($request));
     }
 
     #[Route('/type-rando', name: 'bike_ride_type_add', methods: ['GET', 'POST'])]

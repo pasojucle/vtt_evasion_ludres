@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\Coverage;
 
+use App\Dto\DropdownDto;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 
 
 class GetCoveragesFiltered extends GetUsersFiltered
@@ -42,5 +44,15 @@ class GetCoveragesFiltered extends GetUsersFiltered
     public function listFromEntities(Paginator $users): array
     {
         return $this->userDtoTransformer->coverageListFromEntities($users);
+    }
+
+    public function settings(): ?DropdownDto
+    {
+        return null;
+    }
+
+    public function tools(): ?DropdownDto
+    {
+        return null;
     }
 }

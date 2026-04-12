@@ -3,16 +3,17 @@
         {% set type = 'primary' %}
     {% endif %}
     {% set title_text = 'text-white'%}
-    {% set title_bg = 'bg-' ~ type %}
-    {% if type == 'primary' %}
-        {% set title_bg = 'bg-neutral-200'%}
-        {% set title_text = 'text-primary'%}
-    {% endif %}
+    {% set background = {
+        'destructive': 'bg-destructive',
+        'success': 'bg-success',
+        'primary': 'bg-neutral-200',
+    } %}
+
     {% if form is defined and form is not null %}
         {{ form_start(form)}}
     {% endif %}
-    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 {{ title_bg }}">
-        <h3 class="!mt-0 !mb-0 text-xl font-semibold {{ title_text }}">
+    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 {{ background[type] }}">
+        <h3 class="!mt-0 !mb-0 text-xl font-semibold {{ type == 'primary' ? 'text-primary' : 'text-white'}}">
             {% block modal_title %}{% endblock %}
         </h3>
         <button 

@@ -7,7 +7,14 @@
             <div class="wrapper-title">
                 <h1 class="font-bold text-3xl">Gestion de la boutique</h1>
                 <div class="tool-group">
-                    <a href="{{ path('wiki_show', {'directory': 'boutique'})}}" target="_blank" title="wiki" class="btn-wiki"></a>
+                    <a 
+                        href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
+                        target="_blank" 
+                        title="wiki"
+                        class="text-foreground lg:text-muted lg:hover:text-foreground"
+                    >
+                        {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
+                    </a>
                 </div>
             </div>
             <div class="wrapper-body">

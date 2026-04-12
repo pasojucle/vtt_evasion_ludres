@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
+use App\Dto\RouteDto;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
@@ -39,38 +40,39 @@ class DropdownDtoTransformer
     public function fromUser(User $user): DropdownDto
     {
         $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
         $dropdown->title = $user->getIdentity()->getFullName();
         $level = $user->getLevel();
         if ($this->security->isGranted('USER_LIST') && $level?->getType() === Level::TYPE_SCHOOL_MEMBER) {
             $dropdown->addMenuItem(
                 'Compétences',
+                new RouteDto('admin_member_skill_edit', ['member' => $user->getId()]),
                 'lucide:graduation-cap',
-                $this->urlGenerator->generate('admin_member_skill_edit', ['member' => $user->getId()]),
             );
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $dropdown->addMenuItem(
                 'Participation',
+                new RouteDto('admin_user_participation', ['user' => $user->getId()]),
                 'lucide:chart-line',
-                $this->urlGenerator->generate('admin_user_participation', ['user' => $user->getId()]),
             );
             $dropdown->addMenuItem(
                 'Attestation d\'inscription CE',
+                new RouteDto('admin_user_certificate', ['member' => $user->getId()]),
                 'lucide:file-user',
-                $this->urlGenerator->generate('admin_user_certificate', ['member' => $user->getId()]),
             );
             if ($level?->isAccompanyingCertificat()) {
                 $dropdown->addMenuItem(
                     'Attestation adulte accompagnateur',
+                    new RouteDto('admin_user_accompanying_certificate', ['member' => $user->getId()]),
                     'lucide:file-terminal',
-                    $this->urlGenerator->generate('admin_user_accompanying_certificate', ['member' => $user->getId()]),
                 );
             }
             if ($this->security->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
                 $dropdown->addMenuItem(
                     'Se connecter en tant que',
+                    new RouteDto('home', ['_switch_user' => $user->getLicenceNumber()]),
                     'lucide:arrow-left-right',
-                    $this->urlGenerator->generate('home', ['_switch_user' => $user->getLicenceNumber()]),
                 );
             }
         }
@@ -104,14 +106,14 @@ class DropdownDtoTransformer
             if (in_array($session->getAvailability(), [AvailabilityEnum::NONE, AvailabilityEnum::AVAILABLE, AvailabilityEnum::REGISTERED])) {
                 $dropdown->addMenuItem(
                     'Changer de groupe',
+                    new RouteDto('admin_bike_ride_switch_cluster', ['session' => $session->getId()]),
                     'lucide:refresh-cw',
-                    $this->urlGenerator->generate('admin_bike_ride_switch_cluster', ['session' => $session->getId()]),
                 );
             }
             $dropdown->addMenuItem(
                 'Supprimer',
+                new RouteDto('admin_session_delete', ['session' => $session->getId()]),
                 'lucide:delete',
-                $this->urlGenerator->generate('admin_session_delete', ['session' => $session->getId()]),
             );
         }
 
@@ -125,14 +127,14 @@ class DropdownDtoTransformer
         if ($licence->getState()->toValidate()) {
             $dropdown->addMenuItem(
                 'Inscription incompète',
+                new RouteDto('admin_registration_reject', ['licence' => $licence->getId()]),
                 'lucide:message-circle-warning',
-                $this->urlGenerator->generate('admin_registration_reject', ['licence' => $licence->getId()]),
                 ButtonDto::MODAL_CONTENT,
             );
             $dropdown->addMenuItem(
                 'Supprimer l\'inscription',
+                new RouteDto('admin_delete_licence', ['licence' => $licence->getId()]),
                 'lucide:delete',
-                $this->urlGenerator->generate('admin_delete_licence', ['licence' => $licence->getId()]),
                 ButtonDto::MODAL_CONTENT,
             );
         }
@@ -143,32 +145,33 @@ class DropdownDtoTransformer
     public function fromBikeRide(BikeRide $bikeRide): DropdownDto
     {
         $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
         $dropdown->title = $bikeRide->__toString();
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $dropdown->addMenuItem(
                 'Modifier',
+                new RouteDto('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()]),
                 'lucide:pencil',
-                $this->urlGenerator->generate('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()]),
             );
             if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
                 $dropdown->addMenuItem(
                     'Annuler',
+                    new RouteDto('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()]),
                     'lucide:delete',
-                    $this->urlGenerator->generate('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()]),
                     ButtonDto::MODAL_CONTENT,
                 );
             }
             $dropdown->addMenuItem(
                 'Exporter la séance',
+                new RouteDto('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
                 'lucide:file-down',
-                $this->urlGenerator->generate('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
             );
         }
         if ($this->security->isGranted('SUMMARY_LIST')) {
             $dropdown->addMenuItem(
                 'Actualités',
+                new RouteDto('admin_summary_list', ['bikeRide' => $bikeRide->getId()]),
                 'lucide:image',
-                $this->urlGenerator->generate('admin_summary_list', ['bikeRide' => $bikeRide->getId()]),
             );
         }
         if ($bikeRide->getBikeRideType()->isPublic()) {
@@ -191,58 +194,45 @@ class DropdownDtoTransformer
         public function fromBikeRideType(BikeRideType $bikeRideType): DropdownDto
     {
         $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
         $dropdown->addMenuItem(
             'Modifier',
+            new RouteDto('admin_bike_ride_type_edit', ['bikeRideType' => $bikeRideType->getId()]),
             'lucide:pencil',
-            $this->urlGenerator->generate('admin_bike_ride_type_edit', ['bikeRideType' => $bikeRideType->getId()]),
         );
 
         return $dropdown;
     }
 
-    public function fromSettings(string $sectionName, array $routes = [], array $actions = []): DropdownDto
+    public function fromSettings(string $sectionName): DropdownDto
     {
         $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
         $dropdown->trigger = 'lucide:sliders-horizontal';
         $dropdown->position = 'relative';
         $this->addParameters($dropdown, $this->parameterRepository->findByParameterGroupName($sectionName));
-        $this->addRoutes($dropdown, $routes);
         $this->addMessages($dropdown, $this->messageService->getMessagesBySectionName($sectionName));
-        $this->addActions($dropdown, $actions);
 
         return $dropdown;
     }
-    
-    private function addRoutes(DropdownDto $dropdown, array $routes): void
+
+    public function fromTools(): DropdownDto
     {
-        foreach($routes as $route) {
-            $dropdown->addMenuItem(
-                $route['label'],
-                'lucide:settings-2',
-                $this->urlGenerator->generate($route['name']),
-            );
-        }
-    }
-    
-    private function addActions(DropdownDto $dropdown, array $actions): void
-    {
-        foreach($actions as $action) {
-            $dropdown->addMenuItem(
-                $action['label'],
-                $action['icon'],
-                $this->urlGenerator->generate($action['name'], $action['params']),
-            );
-        }
+        $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
+        $dropdown->position = 'relative';
+
+        return $dropdown;
     }
 
     private function addParameters(DropdownDto $dropdown, array $parameters): void
     {
         /** @var Parameter $parameter */
         foreach($parameters as $parameter) {
-            $dropdown->addMenuItem(
+            $dropdown->addSectionItem(
                 $parameter->getLabel(),
+                new RouteDto('admin_parameter_edit', ['parameter' => $parameter->getName()]),
                 'lucide:settings-2',
-                $this->urlGenerator->generate('admin_parameter_edit', ['parameter' => $parameter->getName()]),
                 ButtonDto::MODAL_CONTENT,
             );
         }
@@ -251,10 +241,10 @@ class DropdownDtoTransformer
     private function addMessages(DropdownDto $dropdown, array $messages): void
     {
         foreach($messages as $message) {
-            $dropdown->addMenuItem(
+            $dropdown->addSectionItem(
                 $message['label'],
+                new RouteDto('admin_message_edit_content', ['message' => $message['id']]),
                 'lucide:message-circle',
-                $this->urlGenerator->generate('admin_message_edit_content', ['message' => $message['id']]),
                 ButtonDto::MODAL_CONTENT,
             );
         }

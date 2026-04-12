@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
@@ -156,5 +157,10 @@ class GetFramersFiltered
     public function listFromEntities(Paginator $users): array
     {
         return $this->userDtoTransformer->listFromEntities($users);
+    }
+
+    public function settings(): ?DropdownDto
+    {
+        return null;
     }
 }

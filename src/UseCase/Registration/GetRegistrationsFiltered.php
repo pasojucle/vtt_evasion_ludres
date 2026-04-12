@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
+use App\Dto\DropdownDto;
 use App\Entity\Licence;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
@@ -61,5 +62,15 @@ class GetRegistrationsFiltered extends GetUsersFiltered
     public function listFromEntities(Paginator $users): array
     {
         return $this->userDtoTransformer->registrationListFromEntities($users);
+    }
+
+    public function settings(): ?DropdownDto
+    {
+        return null;
+    }
+
+    public function tools(): ?DropdownDto
+    {
+        return null;
     }
 }
