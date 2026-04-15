@@ -42,7 +42,7 @@ export const previewFile = (event) => {
     }
 }
 
-const getFile = (event) => {
+export const getFile = (event) => {
     event.preventDefault();
     const formGroupFile = event.currentTarget.closest('.form-group-file');
     const inputFile = formGroupFile.querySelector('input[type="file"].input-file');

@@ -122,12 +122,19 @@ class BikeRide
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $securityGuidelinesThumbnail = null;
 
+    /**
+     * @var Collection<int, BikeRideTrack>
+     */
+    #[ORM\OneToMany(targetEntity: BikeRideTrack::class, mappedBy: 'bikeRide', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
+    private Collection $bikeRideTracks;
+
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
         $this->startAt = new DateTimeImmutable();
         $this->users = new ArrayCollection();
         $this->summaries = new ArrayCollection();
+        $this->bikeRideTracks = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -491,6 +498,36 @@ class BikeRide
     public function setSecurityGuidelinesThumbnail(?string $securityGuidelinesThumbnail): static
     {
         $this->securityGuidelinesThumbnail = $securityGuidelinesThumbnail;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BikeRideTrack>
+     */
+    public function getBikeRideTracks(): Collection
+    {
+        return $this->bikeRideTracks;
+    }
+
+    public function addBikeRideTrack(BikeRideTrack $bikeRideTrack): static
+    {
+        if (!$this->bikeRideTracks->contains($bikeRideTrack)) {
+            $this->bikeRideTracks->add($bikeRideTrack);
+            $bikeRideTrack->setBikeRide($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBikeRideTrack(BikeRideTrack $bikeRideTrack): static
+    {
+        if ($this->bikeRideTracks->removeElement($bikeRideTrack)) {
+            // set the owning side to null (unless already changed)
+            if ($bikeRideTrack->getBikeRide() === $this) {
+                $bikeRideTrack->setBikeRide(null);
+            }
+        }
 
         return $this;
     }

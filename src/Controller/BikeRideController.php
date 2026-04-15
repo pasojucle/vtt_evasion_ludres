@@ -9,6 +9,7 @@ use App\Entity\BikeRide;
 use App\Form\SessionGuestAddType;
 use App\Service\ProjectDirService;
 use App\UseCase\BikeRide\GetSchedule;
+use App\UseCase\BikeRide\GetTrackFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,7 +52,7 @@ class BikeRideController extends AbstractController
     }
 
 
-    #[Route('/randonnee/{bikeRide}/{slug}', name: 'bike_ride_detail', methods: ['GET', 'POST'])]
+    #[Route('/randonnee/{bikeRide}/{slug}', name: 'bike_ride_detail', requirements:['bikeRide' => '\d+'], methods: ['GET', 'POST'])]
     public function detail(
         Request $request,
         BikeRide $bikeRide,
@@ -68,26 +69,23 @@ class BikeRideController extends AbstractController
         ]);
     }
         
-    #[Route('/bikeride/track/{filename}', name: 'bike_ride_track', methods: ['GET'])]
-    public function getTrack(
-        ProjectDirService $projectDirService,
-        string $filename
+    #[Route('/randonnee/traces/{bikeRide}/{slug}', name: 'bike_ride_tracks', methods: ['GET'])]
+    public function getTracks(
+        BikeRide $bikeRide,
+        string $slug,
+        BikeRideDtoTransformer $bikeRideDtoTransformer
     ): Response {
-        $filename = base64_decode($filename);
-        $path = $projectDirService->path('data', 'bike_ride_track', $filename);
-
-        if (!file_exists($path)) {
-            throw new NotFoundHttpException();
-        }
+        return $this->render('bike_ride/tracks.html.twig', [
+            'bikeRide' => $bikeRideDtoTransformer->fromEntity($bikeRide),
+        ]);
+    }
         
-        $response = new BinaryFileResponse($path);
-        $response->headers->set('Content-Type', 'application/force-download');
-        $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $filename
-        );
-
-        return $response;
+    #[Route('/bikeride/track/{filename}/{format}', name: 'bike_ride_track', methods: ['GET'])]
+    public function getTrack(
+        string $filename,
+        string $format,
+        GetTrackFile $getTrackFile
+    ): Response {
+        return $getTrackFile->execute($filename, $format);
     }
 }

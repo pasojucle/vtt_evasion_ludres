@@ -55,6 +55,19 @@ class EditBikeRide
             $bikeRide->setSecurityGuidelinesThumbnail($this->uploadService->uploadFile($securityGuidelinesThumbnail));
         }
 
+        $bikeRideTracks = $bikeRide->getBikeRideTracks();
+        foreach ($request->files->get('bike_ride')['bikeRideTracks'] as $key => $bikeRideTrackFile) {
+            if ($bikeRideTracks->containsKey($key)) {
+                $bikeRideTrack = $bikeRideTracks->get($key);
+                if ($bikeRideTrackFile['file']) {
+                    $bikeRideTrack->setFilename($this->uploadService->uploadFile($bikeRideTrackFile['file'], 'bike_ride_track', 'gpx'));
+                }
+                if ($bikeRideTrackFile['thumbnailFile']) {
+                    $bikeRideTrack->setThumbnail($this->uploadService->uploadFile($bikeRideTrackFile['thumbnailFile'], 'bike_ride_track'));
+                }
+            }
+        }
+
         if ($persist) {
             $this->entityManager->persist($bikeRide);
         }

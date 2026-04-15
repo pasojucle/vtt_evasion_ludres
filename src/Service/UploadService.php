@@ -25,12 +25,12 @@ class UploadService
     ) {
     }
 
-    public function uploadFile(?UploadedFile $pictureFile, ?string $dir = 'uploads_directory_path'): ?string
+    public function uploadFile(?UploadedFile $pictureFile, ?string $dir = 'uploads_directory_path', ?string $extension = null): ?string
     {
         if ($pictureFile) {
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $this->getExtention($pictureFile));
+            $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $extension ?? $this->getExtention($pictureFile));
             $directory = $this->projectDirService->path($dir);
 
             if (!is_dir($directory)) {

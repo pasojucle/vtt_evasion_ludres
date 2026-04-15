@@ -74,6 +74,18 @@
                                                 </a>
                                             </li>                                        
                                         {% endif %}
+                                        {% if 0 < bikeRide.tracks|length %}
+                                            <li>
+                                                <a 
+                                                    class="dropdown-item" 
+                                                    href="{{ absolute_url(path('bike_ride_tracks', {'bikeRide': bikeRide.id, 'slug': bikeRide.title|slug} ))}}" 
+                                                    title="Copier l'url des parcours" 
+                                                    data-clipboard="1"
+                                                >
+                                                    <i class="fas fa-clipboard"></i> Copier l'url des parcours
+                                                </a>
+                                            </li>                                        
+                                        {% endif %}
                                     </ul>
                                 </div>
                             </div>

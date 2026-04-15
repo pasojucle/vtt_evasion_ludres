@@ -42,6 +42,7 @@ parameters:
         wiki: 'data/wiki'
         slideshow: 'data/slideshow'
         content: 'data/content'
+        bike_ride_track: 'data/bike_ride_track'
 
     environment: '%env(APP_ENV)%'
     maintenance:

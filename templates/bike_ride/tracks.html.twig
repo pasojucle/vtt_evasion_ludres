@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ bikeRide.title }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper background-green background-color col-content">
+        <div class="img-center">
+            <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}"/>
+        </div>
+        <div class="wrapper-content">
+            <div class="reveal" data-reveal-threshold="0.05">
+                <h1>{{ bikeRide.title }}</h1>
+                <h2>{{ bikeRide.period }}</h2>
+                <br>
+                <div class="row">
+                    {% for track in bikeRide.tracks %}
+                        <div class="col-md-6 col-xs-12 d-flex flex-col align-items-center">
+                            <p>{{ track.label }}</p>
+                            <img class="user-picture" src="{{ track.thumbnail }}" alt="{{ track.label }}">
+                            <div class="row">
+                                {% for format, link in  track.links %}
+                                    <div class="col-md-6 col-xs-6 d-flex flex-col align-items-center" >
+                                        <a href="{{ link }}" target="_blank" class="btn btn-primary">
+                                            <i class="fa-solid fa-download"></i> {{ format }}
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

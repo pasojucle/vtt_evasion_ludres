@@ -1,4 +1,4 @@
-import { previewFile } from './input-file';
+import { previewFile, getFile } from './input-file';
 
 const addDeleteLink = () => {
     const collectionItems = document.querySelectorAll('.collection_container .form-group-collection:not(.not-deleted)');
@@ -10,7 +10,7 @@ const addDeleteLink = () => {
 }
 
 const initAddItemLink = () => {
-  document.querySelectorAll('.add_item_link, .add-item-file').forEach(btn => btn.addEventListener("click", addFormToCollection));
+  document.querySelectorAll('.add_item_link, .add-item-file, .add-bike-ride-track').forEach(btn => btn.addEventListener("click", addFormToCollection));
 }
 
 
@@ -36,6 +36,12 @@ const addFormToCollection = (e) => {
       const image = document.createElement('IMG');
       previewFile(event)
     });    
+  }
+
+  if (e.currentTarget.classList.contains('add-bike-ride-track')) {
+    collectionHolder.lastChild.querySelectorAll('.input-file-button').forEach((element) => {
+        element.addEventListener('click', getFile);
+    })
   }
 
   container.dataset.index++;

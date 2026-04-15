@@ -76,6 +76,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
             $bikeRideDto->btnRegistration = $this->getBtnRegistration($bikeRide, $user, $userAvailableSessions);
             $bikeRideDto->isPublic = $bikeRide->getBikeRideType()->isPublic();
+            $bikeRideDto->tracks = $this->getTracks($bikeRide);
         }
 
         return $bikeRideDto;
@@ -257,5 +258,24 @@ class BikeRideDtoTransformer
         $user = $this->security->getUser();
 
         return $bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME;
+    }
+
+    private function getTracks(BikeRide $bikeRide): array
+    {
+        $tracks = [];
+        foreach ($bikeRide->getBikeRideTracks() as $track) {
+            $filename = base64_encode($track->getFilename());
+            $tracks[] = [
+                'label' => $track->getLabel(),
+                'thumbnail' => $this->urlGenerator->generate('bike_ride_track', ['filename' => base64_encode($track->getThumbnail()), 'format' => 'img']),
+                ($track->getThumbnail()) ? $this->projectDirService->dir('', 'bike_ride_track', $track->getThumbnail()) : null,
+                'links' => [
+                    'gpx' => $this->urlGenerator->generate('bike_ride_track', ['filename' => $filename, 'format' => 'gpx']),
+                    'zip' => $this->urlGenerator->generate('bike_ride_track', ['filename' => $filename, 'format' => 'zip'])
+                ]
+            ];
+        }
+
+        return $tracks;
     }
 }

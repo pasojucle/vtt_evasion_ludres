@@ -70,4 +70,6 @@ class BikeRideDto
     public ?array $btnRegistration = null;
 
     public bool $showFramerAndMemberList = false;
+
+    public array $tracks = [];
 }
