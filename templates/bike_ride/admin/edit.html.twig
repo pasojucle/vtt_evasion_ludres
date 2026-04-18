@@ -15,7 +15,7 @@
             </span>
         </div>
         <div id="bike_ride_container" class="wrapper-body">
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 mb-20">
                 <div class="form-group-file flex-1 {% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}">
                     <div class="input-file-button h-full">
                         {% if bikeRide.filename is null %}
@@ -59,7 +59,7 @@
                 {% endif %}
                 <b>Traces GPX</b>
                 <div class="card-border">
-                    <ul id="{{ form.bikeRideTracks.vars.name }}" class="collection_container"
+                    <ul id="{{ form.bikeRideTracks.vars.name }}" class="collection_container mb-20"
                     data-index="{{ form.bikeRideTracks|length > 0 ? form.bikeRideTracks|last.vars.name + 1 : 0 }}" 
                     data-prototype="{{ form_widget(form.bikeRideTracks.vars.prototype)|e('html_attr') }}">
                         {% for item in form.bikeRideTracks %}
