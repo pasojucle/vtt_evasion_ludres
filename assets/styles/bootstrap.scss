@@ -141,6 +141,9 @@
     &.flex-col {
         flex-direction: column;
     }
+    .flex-1 {
+        flex-grow: 1;
+    }
 }
 
 
@@ -178,6 +181,12 @@
 
 .w-100 {
     width: 100%;
+}
+.w-lg {
+    width: 32rem;
+}
+.h-full {
+    height: 100%;
 }
 
 .flex-auto {
@@ -245,4 +254,13 @@
 }
 .bg-primary-darker {
     background-color: var(--primary-color-darker);
+}
+.bg-gray-200 {
+    background-color: var(--bs-gray-200);
+}
+.text-gray-500 {
+    color: var(--bs-gray-500);
+}
+.text-3xl {
+    font-size: 30px;
 }

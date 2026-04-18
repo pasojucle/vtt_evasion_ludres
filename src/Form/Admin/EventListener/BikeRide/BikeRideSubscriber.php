@@ -285,6 +285,11 @@ class BikeRideSubscriber implements EventSubscriberInterface
             ])
             ;
         if ($bikeRideType->isPublic()) {
+            $rules = $bikeRide->getRules();
+            $rulesThumbnail = $bikeRide->getRulesThumbnail();
+            $securityGuidelines = $bikeRide->getSecurityGuidelines();
+            $securityGuidelinesThumbnail = $bikeRide->getSecurityGuidelinesThumbnail();
+
             $form
                 ->add('rulesFile', FileType::class, [
                     'label' => 'Règlement de la randonnée (optionnel)',
@@ -293,6 +298,10 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'block_prefix' => 'custom_file',
                     'attr' => [
                         'accept' => '.pdf',
+                        'filename' => $rules,
+                        'preview' => $rules
+                            ? $this->urlGenerator->generate('admin_bike_ride_show_file', ['filename' => base64_encode($rules), 'mimeType' => 'pdf'])
+                            : null,
                     ],
                     'constraints' => [
                         new File([
@@ -311,9 +320,10 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'block_prefix' => 'custom_file',
                     'attr' => [
                         'accept' => '.bmp,.jpeg,.jpg,.png',
-                    ],
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
+                        'filename' => $rulesThumbnail,
+                        'preview' => $rulesThumbnail
+                            ? $this->urlGenerator->generate('admin_bike_ride_show_file', ['filename' => base64_encode($rulesThumbnail), 'mimeType' => 'image'])
+                            : null,
                     ],
                     'constraints' => [
                         new File([
@@ -334,6 +344,10 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'block_prefix' => 'custom_file',
                     'attr' => [
                         'accept' => '.pdf',
+                        'filename' => $securityGuidelines,
+                        'preview' => $securityGuidelines
+                            ? $this->urlGenerator->generate('admin_bike_ride_show_file', ['filename' => base64_encode($securityGuidelines), 'mimeType' => 'pdf'])
+                            : null,
                     ],
                     'constraints' => [
                         new File([
@@ -352,9 +366,10 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'block_prefix' => 'custom_file',
                     'attr' => [
                         'accept' => '.bmp,.jpeg,.jpg,.png',
-                    ],
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
+                        'filename' => $securityGuidelinesThumbnail,
+                        'preview' => $securityGuidelinesThumbnail
+                            ? $this->urlGenerator->generate('admin_bike_ride_show_file', ['filename' => base64_encode($securityGuidelinesThumbnail), 'mimeType' => 'image'])
+                            : null,
                     ],
                     'constraints' => [
                         new File([

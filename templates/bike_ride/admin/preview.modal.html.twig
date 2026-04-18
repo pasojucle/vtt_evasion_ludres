@@ -1,0 +1,15 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = null%}{% endblock %}
+{% block modal_title %}{{ title }}{% endblock %}
+{% block body %}
+    <div class="d-flex justify-content-center min-h-96" data-ratio="1.41">
+        {% if mime_type == 'pdf' %}
+            <object class="sizing" type="application/pdf" data="{{ file }}">
+                <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
+            </object>
+        
+        {% elseif mime_type == 'image'%}
+            <img class="user-picture" src="{{ file }}" alt="{{ title }}">  
+        {% endif %} 
+    </div>
+{% endblock %}

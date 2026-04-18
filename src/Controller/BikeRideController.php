@@ -80,12 +80,12 @@ class BikeRideController extends AbstractController
         ]);
     }
         
-    #[Route('/bikeride/track/{filename}/{format}', name: 'bike_ride_track', methods: ['GET'])]
+    #[Route('/bikeride/track/{filename}/{mimeType}', name: 'bike_ride_track', methods: ['GET'])]
     public function getTrack(
         string $filename,
-        string $format,
+        string $mimeType,
         GetTrackFile $getTrackFile
     ): Response {
-        return $getTrackFile->execute($filename, $format);
+        return $getTrackFile->execute($filename, $mimeType);
     }
 }

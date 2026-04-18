@@ -267,11 +267,11 @@ class BikeRideDtoTransformer
             $filename = base64_encode($track->getFilename());
             $tracks[] = [
                 'label' => $track->getLabel(),
-                'thumbnail' => $this->urlGenerator->generate('bike_ride_track', ['filename' => base64_encode($track->getThumbnail()), 'format' => 'img']),
+                'thumbnail' => $this->urlGenerator->generate('bike_ride_track', ['filename' => base64_encode($track->getThumbnail()), 'mimeType' => 'image']),
                 ($track->getThumbnail()) ? $this->projectDirService->dir('', 'bike_ride_track', $track->getThumbnail()) : null,
                 'links' => [
-                    'gpx' => $this->urlGenerator->generate('bike_ride_track', ['filename' => $filename, 'format' => 'gpx']),
-                    'zip' => $this->urlGenerator->generate('bike_ride_track', ['filename' => $filename, 'format' => 'zip'])
+                    'gpx' => $this->urlGenerator->generate('bike_ride_track', ['filename' => $filename, 'mimeType' => 'gpx']),
+                    'zip' => $this->urlGenerator->generate('bike_ride_track', ['filename' => $filename, 'mimeType' => 'zip'])
                 ]
             ];
         }

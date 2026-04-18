@@ -15,46 +15,50 @@
             </span>
         </div>
         <div id="bike_ride_container" class="wrapper-body">
-                {{ form_row(form.bikeRideType) }}
-                {{ form_row(form.bikeRideTypeChanged) }}
-                {{ form_row(form.title) }}
-                {{ form_row(form.content) }}
-                <div class="form-group">
-                    <div class="form-group-file">
-                        {{ form_row(form.file) }}
-                        <div class="">
-                            <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">   
-                        </div>
+            <div class="d-flex gap-2">
+                <div class="form-group-file flex-1 {% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}">
+                    <div class="input-file-button h-full">
+                        {% if bikeRide.filename is null %}
+                            <div data-placeholder="placeholder" class="d-flex flex-col align-items-center justify-content-center gap-2 h-full bg-gray-200 border">
+                                <i class="fa-regular fa-image text-3xl text-gray-500"></i>
+                                <div>Ajouter une image</div>
+                            </div>
+                        {% endif %}
+                        <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">
                     </div>
-                    {% if form.rulesFile is defined %}
-                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
-                            <object class="sizing"  type="application/pdf" data="{{ bikeRide.rules }}">
-                                <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
-                            </object>
+                    {{ form_widget(form.file, {'attr':{'class': 'input-file d-none'}}) }}   
+                    {{ form_errors(form.file) }} 
+                </div>
+
+                <div class="w-lg">
+                    {{ form_row(form.bikeRideType) }}
+                    {{ form_row(form.bikeRideTypeChanged) }}
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.content) }}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                
+                {% if bikeRide.isPublic %}
+                    <b>Réglement et sécutité</b>
+                    <div class="card-border">
+                        <div class="form-group form-group-file form-group-inline">
                             {{ form_row(form.rulesFile) }}
                         </div>
-                    {% endif %}
-                    {% if form.rulesFileThumbnail is defined %}
-                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
-                            <img class="user-picture" src="{{ bikeRide.rulesThumbnail }}" alt="{{ bikeRide.title }}">   
+                        <div class="form-group form-group-file form-group-inline">
                             {{ form_row(form.rulesFileThumbnail) }}
                         </div>
-                    {% endif %}
-                    {% if form.securityGuidelinesFile is defined %}
-                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
-                            <object class="sizing" type="application/pdf" data="{{ bikeRide.securityGuidelines }}">
-                                <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
-                            </object>
+                        <div class="form-group form-group-file form-group-inline">
                             {{ form_row(form.securityGuidelinesFile) }}
                         </div>
-                    {% endif %}
-                    {% if form.securityGuidelinesFileThumbnail is defined %}
-                        <div class="form-group form-group-file form-group-inline" data-ratio="1.41">
-                            <img class="user-picture" src="{{ bikeRide.securityGuidelinesThumbnail }}" alt="{{ bikeRide.title }}">   
+                        <div class="form-group form-group-file form-group-inline">
                             {{ form_row(form.securityGuidelinesFileThumbnail) }}
                         </div>
-                    {% endif %}
-                    <b>{{ form_label(form.bikeRideTracks) }}</b>
+                    </div>
+                {% endif %}
+                <b>Traces GPX</b>
+                <div class="card-border">
                     <ul id="{{ form.bikeRideTracks.vars.name }}" class="collection_container"
                     data-index="{{ form.bikeRideTracks|length > 0 ? form.bikeRideTracks|last.vars.name + 1 : 0 }}" 
                     data-prototype="{{ form_widget(form.bikeRideTracks.vars.prototype)|e('html_attr') }}">
@@ -64,10 +68,11 @@
                     </ul>
                     <div>
                         <button type="button" class="btn btn-success add-bike-ride-track" data-collection-holder-class="{{ form.bikeRideTracks.vars.name }}">
-                        <i class="fas fa-plus-circle"></i> Ajouter un fichier
+                        <i class="fas fa-plus-circle"></i> Ajouter un parcours
                         </button>            
                     </div>
                 </div>
+            </div>
                 
             <div class="form-group">
                 {{ form_row(form.private) }}

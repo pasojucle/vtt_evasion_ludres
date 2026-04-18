@@ -39,6 +39,12 @@ export const previewFile = (event) => {
                 element.src = fileUrl;
             }
         });
+
+        const formGroupFile = event.currentTarget.closest('.form-group-file');
+        const placeHolder = formGroupFile.querySelector('[data-placeholder]');
+        if (placeHolder) {
+            placeHolder.classList.add("d-none");
+        }
     }
 }
 

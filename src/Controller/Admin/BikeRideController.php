@@ -11,6 +11,7 @@ use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
+use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
@@ -230,5 +231,26 @@ class BikeRideController extends AbstractController
         }
 
         return new JsonResponse(['results' => $results]);
+    }
+
+    #[Route('/bikeride/show/{filename}/{mimeType}', name: 'admin_bike_ride_show_file', methods: ['GET'])]
+    public function showFile(
+        string $filename,
+        string $mimeType,
+    ): Response {
+        return $this->render('bike_ride/admin/preview.modal.html.twig', [
+            'title' => base64_decode($filename),
+            'file' => $this->generateUrl('admin_bike_ride_file', ['filename' => $filename, 'mimeType' => $mimeType]),
+            'mime_type' => $mimeType,
+        ]);
+    }
+
+    #[Route('/bikeride/track/{filename}/{mimeType}', name: 'admin_bike_ride_file', methods: ['GET'])]
+    public function getFile(
+        string $filename,
+        string $mimeType,
+        GetBikeRideFile $getBikeRideFile
+    ): Response {
+        return $getBikeRideFile->execute($filename, $mimeType);
     }
 }

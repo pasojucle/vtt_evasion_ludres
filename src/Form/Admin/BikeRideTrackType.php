@@ -10,16 +10,23 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\File;
 
 class BikeRideTrackType extends AbstractType
 {
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $track = $event->getData();
-
+            $filename = $track?->getFileName();
+            $thumbnail = $track?->getThumbnail();
             $form
                 ->add('label', TextType::class, [
                     'label' => 'Libellé',
@@ -30,10 +37,11 @@ class BikeRideTrackType extends AbstractType
                 ->add('file', FileType::class, [
                     'label' => 'Fichier GPX',
                     'mapped' => false,
-                    'required' => null === $track?->getFileName(),
+                    'required' => null === $filename,
                     'block_prefix' => 'custom_file',
                     'attr' => [
                         'accept' => '.gpx',
+                        'filename' => $filename,
                     ],
                     'row_attr' => [
                         'class' => 'form-group-inline form-group-file',
@@ -54,10 +62,14 @@ class BikeRideTrackType extends AbstractType
                 ->add('thumbnailFile', FileType::class, [
                     'label' => 'Mignature',
                     'mapped' => false,
-                    'required' => null === $track?->getThumbnail(),
+                    'required' => null === $thumbnail,
                     'block_prefix' => 'custom_file',
                     'attr' => [
                         'accept' => '.bmp,.jpeg,.jpg,.png',
+                        'filename' => $thumbnail,
+                        'preview' => $thumbnail
+                            ? $this->urlGenerator->generate('admin_bike_ride_show_file', ['filename' => base64_encode($thumbnail), 'mimeType' => 'image'])
+                            : null,
                     ],
                     'row_attr' => [
                         'class' => 'form-group-inline form-group-file',

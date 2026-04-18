@@ -1,8 +1,20 @@
 {% block custom_file_row %}
     {% set class = (form.vars.row_attr.class is defined) ? form.vars.row_attr.class : 'form-group' %}
-    <div class="{{ class }}">
-        <button class="input-file-button btn btn-secondary" type="button"><i class="fa-solid fa-file-arrow-up"></i> {{ form.vars.label}}</button>
-        {{ form_widget(form, {'attr':{'class': 'input-file'}}) }}   
+    <div class="{{ class }}">     
+        <div class="d-flex flex-column justify-content-center mx-20">
+            <div class="d-flex gap-2">
+                <button class="input-file-button btn btn-secondary flex-1" type="button"><i class="fa-solid fa-file-arrow-up"></i> {{ form.vars.label}}</button>
+                {% if form.vars.attr.preview is defined and form.vars.attr.preview is not null %}
+                    <a href="{{form.vars.attr.preview}}" title="Visualiser" class="btn btn-primary" data-toggle="modal" data-type="primary">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                {% endif %}
+            </div>
+            <div id="filename">
+                {% if form.vars.attr.filename is defined %}{{form.vars.attr.filename}}{% endif %}
+            </div>
+        </div>   
+        {{ form_widget(form, {'attr':{'class': 'input-file d-none'}}) }}   
         {{ form_errors(form) }} 
     </div>
 {% endblock %}

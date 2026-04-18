@@ -125,7 +125,7 @@ class BikeRideType extends AbstractType
                 ],
             ])
             ->add('bikeRideTracks', CollectionType::class, [
-                'label' => 'Traces GPX',
+                'label' => false,
                 'entry_type' => BikeRideTrackType::class,
                 'entry_options' => [
                     'label' => false,
@@ -133,6 +133,7 @@ class BikeRideType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'required' => false,
             ])
         ;
 

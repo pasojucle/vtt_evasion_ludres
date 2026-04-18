@@ -18,21 +18,22 @@ class GetTrackFile
     ) {
     }
 
-    public function execute(string $filename, string $format): Response
+    public function execute(string $filename, string $mimeType): Response
     {
         $filename = base64_decode($filename);
         $path = $this->projectDirService->path('bike_ride_track', $filename);
-
+        if (!file_exists($path)) {
+            $path = $this->projectDirService->dir('upload', $filename);
+        }
         if (!file_exists($path)) {
             throw new NotFoundHttpException();
         }
-
-        if ($format === 'zip') {
+        if ($mimeType === 'zip') {
             return $this->createZipResponse($path, $filename);
         }
 
         $response = new BinaryFileResponse($path);
-        if ($format === 'img') {
+        if ($mimeType === 'image') {
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $filename);
 
             return $response;
