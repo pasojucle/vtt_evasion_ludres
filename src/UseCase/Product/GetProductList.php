@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\UseCase\Product;
 
-use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Repository\ProductRepository;
 use App\Dto\DtoTransformer\ProductDtoTransformer;
+use App\Repository\ProductRepository;
 use App\Service\PaginatorService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GetProductList
 {
@@ -19,11 +17,7 @@ class GetProductList
         private ProductDtoTransformer $productDtoTransformer,
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
-        private DropdownDtoTransformer $dropdownDtoTransformer,
-        private UrlGeneratorInterface $urlGenerator,
-    ) 
-    {
-
+    ) {
     }
 
     public function execute(Request $request): array

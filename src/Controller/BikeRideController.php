@@ -9,9 +9,9 @@ use App\Entity\BikeRide;
 use App\Form\GuestRegistryType;
 use App\Form\SessionGuestAddType;
 use App\Service\ProjectDirService;
-use App\UseCase\Guest\SendLink;
-use App\UseCase\BikeRide\GetTrackFile;
 use App\UseCase\BikeRide\GetSchedule;
+use App\UseCase\BikeRide\GetTrackFile;
+use App\UseCase\Guest\SendLink;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,7 +56,6 @@ class BikeRideController extends AbstractController
     public function detail(
         Request $request,
         BikeRide $bikeRide,
-        Request $request,
         string $slug,
         BikeRideDtoTransformer $bikeRideDtoTransformer,
         SendLink $sendLink,
@@ -84,7 +83,7 @@ class BikeRideController extends AbstractController
             'form' => $form->createView(),
             'bikeRide' => $bikeRideDtoTransformer->fromEntity($bikeRide),
             'isRegistrationEnabled' => $bikeRide->registrationEnabled(),
-        ]);
+        ], );
     }
 
     #[Route('/randonnee/traces/{bikeRide}/{slug}', name: 'bike_ride_tracks', methods: ['GET'])]

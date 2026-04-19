@@ -163,21 +163,21 @@ class SessionService
                 'color' => 'success-color'
             ],
             AvailabilityEnum::AVAILABLE->name => [
-                'badge' => 'person person-question', 
-                'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 
+                'badge' => 'person person-question',
+                'icon' => '<i class="fa-solid fa-person-circle-question"></i>',
                 'ux_icon' => 'lucide:user-plus',
                 'color' => 'warning-color'
             ],
             AvailabilityEnum::UNAVAILABLE->name => [
-                'badge' => 'person person-xmark', 
-                'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 
+                'badge' => 'person person-xmark',
+                'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>',
                 'ux_icon' => 'lucide:user-x',
                 'color' => 'alert-danger-color'
             ],
             AvailabilityEnum::NONE->name => [
-                'badge' => 'person person-xmark', 
+                'badge' => 'person person-xmark',
                 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>',
-                'ux_icon' => 'lucide:user-x', 
+                'ux_icon' => 'lucide:user-x',
                 'color' => 'alert-danger-color'
             ],
         ];

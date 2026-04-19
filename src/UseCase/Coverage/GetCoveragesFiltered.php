@@ -12,7 +12,6 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 
-
 class GetCoveragesFiltered extends GetUsersFiltered
 {
     public int $statusType = LevelService::FILTER_TYPE_COVERAGE;

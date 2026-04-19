@@ -23,9 +23,7 @@ class GetBikeRideTypeList
         private PaginatorDtoTransformer $paginatorDtoTransformer,
         private DropdownDtoTransformer $dropdownDtoTransformer,
         private UrlGeneratorInterface $urlGenerator,
-    ) 
-    {
-
+    ) {
     }
 
     public function execute(Request $request): array
@@ -44,10 +42,10 @@ class GetBikeRideTypeList
         $dropdown = $this->dropdownDtoTransformer->fromSettings('BIKE_RIDE_TYPE');
         $dropdown->setUrlGenerator($this->urlGenerator);
         $dropdown->addMenuItem(
-                'Ajouter un message',
-                new RouteDto('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
-                'lucide:message-circle-plus'
-            );
+            'Ajouter un message',
+            new RouteDto('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
+            'lucide:message-circle-plus'
+        );
         return $dropdown;
     }
 }

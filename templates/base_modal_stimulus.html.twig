@@ -31,10 +31,17 @@
     <div class="p-4 md:p-5 space-y-4">
         {% block body %}{% endblock %}
     </div>
-    <div class="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-3 border-t dark:border-gray-600 border-gray-200 mt-3">
-        <button type="button" data-action="click->modal#close" class="btn">Annuler</button>
-        {% block action %}{% endblock %}
-    </div>
+    {% if block('action') is not empty %}
+        <div class="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-3 border-t dark:border-gray-600 border-gray-200 mt-3">
+            <button type="button" data-action="click->modal#close" class="btn">Annuler</button>
+            {% block action %}{% endblock %}
+        </div>
+    {% else %}
+        <div class="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-3 border-t dark:border-gray-600 border-gray-200 mt-3">
+            <button type="button" data-action="click->modal#close" class="p-2 bg-neutral-200 text-primary col-start-2">Fermer</button>
+        </div>
+    {% endif %}
+
     {% if form is defined and form is not null %}
         {{ form_end(form)}}
     {% endif %}

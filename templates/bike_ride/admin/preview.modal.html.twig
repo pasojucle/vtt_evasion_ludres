@@ -1,4 +1,4 @@
-{% extends 'base_modal.html.twig' %}
+{% extends 'base_modal_stimulus.html.twig' %}
 {% block form %}{% set form = null%}{% endblock %}
 {% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
@@ -7,7 +7,6 @@
             <object class="sizing" type="application/pdf" data="{{ file }}">
                 <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
             </object>
-        
         {% elseif mime_type == 'image'%}
             <img class="user-picture" src="{{ file }}" alt="{{ title }}">  
         {% endif %} 

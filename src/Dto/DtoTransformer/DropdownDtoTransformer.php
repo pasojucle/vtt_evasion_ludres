@@ -35,8 +35,7 @@ class DropdownDtoTransformer
         private MessageService $messageService,
         private Security $security,
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
+    ) {
     }
     public function fromUser(User $user): DropdownDto
     {
@@ -89,7 +88,7 @@ class DropdownDtoTransformer
             $availability = $this->sessionService->getAvailability($session->getAvailability());
             $dropdown->addInfoItem(
                 $availability['text'],
-                $availability['class']['ux_icon'], 
+                $availability['class']['ux_icon'],
             );
         }
 
@@ -180,9 +179,13 @@ class DropdownDtoTransformer
                 'Copier l\'url',
                 'lucide:clipboard-copy',
                 [
-                    sprintf('data-clipboard-url-value=%s', $this->urlGenerator->generate('bike_ride_detail',
+                    sprintf(
+                        'data-clipboard-url-value=%s',
+                        $this->urlGenerator->generate(
+                        'bike_ride_detail',
                         ['bikeRide' => $bikeRide->getId(), 'slug' => $bikeRide->getTitle()],
-                        UrlGeneratorInterface::ABSOLUTE_URL)
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    )
                     ),
                     'data-controller=clipboard'
                 ]
@@ -210,12 +213,12 @@ class DropdownDtoTransformer
         $dropdown = new DropdownDto();
         $dropdown->setUrlGenerator($this->urlGenerator);
         if ($product->isDisabled()) {
-        $dropdown->addMenuItem(
-            'Activer',
-            new RouteDto('admin_product_disable', ['product' => $product->getId()]),
-            'lucide:toggle-left',
-            ButtonDto::MODAL_CONTENT,
-        );
+            $dropdown->addMenuItem(
+                'Activer',
+                new RouteDto('admin_product_disable', ['product' => $product->getId()]),
+                'lucide:toggle-left',
+                ButtonDto::MODAL_CONTENT,
+            );
         } else {
             $dropdown->addMenuItem(
                 'Désactiver',
@@ -259,7 +262,7 @@ class DropdownDtoTransformer
     private function addParameters(DropdownDto $dropdown, array $parameters): void
     {
         /** @var Parameter $parameter */
-        foreach($parameters as $parameter) {
+        foreach ($parameters as $parameter) {
             $dropdown->addSectionItem(
                 $parameter->getLabel(),
                 new RouteDto('admin_parameter_edit', ['name' => $parameter->getName()]),
@@ -271,7 +274,7 @@ class DropdownDtoTransformer
 
     private function addMessages(DropdownDto $dropdown, array $messages): void
     {
-        foreach($messages as $message) {
+        foreach ($messages as $message) {
             $dropdown->addSectionItem(
                 $message['label'],
                 new RouteDto('admin_message_edit_content', ['message' => $message['id']]),

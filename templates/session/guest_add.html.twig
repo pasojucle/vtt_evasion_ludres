@@ -3,7 +3,10 @@
 {% block title %}{{ bikeRide.title }}{% endblock %}
 
 {% block body %}
-    <div class="wrapper background-green background-color col-content col-inverse">
+    <div class="wrapper background-green background-color col-content">
+        <div class="img-center">
+            <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}"/>
+        </div>
         <div class="wrapper-content">
             <div class="reveal" data-controller="reveal" data-reveal-threshold-value="0.05">
                 <h1>{{ bikeRide.title }}</h1>
@@ -25,7 +28,7 @@
                     <div class="form-group">
                         {{ form_row(form.user.identity.address.street) }}
                     </div>
-                    <div data-id="commune-guest" data-form-modifier-target="container" class="form-group">
+                    <div data-id="comune-container-guest" data-form-modifier-target="container" class="form-group">
                         {{ form_row(form.user.identity.address.postalCode) }}
                         {{ form_row(form.user.identity.address.commune) }}
                     </div>
@@ -45,23 +48,17 @@
                     {{ form_errors(form) }}
                     <p>* Champs obligatoires</p>
                     <div class="content-footer">
-                        {{ form_row(form.submit) }}
+                        <button 
+                            type="submit" 
+                            data-check-validator-target="submit"
+                            class="bg-primary text-white p-2 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed flex gap-2 items-center"
+                        >
+                            {{ ux_icon('lucide:circle-arrow-right') }} S'inscrire
+                        </button>
                     </div>
                     {{ form_end(form) }}
                 </div>
             </div>
-        </div>
-        <div class="flex justify-center p-4" data-pdf-size-ratio-value="1.41" data-controller="pdf-size">
-            <object 
-                width="100%" 
-                height="350" 
-                type="application/pdf" 
-                data="{{ bikeRide.rules }}"
-                data-input-file-target="media"
-                data-pdf-size-target="media"
-            >
-                <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
-            </object>
         </div>
     </div>
 {% endblock %}

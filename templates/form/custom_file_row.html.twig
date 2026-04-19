@@ -1,23 +1,27 @@
 {% block custom_file_row %}
     {% set class = (form.vars.row_attr.class is defined) ? form.vars.row_attr.class : 'form-group' %}
-    <div class="{{ class }}">
+    <div 
+        class="{{ class }}"
+        {% for attrname, attrvalue in form.vars.row_attr %} 
+            {{ attrname }}="{{ attrvalue }}"
+        {% endfor %}
+    >
         <div class="d-flex flex-column justify-content-center mx-20">
-            <div class="d-flex gap-2">
                 <button 
-                    class="input-file-button btn btn-secondary" 
+                    class="input-file-button p-2 text-primary border-2 border-primary rounded-sm" 
                     type="button"
                     data-input-file-target="trigger" 
                     data-action="click->input-file#selectFile"
                 >
                 <i class="fa-solid fa-file-arrow-up"></i> {{ form.vars.label}}
                 </button>
+
+            <div data-input-file-target="filename" class="flex items-center gap-2">
                 {% if form.vars.attr.preview is defined and form.vars.attr.preview is not null %}
-                    <a href="{{form.vars.attr.preview}}" title="Visualiser" class="btn btn-primary" data-toggle="modal" data-type="primary">
-                        <i class="fa-solid fa-eye"></i>
+                    <a href="{{form.vars.attr.preview}}" title="Visualiser" class="bg-primary text-white flex items-center p-2 rounded-sm" data-turbo-frame="modal_content">
+                        {{ ux_icon('lucide:eye') }}
                     </a>
                 {% endif %}
-            </div>
-            <div id="filename">
                 {% if form.vars.attr.filename is defined %}{{form.vars.attr.filename}}{% endif %}
             </div>
         </div>

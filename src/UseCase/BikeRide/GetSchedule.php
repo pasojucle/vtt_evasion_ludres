@@ -13,8 +13,6 @@ use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
-use App\Repository\ParameterRepository;
-use App\Service\MessageService;
 use App\Service\PaginatorService;
 use App\UseCase\BikeRide\GetFilters;
 use DateTimeImmutable;
@@ -33,8 +31,6 @@ class GetSchedule
         private DropdownDtoTransformer $dropdownDtoTransformer,
         private BikeRideRepository $bikeRideRepository,
         private ContentRepository $contentRepository,
-        private ParameterRepository $parameterRepository,
-        private readonly MessageService $messageService,
         private GetFilters $getFilters,
         private FormFactoryInterface $formFactory
     ) {
@@ -127,8 +123,8 @@ class GetSchedule
     {
         $dropdown = $this->dropdownDtoTransformer->fromSettings('BIKE_RIDE');
         $dropdown->addMenuItem('Types de rando', new RouteDto('admin_bike_ride_types'));
-        $dropdown->addMenuItem('Indemnités',new RouteDto('admin_indemnity_list'));
+        $dropdown->addMenuItem('Indemnités', new RouteDto('admin_indemnity_list'));
 
-        return $dropdown;  
+        return $dropdown;
     }
 }

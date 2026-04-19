@@ -12,25 +12,28 @@
                 <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
+        {{ form_start(form) }}
         <div id="bike_ride_container" class="wrapper-body">
             <div class="d-flex gap-2 mb-20">
                 <div class="form-group-file flex-1 {% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}" data-controller="input-file">
-                    <div class="input-file-button h-full">
+                    <div 
+                        class="input-file-button h-full"
+                        data-input-file-target="trigger" 
+                        data-action="click->input-file#selectFile">
                         {% if bikeRide.filename is null %}
                             <div data-placeholder="placeholder" class="d-flex flex-col align-items-center justify-content-center gap-2 h-full bg-gray-200 border">
                                 <i class="fa-regular fa-image text-3xl text-gray-500"></i>
                                 <div>Ajouter une image</div>
                             </div>
                         {% endif %}
-                        <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">
+                        <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}" data-input-file-target="media">
                     </div>
-                    {{ form_widget(form.file, {'attr':{'class': 'input-file d-none'}}) }}   
+                    {{ form_widget(form.file, {'attr':{'class': 'input-file d-none', 'data-input-file-target': 'input', 'data-action': 'change->input-file#previewFile'}}) }}   
                     {{ form_errors(form.file) }} 
                 </div>
 
                 <div class="w-lg">
                     {{ form_row(form.bikeRideType) }}
-                    {{ form_row(form.bikeRideTypeChanged) }}
                     {{ form_row(form.title) }}
                     {{ form_row(form.content) }}
                 </div>
@@ -40,7 +43,7 @@
                 
                 {% if bikeRide.isPublic %}
                     <b>Réglement et sécutité</b>
-                    <div class="card-border">
+                    <div class="mt-2 p-2 border-2 border-neutral-200 rounded-sm">
                         <div class="form-group form-group-file form-group-inline" data-controller="input-file">
                             {{ form_row(form.rulesFile) }}
                         </div>
@@ -53,21 +56,27 @@
                         <div class="form-group form-group-file form-group-inline" data-controller="input-file">
                             {{ form_row(form.securityGuidelinesFileThumbnail) }}
                         </div>
-                        {% endif %}
                     </div>
                 {% endif %}
                 <b>Traces GPX</b>
-                <div class="card-border">
-                    <ul id="{{ form.bikeRideTracks.vars.name }}" class="collection_container mb-20"
-                    data-index="{{ form.bikeRideTracks|length > 0 ? form.bikeRideTracks|last.vars.name + 1 : 0 }}" 
-                    data-prototype="{{ form_widget(form.bikeRideTracks.vars.prototype)|e('html_attr') }}">
+                <div class="mt-2 p-2 border-2 border-neutral-200 rounded-sm" data-controller="collection">
+                    <ul 
+                        class="mb-20" 
+                        data-collection-target="container"
+                        data-index="{{ form.bikeRideTracks|length > 0 ? form.bikeRideTracks|last.vars.name + 1 : 0 }}" 
+                        data-prototype="{{ form_widget(form.bikeRideTracks.vars.prototype)|e('html_attr') }}"
+                    >
                         {% for item in form.bikeRideTracks %}
                             <li>{{ form_widget(item) }}</li>
                         {% endfor %}
                     </ul>
                     <div>
-                        <button type="button" class="btn btn-success add-bike-ride-track" data-collection-holder-class="{{ form.bikeRideTracks.vars.name }}">
-                        <i class="fas fa-plus-circle"></i> Ajouter un parcours
+                        <button 
+                            type="button" 
+                            class="p-2 bg-success text-white rounded-sm flex items-center gap-2 add-bike-ride-track" 
+                            data-action="click->collection#addItem"
+                        >
+                        {{ ux_icon('lucide:circle-plus') }} Ajouter un parcours
                         </button>            
                     </div>
                 </div>
@@ -96,12 +105,12 @@
                 {{ form_row(form.registrationClosedMessage) }}
             {% endif %}
             <br>
-            <div id="bikeRideRestriction">
+            <div data-id="bike-ride-restriction" data-form-modifier-target="container">
                 {% for restriction in form.restriction %}
                     <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
-                    {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_MEMBER_LIST') %}
+                    {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_USER_LIST') %}
                         <div class="row row-align-top">
-                            <div class="form-group radio-group col-md-8">{{ form_row(form.users) }}</div>
+                            <div class="form-group radio-group col-md-8">{{ form_row(form.members) }}</div>
                             <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
                         </div>
                     {% endif %}

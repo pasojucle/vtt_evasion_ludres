@@ -10,6 +10,5 @@ class RouteDto
         public string $name,
         public array $params = [],
     ) {
-
     }
 }

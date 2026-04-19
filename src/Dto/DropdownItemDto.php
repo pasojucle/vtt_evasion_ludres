@@ -10,8 +10,6 @@ readonly class DropdownItemDto
         public string $label,
         public string $icon,
         public array $data = [],
-    ) 
-    {
-
+    ) {
     }
 }

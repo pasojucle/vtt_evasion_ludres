@@ -301,7 +301,7 @@ class MenuService
                 $priority = ('menus' === $type) ? 1 : 0.5;
                 if (empty($menu['subMenus'])) {
                     $routes[] = [
-                        'route' => $menu['route'], 
+                        'route' => $menu['route'],
                         'priority' => $priority,
                         'params' => array_key_exists('params', $menu) ? $menu['params'] : []
                     ];

@@ -6,7 +6,6 @@ namespace App\Dto;
 
 readonly class ButtonDto
 {
-
     public const string TOP = '_top';
     public const string MODAL_CONTENT = 'modal_content';
 
@@ -17,8 +16,6 @@ readonly class ButtonDto
         public ?string $icon = null,
         public ?string $className = null,
         public ?string $title = null,
-    ) 
-    {
-
+    ) {
     }
 }

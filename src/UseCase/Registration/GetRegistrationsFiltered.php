@@ -12,7 +12,6 @@ use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-
 class GetRegistrationsFiltered extends GetUsersFiltered
 {
     public int $statusType = LevelService::FILTER_TYPE_REGISTRATION;

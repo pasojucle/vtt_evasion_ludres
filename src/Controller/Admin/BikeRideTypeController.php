@@ -4,17 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideTypeDtoTransformer;
-use App\Dto\DtoTransformer\DropdownDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Form\Admin\BikeRideTypeType;
-use App\Repository\BikeRideTypeRepository;
-use App\Repository\MessageRepository;
-use App\Service\PaginatorService;
 use App\UseCase\BikeRideType\GetBikeRideTypeList;
-use App\UseCase\BikeRideType\GetList;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +20,6 @@ class BikeRideTypeController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private BikeRideTypeRepository $bikeRideTypeRepository
     ) {
     }
 
@@ -37,8 +29,6 @@ class BikeRideTypeController extends AbstractController
         Request $request,
         GetBikeRideTypeList $bikeRideTypeList,
     ): Response {
-        
-
         return $this->render('bike_ride_type/admin/list.html.twig', $bikeRideTypeList->execute($request));
     }
 

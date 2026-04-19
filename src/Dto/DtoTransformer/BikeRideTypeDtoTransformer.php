@@ -14,9 +14,7 @@ class BikeRideTypeDtoTransformer
 {
     public function __construct(
         private DropdownDtoTransformer $dropdownDtoTransformer,
-    )
-    {
-
+    ) {
     }
 
     public function fromEntity(BikeRideType $bikeRideType): BikeRideTypeDto

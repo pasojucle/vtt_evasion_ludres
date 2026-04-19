@@ -6,7 +6,6 @@ namespace App\Dto;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
 class DropdownDto
 {
     public string $trigger = 'lucide:ellipsis-vertical';
@@ -62,8 +61,8 @@ class DropdownDto
 
     private function getUrl(RouteDto $route): string
     {
-        return  $this->urlGenerator 
-            ? $this->urlGenerator->generate($route->name, $route->params) 
+        return  $this->urlGenerator
+            ? $this->urlGenerator->generate($route->name, $route->params)
             : $route;
     }
 }

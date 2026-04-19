@@ -45,6 +45,7 @@ class BikeRideTrackType extends AbstractType
                     ],
                     'row_attr' => [
                         'class' => 'form-group-inline form-group-file',
+                        'data-controller' => "input-file"
                     ],
                     'constraints' => [
                         new File([
@@ -73,6 +74,7 @@ class BikeRideTrackType extends AbstractType
                     ],
                     'row_attr' => [
                         'class' => 'form-group-inline form-group-file',
+                        'data-controller' => "input-file"
                     ],
                     'constraints' => [
                         new File([

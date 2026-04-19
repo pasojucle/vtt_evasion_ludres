@@ -14,8 +14,6 @@ use App\Entity\Member;
 use App\Entity\User;
 use App\Repository\IdentityRepository;
 use App\Repository\LicenceRepository;
-use App\Service\DropdownService;
-use App\Service\LevelService;
 use App\Service\ParameterService;
 use App\Service\SeasonService;
 use App\Service\UserService;
@@ -41,7 +39,6 @@ class UserDtoTransformer
         private SeasonService $seasonService,
         private ParameterService $parameterService,
         private UserService $userService,
-        private LevelService $levelService,
         private DropdownDtoTransformer $dropdownDtoTransformer,
     ) {
     }

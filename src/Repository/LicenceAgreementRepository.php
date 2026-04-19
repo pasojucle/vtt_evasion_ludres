@@ -37,7 +37,7 @@ class LicenceAgreementRepository extends ServiceEntityRepository
                 ]))
                 ->getQuery()
                 ->getOneOrNullResult();
-        } catch(NonUniqueResultException) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }

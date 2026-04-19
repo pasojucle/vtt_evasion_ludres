@@ -100,7 +100,7 @@ class LicenceDtoTransformer
         $licenceDto = new LicenceDto();
         $licenceDto->id = $licence->getId();
         $state = $licence->getState();
-        $licenceDto->stateAction = match(true) {
+        $licenceDto->stateAction = match (true) {
             $state->toValidate() => new ButtonDto(
                 'Reçu',
                 $this->urlGenerator->generate('admin_registration_receive', ['licence' => $licence->getId()]),

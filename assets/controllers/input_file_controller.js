@@ -8,7 +8,9 @@ export default class extends Controller {
         if (!file) return;
         event.currentTarget.classList.add('hidden');
 
-        this.mediaTarget.classList.add('hidden');
+        if (this.hasMediatarget) {
+            this.mediaTarget.classList.add('hidden');
+        }
         const fileUrl = URL.createObjectURL(file);
         this.mediaTargets.forEach((media) => {
             switch(true) {
@@ -40,7 +42,7 @@ export default class extends Controller {
                     media.src = undefined;
             }
         })
-                      
+        console.log("----hasFilenameTarget", this.hasFilenameTarget) 
         if (this.hasFilenameTarget) {
             this.filenameTarget.textContent = event.target.value.split('\\').pop();
         } 

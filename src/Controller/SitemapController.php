@@ -17,8 +17,8 @@ class SitemapController extends AbstractController
         foreach ($menuService->getIndexableRoutes() as $menu) {
             $urls[] = [
                 'loc' => $this->generateUrl(
-                    $menu['route'], 
-                    $menu['params'], 
+                    $menu['route'],
+                    $menu['params'],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
                 'priority' => $menu['priority']

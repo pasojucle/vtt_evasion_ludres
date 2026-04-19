@@ -9,15 +9,14 @@ use App\Entity\Session;
 use App\Repository\ClusterRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SessionGuestAddType extends AbstractType
 {
@@ -53,18 +52,18 @@ class SessionGuestAddType extends AbstractType
             ->add('rulesApproval', CheckboxType::class, [
                 'label' => 'J\'accepte le règlement de la randonnée inscrit ci-dessus.',
                 'block_prefix' => 'customsimplecheck',
+                'constraints' => [
+                    new NotBlank(['message' => 'Vous devez accepter les conditions.']),
+                ],
                 'mapped' => false,
             ])
             ->add('healthApproval', CheckboxType::class, [
                 'label' => 'J\'atteste sur l\'honneur, avoir pris connaissance du questionnaire de santé et des règles d’or. Être en condition physique suffisante pour effectuer le parcours que j\'ai choisi. Avoir pris connaissance des difficultés du parcours et des consignes de sécurité..',
                 'block_prefix' => 'customsimplecheck',
-                'mapped' => false,
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'S\'incrire',
-                'attr' => [
-                    'class' => 'btn btn-primary',
+                'constraints' => [
+                    new NotBlank(['message' => 'Vous devez accepter les conditions.']),
                 ],
+                'mapped' => false,
             ])
         ;
 
@@ -89,11 +88,6 @@ class SessionGuestAddType extends AbstractType
                     'row_attr' => [
                         'class' => $hidden
                     ]
-                ])
-                ->add('link', ButtonType::class, [
-                    'label' => '<i class="fa-regular fa-circle-right"></i> S\'inscrire',
-                    'label_html' => true,
-                    'attr' => $attr,
                 ]);
         };
 
