@@ -24,4 +24,3 @@ import './js/js-datepicker.js';
 import './js/form.js';
 import './js/extraToggle.js';
 import './js/log.js';
-import './js/coverage.js';

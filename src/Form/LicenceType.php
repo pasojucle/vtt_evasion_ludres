@@ -27,9 +27,10 @@ class LicenceType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $licence = $event->getData();
             $form = $event->getForm();
+            $options =$form->getConfig()->getOptions();
             if ($licence->getId() === $options['season_licence']?->id) {
                 $choicesCoverage = array_flip(Licence::COVERAGES);
                 if (LicenceCategoryEnum::SCHOOL === $options['category']) {
@@ -75,6 +76,12 @@ class LicenceType extends AbstractType
                             'choices' => $this->getOptionChoices(),
                             'expanded' => true,
                             'multiple' => true,
+                            'choice_attr' => function ($choice, string $key, mixed $value) {
+                                return [
+                                    'data-action' => 'change->coverage-options#change',
+                                    'data-coverage-options-target' => 'option'
+                                ];
+                            },
                         ])
                     ;
                     if (LicenceCategoryEnum::ADULT === $options['category'] && $licence->getState()->isYearly()) {
