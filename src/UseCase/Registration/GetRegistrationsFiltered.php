@@ -81,9 +81,9 @@ class GetRegistrationsFiltered extends GetUsersFiltered
             'Copier les emails de la séléction',
             'lucide:clipboard-type',
             [
-                'data-controller=email-to-clipboard',
-                'data-action=click->email-to-clipboard#emailToClipboard',
-                sprintf('data-email-to-clipboard-url-value=%s', $this->urlGenerator->generate('admin_registrations_email_to_clipboard')),
+                'data-controller' => 'email-to-clipboard',
+                'data-action' => 'click->email-to-clipboard#emailToClipboard click->dropdown#close',
+                'data-email-to-clipboard-url-value' => $this->urlGenerator->generate('admin_registrations_email_to_clipboard'),
             ],
         );
 

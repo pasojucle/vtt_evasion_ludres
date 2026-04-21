@@ -25,4 +25,8 @@ class SurveyDto
     public bool  $isEditable = true;
 
     public ?string $bikeRide = null;
+
+    public ?DropdownDto $dropdown = null;
+
+    public ?ButtonDto $responseAction = null;
 }

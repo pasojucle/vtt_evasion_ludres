@@ -15,43 +15,10 @@
         <ul>
             {% for survey in surveys %}
                 <li class="list-dropdown">
-                    {% set route = (survey.isAnonymous) ? 'admin_anonymous_survey' : 'admin_survey' %}
-                    <a href="{{ path(route, {'survey': survey.id}) }}" class="btn btn-list" title="Résultats du sondage">
-                        {{ survey.title }}
+                    <a href="{{ survey.responseAction.url }}" class="btn btn-list" title="survey.responseAction.title">
+                        {{ survey.responseAction.label }}
                     </a>
-                    <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ survey.id }}"></button>
-                    <div class="dropdown-menu" data-target="dropdown-{{ survey.id }}">
-                        <div class="dropdown-title">{{ survey.title }}</div>
-                        <ul class="dropdown-body">
-                            <li>
-                                <a 
-                                    class="dropdown-item" 
-                                    title="Copier l'url" 
-                                    data-controller="clipboard"
-                                    data-clipboard-url-value="{{ absolute_url(path('survey', {'survey': survey.id} ))}}" 
-                                ><i class="fas fa-clipboard"></i> Copier l'url</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i> Exporter</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ path('admin_survey_copy', {'survey': survey.id})}}" title="Dupliquer"><i class="fa-solid fa-clone"></i> Dupliquer</a>
-                            </li>
-                            {% if not survey.isDisabled %}
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('admin_survey_edit', {'survey': survey.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item modal-trigger" href="{{ path('admin_survey_disable', {'survey': survey.id})}}" title="Cloturer" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Cloturer</a>
-                                </li>
-                            {% endif %}
-                            <li>
-                                <a class="dropdown-item modal-trigger" href="{{ path('admin_survey_delete', {'survey': survey.id})}}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Supprimer</a>
-                            </li>
-                        </ul>
-                    </div>
-                    </div>
+                    {% include 'component/dropdown.html.twig' with {'dropdown': survey.dropdown} %}
                 </li>  
             {% endfor %}
         </ul>

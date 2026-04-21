@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use App\Dto\ButtonDto;
 use App\Dto\SurveyDto;
 use App\Entity\History;
 use App\Entity\Identity;
@@ -19,6 +20,7 @@ use Doctrine\ORM\UnitOfWork;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SurveyDtoTransformer
 {
@@ -28,6 +30,8 @@ class SurveyDtoTransformer
         private readonly BikeRideService $bikeRideService,
         private readonly EntityManagerInterface $entityManager,
         private readonly RequestStacK $request,
+        private readonly DropdownDtoTransformer $dropdownDtoTransformer,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -55,8 +59,40 @@ class SurveyDtoTransformer
             $surveyDto->isEditable = $survey->getRespondents()->isEmpty();
         }
 
-        
         return $surveyDto;
+    }
+
+    public function fromEntityToResponses(Survey $survey): SurveyDto
+    {
+        $surveyDto = new surveyDto();
+        $surveyDto->title = $survey->getTitle();
+        $surveyDto->dropdown = $this->dropdownDtoTransformer->fromSurvey($survey);
+
+        return $surveyDto;
+    }
+
+    public function listFromEntities(Paginator|Collection|array $surveyEntities): array
+    {
+        $surveys = [];
+        foreach ($surveyEntities as $surveyEntity) {
+            $surveyDto = new surveyDto();
+            $surveyDto->id = $surveyEntity->getId();
+            $surveyDto->title = $surveyEntity->getTitle();
+            $surveyDto->dropdown = $this->dropdownDtoTransformer->fromSurveyForList($surveyEntity);
+            $surveyDto->responseAction = new ButtonDto(
+                $surveyEntity->getTitle(),
+                $this->urlGenerator->generate($surveyEntity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey',
+                    ['survey' => $surveyEntity->getId()]),
+                ButtonDto::TOP,
+                null,
+                null,
+                'Résultats du sondage'
+            );
+
+            $surveys[] = $surveyDto;
+        }
+
+        return $surveys;
     }
 
     public function fromEntities(Paginator|Collection|array $surveyEntities): array

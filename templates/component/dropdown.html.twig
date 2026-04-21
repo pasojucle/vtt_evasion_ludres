@@ -49,8 +49,8 @@
           <div
             class="hover:cursor-pointer block px-3 py-2 text-foreground lg:text-muted lg:hover:text-foreground"
             title="{{ item.label }}"
-            {% for data in item.data %}
-                {{ data }}
+            {% for name, value in item.data %}
+                {{ name }}="{{ value }}"
             {% endfor %}
           >
             <div class="flex items-center gap-2">

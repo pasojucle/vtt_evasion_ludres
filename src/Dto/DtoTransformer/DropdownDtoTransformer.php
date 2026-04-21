@@ -15,6 +15,7 @@ use App\Entity\Licence;
 use App\Entity\Parameter;
 use App\Entity\Product;
 use App\Entity\Session;
+use App\Entity\Survey;
 use App\Entity\User;
 use App\Repository\LicenceAgreementRepository;
 use App\Repository\ParameterRepository;
@@ -179,15 +180,13 @@ class DropdownDtoTransformer
                 'Copier l\'url',
                 'lucide:clipboard-copy',
                 [
-                    sprintf(
-                        'data-clipboard-url-value=%s',
-                        $this->urlGenerator->generate(
+                    'data-clipboard-url-value' => $this->urlGenerator->generate(
                         'bike_ride_detail',
                         ['bikeRide' => $bikeRide->getId(), 'slug' => $bikeRide->getTitle()],
                         UrlGeneratorInterface::ABSOLUTE_URL
-                    )
                     ),
-                    'data-controller=clipboard'
+                    'data-controller' => 'clipboard',
+                    'data-action' => 'click->dropdown#close'
                 ]
             );
         }
@@ -231,6 +230,74 @@ class DropdownDtoTransformer
         $dropdown->addMenuItem(
             'Supprimer',
             new RouteDto('admin_product_delete', ['product' => $product->getId()]),
+            'lucide:delete',
+            ButtonDto::MODAL_CONTENT,
+        );
+
+        return $dropdown;
+    }
+
+    public function fromSurvey(Survey $survey): DropdownDto
+    {
+        $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
+        $dropdown->addActionItem(
+            'Copier les emails de la séléction',
+            'lucide:clipboard-type',
+            [
+                'data-email-to-clipboard-url-value' => $this->urlGenerator->generate('admin_survey_email_to_clipboard'),
+                'data-controller' => 'email-to-clipboard',
+                'data-action' => 'click->email-to-clipboard#emailToClipboard click->dropdown#close',
+            ]
+        );
+
+        return $dropdown;
+    }
+
+    public function fromSurveyForList(Survey $survey): DropdownDto
+    {
+        $dropdown = new DropdownDto();
+        $dropdown->setUrlGenerator($this->urlGenerator);
+        $dropdown->title = $survey->getTitle();
+
+        $dropdown->addActionItem(
+            'Copier l\'url',
+            'lucide:clipboard-copy',
+            [
+                
+                'data-clipboard-url-value' => $this->urlGenerator->generate('survey', 
+                    ['survey' => $survey->getId()], UrlGeneratorInterface::ABSOLUTE_URL
+                ),
+                'data-controller' => 'clipboard',
+                'data-action' => 'click->dropdown#close'
+            ]
+        );
+        $dropdown->addMenuItem(
+            'Exporter',
+            new RouteDto('admin_survey_export', ['survey' => $survey->getId()]),
+            'lucide:file-down',
+        );
+        $dropdown->addMenuItem(
+            'Dupliquer',
+            new RouteDto('admin_survey_copy', ['survey' => $survey->getId()]),
+            'lucide:copy-plus',
+        );
+        if (!$survey->isDisabled()) {
+            $dropdown->addMenuItem(
+                'Modifier',
+                new RouteDto('admin_survey_edit', ['survey' => $survey->getId()]),
+                'lucide:pencil',
+            );
+            $dropdown->addMenuItem(
+                'Cloturer',
+                new RouteDto('admin_survey_disable', ['survey' => $survey->getId()]),
+                'lucide:toggle-left',
+                ButtonDto::MODAL_CONTENT,
+            );
+        }
+        $dropdown->addMenuItem(
+            'Supprimer',
+            new RouteDto('admin_survey_delete', ['survey' => $survey->getId()]),
             'lucide:delete',
             ButtonDto::MODAL_CONTENT,
         );

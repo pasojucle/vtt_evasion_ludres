@@ -47,12 +47,13 @@ class SurveyController extends AbstractController
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
         SurveyRepository $surveyRepository,
+        SurveyDtoTransformer $surveyDtoTransformer,
     ): Response {
         $query = $surveyRepository->findAllDESCQuery();
         $surveys = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('survey/admin/list.html.twig', [
-            'surveys' => $surveys,
+            'surveys' => $this->surveyDtoTransformer->listFromEntities($surveys),
             'paginator' => $paginatorDtoTransformer->fromEntities($surveys),
         ]);
     }
@@ -131,6 +132,7 @@ class SurveyController extends AbstractController
         GetSurveyResults $getSurveyResults,
         Request $request,
         SurveyIssueRepository $surveyIssueRepository,
+        SurveyDtoTransformer $surveyDtoTransformer,
         Survey $survey
     ): Response {
         $session = $request->getSession();
@@ -148,7 +150,7 @@ class SurveyController extends AbstractController
         $session->set('admin_survey_filter', $filter);
         $responses = $getSurveyResults->execute($filter);
         return $this->render('survey/admin/show.html.twig', [
-            'survey' => $survey,
+            'survey' =>  $surveyDtoTransformer->fromEntityToResponses($survey),
             'responses' => $this->surveyResponseDtoTransformer->fromEntities($responses),
             'form' => $form->createView(),
         ]);
