@@ -18,6 +18,7 @@ use App\Entity\Licence;
 use App\Entity\Member;
 use App\Entity\MemberGardian;
 use App\Entity\Session;
+use App\Mapper\DropdownMapper;
 use App\Repository\SessionRepository;
 use App\Service\CacheService;
 use App\Service\ClusterService;
@@ -36,7 +37,7 @@ class ClusterDtoTransformer
 {
     public function __construct(
         private LevelDtoTransformer $levelDtoTransformer,
-        private DropdownDtoTransformer $dropdownDtoTransformer,
+        private DropdownMapper $dropdownMapper,
         private CacheService $cacheService,
         private ClusterService $clusterService,
         private SessionRepository $sessionRepository,
@@ -290,7 +291,7 @@ class ClusterDtoTransformer
                         'isEndTesting' => $isEndTesting,
                         'mustProvideRegistration' => $mustProvideRegistration,
                         'licenceNumber' => $user->getLicenceNumber(),
-                        'dropdown' => $this->dropdownDtoTransformer->fromSession($session),
+                        'dropdown' => $this->dropdownMapper->fromSession($session),
                     ],
                     'userIsOnSite' => $session->isPresent(),
                     'practice' => $bikeRideType->isDisplayBikeKind() ? $session->getPractice()->toBadge($this->translator) : null,

@@ -5,7 +5,7 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Gestion des commandes - <span class="badge badge-info">{{ paginator.total }}</span></h1>
+            <h1 class="font-bold text-3xl">Gestion des commandes - <span class="badge badge-info">{{ list.paginator.total }}</span></h1>
             <div class="tool-group">
                 <a 
                     href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
@@ -15,15 +15,8 @@
                 >
                     {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
                 </a>
-                {% include 'component/dropdown_settings.html.twig' %}
-                <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                    <div class="dropdown-menu" data-target="dropdown-tools">
-                        <ul class="dropdown-body">
-                            <li><a href="{{ path('admin_order_headers_export') }}" class="dropdown-item" title="Exporter la sélection"><i class="fas fa-file-csv"></i> Exporter la sélection</a></li>
-                        </ul>
-                    </div>
-                </div>
+                {% include 'component/dropdown.html.twig' with {dropdown: list.settings} %}
+                {% include 'component/dropdown.html.twig'  with {dropdown: list.tools} %}
             </div>
         </div>
         {% include('order/admin/_frame_list.html.twig') %}

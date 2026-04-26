@@ -37,7 +37,7 @@ class LevelController extends AbstractController
         int $type
     ): Response {
         $query = $this->levelRepository->findLevelQuery($type);
-        $levels = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $levels = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('level/admin/list.html.twig', [
             'levels' => $levels,
             'paginator' => $paginatorDtoTransformer->fromEntities($levels, ['type' => (int) $type]),

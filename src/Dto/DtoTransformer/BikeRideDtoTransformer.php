@@ -12,6 +12,7 @@ use App\Entity\Level;
 use App\Entity\Member;
 use App\Entity\Session;
 use App\Entity\User;
+use App\Mapper\DropdownMapper;
 use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
 use App\Service\ProjectDirService;
@@ -38,7 +39,7 @@ class BikeRideDtoTransformer
         private SessionRepository $sessionRepository,
         private BikeRideService $bikeRideService,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private DropdownDtoTransformer $dropdownDtoTransformer,
+        private DropdownMapper $dropdownMapper,
     ) {
     }
 
@@ -135,7 +136,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->title = $bikeRideEntity->getTitle();
             $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->shedulefromEntity($bikeRideEntity->getBikeRideType());
 
-            $bikeRideDto->dropdown = $this->dropdownDtoTransformer->fromBikeRide($bikeRideEntity);
+            $bikeRideDto->dropdown = $this->dropdownMapper->fromBikeRide($bikeRideEntity);
 
             $bikeRides[] = $bikeRideDto;
         }

@@ -21,17 +21,7 @@
                     </div>
                     <div>
                         {% if user.lastLicence.stateAction %}
-                            <a 
-                                class="{{ user.lastLicence.stateAction.className }}" 
-                                href="{{ user.lastLicence.stateAction.url }}" 
-                                title="{{ user.lastLicence.stateAction.title }}" 
-                                data-turbo-frame="{{ user.lastLicence.stateAction.target }}"
-                            >
-                                <div class="flex items-center gap-2 justify-center">
-                                    {{ ux_icon(user.lastLicence.stateAction.icon) }}
-                                    <div>{{ user.lastLicence.stateAction.label }}</div>
-                                </div> 
-                            </a>
+                            {% include "component/button.html.twig" with {button: user.lastLicence.stateAction} %}
                         {% endif %}
                     </div>
                 </li>

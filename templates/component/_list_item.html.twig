@@ -1,0 +1,9 @@
+{% for cell in item.cells %}
+    {% if cell.type == 'number' %}
+        <div class="text-right font-mono">{{ cell.value }}</div>
+    {% elseif cell.type == 'badge' %}
+        {% include 'component/_badge.html.twig' with {'badge': cell} %}
+    {% else %}
+        <div class="text-left">{{ cell.value }}</div>
+    {% endif %}
+{% endfor %}

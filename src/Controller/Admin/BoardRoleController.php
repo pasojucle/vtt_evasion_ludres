@@ -32,7 +32,7 @@ class BoardRoleController extends AbstractController
         Request $request
     ): Response {
         $query = $this->boardRoleRepository->findBoardRoleQuery();
-        $boardRoles = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $boardRoles = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('board_role/admin/list.html.twig', [
             'boardRoles' => $boardRoles,

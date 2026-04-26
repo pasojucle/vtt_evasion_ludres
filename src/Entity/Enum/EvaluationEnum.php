@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Enum;
 
+use App\Dto\Enum\ColorVariant;
 use App\Entity\Enum\BadgeTrait;
 use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
@@ -26,12 +27,12 @@ enum EvaluationEnum: string implements TranslatableInterface
         return $translator->trans('user_skill.' . $this->value, locale: $locale);
     }
 
-    public function color(): string
+    public function variant(): ColorVariant
     {
         return match ($this) {
-            self::ACQUIRED => 'success-color',
-            self::PENDING => 'primary-color',
-            default => 'danger-color'
+            self::ACQUIRED => ColorVariant::SUCCESS,
+            self::PENDING => ColorVariant::WARNING,
+            default => ColorVariant::DESTRUCTIVE
         };
     }
 }

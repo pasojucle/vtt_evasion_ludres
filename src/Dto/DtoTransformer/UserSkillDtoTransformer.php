@@ -44,7 +44,7 @@ class UserSkillDtoTransformer implements DtoTransformerInterface
     {
         return [
             'value' => ucfirst($eveluation->trans($this->translator)),
-            'color' => $eveluation->color(),
+            'color' => $eveluation->variant(),
         ];
     }
 }

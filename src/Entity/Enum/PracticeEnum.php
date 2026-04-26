@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Enum;
 
+use App\Dto\Enum\ColorVariant;
 use App\Entity\Enum\BadgeTrait;
 use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
@@ -22,15 +23,15 @@ enum PracticeEnum: string implements TranslatableInterface
     use EnumTrait;
     use BadgeTrait;
 
-    public function color(): string
+    public function variant(): ColorVariant
     {
         return match ($this) {
-            self::VTT_AE => '#2596be',
-            self::ROADBIKE => '#76448a',
-            self::GRAVEL => '#e67e22',
-            self::GRAVEL_AE => '#463d6d',
-            self::WALKING => '#f1c40f',
-            default => '#229954'
+            self::VTT_AE => ColorVariant::SKI,
+            self::ROADBIKE => ColorVariant::PINK,
+            self::GRAVEL => ColorVariant::AMBER,
+            self::GRAVEL_AE => ColorVariant::INDIGO,
+            self::WALKING => ColorVariant::YELLOW,
+            default => ColorVariant::SUCCESS
         };
     }
 

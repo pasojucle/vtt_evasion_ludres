@@ -12,6 +12,7 @@ use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\Member;
 use App\Entity\User;
+use App\Mapper\DropdownMapper;
 use App\Repository\IdentityRepository;
 use App\Repository\LicenceRepository;
 use App\Service\ParameterService;
@@ -39,7 +40,7 @@ class UserDtoTransformer
         private SeasonService $seasonService,
         private ParameterService $parameterService,
         private UserService $userService,
-        private DropdownDtoTransformer $dropdownDtoTransformer,
+        private DropdownMapper $dropdownMapper,
     ) {
     }
 
@@ -139,7 +140,7 @@ class UserDtoTransformer
             $userDto->lastLicence = [
                 'isYearly' => $lastLicence->getState()->isYearly(),
             ];
-            $userDto->dropdown = $this->dropdownDtoTransformer->fromUser($userEntity);
+            $userDto->dropdown = $this->dropdownMapper->fromUser($userEntity);
             $users[] = $userDto;
         }
 
@@ -157,7 +158,7 @@ class UserDtoTransformer
             $userDto->level = $this->levelDtoTransformer->fromEntity($userEntity->getLevel());
             $lastLicence = $userEntity->getLastLicence();
             $userDto->lastLicence = $this->licenceDtoTransformer->registrationFromEntity($lastLicence);
-            $userDto->dropdown = $this->dropdownDtoTransformer->fromLastLicence($lastLicence);
+            $userDto->dropdown = $this->dropdownMapper->fromLastLicence($lastLicence);
             $users[] = $userDto;
         }
 
@@ -173,7 +174,7 @@ class UserDtoTransformer
             $userDto->level = $this->levelDtoTransformer->fromEntity($userEntity->getLevel());
             $lastLicence = $userEntity->getLastLicence();
             $userDto->lastLicence = $this->licenceDtoTransformer->coverageFromEntity($lastLicence);
-            $userDto->dropdown = $this->dropdownDtoTransformer->fromUser($userEntity);
+            $userDto->dropdown = $this->dropdownMapper->fromUser($userEntity);
             $users[] = $userDto;
         }
 

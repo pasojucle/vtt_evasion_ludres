@@ -25,7 +25,7 @@ class GetLogErrors
     public function execute(int $statusCode, Request $request): array
     {
         $query = $this->logErrorRepository->findLogErrorQuery($statusCode);
-        $errors = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $errors = $this->paginator->paginate($query, $request->query->getInt('page', 1), PaginatorService::PAGINATOR_PER_PAGE);
         
         return [
             'errors' => $this->logErrorDtoTransformer->fromEntities($errors),

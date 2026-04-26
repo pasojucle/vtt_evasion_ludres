@@ -8,5 +8,6 @@
   --color-background: oklch(70.8% 0 0);
   --color-foreground: oklch(20.5% 0 0);
   --color-muted: oklch(55.6% 0 0);
-  --color-border: oklch(70.8% 0 0)
+  --color-border: oklch(70.8% 0 0);
+  --color-accent: oklch(50% 0.134 242.749);
 }

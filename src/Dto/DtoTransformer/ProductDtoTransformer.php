@@ -9,6 +9,7 @@ use App\Dto\UserDto;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Member;
 use App\Entity\Product;
+use App\Mapper\DropdownMapper;
 use App\Service\ProjectDirService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -20,7 +21,7 @@ class ProductDtoTransformer
         private UserDtoTransformer $userDtoTransformer,
         private Security $security,
         private ProjectDirService $projectDirService,
-        private DropdownDtoTransformer $dropdownDtoTransformer,
+        private DropdownMapper $dropdownMapper,
     ) {
     }
 
@@ -81,7 +82,7 @@ class ProductDtoTransformer
             $productDto->id = $productEntity->getId();
             $productDto->name = $productEntity->getName();
             $productDto->isDisabled = $productEntity->isDisabled();
-            $productDto->dropdown = $this->dropdownDtoTransformer->fromProduct($productEntity);
+            $productDto->dropdown = $this->dropdownMapper->fromProduct($productEntity);
             $products[] = $productDto;
         }
 

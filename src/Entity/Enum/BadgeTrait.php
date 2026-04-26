@@ -18,8 +18,8 @@ trait BadgeTrait
         }
 
         return [
-            'label' => $this->trans($translator),
-            'color' => $this->color(),
+            'value' => $this->trans($translator),
+            'variant' => $this->variant(),
         ];
     }
 }

@@ -58,7 +58,7 @@ class MemberSkillType extends AbstractType
                     ],
                     'block_prefix' => 'btn_radio',
                     'choice_attr' => function ($choice, string $key, mixed $value) use ($attrClass) {
-                        return array_merge($attrClass, ['data-color' => $choice->color()]);
+                        return array_merge($attrClass, ['data-color' => $choice->variant()]);
                     }
                 ])
                 ->add('skill', HiddenEntityType::class, [

@@ -13,9 +13,24 @@ class PaginatorService
 {
     public const PAGINATOR_PER_PAGE = 15;
 
-    public function paginate(Query|QueryBuilder $query, Request $request, int $limit): Paginator
+    public function paginateFromRequest(Query|QueryBuilder $query, Request $request, int $limit): Paginator
     {
         $currentPage = $request->query->getInt('p') ?: 1;
+
+        $query
+            ->setFirstResult($limit * ($currentPage - 1))
+            ->setMaxResults($limit)
+            ->getQuery()
+        ;
+
+        return new Paginator($query);
+    }
+
+    public function paginate(Query|QueryBuilder $query, ?int $currentPage, int $limit): Paginator
+    {
+        if (!$currentPage) {
+            $currentPage = 1;
+        }
 
         $query
             ->setFirstResult($limit * ($currentPage - 1))

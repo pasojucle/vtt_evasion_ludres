@@ -9,54 +9,26 @@
         </div>
         {{ form_end(form) }}
         {% endif %}
-        {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
+        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'bottom'} %}
         <ul id="orders_container">
-            {% for order in orders %}
-                <li class="col-list col-1md-1sx-btn">
-                    <div class="list-dropdown">
-                        <a href="{{ path('admin_order', {'orderHeader': order.id})}}" class="btn btn-list btn-light" title="Voir la commande" data-turbo-frame="_top">
-                            <div class="row">
-                                <div class="col-md-3 col-xs-12">{{ order.createdAt }}</div>
-                                <div class="col-md-4 col-xs-12">{{ order.user.member.fullName }}</div>
-                                <div class="col-md-2 col-xs-12">{{ order.amount }}</div>
-                                <div class="col-md-3 col-xs-12">{{ order.statusToString }}</div>
-                            </div>
+            {% for item in list.items %}
+                <li class="group relative grid grid-cols-2 lg:grid-cols-[auto_112px] items-center gap-4 border-b border-border">
+                    <div class="group relative grid grid-cols-2 lg:grid-cols-[1fr_2fr_1fr_1fr_40px] items-center gap-4 p-3 bg-neutral-100 hover:bg-neutral-200 transition-colors">
+                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
+                            <span class="sr-only">Voir la commande</span>
                         </a>
+                        {% include 'component/_list_item.html.twig' with {item: item} %}
+                        {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
                     </div>
                     <div>
-                        {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').ORDERED %}
-                            <a class="btn btn-success btn-fixed" href="{{ path('admin_order', {'orderHeader': order.id})}}" title="Valider" data-turbo-frame="_top">
-                                <div><i class="fas fa-check"></i> Valider</div>
-                            </a>
-                        {% endif %}
-                        {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED %}
-                            <a 
-                                class="btn btn-primary order-status btn-fixed" 
-                                href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED.value})}}" 
-                                title="Cloturer" 
-                                data-turbo-method="post"
-                                data-turbo-frame="order-list"
-                            >
-                                <div><i class="fas fa-check"></i> Cloturer</div>
-                            </a>
+                        {% if item.action %}
+                            {% include 'component/button.html.twig' with {button: item.action} %}
                         {% endif %}
                     </div>
-                    <div>
-                        {% if order.status not in [enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED, enum('App\\Entity\\Enum\\OrderStatusEnum').CANCELED] %}
-                            <a 
-                                class="btn btn-danger" 
-                                href="{{ path('order_delete', {'orderHeader': order.id}) }}" 
-                                data-turbo-frame="modal_content" 
-                                title="Annuler"
-                            >
-                                <i class="fas fa-times"></i>
-                            </a>
-                        {% endif %}
-                    </di>
                 </li>
             {% endfor %}
         </ul>
-        {% if orders is empty %}Aucune commande{% endif %}
-        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+        {% if list.items is empty %}Aucune commande{% endif %}
+        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>
 </turbo-frame>

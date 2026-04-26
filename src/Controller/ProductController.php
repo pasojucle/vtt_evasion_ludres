@@ -32,7 +32,7 @@ class ProductController extends AbstractController
         Request $request
     ): Response {
         $query = $productRepository->findAllQuery();
-        $products = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $products = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('product/list.html.twig', [
             'products' => $this->productDtoTransformer->fromEntities($products),

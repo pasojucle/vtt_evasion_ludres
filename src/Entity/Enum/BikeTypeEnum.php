@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Enum;
 
+use App\Dto\Enum\ColorVariant;
 use App\Entity\Enum\BadgeTrait;
 use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
@@ -18,12 +19,12 @@ enum BikeTypeEnum: string implements TranslatableInterface
     use EnumTrait;
     use BadgeTrait;
 
-    public function color(): string
+    public function variant(): ColorVariant
     {
         return match ($this) {
-            self::ELECTRIC => '#2596be',
-            self::MUSCULAR => '#76448a',
-            default => '#229954'
+            self::ELECTRIC => ColorVariant::SKI,
+            self::MUSCULAR => ColorVariant::PINK,
+            default => ColorVariant::SUCCESS,
         };
     }
 

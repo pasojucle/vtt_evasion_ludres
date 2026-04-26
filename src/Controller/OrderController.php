@@ -149,7 +149,7 @@ class OrderController extends AbstractController
         /** @var Member $member */
         $member = $this->getUser();
         $query = $this->orderHeaderRepository->findOrdersByMemberQuery($member);
-        $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $orders = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $this->requestStack->getSession()->set('order_return', $this->generateUrl('user_orders'));
 

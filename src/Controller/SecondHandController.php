@@ -44,7 +44,7 @@ class SecondHandController extends AbstractController
         $user = $this->getUser();
         $novelties = $this->secondHandRepository->findNoveltiesByUserIds($user);
         $query = $this->secondHandRepository->findSecondHandEnabledQuery();
-        $secondHands = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $secondHands = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('second_hand/list.html.twig', [
             'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands, $novelties),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands),

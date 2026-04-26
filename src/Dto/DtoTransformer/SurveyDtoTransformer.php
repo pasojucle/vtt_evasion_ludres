@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\ButtonDto;
+use App\Dto\Enum\ColorVariant;
 use App\Dto\SurveyDto;
 use App\Entity\History;
 use App\Entity\Identity;
 use App\Entity\Member;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
+use App\Mapper\DropdownMapper;
 use App\Service\BikeRideService;
 use App\UseCase\Survey\GetResponsesByUser;
 use Doctrine\Common\Collections\Collection;
@@ -30,7 +32,7 @@ class SurveyDtoTransformer
         private readonly BikeRideService $bikeRideService,
         private readonly EntityManagerInterface $entityManager,
         private readonly RequestStacK $request,
-        private readonly DropdownDtoTransformer $dropdownDtoTransformer,
+        private readonly DropdownMapper $dropdownMapper,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -66,7 +68,7 @@ class SurveyDtoTransformer
     {
         $surveyDto = new surveyDto();
         $surveyDto->title = $survey->getTitle();
-        $surveyDto->dropdown = $this->dropdownDtoTransformer->fromSurvey($survey);
+        $surveyDto->dropdown = $this->dropdownMapper->fromSurvey($survey);
 
         return $surveyDto;
     }
@@ -78,14 +80,14 @@ class SurveyDtoTransformer
             $surveyDto = new surveyDto();
             $surveyDto->id = $surveyEntity->getId();
             $surveyDto->title = $surveyEntity->getTitle();
-            $surveyDto->dropdown = $this->dropdownDtoTransformer->fromSurveyForList($surveyEntity);
+            $surveyDto->dropdown = $this->dropdownMapper->fromSurveyForList($surveyEntity);
             $surveyDto->responseAction = new ButtonDto(
                 $surveyEntity->getTitle(),
                 $this->urlGenerator->generate($surveyEntity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey',
                     ['survey' => $surveyEntity->getId()]),
                 ButtonDto::TOP,
                 null,
-                null,
+                ColorVariant::DEFAULT,
                 'Résultats du sondage'
             );
 

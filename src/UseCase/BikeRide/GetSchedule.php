@@ -6,9 +6,8 @@ namespace App\UseCase\BikeRide;
 
 use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\DropdownDtoTransformer;
+use App\Mapper\DropdownMapper;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\RouteDto;
 use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
@@ -20,6 +19,7 @@ use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use ValueError;
 
 class GetSchedule
@@ -28,11 +28,12 @@ class GetSchedule
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private DropdownDtoTransformer $dropdownDtoTransformer,
+        private DropdownMapper $dropdownMapper,
         private BikeRideRepository $bikeRideRepository,
         private ContentRepository $contentRepository,
         private GetFilters $getFilters,
-        private FormFactoryInterface $formFactory
+        private FormFactoryInterface $formFactory,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -71,7 +72,7 @@ class GetSchedule
         $parameters = [];
         if (null === $filters['limit']) {
             $query = $this->bikeRideRepository->findAllQuery($filters);
-            $bikeRides = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+            $bikeRides = $this->paginator->paginate($query, $request->query->getInt('page', 1), PaginatorService::PAGINATOR_PER_PAGE);
             $parameters['paginator'] = $this->paginatorDtoTransformer->fromEntities($bikeRides, $filters);
         } else {
             $bikeRides = $this->bikeRideRepository->findAllFiltered($filters);
@@ -121,9 +122,9 @@ class GetSchedule
 
     private function settings(): DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromSettings('BIKE_RIDE');
-        $dropdown->addMenuItem('Types de rando', new RouteDto('admin_bike_ride_types'));
-        $dropdown->addMenuItem('Indemnités', new RouteDto('admin_indemnity_list'));
+        $dropdown = $this->dropdownMapper->settingsFromSection('BIKE_RIDE');
+        $dropdown->addMenuItem('Types de rando', $this->urlGenerator->generate('admin_bike_ride_types'));
+        $dropdown->addMenuItem('Indemnités', $this->urlGenerator->generate('admin_indemnity_list'));
 
         return $dropdown;
     }

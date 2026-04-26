@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\DropdownDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\Admin\MemberType;
@@ -39,7 +38,6 @@ class UserController extends AbstractController
     #[IsGranted('USER_LIST')]
     public function adminUsers(
         GetMembersFiltered $getMembersFiltered,
-        DropdownDtoTransformer $dropdownDtoTransformer,
         Request $request,
         bool $filtered
     ): Response {

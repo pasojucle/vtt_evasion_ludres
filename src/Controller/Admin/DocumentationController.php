@@ -41,7 +41,7 @@ class DocumentationController extends AbstractController
         Request $request,
     ): Response {
         $query = $this->documentationRepository->findDocumentationQuery();
-        $documentations = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $documentations = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('documentation/admin/list.html.twig', [
             'documentations' => $documentations,

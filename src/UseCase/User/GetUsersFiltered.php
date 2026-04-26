@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\User;
 
 use App\Dto\DropdownDto;
-use App\Dto\DtoTransformer\DropdownDtoTransformer;
+use App\Mapper\DropdownMapper;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Member;
@@ -42,7 +42,7 @@ abstract class GetUsersFiltered
         protected MemberRepository $memberRepository,
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
-        protected DropdownDtoTransformer $dropdownDtoTransformer,
+        protected DropdownMapper $dropdownMapper,
     ) {
     }
 
@@ -76,7 +76,7 @@ abstract class GetUsersFiltered
 
         $this->setRedirect($request);
 
-        $users = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $users = $this->paginator->paginate($query, $request->query->getInt('page', 1), PaginatorService::PAGINATOR_PER_PAGE);
 
         $paginator = $this->paginatorDtoTransformer->fromEntities($users, ['filtered' => (int) $filtered]);
 

@@ -6,7 +6,7 @@ namespace App\UseCase\BikeRideType;
 
 use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideTypeDtoTransformer;
-use App\Dto\DtoTransformer\DropdownDtoTransformer;
+use App\Mapper\DropdownMapper;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\RouteDto;
 use App\Repository\BikeRideTypeRepository;
@@ -21,7 +21,7 @@ class GetBikeRideTypeList
         private BikeRideTypeDtoTransformer $bikeRideTypeDtoTransformer,
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
-        private DropdownDtoTransformer $dropdownDtoTransformer,
+        private DropdownMapper $dropdownMapper,
         private UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -29,7 +29,7 @@ class GetBikeRideTypeList
     public function execute(Request $request): array
     {
         $query = $this->bikeRideTypeRepository->findBikeRideTypeQuery();
-        $bikeRideTypes = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $bikeRideTypes = $this->paginator->paginate($query, $request->query->getInt('page', 1), PaginatorService::PAGINATOR_PER_PAGE);
         return [
             'bikeRideTypes' => $this->bikeRideTypeDtoTransformer->fromEntities($bikeRideTypes),
             'paginator' => $this->paginatorDtoTransformer->fromEntities($bikeRideTypes),
@@ -39,11 +39,11 @@ class GetBikeRideTypeList
 
     private function settings(): DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromSettings('BIKE_RIDE_TYPE');
-        $dropdown->setUrlGenerator($this->urlGenerator);
+        $dropdown = $this->dropdownMapper->settingsFromSection('BIKE_RIDE_TYPE');
+        
         $dropdown->addMenuItem(
             'Ajouter un message',
-            new RouteDto('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
+            $this->urlGenerator->generate('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
             'lucide:message-circle-plus'
         );
         return $dropdown;

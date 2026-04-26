@@ -132,6 +132,6 @@ class SessionDtoTransformer
 
     private function getBadge(PracticeEnum $practice): string
     {
-        return sprintf('<span class="bs-badge" style="background-color:%s">%s</span>', $practice->color(), $practice->trans($this->translator));
+        return sprintf('<span class="bs-badge" style="background-color:%s">%s</span>', $practice->variant()->value, $practice->trans($this->translator));
     }
 }

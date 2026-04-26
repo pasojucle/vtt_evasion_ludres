@@ -37,7 +37,7 @@ class BackgroundController extends AbstractController
         Request $request,
     ): Response {
         $query = $this->backgroundRepository->findAllQuery();
-        $backgrounds = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $backgrounds = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('background/admin/list.html.twig', [
             'backgrounds' => $this->backgroundDtoTransformer->fromEntities($backgrounds),

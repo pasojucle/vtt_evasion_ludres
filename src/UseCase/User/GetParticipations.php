@@ -7,7 +7,7 @@ namespace App\UseCase\User;
 use App\Dto\BikeRideDto;
 use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\DropdownDtoTransformer;
+use App\Mapper\DropdownMapper;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RouteDto;
@@ -45,7 +45,7 @@ class GetParticipations
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LevelService $levelService,
         private readonly TranslatorInterface $translator,
-        private readonly DropdownDtoTransformer $dropdownDtoTransformer,
+        private readonly DropdownMapper $dropdownMapper,
     ) {
     }
 
@@ -246,11 +246,11 @@ class GetParticipations
 
     public function tools(): ?DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromTools();
+        $dropdown = $this->dropdownMapper->fromTools();
 
         $dropdown->addMenuItem(
             'Exporter la sélection',
-            new RouteDto('admin_participations_export'),
+            $this->urlGenerator->generate('admin_participations_export'),
             'lucide:file-down',
         );
 

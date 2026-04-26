@@ -1,0 +1,16 @@
+{% macro color_class(variant) %}
+    {% set classes = {
+        (enum('App\\Dto\\Enum\\ColorVariant').SUCCESS.value): 'bg-success hover:bg-success/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').WARNING.value): 'bg-warning hover:bg-warning/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').DESTRUCTIVE.value): 'bg-destructive hover:bg-destructive/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').ACCENT.value): 'bg-accent hover:bg-accent/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').DROPDOWN.value): 'text-foreground lg:text-muted lg:hover:text-foreground',
+        (enum('App\\Dto\\Enum\\ColorVariant').DEFAULT.value): 'bg-neutral-300 hover:bg-neutral-200',
+        (enum('App\\Dto\\Enum\\ColorVariant').SKI.value): 'bg-sky-700 hover:bg-sky-700/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').PINK.value): 'bg-pink-700 hover:bg-pink-700/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').AMBER.value): 'bg-amber-700 hover:bg-amber-700/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').INDIGO.value): 'bg-indigo-700 hover:bg-indigo-700/60 text-white',
+        (enum('App\\Dto\\Enum\\ColorVariant').YELLOW.value): 'bg-yellow-400 hover:bg-sky-700/60 text-white',
+    } %}
+    {{ classes[variant] ?? classes.default }}
+{% endmacro %}

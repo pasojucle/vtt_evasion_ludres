@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use App\Entity\Enum\OrderLineStateEnum;
 use App\Repository\OrderLineRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderLineRepository::class)]

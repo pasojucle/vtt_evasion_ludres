@@ -66,16 +66,16 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 
     public function settings(): ?DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromSettings('REGISTRATION');
-        $dropdown->addMenuItem('Étapes des inscriptions', new RouteDto('admin_registration_step_list'));
-        $dropdown->addMenuItem('Gestions des autorisations', new RouteDto('admin_agreement_list'));
+        $dropdown = $this->dropdownMapper->settingsFromSection('REGISTRATION');
+        $dropdown->addMenuItem('Étapes des inscriptions', $this->urlGenerator->generate('admin_registration_step_list'));
+        $dropdown->addMenuItem('Gestions des autorisations', $this->urlGenerator->generate('admin_agreement_list'));
 
         return $dropdown;
     }
     
     public function tools(): ?DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromTools();
+        $dropdown = $this->dropdownMapper->fromTools();
 
         $dropdown->addActionItem(
             'Copier les emails de la séléction',
@@ -89,7 +89,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 
         $dropdown->addMenuItem(
             'Exporter la sélection',
-            new RouteDto('admin_registrations_export'),
+            $this->urlGenerator->generate('admin_registrations_export'),
             'lucide:file-down',
         );
 

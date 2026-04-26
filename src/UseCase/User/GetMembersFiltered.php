@@ -47,31 +47,31 @@ class GetMembersFiltered extends GetUsersFiltered
 
     public function settings(): ?DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromSettings('USER');
-        $dropdown->addMenuItem('Niveaux', new RouteDto('admin_levels'));
-        $dropdown->addMenuItem('Compétences', new RouteDto('admin_skill_list'));
-        $dropdown->addMenuItem('Roles du bureau et comité', new RouteDto('admin_board_role_list'));
+        $dropdown = $this->dropdownMapper->settingsFromSection('USER');
+        $dropdown->addMenuItem('Niveaux', $this->urlGenerator->generate('admin_levels'));
+        $dropdown->addMenuItem('Compétences', $this->urlGenerator->generate('admin_skill_list'));
+        $dropdown->addMenuItem('Roles du bureau et comité', $this->urlGenerator->generate('admin_board_role_list'));
 
         return $dropdown;
     }
 
     public function tools(): ?DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromTools();
+        $dropdown = $this->dropdownMapper->fromTools();
 
         $dropdown->addMenuItem(
             'Exporter la sélection',
-            new RouteDto('admin_members_export'),
+            $this->urlGenerator->generate('admin_members_export'),
             'lucide:file-down',
         );
         $dropdown->addMenuItem(
             'Exporter les évaluations de la sélection',
-            new RouteDto('admin_user_skill_export'),
+            $this->urlGenerator->generate('admin_user_skill_export'),
             'lucide:file-down',
         );
         $dropdown->addMenuItem(
             'Synthèse par saison',
-            new RouteDto('admin_overview_season'),
+            $this->urlGenerator->generate('admin_overview_season'),
             'lucide:chart-scatter',
         );
         $dropdown->addActionItem(

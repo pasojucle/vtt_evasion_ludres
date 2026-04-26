@@ -50,7 +50,7 @@ class SurveyController extends AbstractController
         SurveyDtoTransformer $surveyDtoTransformer,
     ): Response {
         $query = $surveyRepository->findAllDESCQuery();
-        $surveys = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $surveys = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('survey/admin/list.html.twig', [
             'surveys' => $this->surveyDtoTransformer->listFromEntities($surveys),

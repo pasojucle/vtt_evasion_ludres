@@ -1,0 +1,16 @@
+{% set base_classes = 'block px-3 py-2 rounded transition' %}
+
+{% import "component/_macros.html.twig" as utils %}
+
+<a href="{{ button.url }}" 
+   title="{{ button.title }}"
+   class="{{ base_classes }} {{ utils.color_class(button.variant.value) }}"
+    {% for attribut, value in button.htmlAttributes %}
+        {{ attribut }}="{{ value}}"
+    {% endfor %}
+>
+        <div class="flex items-center gap-2">
+        {% if button.icon %}{{ ux_icon(button.icon) }}{% endif %}
+        <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ button.label}}</div>
+    </div>
+</a>

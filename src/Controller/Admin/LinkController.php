@@ -40,7 +40,7 @@ class LinkController extends AbstractController
         int $position
     ): Response {
         $query = $this->linkRepository->findLinkQuery($position);
-        $links = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $links = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('link/admin/list.html.twig', [
             'links' => $links,

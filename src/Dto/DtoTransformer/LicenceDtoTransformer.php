@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\ButtonDto;
+use App\Dto\Enum\ColorVariant;
 use App\Dto\LicenceDto;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
@@ -106,7 +107,7 @@ class LicenceDtoTransformer
                 $this->urlGenerator->generate('admin_registration_receive', ['licence' => $licence->getId()]),
                 ButtonDto::MODAL_CONTENT,
                 'lucide:square-check-big',
-                'btn btn-success',
+                ColorVariant::SUCCESS,
                 'Réceptionner le dossier d\'inscription'
             ),
             $state->toRegister() => new ButtonDto(
@@ -114,7 +115,7 @@ class LicenceDtoTransformer
                 $this->urlGenerator->generate('admin_registration_register', ['licence' => $licence->getId()]),
                 ButtonDto::MODAL_CONTENT,
                 'lucide:square-check-big',
-                'btn btn-success',
+                ColorVariant::SUCCESS,
                 'Inscrire à la FFvélo'
             ),
             default => null
@@ -133,7 +134,7 @@ class LicenceDtoTransformer
             $this->urlGenerator->generate('admin_coverage_validate', ['licence' => $licence->getId()]),
             ButtonDto::MODAL_CONTENT,
             'lucide:square-check-big',
-            'btn btn-success',
+            ColorVariant::SUCCESS,
             'Valider l\'assurance ffvélo'
         );
 

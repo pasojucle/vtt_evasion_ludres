@@ -42,7 +42,7 @@ class SecondHandController extends AbstractController
         bool $valid,
     ): Response {
         $query = $this->secondHandRepository->findSecondHandQuery($valid);
-        $secondHands = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $secondHands = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('second_hand/admin/list.html.twig', [
             'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands, ['type' => (int)$valid]),

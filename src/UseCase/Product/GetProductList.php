@@ -23,7 +23,7 @@ class GetProductList
     public function execute(Request $request): array
     {
         $query = $this->productRepository->findAllQuery();
-        $products = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $products = $this->paginator->paginate($query, $request->query->getInt('page', 1), PaginatorService::PAGINATOR_PER_PAGE);
 
         return [
             'products' => $this->productDtoTransformer->listFromEntities($products),

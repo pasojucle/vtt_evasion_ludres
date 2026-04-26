@@ -56,7 +56,7 @@ class GetParticipation
         $session->set($this->filterName, $filters);
         $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
 
-        $sessions = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $sessions = $this->paginator->paginate($query, $request->query->getInt('page', 1), PaginatorService::PAGINATOR_PER_PAGE);
 
         return [
             'user' => $this->userDtoTransformer->fromEntity($user),

@@ -46,7 +46,7 @@ class MessageController extends AbstractController
             $section = $form->get('section')->getData();
         }
         $query = $this->messageRepository->findMessageQuery($section);
-        $messages = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $messages = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('message/admin/list.html.twig', [
             'form' => $form->createView(),
             'messages' => $messageDtoTransformer->fromEntities($messages),

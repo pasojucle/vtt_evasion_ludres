@@ -31,17 +31,7 @@
 
       {% for item in dropdown.menuItems %}
           <li>
-            <a 
-              class="block px-3 py-2 text-foreground lg:text-muted lg:hover:text-foreground"
-              href="{{ item.url }}" 
-              title="{{ item.label }}"
-              data-turbo-frame="{{ item.target}}"
-              data-action="click->dropdown#close"
-            >
-              <div class="flex items-center gap-2">
-                {{ ux_icon(item.icon) }} <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ item.label}}</div>
-              </div>
-            </a>
+            {% include 'component/button.html.twig'  with {button: item} %}
           </li>
       {% endfor %}
       {% for item in dropdown.actionItems %}

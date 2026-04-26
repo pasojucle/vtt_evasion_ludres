@@ -1,6 +1,7 @@
-{# _badge.html.twig #}
-{% if badge %}
-    <div class="flex items-center">
-        <div class="px-1 rounded-sm text-xs text-white" style="background-color: {{ badge.color}}">{{ badge.label}}</div>
+{% import "component/_macros.html.twig" as utils %}
+
+<div class="flex items-center">
+    <div class="px-1 rounded-sm text-xs {{ utils.color_class(badge.variant.value) }}">
+        {{ badge.value}}
     </div>
-{% endif %}
+</div>

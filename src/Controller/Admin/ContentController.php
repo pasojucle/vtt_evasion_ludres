@@ -54,7 +54,7 @@ class ContentController extends AbstractController
         }
 
         $query = $this->contentRepository->findContentQuery($route, $kind);
-        $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $contents = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('content/admin/home_contents.html.twig', [
             'contents' => $contents,
@@ -73,7 +73,7 @@ class ContentController extends AbstractController
         ?string $route
     ): Response {
         $query = $this->contentRepository->findContentQuery($route, null);
-        $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $contents = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('content/admin/list.html.twig', [
             'contents' => $this->contentDtoTransformer->fromEntities($contents)->contents,

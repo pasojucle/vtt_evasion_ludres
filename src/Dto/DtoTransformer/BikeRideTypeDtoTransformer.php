@@ -8,12 +8,13 @@ use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Message;
+use App\Mapper\DropdownMapper;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class BikeRideTypeDtoTransformer
 {
     public function __construct(
-        private DropdownDtoTransformer $dropdownDtoTransformer,
+        private DropdownMapper $dropdownMapper,
     ) {
     }
 
@@ -29,7 +30,7 @@ class BikeRideTypeDtoTransformer
         $bikeRideTypeDto->isNeedFramers = $bikeRideType->isNeedFramers();
         $bikeRideTypeDto->messages = $this->getMessages($bikeRideType);
         $bikeRideTypeDto->displayPractice = $bikeRideType->isDisplayBikeKind();
-        $bikeRideTypeDto->dropdown = $this->dropdownDtoTransformer->fromBikeRideType($bikeRideType);
+        $bikeRideTypeDto->dropdown = $this->dropdownMapper->fromBikeRideType($bikeRideType);
 
         return $bikeRideTypeDto;
     }

@@ -54,7 +54,7 @@ class GetCoveragesFiltered extends GetUsersFiltered
     
     public function tools(): ?DropdownDto
     {
-        $dropdown = $this->dropdownDtoTransformer->fromTools();
+        $dropdown = $this->dropdownMapper->fromTools();
 
         $dropdown->addActionItem(
             'Copier les emails de la séléction',
@@ -68,7 +68,7 @@ class GetCoveragesFiltered extends GetUsersFiltered
 
         $dropdown->addMenuItem(
             'Exporter la sélection',
-            new RouteDto('admin_coverages_export'),
+            $this->urlGenerator->generate('admin_coverages_export'),
             'lucide:file-down',
         );
      
