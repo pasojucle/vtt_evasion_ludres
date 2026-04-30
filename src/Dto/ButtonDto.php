@@ -11,22 +11,26 @@ class ButtonDto
     public const string TOP = '_top';
     public const string MODAL_CONTENT = 'modal_content';
 
-    public array $htmlAttributes = [];
-
+    /**
+     * @param string $label
+     * @param string $url
+     * @param mixed $icon
+     * @param ColorVariant $variant
+     * @param mixed $className
+     * @param HtmlAttributDto[] $htmlAttributes
+     */
     public function __construct(
         public string $label,
         public string $url,
-        string $turboFrame = self::TOP,
         public ?string $icon = null,
         public ColorVariant $variant = ColorVariant::DEFAULT,
         public ?string $className = null,
-        public ?string $title = null,
-    ) {
-        $this->htmlAttributes['data-turbo-frame'] = $turboFrame;
-    }
-
-    public function addHtmlAttribut(string $name, string $value): void
+        public array $htmlAttributes = [
+            new HtmlAttributDto('data-turbo-frame', self::TOP)
+        ],
+        public string $title = '',
+    ) 
     {
-        $this->htmlAttributes[$name] = $value;
+
     }
 }

@@ -1,0 +1,29 @@
+<turbo-frame id="order-list">
+    <div class="wrapper-body">
+        {% include 'component/button.html.twig' with {button: list.addItem} %}
+
+        {% if form is defined %}
+        {{ form_start(form) }}
+        <div class="filters">
+            <ul>
+                <li>{{ form_widget(form.status)}}</li>
+            </ul>
+        </div>
+        {{ form_end(form) }}
+        {% endif %}
+        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'bottom'} %}
+        <ul id="orders_container">
+            {% for item in list.items %}
+                <li class="group relative grid grid-cols-2 lg:grid-cols-[auto_40px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-neutral-100 hover:bg-neutral-200 transition-colors border-b border-border">
+                    <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
+                        <span class="sr-only">Voir le sondage</span>
+                    </a>
+                    {% include 'component/_list_item.html.twig' with {item: item} %}
+                    {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
+                </li>
+            {% endfor %}
+        </ul>
+        {% if list.items is empty %}Aucun sondage{% endif %}
+        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
+    </div>
+</turbo-frame>

@@ -212,6 +212,10 @@ survey:
     check: oui/non
     choice: oui/non/ne se prononce pas
     string: Réponse libre
+  filter:
+    pending: En cours
+    expired: Expirée
+    disabled: Désactivé
 
 second_hand:
   valided: Validées

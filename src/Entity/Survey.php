@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\SurveyStatusEnum;
 use App\Form\Admin\SurveyType;
 use App\Repository\SurveyRepository;
 use DateInterval;
@@ -286,5 +287,17 @@ class Survey
         $this->levelFilter = $levelFilter;
 
         return $this;
+    }
+
+    public function getStatus(): SurveyStatusEnum
+    {
+        if ($this->isDisabled()) {
+            return SurveyStatusEnum::DISABLED;
+        }
+        if ($this->getEndAt() < (new DateTime())->setTime(0,0,0)) {
+            return SurveyStatusEnum::EXPIRED;
+        }
+
+        return SurveyStatusEnum::PENDING;
     }
 }

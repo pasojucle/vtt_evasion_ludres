@@ -12,8 +12,8 @@
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'bottom'} %}
         <ul id="orders_container">
             {% for item in list.items %}
-                <li class="group relative grid grid-cols-2 lg:grid-cols-[auto_112px] items-center gap-4 border-b border-border">
-                    <div class="group relative grid grid-cols-2 lg:grid-cols-[1fr_2fr_1fr_1fr_40px] items-center gap-4 p-3 bg-neutral-100 hover:bg-neutral-200 transition-colors">
+                <li class="group relative grid grid-cols-2 lg:grid-cols-[auto_112px] items-center gap-4">
+                    <div class="group relative grid grid-cols-2 lg:grid-cols-[1fr_2fr_1fr_1fr_40px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-neutral-100 hover:bg-neutral-200 transition-colors border-b border-border">
                         <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
                             <span class="sr-only">Voir la commande</span>
                         </a>

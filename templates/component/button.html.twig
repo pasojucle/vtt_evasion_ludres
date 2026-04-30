@@ -5,8 +5,8 @@
 <a href="{{ button.url }}" 
    title="{{ button.title }}"
    class="{{ base_classes }} {{ utils.color_class(button.variant.value) }}"
-    {% for attribut, value in button.htmlAttributes %}
-        {{ attribut }}="{{ value}}"
+    {% for attribut in button.htmlAttributes %}
+        {{ attribut.name }}="{{ attribut.value }}"
     {% endfor %}
 >
         <div class="flex items-center gap-2">

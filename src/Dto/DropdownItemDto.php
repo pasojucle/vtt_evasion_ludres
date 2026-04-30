@@ -6,10 +6,16 @@ namespace App\Dto;
 
 readonly class DropdownItemDto
 {
+    /**
+     * @param string $label
+     * @param string $icon
+     * @param HtmlAttributDto[] $htmlAttributes
+     */
     public function __construct(
-        public string $label,
-        public string $icon,
-        public array $data = [],
+        public readonly string $label,
+        public readonly string $icon,
+        public array $htmlAttributes = [],
     ) {
+
     }
 }

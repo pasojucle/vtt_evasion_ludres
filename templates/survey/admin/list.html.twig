@@ -2,28 +2,21 @@
 
 {% block title %}Gestion des sondages{% endblock %}
 
-{% block body %}  
- <div class="wrapper">
-    <div class="wrapper-title">
-        <h1 class="font-bold text-3xl">Sondage</h1>
-        <span class="tools">
-        </span>
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1 class="font-bold text-3xl">Sondages - <span class="badge badge-info">{{ list.paginator.total }}</span></h1>
+            <div class="tool-group">
+                <a 
+                    href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
+                    target="_blank" 
+                    title="wiki"
+                    class="text-foreground lg:text-muted lg:hover:text-foreground"
+                >
+                    {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
+                </a>
+            </div>
+        </div>
+        {% include('survey/admin/_frame_list.html.twig') %}
     </div>
-    <div class="wrapper-body">
-        <a href="{{ path('admin_survey_add') }}" class="btn btn-primary" title="Ajouter un survey"><i class="fas fa-plus"></i> Ajouter</a>
-        {% include 'component/pagination.html.twig' with {'margin': 'both'} %}
-        <ul>
-            {% for survey in surveys %}
-                <li class="list-dropdown">
-                    <a href="{{ survey.responseAction.url }}" class="btn btn-list" title="survey.responseAction.title">
-                        {{ survey.responseAction.label }}
-                    </a>
-                    {% include 'component/dropdown.html.twig' with {'dropdown': survey.dropdown} %}
-                </li>  
-            {% endfor %}
-        </ul>
-        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
-    </div>
-</div>
-
 {% endblock %}

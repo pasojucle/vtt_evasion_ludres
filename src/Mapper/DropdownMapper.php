@@ -6,6 +6,8 @@ namespace App\Mapper;
 
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
+use App\Dto\Enum\ColorVariant;
+use App\Dto\HtmlAttributDto;
 use App\Dto\RouteDto;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
@@ -238,23 +240,6 @@ class DropdownMapper
         return $dropdown;
     }
 
-    public function fromSurvey(Survey $survey): DropdownDto
-    {
-        $dropdown = new DropdownDto();
-        
-        $dropdown->addActionItem(
-            'Copier les emails de la séléction',
-            'lucide:clipboard-type',
-            [
-                'data-email-to-clipboard-url-value' => $this->urlGenerator->generate('admin_survey_email_to_clipboard'),
-                'data-controller' => 'email-to-clipboard',
-                'data-action' => 'click->email-to-clipboard#emailToClipboard click->dropdown#close',
-            ]
-        );
-
-        return $dropdown;
-    }
-
     public function fromSurveyForList(Survey $survey): DropdownDto
     {
         $dropdown = new DropdownDto();
@@ -319,17 +304,7 @@ class DropdownMapper
         return $dropdown;
     }
 
-    public function settingsFromSection(string $sectionName): DropdownDto
-    {
-        $dropdown = new DropdownDto();
-        
-        $dropdown->trigger = 'lucide:sliders-horizontal';
-        $dropdown->position = 'relative';
-        $this->addParameters($dropdown, $this->parameterRepository->findByParameterGroupName($sectionName));
-        $this->addMessages($dropdown, $this->messageService->getMessagesBySectionName($sectionName));
 
-        return $dropdown;
-    }
 
     public function fromTools(): DropdownDto
     {
@@ -340,28 +315,5 @@ class DropdownMapper
         return $dropdown;
     }
 
-    private function addParameters(DropdownDto $dropdown, array $parameters): void
-    {
-        /** @var Parameter $parameter */
-        foreach ($parameters as $parameter) {
-            $dropdown->addSectionItem(
-                $parameter->getLabel(),
-                $this->urlGenerator->generate('admin_parameter_edit', ['name' => $parameter->getName()]),
-                'lucide:settings-2',
-                ButtonDto::MODAL_CONTENT,
-            );
-        }
-    }
-
-    private function addMessages(DropdownDto $dropdown, array $messages): void
-    {
-        foreach ($messages as $message) {
-            $dropdown->addSectionItem(
-                $message['label'],
-                $this->urlGenerator->generate('admin_message_edit_content', ['message' => $message['id']]),
-                'lucide:message-circle',
-                ButtonDto::MODAL_CONTENT,
-            );
-        }
-    }
+    
 }

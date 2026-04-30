@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\SurveyStatusEnum;
 use App\Entity\History;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -199,5 +201,36 @@ class SurveyRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException) {
             return null;
         }
+    }
+
+    public function findSurveyQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('s')
+            ->orderBy('s.startAt', 'DESC')
+        ;
+    }
+
+    public function filterPending(QueryBuilder $qb, DateTime $today): void
+    {
+        $qb->andWhere(
+            $qb->expr()->gte('s.endAt',':today'),
+        )
+        ->setParameter('today', $today);
+    }
+
+    public function filterExpired(QueryBuilder $qb, DateTime $today): void
+    {
+        $qb->andWhere(
+            $qb->expr()->lt('s.endAt',':today'),
+        )
+        ->setParameter('today', $today);
+    }
+
+    public function filterDisabled(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->lt('s.disabled',':disabled')
+        )
+        ->setParameter('disabled', true);
     }
 }

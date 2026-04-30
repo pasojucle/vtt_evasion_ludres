@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
+use App\Dto\Filter\SurveyFilter;
+use App\Entity\Enum\SurveyStatusEnum;
 use App\Entity\History;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
+use App\Form\Admin\SurveyListFilterType;
 use App\Form\Admin\SurveyType;
 use App\Repository\SurveyIssueRepository;
-use App\Repository\SurveyRepository;
-use App\Service\PaginatorService;
 use App\Service\SurveyService;
+use App\State\Survey\Provider\SurveyAdminListProvider;
 use App\UseCase\Survey\ExportSurvey;
 use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
@@ -44,19 +45,31 @@ class SurveyController extends AbstractController
     #[IsGranted('SURVEY_LIST')]
     public function list(
         Request $request,
-        PaginatorService $paginator,
-        PaginatorDtoTransformer $paginatorDtoTransformer,
-        SurveyRepository $surveyRepository,
-        SurveyDtoTransformer $surveyDtoTransformer,
+        SurveyAdminListProvider $provider,
     ): Response {
-        $query = $surveyRepository->findAllDESCQuery();
-        $surveys = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $statusQuery = $request->query->get('status');
+        $filter = new SurveyFilter($statusQuery ? SurveyStatusEnum::tryFrom($statusQuery) : $statusQuery);
+
+        $form = $this->createForm(SurveyListFilterType::class, $filter);
+        $form->handleRequest($request);
 
         return $this->render('survey/admin/list.html.twig', [
-            'surveys' => $this->surveyDtoTransformer->listFromEntities($surveys),
-            'paginator' => $paginatorDtoTransformer->fromEntities($surveys),
+            'form' => $form->createView(),
+            'list' => $provider->getCollection(
+                $filter, 
+                $request->attributes->get('_route'), 
+                $request->query->getInt('page', 1),
+            ),
         ]);
+        // $query = $surveyRepository->findAllDESCQuery();
+        // $surveys = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+
+        // return $this->render('survey/admin/list.html.twig', [
+        //     'surveys' => $this->surveyDtoTransformer->listFromEntities($surveys),
+        //     'paginator' => $paginatorDtoTransformer->fromEntities($surveys),
+        // ]);
     }
+
 
     #[Route('/', name: 'admin_survey_add', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_ADD')]
