@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\UseCase\Coverage;
 
+use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
-use App\Dto\RouteDto;
+use App\Dto\DropdownItemDto;
+use App\Dto\Enum\ColorVariant;
+use App\Dto\HtmlAttributDto;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 
 class GetCoveragesFiltered extends GetUsersFiltered
 {
@@ -54,25 +56,30 @@ class GetCoveragesFiltered extends GetUsersFiltered
     
     public function tools(): ?DropdownDto
     {
-        $dropdown = $this->dropdownMapper->fromTools();
-
-        $dropdown->addActionItem(
-            'Copier les emails de la séléction',
-            'lucide:clipboard-type',
-            [
-                'data-controller' => 'email-to-clipboard click->dropdown#close',
-                'data-action' => 'click->email-to-clipboard#emailToClipboard',
-                'data-email-to-clipboard-url-value' => $this->urlGenerator->generate('admin_coverages_email_to_clipboard'),
+        return new DropdownDto(
+            position: 'relative',
+            menuItems: [
+                new ButtonDto(
+                    label: 'Exporter la sélection',
+                    url: $this->urlGenerator->generate('admin_coverages_export'),
+                    icon: 'lucide:file-down',
+                    variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    ],
+                )
+            ],
+            actionItems: [
+                new DropdownItemDto(
+                    label: 'Copier les emails de la séléction',
+                    icon: 'lucide:clipboard-type',
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributDto('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_coverages_email_to_clipboard')),
+                    ],
+                ),
             ],
         );
-
-        $dropdown->addMenuItem(
-            'Exporter la sélection',
-            $this->urlGenerator->generate('admin_coverages_export'),
-            'lucide:file-down',
-        );
-     
-
-        return $dropdown;
     }
 }

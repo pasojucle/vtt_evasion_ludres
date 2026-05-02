@@ -14,9 +14,9 @@ class ButtonDto
     /**
      * @param string $label
      * @param string $url
-     * @param mixed $icon
+     * @param string|null $icon
      * @param ColorVariant $variant
-     * @param mixed $className
+     * @param string|null $className
      * @param HtmlAttributDto[] $htmlAttributes
      */
     public function __construct(

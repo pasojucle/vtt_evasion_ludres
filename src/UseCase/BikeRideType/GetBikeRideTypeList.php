@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRideType;
 
+use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideTypeDtoTransformer;
-use App\Mapper\DropdownMapper;
+use App\Dto\Enum\ColorVariant;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\RouteDto;
+use App\Mapper\DropdownSettingsMapper;
 use App\Repository\BikeRideTypeRepository;
 use App\Service\PaginatorService;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ class GetBikeRideTypeList
         private BikeRideTypeDtoTransformer $bikeRideTypeDtoTransformer,
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
-        private DropdownMapper $dropdownMapper,
+        private DropdownSettingsMapper $dropdownSettingsMapper,
         private UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -39,13 +40,13 @@ class GetBikeRideTypeList
 
     private function settings(): DropdownDto
     {
-        $dropdown = $this->dropdownMapper->settingsFromSection('BIKE_RIDE_TYPE');
-        
-        $dropdown->addMenuItem(
-            'Ajouter un message',
-            $this->urlGenerator->generate('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
-            'lucide:message-circle-plus'
-        );
-        return $dropdown;
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', [
+            new ButtonDto(
+                label: 'Ajouter un message',
+                url: $this->urlGenerator->generate('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
+                icon: 'lucide:message-circle-plus',
+                variant: ColorVariant::DROPDOWN,
+            ),
+        ]);
     }
 }

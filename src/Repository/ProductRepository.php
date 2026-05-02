@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Dto\Enum\ProductStateEnum;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -23,14 +24,23 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findAllQuery(): QueryBuilder
+    public function findProductQuery(?ProductStateEnum $state): QueryBuilder
     {
-        return $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('p')
             ->where(
-                (new Expr())->eq('p.deleted', ':isDeleted')
+                (new Expr())->eq('p.deleted', ':isDeleted'),
             )
             ->setParameter('isDeleted', false)
             ->orderBy('p.name', 'ASC')
         ;
+        if ($state) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('p.isDisabled',':state')
+                )
+                ->setParameter('state', ProductStateEnum::DISABLED === $state);
+        }
+
+        return $qb;
     }
 }

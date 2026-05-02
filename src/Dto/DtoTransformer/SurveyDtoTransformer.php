@@ -13,6 +13,7 @@ use App\Entity\Member;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Mapper\DropdownMapper;
+use App\Mapper\Survey\SurveyAdminDropdownMapper;
 use App\Service\BikeRideService;
 use App\UseCase\Survey\GetResponsesByUser;
 use Doctrine\Common\Collections\Collection;
@@ -33,6 +34,7 @@ class SurveyDtoTransformer
         private readonly EntityManagerInterface $entityManager,
         private readonly RequestStacK $request,
         private readonly DropdownMapper $dropdownMapper,
+        private readonly SurveyAdminDropdownMapper $surveyAdminDropdownMapper,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -68,7 +70,7 @@ class SurveyDtoTransformer
     {
         $surveyDto = new surveyDto();
         $surveyDto->title = $survey->getTitle();
-        $surveyDto->dropdown = $this->dropdownMapper->fromSurvey($survey);
+        $surveyDto->dropdown = $this->surveyAdminDropdownMapper->mapToView($survey);;
 
         return $surveyDto;
     }
@@ -82,13 +84,12 @@ class SurveyDtoTransformer
             $surveyDto->title = $surveyEntity->getTitle();
             $surveyDto->dropdown = $this->dropdownMapper->fromSurveyForList($surveyEntity);
             $surveyDto->responseAction = new ButtonDto(
-                $surveyEntity->getTitle(),
-                $this->urlGenerator->generate($surveyEntity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey',
-                    ['survey' => $surveyEntity->getId()]),
-                ButtonDto::TOP,
-                null,
-                ColorVariant::DEFAULT,
-                'Résultats du sondage'
+                label: $surveyEntity->getTitle(),
+                url: $this->urlGenerator->generate($surveyEntity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey', [
+                    'survey' => $surveyEntity->getId()
+                ]),
+                variant: ColorVariant::DEFAULT,
+                title: 'Résultats du sondage',
             );
 
             $surveys[] = $surveyDto;

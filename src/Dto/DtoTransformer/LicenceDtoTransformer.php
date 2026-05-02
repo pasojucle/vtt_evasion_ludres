@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\ButtonDto;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\HtmlAttributDto;
 use App\Dto\LicenceDto;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
@@ -103,20 +104,24 @@ class LicenceDtoTransformer
         $state = $licence->getState();
         $licenceDto->stateAction = match (true) {
             $state->toValidate() => new ButtonDto(
-                'Reçu',
-                $this->urlGenerator->generate('admin_registration_receive', ['licence' => $licence->getId()]),
-                ButtonDto::MODAL_CONTENT,
-                'lucide:square-check-big',
-                ColorVariant::SUCCESS,
-                'Réceptionner le dossier d\'inscription'
+                label: 'Reçu',
+                url: $this->urlGenerator->generate('admin_registration_receive', ['licence' => $licence->getId()]),
+                icon: 'lucide:square-check-big',
+                variant: ColorVariant::SUCCESS,
+                title: 'Réceptionner le dossier d\'inscription',
+                htmlAttributes: [
+                    new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT)
+                ],
             ),
             $state->toRegister() => new ButtonDto(
-                'Inscrit',
-                $this->urlGenerator->generate('admin_registration_register', ['licence' => $licence->getId()]),
-                ButtonDto::MODAL_CONTENT,
-                'lucide:square-check-big',
-                ColorVariant::SUCCESS,
-                'Inscrire à la FFvélo'
+                label: 'Inscrit',
+                url: $this->urlGenerator->generate('admin_registration_register', ['licence' => $licence->getId()]),
+                icon: 'lucide:square-check-big',
+                variant: ColorVariant::SUCCESS,
+                title: 'Inscrire à la FFvélo',
+                htmlAttributes: [
+                    new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT)
+                ],
             ),
             default => null
         };
@@ -130,12 +135,14 @@ class LicenceDtoTransformer
     {
         $licenceDto = new LicenceDto();
         $licenceDto->stateAction = new ButtonDto(
-            'Valider',
-            $this->urlGenerator->generate('admin_coverage_validate', ['licence' => $licence->getId()]),
-            ButtonDto::MODAL_CONTENT,
-            'lucide:square-check-big',
-            ColorVariant::SUCCESS,
-            'Valider l\'assurance ffvélo'
+            label: 'Valider',
+            url: $this->urlGenerator->generate('admin_coverage_validate', ['licence' => $licence->getId()]),
+            icon: 'lucide:square-check-big',
+            variant: ColorVariant::SUCCESS,
+            title: 'Valider l\'assurance ffvélo',
+            htmlAttributes: [
+                new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT)
+            ],
         );
 
         $licenceDto->isYearly = $licence->getState()->isYearly();

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
+use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Mapper\DropdownMapper;
+use App\Dto\Enum\ColorVariant;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
+use App\Mapper\DropdownSettingsMapper;
 use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
 use App\Service\PaginatorService;
@@ -28,7 +30,7 @@ class GetSchedule
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private DropdownMapper $dropdownMapper,
+        private DropdownSettingsMapper $dropdownSettingsMapper,
         private BikeRideRepository $bikeRideRepository,
         private ContentRepository $contentRepository,
         private GetFilters $getFilters,
@@ -122,10 +124,17 @@ class GetSchedule
 
     private function settings(): DropdownDto
     {
-        $dropdown = $this->dropdownMapper->settingsFromSection('BIKE_RIDE');
-        $dropdown->addMenuItem('Types de rando', $this->urlGenerator->generate('admin_bike_ride_types'));
-        $dropdown->addMenuItem('Indemnités', $this->urlGenerator->generate('admin_indemnity_list'));
-
-        return $dropdown;
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', [
+            new ButtonDto(
+                label: 'Types de rando',
+                url: $this->urlGenerator->generate('admin_bike_ride_types'),
+                variant: ColorVariant::DROPDOWN,
+            ),
+            new ButtonDto(
+                label: 'Indemnités',
+                url: $this->urlGenerator->generate('admin_indemnity_list'),
+                variant: ColorVariant::DROPDOWN,
+            ),
+        ]);
     }
 }

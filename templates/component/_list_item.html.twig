@@ -2,8 +2,17 @@
     {% if cell.type == 'number' %}
         <div class="text-right font-mono">{{ cell.value }}</div>
     {% elseif cell.type == 'badge' %}
-        {% include 'component/_badge.html.twig' with {'badge': cell} %}
+        <div class="flex justify-center">
+            {% include 'component/_badge.html.twig' with {'badge': cell} %}
+        </div>
     {% else %}
         <div class="text-left">{{ cell.value }}</div>
     {% endif %}
 {% endfor %}
+{% if item.badges is not empty %}
+    <div class="flex gap-1">
+    {% for badge in item.badges %}
+        {% include 'component/_badge.html.twig' with {'badge': badge} %}
+    {% endfor %}
+    </div>
+{% endif %}

@@ -14,7 +14,6 @@ use App\Dto\ListDto;
 use App\Dto\ListItemDto;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
-use App\Mapper\DropdownMapper;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\OrderService;
@@ -25,7 +24,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class OrderAdminListMapper
 {
     public function __construct(
-        private DropdownMapper $dropdownMapper,
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private UrlGeneratorInterface $urlGenerator,
         private OrderService $orderService,
@@ -39,13 +37,14 @@ class OrderAdminListMapper
     public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter): ListDto
     {
         $items = [];
+        /** @var OrderHeader $entity */
         foreach ($entities as $entity) {
             $status = $entity->getStatus();
             $items[] = new ListItemDto(
                 cells: [
                     new ListCellItemDto($entity->getCreatedAt()->format('d/m/Y')),
                     new ListCellItemDto($entity->getMember()->getIdentity()->getFullName()),
-                    new ListCellItemDto($this->orderService->getAmount($entity->getOrderLines()), ListCellItemDto::TYPE_NUMBER),
+                    new ListCellItemDto($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), ListCellItemDto::TYPE_NUMBER),
                     new ListCellItemDto($status->trans($this->translator), ListCellItemDto::TYPE_BADGE, $status->variant()),
                 ],
                 dropdown: $this->getDropdown($entity),
@@ -120,11 +119,12 @@ class OrderAdminListMapper
             position: 'relative',
             menuItems: [
                 new ButtonDto(
-                    'Exporter la sélection',
-                    $this->urlGenerator->generate('admin_order_headers_export'),
-                    'lucide:file-down',
-                )
-            ]
+                    label: 'Exporter la sélection',
+                    url: $this->urlGenerator->generate('admin_order_headers_export'),
+                    icon: 'lucide:file-down',
+                    variant: ColorVariant::DROPDOWN,
+                ),
+            ],
         );
 
         return $dropdown;

@@ -10,6 +10,7 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Member;
 use App\Form\Admin\UserFilterType;
+use App\Mapper\DropdownSettingsMapper;
 use App\Repository\MemberRepository;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
@@ -43,6 +44,7 @@ abstract class GetUsersFiltered
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
         protected DropdownMapper $dropdownMapper,
+        protected DropdownSettingsMapper $dropdownSettingsMapper,
     ) {
     }
 

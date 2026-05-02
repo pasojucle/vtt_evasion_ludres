@@ -1,4 +1,4 @@
-<turbo-frame id="surveys-list">
+<turbo-frame id="product-list">
     <div class="wrapper-body">
         {% include 'component/button.html.twig' with {button: list.addItem} %}
 
@@ -6,24 +6,24 @@
         {{ form_start(form) }}
         <div class="filters">
             <ul>
-                <li>{{ form_widget(form.status)}}</li>
+                <li>{{ form_widget(form.state)}}</li>
             </ul>
         </div>
         {{ form_end(form) }}
         {% endif %}
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'bottom'} %}
-        <ul id="surveys_container">
+        <ul id="products_container">
             {% for item in list.items %}
-                <li class="group relative grid grid-cols-2 lg:grid-cols-[auto_60px_60px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-neutral-100 hover:bg-neutral-200 transition-colors border-b border-border">
-                    <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
-                        <span class="sr-only">Voir le sondage</span>
+                <li class="group relative grid grid-cols-2 lg:grid-cols-[1fr_60px_1fr] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-neutral-100 hover:bg-neutral-200 transition-colors border-b border-border">
+                    <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Modifier l'article" data-turbo-frame="_top">
+                        <span class="sr-only">Modifier l'article</span>
                     </a>
                     {% include 'component/_list_item.html.twig' with {item: item} %}
                     {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
                 </li>
             {% endfor %}
         </ul>
-        {% if list.items is empty %}Aucun sondage{% endif %}
+        {% if list.items is empty %}Aucun article{% endif %}
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>
 </turbo-frame>

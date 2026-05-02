@@ -21,14 +21,20 @@ class DropdownSettingsMapper
     ) {
     }
 
-    public function mapToView(string $sectionName): DropdownDto
+    /**
+     * @param string $sectionName
+     * @param ButtonDto[] $menuItems
+     * @return DropdownDto
+     */
+    public function mapToView(string $sectionName, array $menuItems = []): DropdownDto
     {
         return  new DropdownDto(
             trigger: 'lucide:sliders-horizontal',
             position: 'relative',
             menuItems: array_merge(
+                $menuItems,
                 $this->getParameters($sectionName),
-                $this->getMessages($sectionName)
+                $this->getMessages($sectionName),
             ),
         );
     }

@@ -249,3 +249,8 @@ agreement:
   kind:
     authorization: Autorisations
     consent: Consentement
+
+product:
+  state: 
+    enabled: Activé
+    disabled: Désactivé

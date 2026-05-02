@@ -39,6 +39,7 @@ class SurveyAdminListMapper
                 cells: [
                     new ListCellItemDto($entity->getTitle()),
                     new ListCellItemDto($status->trans($this->translator), ListCellItemDto::TYPE_BADGE, $status->variant()),
+                    new ListCellItemDto((string) $entity->getRespondents()->count(), ListCellItemDto::TYPE_BADGE),
                 ],
                 dropdown: $this->surveyAdminDropdownMapper->mapToView($entity),
                 url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey', [
@@ -47,17 +48,15 @@ class SurveyAdminListMapper
             );
         }
       
-        $addItem = new ButtonDto(
-            'Ajouter un sondage',
-            $this->urlGenerator->generate('admin_survey_add'),
-            'lucide:plus',
-            ColorVariant::DEFAULT,
-        );
-
         return new ListDto(
             items: $items,
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
-            addItem: $addItem
+            addItem: new ButtonDto(
+                'Ajouter un sondage',
+                $this->urlGenerator->generate('admin_survey_add'),
+                'lucide:plus',
+                ColorVariant::DEFAULT,
+            )
         );
     }
 }

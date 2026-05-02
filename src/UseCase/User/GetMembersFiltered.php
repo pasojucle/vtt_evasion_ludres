@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
+use App\Dto\DropdownItemDto;
+use App\Dto\Enum\ColorVariant;
+use App\Dto\HtmlAttributDto;
 use App\Dto\RouteDto;
 use App\Entity\Member;
 use App\Service\LevelService;
@@ -45,45 +49,68 @@ class GetMembersFiltered extends GetUsersFiltered
         return $this->userDtoTransformer->listFromEntities($users);
     }
 
-    public function settings(): ?DropdownDto
+    public function settings(): DropdownDto
     {
-        $dropdown = $this->dropdownMapper->settingsFromSection('USER');
-        $dropdown->addMenuItem('Niveaux', $this->urlGenerator->generate('admin_levels'));
-        $dropdown->addMenuItem('Compétences', $this->urlGenerator->generate('admin_skill_list'));
-        $dropdown->addMenuItem('Roles du bureau et comité', $this->urlGenerator->generate('admin_board_role_list'));
-
-        return $dropdown;
+        return $this->dropdownSettingsMapper->mapToView('USER', [
+            new ButtonDto(
+                label: 'Niveaux',
+                url: $this->urlGenerator->generate('admin_levels'),
+                variant: ColorVariant::DROPDOWN,
+            ),
+            new ButtonDto(
+                label: 'Compétences',
+                url: $this->urlGenerator->generate('admin_skill_list'),
+                variant: ColorVariant::DROPDOWN,
+            ),
+            new ButtonDto(
+                label: 'Roles du bureau et comité',
+                url: $this->urlGenerator->generate('admin_board_role_list'),
+                variant: ColorVariant::DROPDOWN,
+            ),
+        ]);
     }
 
     public function tools(): ?DropdownDto
     {
-        $dropdown = $this->dropdownMapper->fromTools();
-
-        $dropdown->addMenuItem(
-            'Exporter la sélection',
-            $this->urlGenerator->generate('admin_members_export'),
-            'lucide:file-down',
+        return new DropdownDto(
+            position: 'relative',
+            menuItems: [
+                new ButtonDto(
+                    label: 'Exporter la sélection',
+                    url: $this->urlGenerator->generate('admin_members_export'),
+                    icon: 'lucide:file-down',
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    ],
+                ),
+                new ButtonDto(
+                    label: 'Exporter les évaluations de la sélection',
+                    url: $this->urlGenerator->generate('admin_user_skill_export'),
+                    icon: 'lucide:file-down',
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    ],
+                ),
+                new ButtonDto(
+                    label: 'Synthèse par saison',
+                    url: $this->urlGenerator->generate('admin_overview_season'),
+                    icon: 'lucide:chart-scatter',
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    ],
+                ),
+            ],
+            actionItems: [
+                new DropdownItemDto(
+                    label: 'Copier les emails de la séléction',
+                    icon: 'lucide:clipboard-type',
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributDto('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_members_email_to_clipboard')),
+                    ],
+                ),
+            ],
         );
-        $dropdown->addMenuItem(
-            'Exporter les évaluations de la sélection',
-            $this->urlGenerator->generate('admin_user_skill_export'),
-            'lucide:file-down',
-        );
-        $dropdown->addMenuItem(
-            'Synthèse par saison',
-            $this->urlGenerator->generate('admin_overview_season'),
-            'lucide:chart-scatter',
-        );
-        $dropdown->addActionItem(
-            'Copier les emails de la séléction',
-            'lucide:clipboard-copy',
-            [
-                'data-email-to-clipboard-url-value' => $this->urlGenerator->generate('admin_members_email_to_clipboard'),
-                'data-controller' => 'email-to-clipboard',
-                'data-action' => 'click->email-to-clipboard#emailToClipboard click->dropdown#close',
-            ]
-        );
-
-        return $dropdown;
     }
 }

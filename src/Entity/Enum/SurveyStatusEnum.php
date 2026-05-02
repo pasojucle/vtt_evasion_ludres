@@ -26,7 +26,6 @@ enum SurveyStatusEnum: string implements TranslatableInterface
             self::PENDING => ColorVariant::SUCCESS,
             self::EXPIRED => ColorVariant::ACCENT,
             self::DISABLED => ColorVariant::DESTRUCTIVE,
-            default => ColorVariant::DEFAULT
         };
     }
 

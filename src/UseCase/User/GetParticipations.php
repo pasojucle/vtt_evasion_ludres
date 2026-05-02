@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\BikeRideDto;
+use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Mapper\DropdownMapper;
+use App\Dto\Enum\ColorVariant;
+use App\Dto\HtmlAttributDto;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Dto\RouteDto;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
-use App\Entity\Guest;
 use App\Entity\Member;
 use App\Entity\Session;
 use App\Form\Admin\ParticipationFilterType;
@@ -45,7 +44,6 @@ class GetParticipations
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LevelService $levelService,
         private readonly TranslatorInterface $translator,
-        private readonly DropdownMapper $dropdownMapper,
     ) {
     }
 
@@ -246,14 +244,19 @@ class GetParticipations
 
     public function tools(): ?DropdownDto
     {
-        $dropdown = $this->dropdownMapper->fromTools();
-
-        $dropdown->addMenuItem(
-            'Exporter la sélection',
-            $this->urlGenerator->generate('admin_participations_export'),
-            'lucide:file-down',
+        return new DropdownDto(
+            position: 'relative',
+            menuItems: [
+                new ButtonDto(
+                    label: 'Exporter la sélection',
+                    url: $this->urlGenerator->generate('admin_participations_export'),
+                    icon: 'lucide:file-down',
+                    variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    ]
+                )
+            ],
         );
-
-        return $dropdown;
     }
 }

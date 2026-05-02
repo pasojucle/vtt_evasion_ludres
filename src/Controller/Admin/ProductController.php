@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\ProductDtoTransformer;
+use App\Dto\Enum\ProductStateEnum;
+use App\Dto\Filter\ProductFilter;
 use App\Entity\Product;
+use App\Form\Admin\ProductFilterType;
 use App\Form\Admin\ProductType;
 use App\Service\Product\ProductEditService;
-use App\UseCase\Product\GetProductList;
+use App\State\Product\Provider\ProductAdminListProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -28,10 +31,23 @@ class ProductController extends AbstractController
     #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminList(
-        GetProductList $getProductList,
+        ProductAdminListProvider $provider,
         Request $request
     ): Response {
-        return $this->render('product/admin/list.html.twig', $getProductList->execute($request));
+        $stateQuery = $request->query->get('state');
+        $filter = new ProductFilter($stateQuery ? ProductStateEnum::tryFrom($stateQuery) : $stateQuery);
+        $form = $this->createForm(ProductFilterType::class, $filter);
+        $form ->handleRequest($request);
+
+
+        return $this->render('product/admin/list.html.twig', [
+            'form' => $form->createView(),
+            'list' => $provider->getCollection(
+                $filter, 
+                $request->attributes->get('_route'), 
+                $request->query->getInt('page', 1),
+            ),
+        ]);
     }
 
     #[Route('/admin/produit', name: 'admin_product_add', methods: ['GET', 'POST'])]

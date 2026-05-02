@@ -3,39 +3,20 @@
 {% block title %}Gestion de la boutique{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-            <div class="wrapper-title">
-                <h1 class="font-bold text-3xl">Gestion de la boutique</h1>
-                <div class="tool-group">
-                    <a 
-                        href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
-                        target="_blank" 
-                        title="wiki"
-                        class="text-foreground lg:text-muted lg:hover:text-foreground [&>*:last-child]:mr-2"
-                    >
-                        {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
-                    </a>
-                </div>
-            </div>
-            <div class="wrapper-body">
-                <span class="tools">
-                    <a href="{{ path('admin_product_add') }}" class="btn btn-primary" title="Ajouter un produit"><i class="fas fa-plus"></i> Ajouter</a>
-                </span>
-                {% include 'component/pagination.html.twig' with {'margin': 'both'} %}
-                <ul>
-                    {% for product in products %}
-                        <li class="list-dropdown"> 
-                            <a href="{{ path('admin_product', {'product' : product.id}) }}">
-                                <div class="{% if product.isDisabled %}disabled{% endif %}">
-                                    {{ product.name }}
-                                </div>
-                            </a>
-                            {% include 'component/dropdown.html.twig' with {'dropdown': product.dropdown} %}
-                        </li>
-                    {% endfor %}
-                </ul>
-                {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1 class="font-bold text-3xl">Gestion de la boutique - <span class="badge badge-info">{{ list.paginator.total }}</span></h1>
+            <div class="tool-group">
+                <a 
+                    href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
+                    target="_blank" 
+                    title="wiki"
+                    class="text-foreground lg:text-muted lg:hover:text-foreground"
+                >
+                    {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
+                </a>
             </div>
         </div>
+        {% include('product/admin/_frame_list.html.twig') %}
     </div>
 {% endblock %}

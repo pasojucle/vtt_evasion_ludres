@@ -11,9 +11,11 @@ readonly class ListItemDto
 {
     /**
      * @param ListCellItemDto[] $cells
+     * @param ListBadgesItemDto[] $badges
      */
     public function __construct(
         public array $cells = [],
+        public array $badges = [],
         public ?DropdownDto $dropdown = null,
         public ?string $background = null,
         public ?string $url = null,
