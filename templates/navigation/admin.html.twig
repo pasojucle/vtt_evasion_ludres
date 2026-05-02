@@ -1,53 +1,85 @@
 {% set groups = menu_admin_service.menuGroupsAdmin() %}
 {% set menu_actived = menu_admin_service.menuActived() %}
-<div class="nav-bar">
-    <a href="" class="btn btn-ico" data-action="click->nav-sm#toggle" data-nav-sm-target="trigger"></a>
-    <img class="mx-auto" src="/logos/logo.jpg" alt="VTT EVASION LUDRES">
-    <div></div>
-</div>
 
-<nav class="admin" data-nav-sm-target="container">
-    {% for key, group in groups %}
-        {% if group.subMenus is not empty %}
-            {% set body_class = (key == menu_actived) ? 'down' : 'up' %}
-            <div class="nav-group block" data-group="{{ key }}" data-controller="collapse" data-context-item>
-            <a href="" data-collapse-target="trigger" data-action="click->collapse#toggle">
-                <div class="block-title flex items-center">
-                    <h2>{{ group.label|trans }}</h2>
-                    <span
-                        data-collapse-target="chevron"
-                        {% if key == menu_actived%}class="ml-auto rotate-90"{% else %}class="ml-auto rotate-0"{% endif %}
+<div class="lg:hidden bg-slate-900 flex flex-row items-center gap-4 shadow-xl text-slate-200 select-none p-4"
+    <a href="" data-action="click->nav-sm#toggle" data-nav-sm-target="trigger">{{ ux_icon('lucide:square-menu', {class:'size-6'}) }}</a>
+    <div class="flex items-center gap-4 bg-slate-950/50 border-b border-white/5">
+        <div class="w-10 h-10 p-1 bg-white rounded-xl shadow-inner">
+            <img src="/logos/logo.png" alt="vtt évasion Ludres" class="w-full h-full object-contain">
+        </div>
+        <div class="flex flex-col">
+            <span class="text-sm font-semibold text-primary tracking-wider uppercase">VTT Évasion</span>
+            <span class="text-xs text-slate-500 font-medium">Administration</span>
+        </div>
+    </div>
+</div>
+{# <nav class="bg-slate-900 h-lvh flex flex-col shadow-xl text-slate-200 select-none" data-nav-sm-target="container"> #}
+<nav class="fixed left-0 top-0 w-64 bg-slate-900 h-screen flex flex-col shadow-xl text-slate-200 select-none z-50 overflow-hidden" data-nav-sm-target="container">
+    <!-- Header avec Logo -->
+    <div class="hidden lg:flex p-6  items-center gap-4 bg-slate-950/50 border-b border-white/5">
+        <div class="w-10 h-10 p-1 bg-white rounded-xl shadow-inner">
+            <img src="/logos/logo.png" alt="vtt évasion Ludres" class="w-full h-full object-contain">
+        </div>
+        <div class="flex flex-col">
+            <span class="text-sm font-semibold text-primary tracking-wider uppercase">VTT Évasion</span>
+            <span class="text-xs text-slate-500 font-medium">Administration</span>
+        </div>
+    </div>
+
+    <!-- Menu Scrollable -->
+    <div class="flex-1 overflow-y-auto py-4 custom-scrollbar bg-slate-900">
+        {% for key, group in groups %}
+            {% if group.subMenus is not empty %}
+                {% set isOpen = (key == menu_actived) %}
+                <div class="mb-2" data-group="{{ key }}" data-controller="collapse">
+                    <button 
+                        data-collapse-target="trigger" 
+                        data-action="click->collapse#toggle"
+                        class="w-full flex items-center px-6 py-2 transition-colors hover:text-white group"
                     >
-                        {{ ux_icon('lucide:chevron-down', {class: 'size-6'}) }}
-                    </span>
-                </div></a>
-                <div class="block-body {{ body_class }}" data-collapse-target="content">
-                    <ul>
-                    {% for menu in group.subMenus %}
-                        <li>
+                        <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-primary transition-colors">
+                            {{ group.label|trans }}
+                        </span>
+                        <span
+                            data-collapse-target="chevron"
+                            class="ml-auto transition-transform duration-300 {{ isOpen ? 'rotate-90 text-primary' : 'text-slate-400' }}"
+                        >
+                            {{ ux_icon('lucide:chevron-down', {class: 'size-4'}) }}
+                        </span>
+                    </button>
+
+                    <div class="{{ isOpen ? '' : 'hidden' }} mt-1 space-y-1" data-collapse-target="content">
+                        {% for menu in group.subMenus %}
+                            {% set isActive = app.request.get('_route') matches menu.pattern %}
                             <a href="{{ path(menu.route) }}"
-                                {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
+                                class="flex items-center px-8 py-2 text-[14px] transition-all duration-200 border-l-2 {{ isActive ? 'bg-primary/10 text-white border-primary font-medium' : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-white/5' }}"
+                            >
+                                {# Optionnel : tu peux ajouter une icône spécifique ici #}
                                 {{ menu.label }}
                             </a>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>         
-            </div>
-        {% endif %}      
-    {% endfor %}
-    <div class="nav-group block">
-        <div class="block-body">
-            <ul>
-                <li>
-                    <a href="{{ path('check_logout') }}"  title="Se déconnecter" data-turbo-frame="modal_content">
-                        Se déconnecter
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ path('home') }}">Retour au site</a>
-                </li>
-            </ul>
-        </div>
-    <div>
+                        {% endfor %}
+                    </div>         
+                </div>
+            {% endif %}      
+        {% endfor %}
+    </div>
+
+    <!-- Footer Menu -->
+    {# <div class="p-4 mt-auto border-t border-white/5 bg-slate-950/20"> #}
+    <div class="flex-none p-4 border-t border-white/5 bg-slate-950/40">
+        <ul class="space-y-1">
+            <li>
+                <a href="{{ path('home') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm hover:bg-white/5 transition-colors">
+                    {{ ux_icon('lucide:external-link', {class: 'size-4 text-slate-500'}) }}
+                    <span>Retour au site</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('check_logout') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-primary hover:bg-primary/10 transition-colors">
+                    {{ ux_icon('lucide:log-out', {class: 'size-4'}) }}
+                    <span>Se déconnecter</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 </nav>

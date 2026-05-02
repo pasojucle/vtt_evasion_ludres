@@ -1,20 +1,27 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}Gestion de la boutique{% endblock %}
+{% block title %}Boutique{% endblock %}
 
 {% block body %}
-    <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Gestion de la boutique - <span class="badge badge-info">{{ list.paginator.total }}</span></h1>
-            <div class="tool-group">
-                <a 
-                    href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
-                    target="_blank" 
-                    title="wiki"
-                    class="text-foreground lg:text-muted lg:hover:text-foreground"
-                >
-                    {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
-                </a>
+    <div class="p-6">
+        <div class="flex mt-4">
+            <div>
+                <h1 class="font-bold text-3xl">Boutique</span></h1>
+                <div class="text-muted mt-1">Gestion des produits aux couleurs du club vendus en lignes</div>
+            </div>
+            
+            <div class="ml-auto">
+                <div class="flex flex-col lg:flex-row items-center gap-2 border border-border rounded-sm">
+                    <div class="p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:package', {'class': 'text-white'}) }}</div>
+                    <a 
+                        href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
+                        target="_blank" 
+                        title="wiki"
+                        class="text-foreground lg:text-muted lg:hover:text-foreground mr-2"
+                    >
+                        {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
+                    </a>
+                </div>
             </div>
         </div>
         {% include('product/admin/_frame_list.html.twig') %}

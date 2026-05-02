@@ -67,6 +67,8 @@ class PaginatorMapper
 
     private function getPageData(int $page, string $route, array $queries): array
     {
+        $queries['page'] = $page;
+        
         return [
             'page' => $page,
             'url' => $this->urlGenerator->generate($route, $queries),

@@ -1,39 +1,43 @@
-
 {% if paginator is not null and paginator.lastPage > 1 %}
-    <nav class="paginator{% if margin is defined %} margin-{{ margin }}{% endif %}">
-        <ul>
+    <nav class="mt-4 paginator" aria-label="Pagination">
+        <ul class="flex items-stretch -space-x-px">
+            {% set base_li = "flex items-center justify-center border border-border first:rounded-l-md last:rounded-r-md transition-colors" %}
+            {% set base_link = "px-1 py-2 flex items-center justify-center w-full h-full" %}
+
             {% if paginator.first is not null %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ paginator.first.url }}" aria-label="Previous">
-                        <span aria-hidden="true"><i class="fas fa-angle-double-left"></i></span>
+                <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
+                    <a class="{{ base_link }}" href="{{ paginator.first.url }}">
+                        {{ ux_icon('lucide:chevron-first', {class: 'size-4'}) }}
                     </a>
                 </li>
             {% endif %}
+
             {% if paginator.previous is not null %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ paginator.previous.url }}" aria-label="Previous">
-                        <span aria-hidden="true"><i class="fas fa-angle-left"></i></span>
+                <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
+                    <a class="{{ base_link }}" href="{{ paginator.previous.url }}">
+                        {{ ux_icon('lucide:chevron-left', {class: 'size-4'}) }}
                     </a>
                 </li>
             {% endif %}
+
             {% for item in paginator.pages %}
-                <li class="page-item{% if item.page == paginator.currentPage %} active{% endif %}">
-                    <a class="page-link" href="{{ item.url }}">{{ item.page }}</a>
+                <li class="{{ base_li }} {% if item.page == paginator.currentPage %}bg-slate-950 text-primary z-10{% else %}bg-slate-100 text-foreground/60 hover:text-foreground{% endif %}">
+                    <a class="{{ base_link }} min-w-[2rem]" href="{{ item.url }}">{{ item.page }}</a>
                 </li>
             {% endfor %}
 
             {% if paginator.next is not null %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ paginator.next.url }}" aria-label="Next">
-                        <span aria-hidden="true"><i class="fas fa-angle-right"></i></span>
+                <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
+                    <a class="{{ base_link }}" href="{{ paginator.next.url }}">
+                        {{ ux_icon('lucide:chevron-right', {class: 'size-4'}) }}
                     </a>
                 </li>
             {% endif %}
 
             {% if paginator.last is not null %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ paginator.last.url }}" aria-label="Next">
-                        <span aria-hidden="true"><i class="fas fa-angle-double-right"></i></span>
+                <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
+                    <a class="{{ base_link }}" href="{{ paginator.last.url }}">
+                        {{ ux_icon('lucide:chevron-last', {class: 'size-4'}) }}
                     </a>
                 </li>
             {% endif %}

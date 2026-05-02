@@ -1,28 +1,32 @@
 <turbo-frame id="product-list">
-    <div class="wrapper-body">
-        {% include 'component/button.html.twig' with {button: list.addItem} %}
-
-        {% if form is defined %}
-        {{ form_start(form) }}
-        <div class="filters">
-            <ul>
-                <li>{{ form_widget(form.state)}}</li>
+    <div>
+        <div class="flex items-center my-4">
+            <div class="border border-border rounded-sm flex items-stretch gap-2">
+                <div class="flex items-center p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
+                {{ form_start(form) }}
+                {{ form_widget(form.state)}}                
+                {{ form_end(form) }}
+            </div>
+            <div class="ml-auto">
+                {% include 'component/button.html.twig' with {button: list.addItem} %}
+            </div>
+        </div>
+        <div class="border border-border rounded-md">
+            <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
+                Produits - <span class="">{{ list.paginator.total }}
+            </div>
+            <ul id="products_container">
+                {% for item in list.items %}
+                    <li class="group relative grid grid-cols-2 lg:grid-cols-[1fr_60px_1fr]  xl:grid-cols-[2fr_80px_1fr] items-center gap-4 px-4 py-2 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors not-last:border-b not-last:border-border first:rounded-t-md last:rounded-b-md">
+                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Modifier l'article" data-turbo-frame="_top">
+                            <span class="sr-only">Modifier l'article</span>
+                        </a>
+                        {% include 'component/_list_item.html.twig' with {item: item} %}
+                        {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
+                    </li>
+                {% endfor %}
             </ul>
         </div>
-        {{ form_end(form) }}
-        {% endif %}
-        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'bottom'} %}
-        <ul id="products_container">
-            {% for item in list.items %}
-                <li class="group relative grid grid-cols-2 lg:grid-cols-[1fr_60px_1fr] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-neutral-100 hover:bg-neutral-200 transition-colors border-b border-border">
-                    <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Modifier l'article" data-turbo-frame="_top">
-                        <span class="sr-only">Modifier l'article</span>
-                    </a>
-                    {% include 'component/_list_item.html.twig' with {item: item} %}
-                    {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
-                </li>
-            {% endfor %}
-        </ul>
         {% if list.items is empty %}Aucun article{% endif %}
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>

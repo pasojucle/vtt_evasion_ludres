@@ -10,8 +10,6 @@ import 'tom-select/dist/css/tom-select.default.css';
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
-import './styles/admin.css';
-import './styles/paginator.css';
 import './styles/common.css';
 import './styles/modal.css';
 import './styles/dropdown.css';

@@ -9,8 +9,10 @@
         {{ attribut.name }}="{{ attribut.value }}"
     {% endfor %}
 >
+    <div class="flex justify-center">
         <div class="flex items-center gap-2">
-        {% if button.icon %}{{ ux_icon(button.icon) }}{% endif %}
-        <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ button.label}}</div>
+            {% if button.icon %}{{ ux_icon(button.icon) }}{% endif %}
+            <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ button.label}}</div>
+        </div>
     </div>
 </a>

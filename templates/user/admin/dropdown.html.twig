@@ -1,23 +1,23 @@
 {% if session is defined or is_granted('ROLE_ADMIN') %}
 <div class="absolute h-full w-8 right-0 top-0" data-controller="dropdown">
   <button 
-    class="group absolute bg-transparent flex justify-center items-center h-full w-full hover:bg-neutral-300 hover:z-50" 
+    class="group absolute bg-transparent flex justify-center items-center h-full w-full hover:bg-slate-300 hover:z-50" 
     type="button" 
     data-dropdown-target="trigger" 
     data-action="click->dropdown#toggle"
   >
     <div data-dropdown-target="icon">
-        {{ ux_icon('lucide:ellipsis-vertical', { class: 'w-5 h-5 text-neutral-500' }) }}
+        {{ ux_icon('lucide:ellipsis-vertical', { class: 'w-5 h-5 text-slate-500' }) }}
     </div>
     <div class="hidden" data-dropdown-target="activeIcon">
-        {{ ux_icon('lucide:x', { class: 'w-5 h-5 text-neutral-500' }) }}
+        {{ ux_icon('lucide:x', { class: 'w-5 h-5 text-slate-500' }) }}
     </div>
   </button>
   <div 
-    class="hidden absolute mt-0! top-0 right-8 bg-neutral-200 border-2 border-white w-max max-w-80 z-50" 
+    class="hidden absolute mt-0! top-0 right-8 bg-slate-200 border-2 border-white w-max max-w-80 z-50" 
     data-dropdown-target="content"
   >
-    <div class="p-3 bg-neutral-400 [&>*:not(:first-child)]:border-t-2 [&>*:not(:first-child)]:border-white">
+    <div class="p-3 bg-slate-400 [&>*:not(:first-child)]:border-t-2 [&>*:not(:first-child)]:border-white">
       {{ user.member.fullName }}
     </div>
     <ul class="[&>*:not(:first-child)]:border-t-2 [&>*:not(:first-child)]:border-white">
@@ -35,7 +35,7 @@
         {% if bikeRide.isEditable and not cluster.isComplete and (session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').NONE or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').AVAILABLE or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').REGISTERED ) %}
           <li>
             <a 
-              class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+              class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
               href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" 
               title="Changer de groupe"
               data-turbo-frame="_top"
@@ -47,7 +47,7 @@
         {% if bikeRide.isEditable and not cluster.isComplete %}
           <li>
             <a 
-              class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+              class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
               href="{{ path('admin_session_delete', {'session' : session.id}) }}" 
               title="Supprimer"
               data-turbo-frame="_top"
@@ -60,7 +60,7 @@
       {% if is_granted('USER_LIST') and user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER')%}
         <li >
           <a 
-            class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+            class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
             href="{{ path('admin_member_skill_edit', {'member': user.id}) }}"
             data-turbo-frame="_top"
           >
@@ -71,7 +71,7 @@
       {% if is_granted('ROLE_ADMIN') %}
         <li>
           <a 
-            class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300" 
+            class="block px-3 py-2 bg-slate-200 hover:bg-slate-300" 
             href="{{ path('admin_user_participation', {'user': user.id}) }}"
             data-turbo-frame="_top"
           >
@@ -80,7 +80,7 @@
         </li>
         <li>
           <a 
-            class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+            class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
             href="{{ path('admin_user_certificate', {'member': user.id}) }}"
             data-turbo-frame="_top"
           >
@@ -90,7 +90,7 @@
         {% if user.level.accompanyingCertificat %}
           <li>
             <a 
-            class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+            class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
               href="{{ path('admin_user_accompanying_certificate', {'member': user.id}) }}"
               data-turbo-frame="_top"
             >
@@ -102,7 +102,7 @@
       {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}
         <li>
           <a 
-            class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+            class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
             href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"
             data-turbo-frame="_top"
           >
@@ -113,7 +113,7 @@
       {% if app.request.get('_route') == 'admin_registration_list' and user.lastLicence.toValidate %}
         <li>
           <a 
-            class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+            class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
             href="{{ path('admin_registration_reject', {'licence': user.lastLicence.id})}}" 
             data-turbo-frame="modal_content"
           >
@@ -122,7 +122,7 @@
         </li>
         <li>
           <a 
-            class="block px-3 py-2 bg-neutral-200 hover:bg-neutral-300"
+            class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"
             href="{{ path('admin_delete_licence', {'licence': user.lastLicence.id})}}" 
             data-turbo-frame="modal_content"
           >

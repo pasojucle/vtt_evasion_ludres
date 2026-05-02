@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% if parameter_service.getParameterByName('TEST_MODE') %}
+            <link rel="icon" type="image/jpg" href="/favicon_test.ico">
+        {% else %}
+            <link rel="icon" type="image/jpg" href="/favicon.ico">
+        {% endif %}
+        <link rel="apple-touch-icon-precomposed" href="/favicon.jpg">
+        <title>{% block title %}{% endblock %}</title>
+        {% block importmap %}
+            {{ importmap('admin') }}
+        {% endblock %}
+    </head>
+    <body 
+        class="bg-slate-50 text-slate-800 select-none overflow-x-hidden text-base font-display"
+        data-controller="nav-sm context-collapse"
+        data-action="collapse:opened->context-collapse#closeOthers dropdown:opened->context-collapse#closeOthers"
+        data-context-collapse-collapse-outlet="[data-controller='collapse']"
+        data-context-collapse-dropdown-outlet="[data-controller='dropdown']"
+        {% if parameter_service.getParameterByName('TEST_MODE') %}class="testing"{% endif %}
+    >
+        <turbo-frame 
+            id="notifications" 
+            data-controller="notifications"
+            data-notifications-url-value="{{ path('notification_list') }}"
+        ></turbo-frame>
+        {% block background %}{% endblock %}
+        <div class="security" data-role="ROLE_USER"></div>
+        <div class="notification">
+            <div class="flashes">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="flash-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        {% include 'navigation/admin.html.twig' %}
+        <main>
+            <section class="lg:pl-64">
+                {% block body %}{% endblock %}
+            </section>
+        </main>
+    </body>
+</html>

@@ -37,6 +37,6 @@ enum OrderStatusEnum: string implements TranslatableInterface
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
-        return $translator->trans('order.filter.' . $this->value, locale: $locale);
+        return $translator->trans('order.status.' . $this->value, locale: $locale);
     }
 }

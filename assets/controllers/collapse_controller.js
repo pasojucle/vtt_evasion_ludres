@@ -5,7 +5,7 @@ export default class extends Controller {
 
     toggle(event) {
         event.preventDefault();
-        if (this.contentTarget.classList.contains('up')) {
+        if (this.contentTarget.classList.contains('hidden')) {
             this.open();
         } else {
             this.close();
@@ -19,7 +19,7 @@ export default class extends Controller {
             this.triggerTarget.classList.remove("bg-background")
         }
         if (this.hasContentTarget) {
-            this.contentTarget.classList.replace("up", "down")
+            this.contentTarget.classList.remove("hidden")
         }
         if (this.hasChevronTarget) {
             this.chevronTarget.classList.replace("rotate-0", "rotate-90")
@@ -35,7 +35,7 @@ export default class extends Controller {
             this.triggerTarget.classList.add("bg-background")
         }
         if (this.hasContentTarget) {
-            this.contentTarget.classList.replace("down", "up")
+            this.contentTarget.classList.add("hidden")
         }
         if (this.hasChevronTarget) {
             this.chevronTarget.classList.replace("rotate-90", "rotate-0")

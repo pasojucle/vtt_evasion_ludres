@@ -43,7 +43,7 @@
                 
                 {% if bikeRide.isPublic %}
                     <b>Réglement et sécutité</b>
-                    <div class="mt-2 p-2 border-2 border-neutral-200 rounded-sm">
+                    <div class="mt-2 p-2 border-2 border-slate-200 rounded-sm">
                         <div class="form-group form-group-file form-group-inline" data-controller="input-file">
                             {{ form_row(form.rulesFile) }}
                         </div>
@@ -59,7 +59,7 @@
                     </div>
                 {% endif %}
                 <b>Traces GPX</b>
-                <div class="mt-2 p-2 border-2 border-neutral-200 rounded-sm" data-controller="collection">
+                <div class="mt-2 p-2 border-2 border-slate-200 rounded-sm" data-controller="collection">
                     <ul 
                         class="mb-20" 
                         data-collection-target="container"

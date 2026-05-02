@@ -97,9 +97,9 @@ export default class extends Controller {
     }
    
     createButton( action, content, isActive, title=null, value=null) {
-        const btnBase = 'px-1 py-1 rounded-md text-xs font-medium transition disabled:text-neutral-200';
+        const btnBase = 'px-1 py-1 rounded-md text-xs font-medium transition disabled:text-slate-200';
         const btnActive = 'bg-blue-500 text-white border border-blue-600';
-        const btnInactive = 'bg-white text-neutral-500 hover:bg-neutral-200';
+        const btnInactive = 'bg-white text-slate-500 hover:bg-slate-200';
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = [btnBase, isActive ? btnActive : btnInactive].join(' ');
@@ -125,7 +125,7 @@ export default class extends Controller {
 
     createSeparator() {
         const separator = document.createElement('div');
-        separator.className = 'mx-1 h-6 w-px bg-neutral-200 self-center';
+        separator.className = 'mx-1 h-6 w-px bg-slate-200 self-center';
         return separator;
     }
 
@@ -138,8 +138,8 @@ export default class extends Controller {
     createMenuItem(item, action, menu) {
         const menuItem = document.createElement('button');
         menuItem.type = 'button';
-        menuItem.className = `w-full text-left px-3 py-1 text-xs transition-colors disabled:text-neutral-200 ${
-            item.isActive ? 'bg-blue-500 text-white' : 'text-neutral-700 hover:bg-blue-50'
+        menuItem.className = `w-full text-left px-3 py-1 text-xs transition-colors disabled:text-slate-200 ${
+            item.isActive ? 'bg-blue-500 text-white' : 'text-slate-700 hover:bg-blue-50'
         }`;
         if (item.icon) {
             const icon = ICONS[item.icon];           

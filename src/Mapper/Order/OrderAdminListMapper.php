@@ -42,7 +42,7 @@ class OrderAdminListMapper
             $status = $entity->getStatus();
             $items[] = new ListItemDto(
                 cells: [
-                    new ListCellItemDto($entity->getCreatedAt()->format('d/m/Y')),
+                    new ListCellItemDto($entity->getCreatedAt()->format('d/m/y')),
                     new ListCellItemDto($entity->getMember()->getIdentity()->getFullName()),
                     new ListCellItemDto($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), ListCellItemDto::TYPE_NUMBER),
                     new ListCellItemDto($status->trans($this->translator), ListCellItemDto::TYPE_BADGE, $status->variant()),

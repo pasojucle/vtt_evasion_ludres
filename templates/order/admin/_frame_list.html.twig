@@ -1,34 +1,40 @@
 <turbo-frame id="order-list">
-    <div class="wrapper-body">
-        {% if form is defined %}
-        {{ form_start(form) }}
-        <div class="filters">
-            <ul>
-                <li>{{ form_widget(form.status)}}</li>
-            </ul>
+
+    <div>
+        <div class="flex items-center my-4">
+            <div class="border border-border rounded-sm flex items-stretch gap-2">
+                <div class="flex items-center p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
+                {{ form_start(form) }}
+                {{ form_widget(form.status)}}                
+                {{ form_end(form) }}
+            </div>
         </div>
-        {{ form_end(form) }}
-        {% endif %}
-        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'bottom'} %}
-        <ul id="orders_container">
-            {% for item in list.items %}
-                <li class="group relative grid grid-cols-2 lg:grid-cols-[auto_112px] items-center gap-4">
-                    <div class="group relative grid grid-cols-2 lg:grid-cols-[1fr_2fr_1fr_1fr_40px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-neutral-100 hover:bg-neutral-200 transition-colors border-b border-border">
-                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
-                            <span class="sr-only">Voir la commande</span>
-                        </a>
-                        {% include 'component/_list_item.html.twig' with {item: item} %}
-                        {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
-                    </div>
-                    <div>
-                        {% if item.action %}
-                            {% include 'component/button.html.twig' with {button: item.action} %}
-                        {% endif %}
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-        {% if list.items is empty %}Aucune commande{% endif %}
+        <div class="border border-border rounded-md">
+            <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
+                Commandes - <span class="">{{ list.paginator.total }}
+            </div>
+            <ul id="orders_container">
+                {% for item in list.items %}
+                    <li class="group relative grid grid-cols-1 lg:grid-cols-[auto_112px] items-center gap-4 not-last:border-b not-last:border-border pr-4">
+                        <div class="group relative grid grid-cols-[1fr_40px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
+                            <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
+                                <span class="sr-only">Voir la commande</span>
+                            </a>
+                            <div class="grid grid-cols-[70px_1fr] lg:grid-cols-[1fr_2fr_1fr_1fr] gap-2">
+                                {% include 'component/_list_item.html.twig' with {item: item} %}
+                            </div>
+                            {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
+                        </div>
+                        <div>
+                            {% if item.action %}
+                                {% include 'component/button.html.twig' with {button: item.action} %}
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if list.items is empty %}Aucune commande{% endif %}
+        </div>
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>
 </turbo-frame>

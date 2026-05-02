@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %}
 
 {% block title %}Gestion des commandes{% endblock %}
 
@@ -17,6 +17,37 @@
                 </a>
                 {% include 'component/dropdown.html.twig' with {dropdown: list.settings} %}
                 {% include 'component/dropdown.html.twig'  with {dropdown: list.tools} %}
+            </div>
+        </div>
+        {% include('order/admin/_frame_list.html.twig') %}
+    </div>
+{% endblock %} #}
+
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Commandes{% endblock %}
+
+{% block body %}
+    <div class="p-6">
+        <div class="flex gap-2 mt-4">
+            <div>
+                <h1 class="font-bold text-3xl">Commandes</span></h1>
+                <div class="text-muted mt-1">Gestion des commandes de produits aux couleurs du club vendus en lignes</div>
+            </div>
+            <div class="ml-auto">
+                <div class="flex flex-col lg:flex-row items-center gap-2 border border-border rounded-sm">
+                    <div class="p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:package', {'class': 'text-white'}) }}</div>
+                    <a 
+                        href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
+                        target="_blank" 
+                        title="wiki"
+                        class="text-foreground lg:text-muted lg:hover:text-foreground"
+                    >
+                        {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
+                    </a>
+                    {% include 'component/dropdown.html.twig' with {dropdown: list.settings} %}
+                    {% include 'component/dropdown.html.twig'  with {dropdown: list.tools} %}
+                </div>
             </div>
         </div>
         {% include('order/admin/_frame_list.html.twig') %}
