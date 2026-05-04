@@ -1,22 +1,16 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}Gestion des sondages{% endblock %}
+{% block title %}Sondage{% endblock %}
 
 {% block body %}
-    <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Sondages - <span class="badge badge-info">{{ list.paginator.total }}</span></h1>
-            <div class="tool-group">
-                <a 
-                    href="{{ path('wiki_show', {'directory': 'boutique'})}}" 
-                    target="_blank" 
-                    title="wiki"
-                    class="text-foreground lg:text-muted lg:hover:text-foreground"
-                >
-                    {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
-                </a>
+    <div class="p-6">
+        <div class="flex mt-4">
+            <div>
+                <h1 class="font-bold text-3xl">Sondages</span></h1>
+                <div class="text-muted mt-1">Administration des sondages : création des questionnaires et suivi des réponses</div>
             </div>
         </div>
         {% include('survey/admin/_frame_list.html.twig') %}
     </div>
 {% endblock %}
+

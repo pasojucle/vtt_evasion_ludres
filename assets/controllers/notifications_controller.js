@@ -1,5 +1,4 @@
 import { Controller } from '@hotwired/stimulus';
-import { disableScroll, enableScroll } from '../utils/toggleScroll.js';
 
 export default class extends Controller {
     static targets = ["dropdown"];
@@ -68,11 +67,11 @@ export default class extends Controller {
         console.log("toggleNotifications")
         this.dropdownTarget.classList.toggle('active');
         if (this.dropdownTarget.classList.contains('active')) {
-            disableScroll();
+            document.body.classList.add('overflow-hidden', 'touch-none');
             hideNav();
             return;
         }
-        enableScroll();
+        this.releaseScroll();
     }
 
     hideNotifications = () => {
@@ -80,5 +79,13 @@ export default class extends Controller {
         if (notifications) {
             notifications.classList.remove('active');
         }
+    }
+
+    releaseScroll() {
+        document.body.classList.remove('overflow-hidden', 'touch-none');
+    }
+
+    disconnect() {
+        this.releaseScroll();
     }
 }

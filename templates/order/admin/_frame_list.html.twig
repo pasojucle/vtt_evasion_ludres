@@ -1,7 +1,6 @@
 <turbo-frame id="order-list">
-
     <div>
-        <div class="flex items-center my-4">
+        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
             <div class="border border-border rounded-sm flex items-stretch gap-2">
                 <div class="flex items-center p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
                 {{ form_start(form) }}
@@ -10,12 +9,17 @@
             </div>
         </div>
         <div class="border border-border rounded-md">
-            <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
-                Commandes - <span class="">{{ list.paginator.total }}
+            <div class="bg-slate-300 pl-4 py-2 flex items-center">
+                <div class="uppercase text-white text-sm">
+                    Commandes - <span class="">{{ list.paginator.total }}
+                </div>
+                <div class="ml-auto">
+                    {% include 'component/dropdown.html.twig'  with {dropdown: list.tools} %}
+                </div>
             </div>
             <ul id="orders_container">
                 {% for item in list.items %}
-                    <li class="group relative grid grid-cols-1 lg:grid-cols-[auto_112px] items-center gap-4 not-last:border-b not-last:border-border pr-4">
+                    <li class="group relative grid grid-cols-1 lg:grid-cols-[auto_112px] items-center lg:gap-4 not-last:border-b not-last:border-border lg:pr-4">
                         <div class="group relative grid grid-cols-[1fr_40px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
                             <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
                                 <span class="sr-only">Voir la commande</span>
@@ -27,7 +31,9 @@
                         </div>
                         <div>
                             {% if item.action %}
+                            <div class="px-4 py-2 lg:p-0">
                                 {% include 'component/button.html.twig' with {button: item.action} %}
+                            </div>
                             {% endif %}
                         </div>
                     </li>

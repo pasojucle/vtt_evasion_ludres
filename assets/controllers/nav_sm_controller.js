@@ -1,6 +1,4 @@
 import { Controller } from '@hotwired/stimulus';
-import { disableScroll, enableScroll } from '../utils/toggleScroll.js';
-
 
 export default class extends Controller {
     static targets = ['container', 'trigger'];
@@ -18,15 +16,23 @@ export default class extends Controller {
             this.dispatch("hideNotifications", { 
                 prefix: "notifications",
             });
-            disableScroll();
+            document.body.classList.add('overflow-hidden', 'touch-none');
             return;
         }
-        enableScroll();
+        this.releaseScroll();
     }
 
     hideNav() {
         document.querySelector('nav').classList.remove('nav-active')
         document.querySelector('.nav-bar .btn').classList.remove('nav-hide');
         closeDropdown();
+    }
+
+    releaseScroll() {
+        document.body.classList.remove('overflow-hidden', 'touch-none');
+    }
+
+    disconnect() {
+        this.releaseScroll();
     }
 }

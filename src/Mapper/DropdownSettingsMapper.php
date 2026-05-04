@@ -30,7 +30,8 @@ class DropdownSettingsMapper
     {
         return  new DropdownDto(
             trigger: 'lucide:sliders-horizontal',
-            position: 'relative',
+            position: 'relative h-8 lg:self-stretch',
+            variant: ColorVariant::DEFAULT,
             menuItems: array_merge(
                 $menuItems,
                 $this->getParameters($sectionName),

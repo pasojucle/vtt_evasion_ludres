@@ -52,11 +52,11 @@ class SurveyAdminListMapper
             items: $items,
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
             addItem: new ButtonDto(
-                'Ajouter un sondage',
-                $this->urlGenerator->generate('admin_survey_add'),
-                'lucide:plus',
-                ColorVariant::DEFAULT,
-            )
+                label: 'Ajouter un sondage',
+                url: $this->urlGenerator->generate('admin_survey_add'),
+                icon: 'lucide:plus',
+                variant: ColorVariant::DEFAULT,
+            ),
         );
     }
 }

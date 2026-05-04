@@ -214,7 +214,7 @@ survey:
     string: Réponse libre
   filter:
     pending: En cours
-    expired: Expirée
+    expired: Expiré
     disabled: Désactivé
 
 second_hand:

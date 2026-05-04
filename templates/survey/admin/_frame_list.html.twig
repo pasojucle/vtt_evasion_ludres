@@ -1,28 +1,32 @@
 <turbo-frame id="surveys-list">
-    <div class="wrapper-body">
-        {% include 'component/button.html.twig' with {button: list.addItem} %}
-
-        {% if form is defined %}
-        {{ form_start(form) }}
-        <div class="filters">
-            <ul>
-                <li>{{ form_widget(form.status)}}</li>
+    <div>
+        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
+            <div class="border border-border rounded-sm flex items-stretch gap-2">
+                <div class="flex items-center p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
+                {{ form_start(form) }}
+                {{ form_widget(form.status)}}                
+                {{ form_end(form) }}
+            </div>
+            <div class="lg:ml-auto">
+                {% include 'component/button.html.twig' with {button: list.addItem} %}
+            </div>
+        </div>
+        <div class="border border-border rounded-md">
+            <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
+                Sondages - <span class="">{{ list.paginator.total }}
+            </div>
+            <ul id="surveys_container">
+                {% for item in list.items %}
+                    <li class="group relative grid grid-cols-[auto_60px_25px] lg:grid-cols-[auto_60px_60px] pr-8 items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
+                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
+                            <span class="sr-only">Voir le sondage</span>
+                        </a>
+                        {% include 'component/_list_item.html.twig' with {item: item} %}
+                        {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
+                    </li>
+                {% endfor %}
             </ul>
         </div>
-        {{ form_end(form) }}
-        {% endif %}
-        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'bottom'} %}
-        <ul id="surveys_container">
-            {% for item in list.items %}
-                <li class="group relative grid grid-cols-2 lg:grid-cols-[auto_60px_60px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
-                    <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
-                        <span class="sr-only">Voir le sondage</span>
-                    </a>
-                    {% include 'component/_list_item.html.twig' with {item: item} %}
-                    {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
-                </li>
-            {% endfor %}
-        </ul>
         {% if list.items is empty %}Aucun sondage{% endif %}
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>

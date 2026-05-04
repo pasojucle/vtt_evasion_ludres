@@ -11,6 +11,11 @@ readonly class ListDto
 {
     /**
      * @param ListItemDto[] $items
+     * @param ?PaginatorDto $paginator
+     * @param ?DropdownDto $tools
+     * @param ?DropdownDto $settings
+     * @param ?ButtonDto $addItem
+     * @param ?ButtonDto $wiki
      */
     public function __construct(
         public array $items, 
@@ -18,35 +23,9 @@ readonly class ListDto
         public ?DropdownDto $tools = null,
         public ?DropdownDto $settings = null,
         public ?ButtonDto $addItem = null,
+        public ?ButtonDto $wiki = null,
     ) 
     {
 
     }
-
-    // public function addItem(ListItemDto $item): void
-    // {
-    //     $this->items[] = $item;
-    // }
-
-    // public function getItems(): array
-    // {
-    //     return $this->items;
-    // }
-
-    // public function setAddItem(string $label, string $route): void
-    // {
-    //     $this->addItem = new ButtonDto(
-    //         $label,
-    //         $route,
-    //         ButtonDto::TOP,
-    //         'lucide:plus',
-    //         ColorVariant::DEFAULT,
-    //         $label
-    //     );
-    // }
-
-    //     public function getAddItem(): ?ButtonDto
-    // {
-    //     return $this->addItem;
-    // }
 }

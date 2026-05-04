@@ -52,11 +52,20 @@ class ProductAdminListMapper
             items: $items,
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
             addItem: new ButtonDto(
-                'Ajouter un produit',
-                $this->urlGenerator->generate('admin_product_add'),
-                'lucide:plus',
-                ColorVariant::DEFAULT,
-            )
+                label: 'Ajouter un produit',
+                url: $this->urlGenerator->generate('admin_product_add'),
+                icon: 'lucide:plus',
+                variant: ColorVariant::DEFAULT,
+            ),
+            wiki: new ButtonDto(
+                url: $this->urlGenerator->generate('wiki_show', ['directory'=> 'boutique']),
+                title: 'wiki',
+                icon: 'lucide:circle-help',
+                variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributDto('target', '_blank'),
+                ],
+            ),
         );
     }
 
@@ -68,6 +77,7 @@ class ProductAdminListMapper
                 label: 'Activer',
                 url: $this->urlGenerator->generate('admin_product_disable', ['product' => $product->getId()]),
                 icon: 'lucide:toggle-left',
+                variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
                     new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
                 ],
@@ -77,6 +87,7 @@ class ProductAdminListMapper
                 label: 'Désactiver',
                 url: $this->urlGenerator->generate('admin_product_disable', ['product' => $product->getId()]),
                 icon: 'lucide:toggle-right',
+                variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
                     new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
                 ],
@@ -87,6 +98,7 @@ class ProductAdminListMapper
             label: 'Supprimer',
             url: $this->urlGenerator->generate('admin_product_delete', ['product' => $product->getId()]),
             icon: 'lucide:delete',
+            variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
                 new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
             ],

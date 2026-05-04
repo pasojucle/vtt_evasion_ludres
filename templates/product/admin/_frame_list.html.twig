@@ -1,13 +1,13 @@
 <turbo-frame id="product-list">
     <div>
-        <div class="flex items-center my-4">
+        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
             <div class="border border-border rounded-sm flex items-stretch gap-2">
                 <div class="flex items-center p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
                 {{ form_start(form) }}
                 {{ form_widget(form.state)}}                
                 {{ form_end(form) }}
             </div>
-            <div class="ml-auto">
+            <div class="lg:ml-auto">
                 {% include 'component/button.html.twig' with {button: list.addItem} %}
             </div>
         </div>

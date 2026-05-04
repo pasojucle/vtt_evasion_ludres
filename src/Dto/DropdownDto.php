@@ -12,6 +12,7 @@ readonly class DropdownDto
     /**
      * @param string $trigger
      * @param string $position
+     * @param ColorVariant $variant
      * @param DropdownItemDto[] $infoItems
      * @param ButtonDto[] $menuItems
      * @param DropdownItemDto[] $actionItems
@@ -19,6 +20,7 @@ readonly class DropdownDto
     public function __construct(
         public string $trigger = 'lucide:ellipsis-vertical',
         public string $position = 'absolute h-full w-8 right-0 top-0',
+        public ColorVariant $variant = ColorVariant::DROPDOWN,
         public ?string $title = null,
         public array $infoItems = [],
         public array $menuItems = [],

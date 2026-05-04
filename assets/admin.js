@@ -31,6 +31,5 @@ import './js/form.js';
 import './js/modal.js';
 import './js/media_position.js';
 import './js/switch.js';
-import './js/js-datepicker.js';
 import './js/isGranted.js';
 import './js/uploadFile.js'

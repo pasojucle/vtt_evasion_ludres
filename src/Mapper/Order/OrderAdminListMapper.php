@@ -58,6 +58,15 @@ class OrderAdminListMapper
             settings: $this->dropdownSettingsMapper->mapToView('ORDER'),
             tools: $this->getTools(),
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
+            wiki: new ButtonDto(
+                url: $this->urlGenerator->generate('wiki_show', ['directory'=> 'boutique']),
+                title: 'wiki',
+                icon: 'lucide:circle-help',
+                variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributDto('target', '_blank'),
+                ],
+            ),
         );
     }
 
@@ -105,6 +114,7 @@ class OrderAdminListMapper
                     label: 'Supprimer',
                     url: $this->urlGenerator->generate('order_delete', ['orderHeader' => $order->getId()]),
                     icon: 'lucide:delete',
+                    variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
                         new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
                     ],

@@ -16,6 +16,8 @@ enum ColorVariant: string
 
     case ACCENT = 'accent';
 
+    case GOST = 'gost';
+
     case SKI = 'sky';
 
     case PINK = 'pink';

@@ -1,7 +1,21 @@
-{% import "component/_macros.html.twig" as utils %}
+{% set classes = {
+    (enum('App\\Dto\\Enum\\ColorVariant').SUCCESS.value): 'text-success bg-success/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').WARNING.value): 'text-warning bg-warning/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').DESTRUCTIVE.value): 'text-destructive bg-destructive/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').ACCENT.value): 'text-accent bg-accent/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').DROPDOWN.value): 'text-foreground bg-background',
+    (enum('App\\Dto\\Enum\\ColorVariant').DEFAULT.value): 'text-slate-400 bg-slate-200',
+    (enum('App\\Dto\\Enum\\ColorVariant').GOST.value): 'text-slate-400 border border-slate-400',
+    (enum('App\\Dto\\Enum\\ColorVariant').SKI.value): 'text-sky-700 bg-sky-200',
+    (enum('App\\Dto\\Enum\\ColorVariant').PINK.value): 'text-pink-700 bg-pink-200',
+    (enum('App\\Dto\\Enum\\ColorVariant').AMBER.value): 'text-amber-700 bg-amber-200',
+    (enum('App\\Dto\\Enum\\ColorVariant').INDIGO.value): 'text-indigo-700 bg-indigo-300',
+    (enum('App\\Dto\\Enum\\ColorVariant').YELLOW.value): 'text-yellow-400 bg-yellow-100',
+} %}
+    
 
 <div class="flex items-center">
-    <div class="px-1 rounded-sm text-xs {{ utils.color_class(badge.variant.value) }}">
+    <div class="px-1 rounded-sm text-xs font-semibold {{ classes[badge.variant.value] ?? classes.default }}">
         {{ badge.value}}
     </div>
 </div>

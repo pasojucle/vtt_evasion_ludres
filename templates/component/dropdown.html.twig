@@ -1,7 +1,9 @@
+{% import "component/_macros.html.twig" as utils %}
+
 {% if session is defined or is_granted('ROLE_ADMIN') %}
-<div class="{{ dropdown.position }} h-full w-8 text-foreground" data-controller="dropdown">
+<div class="group {{ dropdown.position }} w-8 text-foreground" data-controller="dropdown">
   <button 
-    class="group text-foreground lg:text-muted flex justify-center items-center h-full w-full lg:hover:text-foreground hover:z-50" 
+    class="group flex justify-center items-center h-full w-full hover:z-50 group-last:rounded-b-sm lg:group-last:rounded-r-sm lg:group-last:rounded-bl-none {{ utils.color_class(dropdown.variant.value) }}" 
     type="button" 
     data-dropdown-target="trigger" 
     data-action="click->dropdown#toggle"

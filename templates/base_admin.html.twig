@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         {% if parameter_service.getParameterByName('TEST_MODE') %}
             <link rel="icon" type="image/jpg" href="/favicon_test.ico">
         {% else %}
@@ -15,7 +15,7 @@
         {% endblock %}
     </head>
     <body 
-        class="bg-slate-50 text-slate-800 select-none overflow-x-hidden text-base font-display"
+        class="bg-slate-50 text-slate-800 select-none min-h-screen overflow-x-hidden text-base font-display"
         data-controller="nav-sm context-collapse"
         data-action="collapse:opened->context-collapse#closeOthers dropdown:opened->context-collapse#closeOthers"
         data-context-collapse-collapse-outlet="[data-controller='collapse']"

@@ -1,18 +1,23 @@
-{% set base_classes = 'block px-3 py-2 rounded transition' %}
+{% set base_classes = 'block transition' %}
+{% set spaces_classes = button.label ? 'px-3 py-2' : 'p-2' %}
+{% set rounded_classes = button.label ? 'rounded-sm' : 'first:rounded-t-sm lg:first:rounded-l-sm lg:first:rounded-tr-none last:rounded-b-sm lg:last:rounded-bl-none lg:last:rounded-r-sm' %}
+
 
 {% import "component/_macros.html.twig" as utils %}
 
 <a href="{{ button.url }}" 
    title="{{ button.title }}"
-   class="{{ base_classes }} {{ utils.color_class(button.variant.value) }}"
+   class="{{ base_classes }} {{ rounded_classes }} {{ utils.color_class(button.variant.value) }}"
     {% for attribut in button.htmlAttributes %}
         {{ attribut.name }}="{{ attribut.value }}"
     {% endfor %}
 >
     <div class="flex justify-center">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 {{ spaces_classes }}">
             {% if button.icon %}{{ ux_icon(button.icon) }}{% endif %}
-            <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ button.label}}</div>
+            {% if button.label %}
+                <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ button.label}}</div>
+            {% endif %}
         </div>
     </div>
 </a>
