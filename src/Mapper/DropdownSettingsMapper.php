@@ -7,6 +7,7 @@ namespace App\Mapper;
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\DropdownVariant;
 use App\Dto\HtmlAttributDto;
 use App\Repository\ParameterRepository;
 use App\Service\MessageService;
@@ -26,12 +27,11 @@ class DropdownSettingsMapper
      * @param ButtonDto[] $menuItems
      * @return DropdownDto
      */
-    public function mapToView(string $sectionName, array $menuItems = []): DropdownDto
+    public function mapToView(string $sectionName, DropdownVariant $variant, array $menuItems = []): DropdownDto
     {
         return  new DropdownDto(
             trigger: 'lucide:sliders-horizontal',
-            position: 'relative h-8 lg:self-stretch',
-            variant: ColorVariant::DEFAULT,
+            variant: $variant,
             menuItems: array_merge(
                 $menuItems,
                 $this->getParameters($sectionName),
@@ -41,9 +41,9 @@ class DropdownSettingsMapper
     }
     
     /** @return ButtonDto[] */
-    private function getParameters(string $sectionName): array 
+    private function getParameters(string $sectionName): array
     {
-        return array_map(fn($parameter) => new ButtonDto(
+        return array_map(fn ($parameter) => new ButtonDto(
             label: $parameter->getLabel(),
             url: $this->urlGenerator->generate('admin_parameter_edit', ['name' => $parameter->getName()]),
             icon: 'lucide:settings-2',
@@ -58,7 +58,7 @@ class DropdownSettingsMapper
     /** @return ButtonDto[] */
     private function getMessages(string $sectionName): array
     {
-        return array_map(fn($message) => new ButtonDto(
+        return array_map(fn ($message) => new ButtonDto(
             label: $message['label'],
             url: $this->urlGenerator->generate('admin_message_edit_content', ['message' => $message['id']]),
             icon: 'lucide:message-circle',

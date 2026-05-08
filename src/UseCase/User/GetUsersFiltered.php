@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\UseCase\User;
 
 use App\Dto\DropdownDto;
-use App\Mapper\DropdownMapper;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Member;
 use App\Form\Admin\UserFilterType;
+use App\Mapper\DropdownMapper;
 use App\Mapper\DropdownSettingsMapper;
 use App\Repository\MemberRepository;
 use App\Service\PaginatorService;

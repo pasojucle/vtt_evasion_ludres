@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\ProductDtoTransformer;
-use App\Dto\Enum\ProductStateEnum;
+use App\Dto\Enum\ProductState;
 use App\Dto\Filter\ProductFilter;
 use App\Entity\Product;
 use App\Form\Admin\ProductFilterType;
@@ -35,7 +35,7 @@ class ProductController extends AbstractController
         Request $request
     ): Response {
         $stateQuery = $request->query->get('state');
-        $filter = new ProductFilter($stateQuery ? ProductStateEnum::tryFrom($stateQuery) : $stateQuery);
+        $filter = new ProductFilter($stateQuery ? ProductState::tryFrom($stateQuery) : $stateQuery);
         $form = $this->createForm(ProductFilterType::class, $filter);
         $form ->handleRequest($request);
 
@@ -43,8 +43,8 @@ class ProductController extends AbstractController
         return $this->render('product/admin/list.html.twig', [
             'form' => $form->createView(),
             'list' => $provider->getCollection(
-                $filter, 
-                $request->attributes->get('_route'), 
+                $filter,
+                $request->attributes->get('_route'),
                 $request->query->getInt('page', 1),
             ),
         ]);

@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\Enum\ColorVariant;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
-use App\Mapper\DropdownSettingsMapper;
 use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
 use App\Service\PaginatorService;
@@ -21,7 +17,6 @@ use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use ValueError;
 
 class GetSchedule
@@ -30,12 +25,10 @@ class GetSchedule
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private DropdownSettingsMapper $dropdownSettingsMapper,
         private BikeRideRepository $bikeRideRepository,
         private ContentRepository $contentRepository,
         private GetFilters $getFilters,
         private FormFactoryInterface $formFactory,
-        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -87,7 +80,7 @@ class GetSchedule
             'bikeRides' => $this->bikeRideDtoTransformer->shedulefromEntities($bikeRides),
             'backgrounds' => $this->contentRepository->findOneByRoute('schedule')?->getBackgrounds(),
             'current_filters' => $filters,
-            'settings' => $this->settings(),
+            // 'settings' => $this->settings(),
         ];
 
         return [
@@ -122,19 +115,19 @@ class GetSchedule
         return $this->getFilters->execute($period, $date, $direction);
     }
 
-    private function settings(): DropdownDto
-    {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', [
-            new ButtonDto(
-                label: 'Types de rando',
-                url: $this->urlGenerator->generate('admin_bike_ride_types'),
-                variant: ColorVariant::DROPDOWN,
-            ),
-            new ButtonDto(
-                label: 'Indemnités',
-                url: $this->urlGenerator->generate('admin_indemnity_list'),
-                variant: ColorVariant::DROPDOWN,
-            ),
-        ]);
-    }
+    // private function settings(): DropdownDto
+    // {
+    //     return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', [
+    //         new ButtonDto(
+    //             label: 'Types de rando',
+    //             url: $this->urlGenerator->generate('admin_bike_ride_types'),
+    //             variant: ColorVariant::DROPDOWN,
+    //         ),
+    //         new ButtonDto(
+    //             label: 'Indemnités',
+    //             url: $this->urlGenerator->generate('admin_indemnity_list'),
+    //             variant: ColorVariant::DROPDOWN,
+    //         ),
+    //     ]);
+    // }
 }

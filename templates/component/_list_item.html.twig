@@ -1,18 +1,24 @@
-{% for cell in item.cells %}
-    {% if cell.type == 'number' %}
-        <div class="text-right font-mono">{{ cell.value }}</div>
-    {% elseif cell.type == 'badge' %}
-        <div class="flex justify-center">
-            {% include 'component/_badge.html.twig' with {'badge': cell} %}
-        </div>
+{% for label in item.labels %}
+    {% if label.type == 'number' %}
+        <div class="text-right font-mono">{{ label.value }}</div>
     {% else %}
-        <div class="text-left">{{ cell.value }}</div>
+        <div class="text-left">{{ label.value }}</div>
     {% endif %}
 {% endfor %}
-{% if item.badges is not empty %}
+{% if item.indicators is not null %}
     <div class="flex gap-1">
-    {% for badge in item.badges %}
-        {% include 'component/_badge.html.twig' with {'badge': badge} %}
+    {% for indicator in item.indicators %}
+        {% include 'component/_badge.html.twig' with {'badge': indicator} %}
     {% endfor %}
     </div>
 {% endif %}
+<div class="grid grid-cols-[1fr_30px]">
+    {% if item.status is not null %}
+        <div class="flex justify-start lg:justify-center">
+            {% include 'component/_badge.html.twig' with {'badge': item.status} %}
+        </div>
+    {% endif %}
+    {% if item.counter is not null %}
+        {% include 'component/_badge.html.twig' with {'badge': item.counter} %}
+    {% endif %}
+</div>

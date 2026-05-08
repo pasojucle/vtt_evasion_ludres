@@ -1,4 +1,4 @@
-{% set classes = {
+{% set color_classes = {
     (enum('App\\Dto\\Enum\\ColorVariant').SUCCESS.value): 'text-success bg-success/20',
     (enum('App\\Dto\\Enum\\ColorVariant').WARNING.value): 'text-warning bg-warning/20',
     (enum('App\\Dto\\Enum\\ColorVariant').DESTRUCTIVE.value): 'text-destructive bg-destructive/20',
@@ -12,10 +12,20 @@
     (enum('App\\Dto\\Enum\\ColorVariant').INDIGO.value): 'text-indigo-700 bg-indigo-300',
     (enum('App\\Dto\\Enum\\ColorVariant').YELLOW.value): 'text-yellow-400 bg-yellow-100',
 } %}
-    
 
+{% set size_classes = {
+    (enum('App\\Dto\\Enum\\Size').SM.value): 'px-1 rounded-sm text-xs font-semibold',
+    (enum('App\\Dto\\Enum\\Size').MD.value): 'px-2 py-1 rounded-sm text-sm font-semibold',
+    (enum('App\\Dto\\Enum\\Size').LG.value): 'px-4 py-2 rounded-sm text-base font-bold',
+    (enum('App\\Dto\\Enum\\Size').ICON.value): 'p-1 rounded-full',
+} %}
+    
 <div class="flex items-center">
-    <div class="px-1 rounded-sm text-xs font-semibold {{ classes[badge.variant.value] ?? classes.default }}">
-        {{ badge.value}}
+    <div class="{{ size_classes[badge.size.value] ?? size_classes.sm }} {{ color_classes[badge.variant.value] ?? color_classes.default }}">
+        {% if badge.size == enum('App\\Dto\\Enum\\Size').ICON %}
+            {{ ux_icon(badge.value, {class: 'size-4'})}}
+        {% else %}
+            {{ badge.value}}
+        {% endif %}
     </div>
 </div>

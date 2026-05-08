@@ -7,9 +7,10 @@ namespace App\Mapper\Order;
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\DropdownVariant;
 use App\Dto\Filter\OrderFilter;
 use App\Dto\HtmlAttributDto;
-use App\Dto\ListCellItemDto;
+use App\Dto\LabelDto;
 use App\Dto\ListDto;
 use App\Dto\ListItemDto;
 use App\Entity\Enum\OrderStatusEnum;
@@ -29,9 +30,7 @@ class OrderAdminListMapper
         private OrderService $orderService,
         private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
-    ) 
-    {
-
+    ) {
     }
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter): ListDto
@@ -41,11 +40,11 @@ class OrderAdminListMapper
         foreach ($entities as $entity) {
             $status = $entity->getStatus();
             $items[] = new ListItemDto(
-                cells: [
-                    new ListCellItemDto($entity->getCreatedAt()->format('d/m/y')),
-                    new ListCellItemDto($entity->getMember()->getIdentity()->getFullName()),
-                    new ListCellItemDto($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), ListCellItemDto::TYPE_NUMBER),
-                    new ListCellItemDto($status->trans($this->translator), ListCellItemDto::TYPE_BADGE, $status->variant()),
+                labels: [
+                    new LabelDto($entity->getCreatedAt()->format('d/m/y')),
+                    new LabelDto($entity->getMember()->getIdentity()->getFullName()),
+                    new LabelDto($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), LabelDto::TYPE_NUMBER),
+                    new LabelDto($status->trans($this->translator), LabelDto::TYPE_BADGE, $status->variant()),
                 ],
                 dropdown: $this->getDropdown($entity),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
@@ -55,11 +54,11 @@ class OrderAdminListMapper
 
         return new ListDto(
             items: $items,
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER'),
+            settings: $this->dropdownSettingsMapper->mapToView('ORDER', DropdownVariant::ROUNDED_END),
             tools: $this->getTools(),
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
             wiki: new ButtonDto(
-                url: $this->urlGenerator->generate('wiki_show', ['directory'=> 'boutique']),
+                url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),
                 title: 'wiki',
                 icon: 'lucide:circle-help',
                 variant: ColorVariant::DEFAULT,
@@ -76,20 +75,20 @@ class OrderAdminListMapper
         if ($status === OrderStatusEnum::ORDERED) {
             return new ButtonDto(
                 label: 'Valider',
-                url: $this->urlGenerator->generate('admin_order', ['orderHeader'=> $entity->getId()]),
+                url: $this->urlGenerator->generate('admin_order', ['orderHeader' => $entity->getId()]),
                 icon: 'lucide:check-check',
                 variant: ColorVariant::SUCCESS,
             );
         }
         if ($status === OrderStatusEnum::VALIDED) {
             $params = [
-                'orderHeader'=> $entity->getId(),
+                'orderHeader' => $entity->getId(),
                 'status' => OrderStatusEnum::COMPLETED->value,
             ];
             if ($filterHash = $filter->toEncodedString($currentPage)) {
                 $params['filter'] = $filterHash;
             }
-            $action =  new ButtonDto(
+            $action = new ButtonDto(
                 label: 'Cloturer',
                 url: $this->urlGenerator->generate('admin_order_status', $params),
                 icon: 'lucide:check-check',
@@ -126,7 +125,7 @@ class OrderAdminListMapper
     private function getTools(): DropdownDto
     {
         $dropdown = new DropdownDto(
-            position: 'relative',
+            variant: DropdownVariant::GOST,
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',

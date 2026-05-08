@@ -7,7 +7,7 @@ namespace App\Service;
 use App\Entity\Enum\OrderLineStateEnum;
 use App\Entity\Member;
 use App\Entity\OrderLine;
-use Doctrine\Common\Collections\Collection;   
+use Doctrine\Common\Collections\Collection;
 
 class OrderService
 {

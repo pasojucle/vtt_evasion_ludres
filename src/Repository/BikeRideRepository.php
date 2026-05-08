@@ -12,6 +12,7 @@ use App\Entity\Survey;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -56,6 +57,66 @@ class BikeRideRepository extends ServiceEntityRepository
         $qb->andWhere($andX);
 
         return $qb
+            ->orderBy('br.startAt', 'ASC')
+        ;
+    }
+
+
+    public function findActivityQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('a');
+    }
+
+    public function filterUpcoming(QueryBuilder $qb, DateTimeInterface $today): void
+    {
+        $qb->andWhere(
+            $qb->expr()->gte('a.startAt', ':today'),
+            $qb->expr()->eq('a.deleted', ':deleted'),
+        )
+        ->setParameter('today', $today)
+        ->setParameter('deleted', false)
+        ->orderBy('a.startAt', 'ASC');
+    }
+
+    public function filterByMonth(QueryBuilder $qb, DateTimeInterface $startAt, DateTimeInterface $endAt): void
+    {
+        $qb->andWhere(
+            $qb->expr()->gte('a.startAt', ':startAt'),
+            $qb->expr()->lte('a.startAt', ':endAt'),
+            $qb->expr()->eq('a.deleted', ':deleted'),
+        )
+        ->setParameter('startAt', $startAt)
+        ->setParameter('endAt', $endAt)
+        ->setParameter('deleted', false)
+        ->orderBy('a.startAt', 'ASC');
+    }
+
+    public function filterAllDesc(QueryBuilder $qb): void
+    {
+        $qb->orderBy('a.startAt', 'DESC');
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function findByPeriodQuery(?DateTimeInterface $startAt, ?DateTimeInterface $endAt): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('br');
+        $andX = $qb->expr()->andX();
+        if ($startAt) {
+            $andX->add($qb->expr()->gte('br.startAt', ':startAt'));
+            $qb->setParameter('startAt', $startAt);
+        }
+        if ($endAt) {
+            $andX->add($qb->expr()->lte('br.startAt', ':endAt'));
+            $qb->setParameter('endAt', $endAt);
+        }
+
+        $andX->add((new Expr())->eq('br.deleted', ':deleted'), );
+        $qb->setParameter('deleted', false);
+
+        return $qb
+            ->andWhere($andX)
             ->orderBy('br.startAt', 'ASC')
         ;
     }

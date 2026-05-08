@@ -9,9 +9,8 @@ use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-enum ProductStateEnum: string implements TranslatableInterface
+enum ProductState: string implements TranslatableInterface
 {
-
     case ENABLED = 'enabled';
 
     case DISABLED = 'disabled';
@@ -20,7 +19,7 @@ enum ProductStateEnum: string implements TranslatableInterface
     use EnumTrait;
     use BadgeTrait;
 
-        public function variant(): ColorVariant
+    public function variant(): ColorVariant
     {
         return match ($this) {
             self::DISABLED => ColorVariant::WARNING,

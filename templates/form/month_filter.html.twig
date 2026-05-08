@@ -1,0 +1,16 @@
+{% block month_filter_row %}
+    <div class="flex divide-x divide-white">
+        {% for child in form %}
+            <div class="px-2 py-1 flex items-center bg-slate-500 text-white">
+                <label c for="{{ child.vars.id }}">
+                    {% if child.vars.label starts with 'lucide:' %}
+                        {{ ux_icon(child.vars.label, { class: 'w-6 h-6' }) }}
+                    {% else %}
+                        {{ child.vars.label }}
+                    {% endif %}
+                </label>
+                {{ form_widget(child, {'attr': child.vars.attr | merge({'class': 'hidden'})}) }}   
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -10,8 +10,6 @@ class OrderFilter extends AbstractFilter
 {
     public function __construct(
         public ?OrderStatusEnum $status = null,
-    )
-    {
-
+    ) {
     }
 }

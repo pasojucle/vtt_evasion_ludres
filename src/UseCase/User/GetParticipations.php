@@ -7,10 +7,11 @@ namespace App\UseCase\User;
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\Enum\ColorVariant;
-use App\Dto\HtmlAttributDto;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\DropdownVariant;
+use App\Dto\HtmlAttributDto;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
 use App\Entity\Member;
@@ -245,7 +246,7 @@ class GetParticipations
     public function tools(): ?DropdownDto
     {
         return new DropdownDto(
-            position: 'relative',
+            variant: DropdownVariant::ROUNDED_END,
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',

@@ -70,7 +70,8 @@ class SurveyDtoTransformer
     {
         $surveyDto = new surveyDto();
         $surveyDto->title = $survey->getTitle();
-        $surveyDto->dropdown = $this->surveyAdminDropdownMapper->mapToView($survey);;
+        $surveyDto->dropdown = $this->surveyAdminDropdownMapper->mapToView($survey);
+        ;
 
         return $surveyDto;
     }

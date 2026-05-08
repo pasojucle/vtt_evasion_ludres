@@ -17,7 +17,7 @@
             </div>
             <ul id="products_container">
                 {% for item in list.items %}
-                    <li class="group relative grid grid-cols-2 lg:grid-cols-[1fr_60px_1fr]  xl:grid-cols-[2fr_80px_1fr] items-center gap-4 px-4 py-2 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors not-last:border-b not-last:border-border first:rounded-t-md last:rounded-b-md">
+                    <li class="group relative grid grid-cols-1 lg:grid-cols-[1fr_1fr_120px] items-center gap-4 px-4 py-2 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors not-last:border-b not-last:border-border first:rounded-t-md last:rounded-b-md">
                         <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Modifier l'article" data-turbo-frame="_top">
                             <span class="sr-only">Modifier l'article</span>
                         </a>
@@ -26,8 +26,10 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% if list.items is empty %}
+                {% include "component/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucun article'} %}
+            {% endif %}
         </div>
-        {% if list.items is empty %}Aucun article{% endif %}
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>
 </turbo-frame>

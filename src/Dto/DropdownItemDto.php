@@ -16,6 +16,5 @@ readonly class DropdownItemDto
         public readonly string $icon,
         public array $htmlAttributes = [],
     ) {
-
     }
 }

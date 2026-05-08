@@ -10,8 +10,6 @@ class SurveyFilter extends AbstractFilter
 {
     public function __construct(
         public ?SurveyStatusEnum $status = null,
-    )
-    {
-
+    ) {
     }
 }

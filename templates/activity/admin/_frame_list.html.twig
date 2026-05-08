@@ -1,0 +1,42 @@
+<turbo-frame id="activity-list">
+    <div>
+        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
+            {{ form_start(form) }}
+            <div class="border border-border rounded-sm flex items-center gap-2">
+                <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
+                <div class="flex items-center gap-4">
+                    {{ form_row(form.period)}}    
+                    {% if form.month is defined %}
+                        {{ form_row(form.month)}}    
+                    {% endif %}          
+                </div>
+            </div>
+            {{ form_end(form) }}
+            <div class="lg:ml-auto">
+                {% include 'component/button.html.twig' with {button: list.addItem} %}
+            </div>
+        </div>
+        <div class="border border-border rounded-md">
+            <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
+                Activités - <span class="">{{ list.paginator.total }}
+            </div>
+            <ul id="activities_container">
+                {% for item in list.items %}
+                    <li class="group relative pr-8 items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
+                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir l'activité'" data-turbo-frame="_top">
+                            <span class="sr-only">Voir l'activité'</span>
+                        </a>
+                        <div class="grid grid-cols-[70px_1fr] lg:grid-cols-[1fr_2fr_1fr_1fr] gap-2">
+                            {% include 'component/_list_item.html.twig' with {item: item} %}
+                        </div>
+                        {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if list.items is empty %}
+                {% include "component/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucune activité'} %}
+            {% endif %}
+        </div>
+        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
+    </div>
+</turbo-frame>

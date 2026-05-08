@@ -39,7 +39,9 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% if list.items is empty %}Aucune commande{% endif %}
+            {% if list.items is empty %}
+                {% include "component/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucune commande'} %}
+            {% endif %}
         </div>
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>

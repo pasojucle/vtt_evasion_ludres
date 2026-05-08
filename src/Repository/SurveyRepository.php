@@ -213,8 +213,8 @@ class SurveyRepository extends ServiceEntityRepository
     public function filterPending(QueryBuilder $qb, DateTime $today): void
     {
         $qb->andWhere(
-            $qb->expr()->gte('s.endAt',':today'),
-            $qb->expr()->eq('s.disabled',':disabled'),
+            $qb->expr()->gte('s.endAt', ':today'),
+            $qb->expr()->eq('s.disabled', ':disabled'),
         )
         ->setParameter('today', $today)
         ->setParameter('disabled', false);
@@ -223,8 +223,8 @@ class SurveyRepository extends ServiceEntityRepository
     public function filterExpired(QueryBuilder $qb, DateTime $today): void
     {
         $qb->andWhere(
-            $qb->expr()->lt('s.endAt',':today'),
-            $qb->expr()->eq('s.disabled',':disabled')
+            $qb->expr()->lt('s.endAt', ':today'),
+            $qb->expr()->eq('s.disabled', ':disabled')
         )
         ->setParameter('today', $today)
         ->setParameter('disabled', false);
@@ -233,7 +233,7 @@ class SurveyRepository extends ServiceEntityRepository
     public function filterDisabled(QueryBuilder $qb): void
     {
         $qb->andWhere(
-            $qb->expr()->eq('s.disabled',':disabled')
+            $qb->expr()->eq('s.disabled', ':disabled')
         )
         ->setParameter('disabled', true);
     }

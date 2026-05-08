@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Dto\Enum\ProductStateEnum;
+use App\Dto\Enum\ProductState;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -24,7 +24,7 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findProductQuery(?ProductStateEnum $state): QueryBuilder
+    public function findProductQuery(?ProductState $state): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p')
             ->where(
@@ -36,11 +36,22 @@ class ProductRepository extends ServiceEntityRepository
         if ($state) {
             $qb
                 ->andWhere(
-                    $qb->expr()->eq('p.isDisabled',':state')
+                    $qb->expr()->eq('p.isDisabled', ':state')
                 )
-                ->setParameter('state', ProductStateEnum::DISABLED === $state);
+                ->setParameter('state', ProductState::DISABLED === $state);
         }
 
         return $qb;
+    }
+
+    public function findAllQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('p')
+            ->where(
+                (new Expr())->eq('p.deleted', ':isDeleted')
+            )
+            ->setParameter('isDeleted', false)
+            ->orderBy('p.name', 'ASC')
+        ;
     }
 }

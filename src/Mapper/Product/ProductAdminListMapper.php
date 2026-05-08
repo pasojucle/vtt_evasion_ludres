@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mapper\Product;
 
+use App\Dto\BadgeDto;
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\ProductStateEnum;
+use App\Dto\Enum\ProductState;
 use App\Dto\HtmlAttributDto;
-use App\Dto\ListBadgesItemDto;
-use App\Dto\ListCellItemDto;
+use App\Dto\LabelDto;
 use App\Dto\ListDto;
 use App\Dto\ListItemDto;
 use App\Entity\Product;
@@ -25,24 +25,22 @@ class ProductAdminListMapper
         private PaginatorMapper $paginatorMapper,
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
-
+    ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage,  $filter): ListDto
+    public function mapToView(Paginator $entities, string $route, int $currentPage, $filter): ListDto
     {
         $items = [];
         /** @var Product $entity */
         foreach ($entities as $entity) {
-            $state = $entity->isDisabled() ? ProductStateEnum::DISABLED : ProductStateEnum::ENABLED;
+            $state = $entity->isDisabled() ? ProductState::DISABLED : ProductState::ENABLED;
 
             $items[] = new ListItemDto(
-                cells: [
-                    new ListCellItemDto($entity->getName()),
-                    new ListCellItemDto($state->trans($this->translator), ListCellItemDto::TYPE_BADGE, $state->variant()),
+                labels: [
+                    new LabelDto($entity->getName()),
                 ],
-                badges: $entity->getSizes()->map(fn ($size) => new ListBadgesItemDto($size->getName()))->toArray(),
+                indicators: $entity->getSizes()->map(fn ($size) => new BadgeDto($size->getName()))->toArray(),
+                status: new BadgeDto($state->trans($this->translator), $state->variant()),
                 dropdown: $this->getDropdown($entity),
                 url: $this->urlGenerator->generate("admin_product", ['product' => $entity->getId()]),
             );
@@ -58,7 +56,7 @@ class ProductAdminListMapper
                 variant: ColorVariant::DEFAULT,
             ),
             wiki: new ButtonDto(
-                url: $this->urlGenerator->generate('wiki_show', ['directory'=> 'boutique']),
+                url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),
                 title: 'wiki',
                 icon: 'lucide:circle-help',
                 variant: ColorVariant::DEFAULT,
@@ -105,7 +103,7 @@ class ProductAdminListMapper
         );
 
         return new DropdownDto(
-            menuItems: $menuItems, 
+            menuItems: $menuItems,
         );
     }
- }
+}

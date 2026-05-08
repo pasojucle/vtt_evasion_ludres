@@ -133,7 +133,6 @@ class DropdownMapper
 
     public function fromLastLicence(Licence $licence): DropdownDto
     {
-        
         $user = $licence->getUser();
         $menuItems = $this->getMenuItemsfromUser($user);
         if ($licence->getState()->toValidate()) {
@@ -158,64 +157,6 @@ class DropdownMapper
         return new DropdownDto(
             title: $user->getIdentity()->getFullName(),
             menuItems: $menuItems,
-        );
-    }
-
-    public function fromBikeRide(BikeRide $bikeRide): DropdownDto
-    {
-        $menuItems = [];
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            $menuItems[] = new ButtonDto(
-                label: 'Modifier',
-                url: $this->urlGenerator->generate('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()]),
-                icon: 'lucide:pencil',
-            );
-            if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
-                $menuItems[] = new ButtonDto(
-                    label: 'Annuler',
-                    url: $this->urlGenerator->generate('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()]),
-                    icon: 'lucide:delete',
-                    htmlAttributes: [
-                        new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
-                    ],
-                );
-            }
-            $menuItems[] = new ButtonDto(
-                label: 'Exporter la séance',
-                url: $this->urlGenerator->generate('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
-                icon: 'lucide:file-down',
-            );
-        }
-        if ($this->security->isGranted('SUMMARY_LIST')) {
-            $menuItems[] = new ButtonDto(
-                label: 'Actualités',
-                url: $this->urlGenerator->generate('admin_summary_list', ['bikeRide' => $bikeRide->getId()]),
-                icon: 'lucide:image',
-            );
-        }
-        $actionItems = [];
-        if ($bikeRide->getBikeRideType()->isPublic()) {
-            $actionItems = new DropdownItemDto(
-                label: 'Copier l\'url',
-                icon: 'lucide:clipboard-copy',
-                htmlAttributes: [
-                    new HtmlAttributDto(
-                        'data-clipboard-url-value',
-                        $this->urlGenerator->generate(
-                            'bike_ride_detail',
-                            ['bikeRide' => $bikeRide->getId(), 'slug' => $bikeRide->getTitle()],
-                            UrlGeneratorInterface::ABSOLUTE_URL
-                    )),
-                    new HtmlAttributDto('data-controller', 'clipboard'),
-                    new HtmlAttributDto('data-action', 'click->dropdown#close')
-                ]
-            );
-        }
-                                                         
-        return new DropdownDto(
-            title: $bikeRide->__toString(),
-            menuItems: $menuItems,
-            actionItems: $actionItems,
         );
     }
 
@@ -278,8 +219,10 @@ class DropdownMapper
                     htmlAttributes: [
                         new HtmlAttributDto(
                             'data-clipboard-url-value',
-                            $this->urlGenerator->generate('survey', 
-                                ['survey' => $survey->getId()], UrlGeneratorInterface::ABSOLUTE_URL
+                            $this->urlGenerator->generate(
+                                'survey',
+                                ['survey' => $survey->getId()],
+                                UrlGeneratorInterface::ABSOLUTE_URL
                             ),
                         ),
                         new HtmlAttributDto('data-controller', 'clipboard'),

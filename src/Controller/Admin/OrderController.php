@@ -47,8 +47,8 @@ class OrderController extends AbstractController
         return $this->render('order/admin/list.html.twig', [
             'form' => $form->createView(),
             'list' => $provider->getCollection(
-                $filter, 
-                $request->attributes->get('_route'), 
+                $filter,
+                $request->attributes->get('_route'),
                 $request->query->getInt('page', 1),
             ),
         ]);
@@ -62,8 +62,6 @@ class OrderController extends AbstractController
         FilterDecoderService $filterDecoder,
         OrderStatusEnum $status
     ): Response {
-
-
         $orderHeader->setStatus($status);
         $this->entityManager->flush();
         $queries = $filterDecoder->decode($request->query->get('filter'));

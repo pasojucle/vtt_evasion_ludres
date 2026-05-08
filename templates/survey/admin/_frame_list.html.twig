@@ -1,4 +1,4 @@
-<turbo-frame id="surveys-list">
+<turbo-frame id="survey-list">
     <div>
         <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
             <div class="border border-border rounded-sm flex items-stretch gap-2">
@@ -17,8 +17,8 @@
             </div>
             <ul id="surveys_container">
                 {% for item in list.items %}
-                    <li class="group relative grid grid-cols-[auto_60px_25px] lg:grid-cols-[auto_60px_60px] pr-8 items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
-                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
+                    <li class="group relative grid grid-cols-1 lg:grid-cols-[auto_150px] pr-8 items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
+                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir les réponses" data-turbo-frame="_top">
                             <span class="sr-only">Voir le sondage</span>
                         </a>
                         {% include 'component/_list_item.html.twig' with {item: item} %}
@@ -26,8 +26,10 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% if list.items is empty %}
+                {% include "component/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucun sondage'} %}
+            {% endif %}
         </div>
-        {% if list.items is empty %}Aucun sondage{% endif %}
         {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>
 </turbo-frame>

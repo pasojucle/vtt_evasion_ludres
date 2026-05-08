@@ -16,9 +16,7 @@ class SurveyAdminDropdownMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
-
+    ) {
     }
 
     public function mapToView(Survey $survey): DropdownDto

@@ -6,15 +6,18 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Dto\Enum\ActivityPeriod;
+use App\Dto\Filter\ActivityFilter;
 use App\Entity\BikeRide;
+use App\Form\ActivityListFilterType;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
+use App\State\Activity\Provider\ActivityAdminListProvider;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
-use App\UseCase\BikeRide\GetSchedule;
 
 
 use App\UseCase\User\GetFramersFiltered;
@@ -33,28 +36,35 @@ class BikeRideController extends AbstractController
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
         private EntityManagerInterface $entityManager,
-        private GetSchedule $getSchedule,
         private GetFilters $getFilters,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private ClusterDtoTransformer $clusterDtoTransformer,
     ) {
     }
 
-    #[Route('/calendrier/{period}/{year}/{month}/{day}', name: 'admin_bike_rides', methods: ['GET', 'POST'], defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null])]
+    #[Route('/calendrier', name: 'admin_bike_rides', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminList(
         Request $request,
-        ?string $period,
-        ?int $year,
-        ?int $month,
-        ?int $day
+        ActivityAdminListProvider $provider,
     ): Response {
-        $response = $this->getSchedule->execute($request, $period, $year, $month, $day);
-        if (array_key_exists('redirect', $response)) {
-            return $this->redirectToRoute($response['redirect'], $response['filters']);
-        }
+        $periodQuery = $request->query->get('period', ActivityPeriod::UPCOMING->value);
+        $filter = new ActivityFilter(
+            $periodQuery ? ActivityPeriod::tryFrom($periodQuery) : $periodQuery,
+            $request->query->get('month')
+        );
 
-        return $this->render('bike_ride/admin/list.html.twig', $response['parameters']);
+        $form = $this->createForm(ActivityListFilterType::class, $filter);
+        $form->handleRequest($request);
+
+        return $this->render('activity/admin/list.html.twig', [
+            'form' => $form->createView(),
+            'list' => $provider->getCollection(
+                $filter,
+                $request->attributes->get('_route'),
+                $request->query->getInt('page', 1),
+            ),
+        ]);
     }
 
     #[Route('/sortie', name: 'admin_bike_ride_add', methods: ['GET', 'POST'])]

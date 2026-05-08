@@ -1,7 +1,7 @@
 {% set base_classes = 'block transition' %}
 {% set spaces_classes = button.label ? 'px-3 py-2' : 'p-2' %}
 {% set rounded_classes = button.label ? 'rounded-sm' : 'first:rounded-t-sm lg:first:rounded-l-sm lg:first:rounded-tr-none last:rounded-b-sm lg:last:rounded-bl-none lg:last:rounded-r-sm' %}
-
+{% set align_class = button.variant.value == 'dropdown' ? 'justify-start' : 'justify-center' %}
 
 {% import "component/_macros.html.twig" as utils %}
 
@@ -12,7 +12,7 @@
         {{ attribut.name }}="{{ attribut.value }}"
     {% endfor %}
 >
-    <div class="flex justify-center">
+    <div class="flex {{ align_class }}">
         <div class="flex items-center gap-2 {{ spaces_classes }}">
             {% if button.icon %}{{ ux_icon(button.icon) }}{% endif %}
             {% if button.label %}

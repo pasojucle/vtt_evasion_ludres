@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mapper\Survey;
 
+use App\Dto\BadgeDto;
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\DropdownItemDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Filter\SurveyFilter;
-use App\Dto\ListCellItemDto;
+use App\Dto\LabelDto;
 use App\Dto\ListDto;
 use App\Dto\ListItemDto;
 use App\Entity\Survey;
@@ -25,9 +26,7 @@ class SurveyAdminListMapper
         private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
         private SurveyAdminDropdownMapper $surveyAdminDropdownMapper
-    ) 
-    {
-
+    ) {
     }
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, SurveyFilter $filter): ListDto
@@ -36,11 +35,17 @@ class SurveyAdminListMapper
         foreach ($entities as $entity) {
             $status = $entity->getStatus();
             $items[] = new ListItemDto(
-                cells: [
-                    new ListCellItemDto($entity->getTitle()),
-                    new ListCellItemDto($status->trans($this->translator), ListCellItemDto::TYPE_BADGE, $status->variant()),
-                    new ListCellItemDto((string) $entity->getRespondents()->count(), ListCellItemDto::TYPE_BADGE),
+                labels: [
+                    new LabelDto($entity->getTitle()),
+                    // new LabelDto(( LabelDto::TYPE_BADGE),
                 ],
+                status: new BadgeDto(
+                    $status->trans($this->translator),
+                    $status->variant()
+                ),
+                counter: new BadgeDto(
+                    (string) $entity->getRespondents()->count(),
+                ),
                 dropdown: $this->surveyAdminDropdownMapper->mapToView($entity),
                 url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey', [
                     'survey' => $entity->getId()

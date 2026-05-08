@@ -254,3 +254,8 @@ product:
   state: 
     enabled: Activé
     disabled: Désactivé
+
+activity:
+  period: 
+    month: mois
+    upcoming: Prochainement

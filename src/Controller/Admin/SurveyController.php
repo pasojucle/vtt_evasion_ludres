@@ -56,8 +56,8 @@ class SurveyController extends AbstractController
         return $this->render('survey/admin/list.html.twig', [
             'form' => $form->createView(),
             'list' => $provider->getCollection(
-                $filter, 
-                $request->attributes->get('_route'), 
+                $filter,
+                $request->attributes->get('_route'),
                 $request->query->getInt('page', 1),
             ),
         ]);
@@ -163,7 +163,7 @@ class SurveyController extends AbstractController
         $session->set('admin_survey_filter', $filter);
         $responses = $getSurveyResults->execute($filter);
         return $this->render('survey/admin/show.html.twig', [
-            'survey' =>  $surveyDtoTransformer->fromEntityToResponses($survey),
+            'survey' => $surveyDtoTransformer->fromEntityToResponses($survey),
             'responses' => $this->surveyResponseDtoTransformer->fromEntities($responses),
             'form' => $form->createView(),
         ]);

@@ -6,7 +6,6 @@ namespace App\Dto\Filter;
 
 use BackedEnum;
 
-
 abstract class AbstractFilter
 {
     public function toArray(): array
@@ -17,7 +16,7 @@ abstract class AbstractFilter
                 $properties[$name] = $value instanceof BackedEnum
                     ? $value->value
                     : $value;
-                }
+            }
         }
         return $properties;
     }

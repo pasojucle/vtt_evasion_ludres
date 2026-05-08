@@ -11,7 +11,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PaginatorMapper
 {
-
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
     ) {

@@ -294,7 +294,7 @@ class Survey
         if ($this->isDisabled()) {
             return SurveyStatusEnum::DISABLED;
         }
-        if ($this->getEndAt() < (new DateTime())->setTime(0,0,0)) {
+        if ($this->getEndAt() < (new DateTime())->setTime(0, 0, 0)) {
             return SurveyStatusEnum::EXPIRED;
         }
 

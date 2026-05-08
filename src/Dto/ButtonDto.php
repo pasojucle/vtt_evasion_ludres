@@ -29,8 +29,6 @@ class ButtonDto
             new HtmlAttributDto('data-turbo-frame', self::TOP)
         ],
         public string $title = '',
-    ) 
-    {
-
+    ) {
     }
 }

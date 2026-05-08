@@ -8,6 +8,7 @@ use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\DropdownItemDto;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\DropdownVariant;
 use App\Dto\HtmlAttributDto;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
@@ -57,7 +58,7 @@ class GetCoveragesFiltered extends GetUsersFiltered
     public function tools(): ?DropdownDto
     {
         return new DropdownDto(
-            position: 'relative',
+            variant: DropdownVariant::ROUNDED,
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',

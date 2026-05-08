@@ -390,4 +390,21 @@ class SessionRepository extends ServiceEntityRepository
             ->getSingleScalarResult()
         ;
     }
+
+    public function findTotalByActivityIds(array $activityIds): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('b.id')
+            ->addSelect(sprintf('%s as count', (new Expr())->count('s.id')))
+            ->addSelect('SUM(CASE WHEN s.isPresent = true THEN 1 ELSE 0 END) as present')
+            ->join('s.cluster', 'c')
+            ->join('c.bikeRide', 'b')
+            ->andWhere(
+                (new Expr())->in('b.id', ':ids'),
+            )
+            ->setParameter('ids', $activityIds)
+            ->groupBy('b.id')
+            ->getQuery()
+            ->getArrayResult();
+    }
 }
