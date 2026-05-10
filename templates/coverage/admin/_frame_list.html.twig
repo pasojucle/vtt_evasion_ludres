@@ -17,11 +17,11 @@
                                 {% endif %}
                             </div>
                         </a>
-                        {% include 'component/dropdown.html.twig' with {dropdown: user.dropdown} %}
+                        {% include 'component/_dropdown.html.twig' with {dropdown: user.dropdown} %}
                     </div>
                     <div>
                         {% if user.lastLicence.stateAction %}
-                            {% include "component/button.html.twig" with {button: user.lastLicence.stateAction} %}
+                            {% include "component/_button.html.twig" with {button: user.lastLicence.stateAction} %}
                         {% endif %}
                     </div>
                 </li>

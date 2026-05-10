@@ -30,7 +30,7 @@ class DropdownSettingsMapper
     public function mapToView(string $sectionName, DropdownVariant $variant, array $menuItems = []): DropdownDto
     {
         return  new DropdownDto(
-            trigger: 'lucide:sliders-horizontal',
+            trigger: 'lucide:settings',
             variant: $variant,
             menuItems: array_merge(
                 $menuItems,
@@ -64,7 +64,7 @@ class DropdownSettingsMapper
             icon: 'lucide:message-circle',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
-                new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
+                new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
                 new HtmlAttributDto('data-action', 'click->dropdown#close')
             ],
         ), $this->messageService->getMessagesBySectionName($sectionName));

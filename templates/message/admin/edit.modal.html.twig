@@ -1,22 +1,22 @@
-{% extends 'base_modal_stimulus.html.twig' %}
-{% set title = (indemnity is defined) ? 'Ajouter' : 'Modifier' %}
-{% block modal_title %}{{ title }}{% endblock %}
+{% extends 'base_sheet.html.twig' %}
 {% block body %}
-    <div class="w-full m-0 py-2 px-4">
-        <h3>Modifier le message</h3>
-        <blockquote class="border-l-4 border-gray-300 pl-4 italic text-slate-700">{{ message.label }}</blockquote>
-        <div class="mb-2">
+    <div class="mb-2">
+        {% if form.name is defined %}
+            {{ form_row(form.name) }}
+        {% endif %}
+        {% if form.label is defined %}
+            {{ form_row(form.label) }}
+        {% endif %}
             {{ form_row(form.content) }}
+        {% if form.section is defined %}
+            {{ form_row(form.section) }}
+        {% endif %}
+        {% if form.levelType is defined %}
+            {{ form_row(form.levelType) }}
+        {% endif %}
+        {% if form.referer is defined %}
             {{ form_row(form.referer) }}
-            {{ form_errors(form) }}
-        </div>
+        {% endif %}
+        {{ form_errors(form) }}
     </div>
-{% endblock %}
-{% block action %}
-    <button 
-        type="submit"
-        class="btn text-primary bg-slate-200"
-    >
-        <i class="fas fa-check"></i> Modifier
-    </button>
 {% endblock %}

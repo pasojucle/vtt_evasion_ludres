@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\Order;
 
+use App\Dto\BadgeDto;
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
@@ -44,8 +45,8 @@ class OrderAdminListMapper
                     new LabelDto($entity->getCreatedAt()->format('d/m/y')),
                     new LabelDto($entity->getMember()->getIdentity()->getFullName()),
                     new LabelDto($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), LabelDto::TYPE_NUMBER),
-                    new LabelDto($status->trans($this->translator), LabelDto::TYPE_BADGE, $status->variant()),
                 ],
+                status: new BadgeDto($status->trans($this->translator), $status->variant()),
                 dropdown: $this->getDropdown($entity),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 action: $this->getAction($entity, $currentPage, $filter),

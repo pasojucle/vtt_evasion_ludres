@@ -12,7 +12,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -42,7 +41,7 @@ class MessageType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $form = $event->getForm();
             $message = $event->getData();
-            if (!$options['modal']) {
+            if ($options['full_mode']) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom (Tout en capital, sans espace)',
@@ -73,12 +72,6 @@ class MessageType extends AbstractType
                             'class' => 'form-group-inline',
                         ],
                     ])
-                    ->add('save', SubmitType::class, [
-                        'label' => 'Enregistrer',
-                        'attr' => [
-                            'class' => 'btn btn-primary float-right',
-                        ],
-                    ])
                 ;
             }
         });
@@ -88,9 +81,9 @@ class MessageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Message::class,
+            'full_mode' => false,
             'referer' => null,
-            'modal' => false,
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit'],
+            'attr' => ['data-action' => 'turbo:submit-end->sheet#handleFormSubmit'],
         ]);
     }
 }

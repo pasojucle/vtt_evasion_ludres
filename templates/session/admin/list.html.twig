@@ -55,9 +55,9 @@
                 </div>
             </div>
         </a>
-        {% include 'component/dropdown.html.twig' with {dropdown: user.dropdown} %}
+        {% include 'component/_dropdown.html.twig' with {dropdown: user.dropdown} %}
 
-        {# {% include 'user/admin/dropdown.html.twig' with {'session' : session} %} #}
+        {# {% include 'user/admin/_dropdown.html.twig' with {'session' : session} %} #}
     </div>
     {% include 'session/admin/_present.html.twig' %}
 </li>

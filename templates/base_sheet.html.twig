@@ -1,0 +1,43 @@
+<turbo-frame id="sheet_content">
+    {% if form is defined and form is not null %}
+        {{ form_start(form, {'attr': {'class':"flex flex-col h-full m-0"}})}}
+    {% endif %}
+    <div class="flex-none items-center justify-between p-4 border-b border-border bg-slate-200">
+        <div class="flex gap-2">
+            <div>
+                <h3 class="!mt-0 !mb-0 text-xl font-semibold text-slate-800">{{ sheet.title }}</h3>
+                <div class="text-muted">{{ sheet.description }}</div>
+            </div>
+            <div class="ml-auto">
+                <button 
+                    type="button"  
+                    data-action="click->sheet#close" 
+                    class="end-2.5 text-slate-400 bg-transparent hover:bg-slate-300 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-slate-600 dark:hover:text-white" 
+                    data-modal-hide="authentication-modal">
+                    {{ ux_icon('lucide:x')}}
+                    <span class="sr-only">Fermer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 overflow-y-auto p-4 space-y-4">
+        {% block body %}{% endblock %}
+    </div>
+    <div class="flex-none p-4 grid grid-cols-2 gap-3 border-t border-border bg-white">
+        <button type="button" data-action="click->sheet#close" class="p-2 bg-slate-300 lg:bg-slate-200 lg:hover:bg-slate-300">
+            Annuler
+        </button>
+        <button 
+            type="submit"
+            class="p-2 flex justify-center text-white bg-accent lg:bg-accent/80 lg:hover:bg-accent"
+        >
+            <div class="flex items-center gap-2">
+                <div>{{ ux_icon('lucide:check')}}</div>
+                <div>{{ sheet.action }}</div>
+            </div>
+        </button>        
+    </div>
+    {% if form is defined and form is not null %}
+        {{ form_end(form)}}
+    {% endif %}
+</turbo-frame>

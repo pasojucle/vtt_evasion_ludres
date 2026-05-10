@@ -12,8 +12,8 @@
             >
                 {{ ux_icon('lucide:circle-help',{ class: 'w-5 h-5' }) }}
             </a>
-        {% include 'component/dropdown.html.twig' with {dropdown: settings}%}
-        {% include 'component/dropdown.html.twig' with {dropdown: tools}%}
+        {% include 'component/_dropdown.html.twig' with {dropdown: settings}%}
+        {% include 'component/_dropdown.html.twig' with {dropdown: tools}%}
         </div>
     </div>
     {% include('user/admin/filters.html.twig') %}
@@ -34,10 +34,10 @@
                                 {% endif %}
                             </div>
                         </a>
-                        {% include 'component/dropdown.html.twig' with {dropdown: user.dropdown} %}
+                        {% include 'component/_dropdown.html.twig' with {dropdown: user.dropdown} %}
                     </div>
                     {% if user.lastLicence.stateAction %}
-                        {% include "component/button.html.twig" with {button: user.lastLicence.stateAction} %}
+                        {% include "component/_button.html.twig" with {button: user.lastLicence.stateAction} %}
                     {% endif %}
                 </li>
             {% endfor %}

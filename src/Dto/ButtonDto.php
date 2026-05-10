@@ -6,10 +6,11 @@ namespace App\Dto;
 
 use App\Dto\Enum\ColorVariant;
 
-class ButtonDto
+readonly class ButtonDto
 {
     public const string TOP = '_top';
     public const string MODAL_CONTENT = 'modal_content';
+    public const string SHEET_CONTENT = 'sheet_content';
 
     /**
      * @param string $url

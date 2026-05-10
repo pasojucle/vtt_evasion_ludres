@@ -13,6 +13,7 @@ use App\Form\Admin\MessageType;
 use App\Repository\MessageRepository;
 use App\Repository\ParameterGroupRepository;
 use App\Service\PaginatorService;
+use App\State\Message\Provider\MessageProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -91,13 +92,14 @@ class MessageController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminEditContent(
         Request $request,
+        MessageProvider $provider,
         Message $message
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(MessageType::class, $message, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+            'action' => $request->getUri(),
             'referer' => $request->headers->get('referer'),
-            'modal' => true,
+            'full_mode' => false,
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
@@ -109,8 +111,7 @@ class MessageController extends AbstractController
         }
 
         return $this->render('message/admin/edit.modal.html.twig', [
-            'message' => $message,
-            'section' => $message->getSection(),
+            'sheet' => $provider->createSheet($message),
             'form' => $form->createView(),
         ], $response);
     }

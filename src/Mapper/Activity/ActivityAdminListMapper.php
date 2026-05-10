@@ -88,7 +88,7 @@ class ActivityAdminListMapper
     //     <div class="list-item">{{ bikeRide_content }}</div>
     // {% endif %}
     // {% if is_granted('ROLE_ADMIN') or is_granted('SUMMARY_LIST') %}
-    //     {% include 'component/dropdown.html.twig' with {'dropdown': bikeRide.dropdown} %}
+    //     {% include 'component/_dropdown.html.twig' with {'dropdown': bikeRide.dropdown} %}
     // {% endif %}
 
     private function settings(): DropdownDto

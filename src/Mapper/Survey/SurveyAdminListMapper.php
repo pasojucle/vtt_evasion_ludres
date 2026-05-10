@@ -37,7 +37,6 @@ class SurveyAdminListMapper
             $items[] = new ListItemDto(
                 labels: [
                     new LabelDto($entity->getTitle()),
-                    // new LabelDto(( LabelDto::TYPE_BADGE),
                 ],
                 status: new BadgeDto(
                     $status->trans($this->translator),

@@ -10,7 +10,7 @@
             </div>
             <div class="ml-auto flex gap-2 items-center">
                 <a href="{{ path('admin_bike_rides') }}" class="text-foreground lg:text-muted lg:hover:text-foreground" title="Retour à la liste des randos">{{ ux_icon('lucide:chevron-left', { class: 'w-6 h-6' }) }}</a>
-                {% include 'component/dropdown.html.twig' with {'dropdown': settings} %}
+                {% include 'component/_dropdown.html.twig' with {'dropdown': settings} %}
             </div>
         </div>
         <div class="wrapper-body">
@@ -20,7 +20,7 @@
                 {% for bikeRideType in bikeRideTypes %}     
                     <li class="list-group-item">
                         <div>{{ bikeRideType.name }}</div>
-                        {% include 'component/dropdown.html.twig' with {'dropdown': bikeRideType.dropdown} %} 
+                        {% include 'component/_dropdown.html.twig' with {'dropdown': bikeRideType.dropdown} %} 
                     </li>
                 {% endfor %}
             </ul>

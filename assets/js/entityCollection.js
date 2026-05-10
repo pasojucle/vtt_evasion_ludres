@@ -1,4 +1,4 @@
-import { previewFile, getFile } from './input-file';
+// import { previewFile, getFile } from './input-file';
 
 const addDeleteLink = () => {
     const collectionItems = document.querySelectorAll('.collection_container .form-group-collection:not(.not-deleted)');
@@ -34,13 +34,13 @@ const addFormToCollection = (e) => {
     inputFile.click();
     inputFile.addEventListener('change', (event) => {
       const image = document.createElement('IMG');
-      previewFile(event)
+      // previewFile(event)
     });    
   }
 
   if (e.currentTarget.classList.contains('add-bike-ride-track')) {
     collectionHolder.lastChild.querySelectorAll('.input-file-button').forEach((element) => {
-        element.addEventListener('click', getFile);
+        // element.addEventListener('click', getFile);
     })
   }
 

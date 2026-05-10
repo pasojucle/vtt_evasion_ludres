@@ -14,25 +14,25 @@
                     Commandes - <span class="">{{ list.paginator.total }}
                 </div>
                 <div class="ml-auto">
-                    {% include 'component/dropdown.html.twig'  with {dropdown: list.tools} %}
+                    {% include 'component/_dropdown.html.twig'  with {dropdown: list.tools} %}
                 </div>
             </div>
             <ul id="orders_container">
                 {% for item in list.items %}
                     <li class="group relative grid grid-cols-1 lg:grid-cols-[auto_112px] items-center lg:gap-4 not-last:border-b not-last:border-border lg:pr-4">
-                        <div class="group relative grid grid-cols-[1fr_40px] items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
+                        <div class="group relative items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
                             <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
                                 <span class="sr-only">Voir la commande</span>
                             </a>
                             <div class="grid grid-cols-[70px_1fr] lg:grid-cols-[1fr_2fr_1fr_1fr] gap-2">
                                 {% include 'component/_list_item.html.twig' with {item: item} %}
                             </div>
-                            {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
+                            {% include 'component/_dropdown.html.twig' with {dropdown: item.dropdown} %}
                         </div>
                         <div>
                             {% if item.action %}
                             <div class="px-4 py-2 lg:p-0">
-                                {% include 'component/button.html.twig' with {button: item.action} %}
+                                {% include 'component/_button.html.twig' with {button: item.action} %}
                             </div>
                             {% endif %}
                         </div>

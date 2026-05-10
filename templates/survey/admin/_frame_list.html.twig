@@ -8,7 +8,7 @@
                 {{ form_end(form) }}
             </div>
             <div class="lg:ml-auto">
-                {% include 'component/button.html.twig' with {button: list.addItem} %}
+                {% include 'component/_button.html.twig' with {button: list.addItem} %}
             </div>
         </div>
         <div class="border border-border rounded-md">
@@ -22,7 +22,7 @@
                             <span class="sr-only">Voir le sondage</span>
                         </a>
                         {% include 'component/_list_item.html.twig' with {item: item} %}
-                        {% include 'component/dropdown.html.twig' with {dropdown: item.dropdown} %}
+                        {% include 'component/_dropdown.html.twig' with {dropdown: item.dropdown} %}
                     </li>
                 {% endfor %}
             </ul>
