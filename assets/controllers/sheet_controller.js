@@ -23,6 +23,11 @@ export default class extends Controller {
     disconnect() {
         document.removeEventListener("modal:openWithContent", this.openWithContentHandler);
         document.removeEventListener("modal:openFromUrl", this.openFromUrlHandler);
+        this.releaseScroll();
+    }
+
+    releaseScroll() {
+        document.body.classList.remove('overflow-hidden', 'touch-none');
     }
 
     open() {
@@ -32,6 +37,7 @@ export default class extends Controller {
 
             setTimeout(() => {
                 this.containerTarget.classList.replace('translate-x-full', 'translate-x-0');
+                document.body.classList.add('overflow-hidden', 'touch-none');
             }, 10);
         }
     }
@@ -67,7 +73,7 @@ export default class extends Controller {
 
     close() {
         this.containerTarget.classList.replace('translate-x-0', 'translate-x-full');
-
+        this.releaseScroll();
         setTimeout(() => {
             this.dialogTarget.close();
             this.frameTarget.src = "";
@@ -94,8 +100,10 @@ export default class extends Controller {
     handleFormSubmit(event) {
         console.log("handleFormSubmit");
         if (event.detail.success) {
+            event.preventDefault();
             this.close();
-            Turbo.visit(window.location.href, { action: "replace" });
+            // Turbo.visit(window.location.href, { action: "replace" });
+            Turbo.cache.clear();
         } else {
             this.frameTarget.scrollTop = 0;
         }

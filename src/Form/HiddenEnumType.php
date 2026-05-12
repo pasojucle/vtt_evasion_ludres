@@ -25,6 +25,7 @@ class HiddenEnumType extends HiddenType
         $resolver->setRequired('class');
         $resolver->setDefaults([
             'data_class' => null,
+            'compound' => false,
         ]);
     }
 }

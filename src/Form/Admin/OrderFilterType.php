@@ -23,7 +23,6 @@ class OrderFilterType extends AbstractType
                 'class' => OrderStatusEnum::class,
                 'attr' => [
                     'class' => 'btn',
-                    'data-controller' => "filter",
                     'data-action' => 'change->filter#change'
                 ],
                 'required' => false,
@@ -35,9 +34,17 @@ class OrderFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => OrderFilter::class,
+            'csrf_protection' => false,
             'attr' => [
                 'data-controller' => "filter",
+                'data-turbo-frame' => '_top',
             ],
         ]);
+    }
+
+
+    public function getBlockPrefix(): string
+    {
+        return '';
     }
 }

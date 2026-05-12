@@ -1,0 +1,9 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    <div class="mb-2">
+        {% for child in form.children %}
+            {{ form_row(child) }}
+        {% endfor %}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}

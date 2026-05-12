@@ -48,13 +48,15 @@ class BikeRideController extends AbstractController
         Request $request,
         ActivityAdminListProvider $provider,
     ): Response {
-        $periodQuery = $request->query->get('period', ActivityPeriod::UPCOMING->value);
-        $filter = new ActivityFilter(
-            $periodQuery ? ActivityPeriod::tryFrom($periodQuery) : $periodQuery,
-            $request->query->get('month')
-        );
+        $filter = $provider->getHydratedDto($request->query->all(), ActivityFilter::class);
 
-        $form = $this->createForm(ActivityListFilterType::class, $filter);
+        $filterConfig = $provider->getFilterConfig('admin_bike_rides');
+        if (!$filterConfig) {
+            throw $this->createNotFoundException();
+        }
+        $form = $this->createForm(ActivityListFilterType::class, $filter, [
+            'advanced_fields' => $filterConfig->getAdvancedFields(),
+        ]);
         $form->handleRequest($request);
 
         return $this->render('activity/admin/list.html.twig', [

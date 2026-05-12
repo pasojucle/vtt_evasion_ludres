@@ -25,7 +25,6 @@ class SurveyListFilterType extends AbstractType
                 'class' => SurveyStatusEnum::class,
                 'attr' => [
                     'class' => 'btn',
-                    'data-controller' => "filter",
                     'data-action' => 'change->filter#change'
                 ],
                 'required' => false,
@@ -37,9 +36,16 @@ class SurveyListFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SurveyFilter::class,
+            'csrf_protection' => false,
             'attr' => [
                 'data-controller' => "filter",
+                'data-turbo-frame' => '_top',
             ],
         ]);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return '';
     }
 }

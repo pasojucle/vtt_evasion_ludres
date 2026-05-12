@@ -22,6 +22,7 @@ readonly class ListDto
         public ?DropdownDto $tools = null,
         public ?DropdownDto $settings = null,
         public ?ButtonDto $addItem = null,
+        public ?ButtonDto $advancedFilter = null,
         public ?ButtonDto $wiki = null,
     ) {
     }

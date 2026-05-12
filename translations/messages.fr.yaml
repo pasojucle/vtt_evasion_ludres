@@ -257,5 +257,6 @@ product:
 
 activity:
   period: 
-    month: mois
+    month: Mois
     upcoming: Prochainement
+    all: Tous

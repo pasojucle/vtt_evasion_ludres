@@ -62,6 +62,14 @@ class ActivityAdminListMapper
             items: $items,
             settings: $this->settings(),
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
+            advancedFilter: new ButtonDto(
+                url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_bike_rides'], $filter->toQueryParams())),
+                icon: 'lucide:settings-2',
+                htmlAttributes: [
+                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
+                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                ],
+            ),
             addItem: new ButtonDto(
                 label: 'Ajouter une activité',
                 url: $this->urlGenerator->generate('admin_bike_ride_add'),

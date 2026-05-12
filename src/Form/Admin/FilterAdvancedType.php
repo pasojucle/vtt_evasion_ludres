@@ -2,33 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Admin;
 
-use App\Dto\Enum\ActivityPeriod;
-use App\Dto\Filter\ActivityFilter;
-use App\Form\EventListener\ActivityFilterSubscriber;
 use App\Service\Filter\FilterFieldConfig;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ActivityListFilterType extends AbstractType
+class FilterAdvancedType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->setMethod('GET')
-            ->add('period', EnumType::class, [
-                'label' => false,
-                'class' => ActivityPeriod::class,
-                'attr' => [
-                    'data-action' => 'change->filter#change'
-                ],
-            ])
-            ->addEventSubscriber(new ActivityFilterSubscriber());
-
         foreach ($options['advanced_fields'] as $fieldConfig) {
+            /** @var FilterFieldConfig $fieldConfig */
+            $builder->add(
+                $fieldConfig->name,
+                $fieldConfig->type,
+                $fieldConfig->options
+            );
+        }
+        foreach ($options['fields'] as $fieldConfig) {
             /** @var FilterFieldConfig $fieldConfig */
             $builder->add(
                 $fieldConfig->name,
@@ -38,18 +31,21 @@ class ActivityListFilterType extends AbstractType
         }
     }
 
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ActivityFilter::class,
+            'data_class' => null,
+            'fields' => [],
             'advanced_fields' => [],
             'csrf_protection' => false,
             'attr' => [
                 'data-controller' => "filter",
                 'data-turbo-frame' => '_top',
-            ],
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit'
+                ],
         ]);
+
+        $resolver->setAllowedTypes('fields', 'array');
 
         $resolver->setAllowedTypes('advanced_fields', 'array');
     }

@@ -9,8 +9,9 @@ use App\Dto\Enum\ActivityPeriod;
 class ActivityFilter extends AbstractFilter
 {
     public function __construct(
-        public ?ActivityPeriod $period = null,
+        public ActivityPeriod $period = ActivityPeriod::UPCOMING,
         public ?string $month = null,
+        public ?string $sort = null,
     ) {
     }
 }

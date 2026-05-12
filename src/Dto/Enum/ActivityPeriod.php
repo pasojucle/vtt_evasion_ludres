@@ -14,6 +14,8 @@ enum ActivityPeriod: string implements TranslatableInterface
 
     case UPCOMING = 'upcoming';
 
+    case ALL = 'all';
+
     use EnumTrait;
 
 

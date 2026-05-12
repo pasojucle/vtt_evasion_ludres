@@ -13,7 +13,7 @@ class MessageProvider
     {
         return new SheetDto(
             title: 'Modifier un message',
-            description: $message->getLabel() ?? '',
+            description: $message->getLabel(),
             action: 'Modifier',
         );
     }

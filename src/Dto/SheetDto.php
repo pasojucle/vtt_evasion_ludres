@@ -11,6 +11,5 @@ readonly class SheetDto
         public string $description,
         public string $action,
     ) {
-
     }
 }

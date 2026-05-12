@@ -23,7 +23,6 @@ class ProductFilterType extends AbstractType
                 'class' => ProductState::class,
                 'attr' => [
                     'class' => 'btn',
-                    'data-controller' => "filter",
                     'data-action' => 'change->filter#change'
                 ],
                 'required' => false,
@@ -36,6 +35,16 @@ class ProductFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ProductFilter::class,
+            'csrf_protection' => false,
+            'attr' => [
+                'data-controller' => "filter",
+                'data-turbo-frame' => '_top',
+            ],
         ]);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return '';
     }
 }

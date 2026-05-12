@@ -8,6 +8,7 @@ use App\Dto\Enum\ActivityPeriod;
 use DateTime;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -67,7 +68,6 @@ class ActivityFilterSubscriber implements EventSubscriberInterface
                     'choices' => $this->getPreviousAndFollowingMonths($month),
                     'choice_attr' => function ($choice, string $key, mixed $value) {
                         return [
-                            'data-controller' => "filter",
                             'data-action' => 'change->filter#change'
                         ];
                     },
@@ -77,7 +77,7 @@ class ActivityFilterSubscriber implements EventSubscriberInterface
                 ])
             ;
         } else {
-            $form->remove('month');
+            $form->add('month', HiddenType::class);
         }
     }
 

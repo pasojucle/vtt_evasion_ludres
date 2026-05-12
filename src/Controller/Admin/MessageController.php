@@ -110,7 +110,7 @@ class MessageController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('message/admin/edit.modal.html.twig', [
+        return $this->render('message/admin/edit.sheet.html.twig', [
             'sheet' => $provider->createSheet($message),
             'form' => $form->createView(),
         ], $response);

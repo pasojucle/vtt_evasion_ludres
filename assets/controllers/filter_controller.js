@@ -7,7 +7,7 @@ export default class extends Controller {
     }
 
     change(event) {
-        console.log('filter_controller', event.target)
+        console.log('filter_controller change', event.target)
         const form = event.target.closest('form');
         if (form) {
             form.requestSubmit();

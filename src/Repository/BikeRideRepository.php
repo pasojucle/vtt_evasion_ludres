@@ -74,8 +74,7 @@ class BikeRideRepository extends ServiceEntityRepository
             $qb->expr()->eq('a.deleted', ':deleted'),
         )
         ->setParameter('today', $today)
-        ->setParameter('deleted', false)
-        ->orderBy('a.startAt', 'ASC');
+        ->setParameter('deleted', false);
     }
 
     public function filterByMonth(QueryBuilder $qb, DateTimeInterface $startAt, DateTimeInterface $endAt): void
@@ -87,13 +86,14 @@ class BikeRideRepository extends ServiceEntityRepository
         )
         ->setParameter('startAt', $startAt)
         ->setParameter('endAt', $endAt)
-        ->setParameter('deleted', false)
-        ->orderBy('a.startAt', 'ASC');
+        ->setParameter('deleted', false);
     }
 
-    public function filterAllDesc(QueryBuilder $qb): void
+    public function filterSort(QueryBuilder $qb, string $sort): void
     {
-        $qb->orderBy('a.startAt', 'DESC');
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('a.startAt', $direction);
     }
 
     /**
