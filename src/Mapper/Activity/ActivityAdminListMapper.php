@@ -9,6 +9,7 @@ use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\ActivityFilter;
 use App\Dto\HtmlAttributDto;
@@ -101,7 +102,7 @@ class ActivityAdminListMapper
 
     private function settings(): DropdownDto
     {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', DropdownVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', RoundedVariant::ROUNDED, [
             new ButtonDto(
                 label: 'Types de rando',
                 url: $this->urlGenerator->generate('admin_bike_ride_types'),

@@ -11,6 +11,7 @@ use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\HtmlAttributDto;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
@@ -246,7 +247,8 @@ class GetParticipations
     public function tools(): ?DropdownDto
     {
         return new DropdownDto(
-            variant: DropdownVariant::ROUNDED_END,
+            variant: DropdownVariant::BUTTON,
+            rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',

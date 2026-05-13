@@ -15,3 +15,13 @@
     } %}
     {{ classes[variant] ?? classes.default }}
 {% endmacro %}
+
+{% macro rounded_class(variant) %}
+    {% set classes = {
+        (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED.value): 'rounded-sm',
+        (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED_START.value): 'rounded-t-sm lg:rounded-l-sm lg:rounded-tr-none',
+        (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED_END.value): 'rounded-b-sm lg:rounded-r-sm lg:rounded-bl-none',
+        (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED_NONE.value): '',
+    } %}
+    {{ classes[variant] ?? classes.default }}
+{% endmacro %}

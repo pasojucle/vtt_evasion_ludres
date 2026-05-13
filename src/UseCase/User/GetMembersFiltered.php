@@ -9,6 +9,7 @@ use App\Dto\DropdownDto;
 use App\Dto\DropdownItemDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\HtmlAttributDto;
 use App\Dto\RouteDto;
 use App\Entity\Member;
@@ -52,7 +53,7 @@ class GetMembersFiltered extends GetUsersFiltered
 
     public function settings(): DropdownDto
     {
-        return $this->dropdownSettingsMapper->mapToView('USER', DropdownVariant::ROUNDED_NONE, [
+        return $this->dropdownSettingsMapper->mapToView('USER', RoundedVariant::ROUNDED_NONE, [
             new ButtonDto(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_levels'),
@@ -74,7 +75,8 @@ class GetMembersFiltered extends GetUsersFiltered
     public function tools(): ?DropdownDto
     {
         return new DropdownDto(
-            variant: DropdownVariant::ROUNDED_END,
+            variant: DropdownVariant::BUTTON,
+            rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',

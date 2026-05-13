@@ -9,6 +9,7 @@ use App\Dto\DropdownDto;
 use App\Dto\DropdownItemDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\HtmlAttributDto;
 use App\Dto\RouteDto;
 use App\Entity\Licence;
@@ -71,7 +72,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 
     public function settings(): DropdownDto
     {
-        return $this->dropdownSettingsMapper->mapToView('REGISTRATION', DropdownVariant::ROUNDED_START, [
+        return $this->dropdownSettingsMapper->mapToView('REGISTRATION', RoundedVariant::ROUNDED_START, [
             new ButtonDto(
                 label: 'Étapes des inscriptions',
                 url: $this->urlGenerator->generate('admin_registration_step_list'),
@@ -88,7 +89,8 @@ class GetRegistrationsFiltered extends GetUsersFiltered
     public function tools(): ?DropdownDto
     {
         return new DropdownDto(
-            variant: DropdownVariant::ROUNDED_END,
+            variant: DropdownVariant::BUTTON,
+            rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',

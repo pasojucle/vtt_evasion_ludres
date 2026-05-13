@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\RoundedVariant;
 
 readonly class ButtonDto
 {
@@ -15,6 +16,7 @@ readonly class ButtonDto
     /**
      * @param string $url
      * @param ColorVariant $variant
+     * @param RoundedVariant $rounded
      * @param ?string $label
      * @param string|null $icon
      * @param string|null $className
@@ -23,6 +25,7 @@ readonly class ButtonDto
     public function __construct(
         public string $url,
         public ColorVariant $variant = ColorVariant::DEFAULT,
+        public RoundedVariant $rounded = RoundedVariant::ROUNDED,
         public ?string $label = null,
         public ?string $icon = null,
         public ?string $className = null,

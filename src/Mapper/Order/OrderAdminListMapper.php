@@ -9,6 +9,7 @@ use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Filter\OrderFilter;
 use App\Dto\HtmlAttributDto;
 use App\Dto\LabelDto;
@@ -55,7 +56,7 @@ class OrderAdminListMapper
 
         return new ListDto(
             items: $items,
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER', DropdownVariant::ROUNDED_END),
+            settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED_END),
             tools: $this->getTools(),
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
             wiki: new ButtonDto(
@@ -63,6 +64,7 @@ class OrderAdminListMapper
                 title: 'wiki',
                 icon: 'lucide:circle-help',
                 variant: ColorVariant::DEFAULT,
+                rounded: RoundedVariant::ROUNDED_START,
                 htmlAttributes: [
                     new HtmlAttributDto('target', '_blank'),
                 ],

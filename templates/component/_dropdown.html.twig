@@ -1,26 +1,26 @@
 {% set variant_classes = {
-    (enum('App\\Dto\\Enum\\DropdownVariant').LIST_ITEM.value): '',
-    (enum('App\\Dto\\Enum\\DropdownVariant').GOST.value): '',
-    (enum('App\\Dto\\Enum\\DropdownVariant').ROUNDED.value): 'rounded-sm',
-    (enum('App\\Dto\\Enum\\DropdownVariant').ROUNDED_START.value): 'rounded-t-sm lg:rounded-l-sm lg:rounded-tr-none',
-    (enum('App\\Dto\\Enum\\DropdownVariant').ROUNDED_END.value): 'rounded-b-sm lg:rounded-r-sm lg:rounded-bl-none',
-    (enum('App\\Dto\\Enum\\DropdownVariant').ROUNDED_NONE.value): 'rounded-none',
+    (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED.value): 'rounded-sm',
+    (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED_START.value): 'rounded-t-sm lg:rounded-l-sm lg:rounded-tr-none',
+    (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED_END.value): 'rounded-b-sm lg:rounded-r-sm lg:rounded-bl-none',
+    (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED_NONE.value): '',
 } %}
+
+{% import "component/_macros.html.twig" as utils %}
 
 {% set position_classes = (enum('App\\Dto\\Enum\\DropdownVariant').LIST_ITEM == dropdown.variant)
   ? 'absolute h-full w-8 right-0 top-0'
   : 'relative h-8 lg:self-stretch'
 %}
 
-{% set color_class = (dropdown.variant in [enum('App\\Dto\\Enum\\DropdownVariant').LIST_ITEM, enum('App\\Dto\\Enum\\DropdownVariant').GOST])
-  ? 'text-foreground lg:text-muted lg:hover:text-foreground bg-transparent'
-  : 'bg-slate-300 lg:bg-slate-400 lg:hover:bg-slate-300 text-white'
+{% set color_class = (dropdown.variant == enum('App\\Dto\\Enum\\DropdownVariant').BUTTON)
+  ? 'bg-slate-300 lg:bg-slate-400 lg:hover:bg-slate-300 text-white'
+  : 'text-foreground lg:text-muted lg:hover:text-foreground bg-transparent'
 %}
 
 {% if session is defined or is_granted('ROLE_ADMIN') %}
 <div class="{{ position_classes }} w-8 text-foreground" data-controller="dropdown">
   <button 
-    class="flex justify-center items-center h-full w-full hover:z-50 {{ color_class }} {{ variant_classes[dropdown.variant.value] }}" 
+    class="flex justify-center items-center h-full w-full hover:z-50 {{ color_class }} {{ utils.rounded_class(dropdown.rounded.value) }}" 
     type="button" 
     data-dropdown-target="trigger" 
     data-action="click->dropdown#toggle"

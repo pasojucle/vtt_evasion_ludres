@@ -1,13 +1,12 @@
 {% set base_classes = 'block transition' %}
 {% set spaces_classes = button.label ? 'px-3 py-2' : 'p-2' %}
-{% set rounded_classes = button.label ? 'rounded-sm' : 'first:rounded-t-sm lg:first:rounded-l-sm lg:first:rounded-tr-none last:rounded-b-sm lg:last:rounded-bl-none lg:last:rounded-r-sm' %}
 {% set align_class = button.variant.value == 'dropdown' ? 'justify-start' : 'justify-center' %}
 
 {% import "component/_macros.html.twig" as utils %}
 
 <a href="{{ button.url }}" 
    title="{{ button.title }}"
-   class="{{ base_classes }} {{ rounded_classes }} {{ utils.color_class(button.variant.value) }}"
+   class="{{ base_classes }}  {{ utils.rounded_class(button.rounded.value) }} {{ utils.color_class(button.variant.value) }}"
     {% for attribut in button.htmlAttributes %}
         {{ attribut.name }}="{{ attribut.value }}"
     {% endfor %}

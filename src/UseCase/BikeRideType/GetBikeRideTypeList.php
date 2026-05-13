@@ -41,7 +41,7 @@ class GetBikeRideTypeList
 
     private function settings(): DropdownDto
     {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', DropdownVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', RoundedVariant::ROUNDED, [
             new ButtonDto(
                 label: 'Ajouter un message',
                 url: $this->urlGenerator->generate('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),

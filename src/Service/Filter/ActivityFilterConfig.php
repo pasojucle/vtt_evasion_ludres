@@ -6,9 +6,8 @@ namespace App\Service\Filter;
 
 use App\Dto\Enum\ActivityPeriod;
 use App\Dto\Filter\ActivityFilter;
-use App\Form\HiddenEnumType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class ActivityFilterConfig implements FilterConfigInterface
 {
@@ -22,11 +21,15 @@ class ActivityFilterConfig implements FilterConfigInterface
         return [
             new FilterFieldConfig(
                 name: 'period',
-                hiddenType: HiddenEnumType::class,
-                hiddenOptions: ['class' => ActivityPeriod::class]
+                type: EnumType::class,
+                options: [
+                    'class' => ActivityPeriod::class,
+                ]
             ),
             new FilterFieldConfig(
                 name: 'month',
+                type: ChoiceType::class,
+                options: [],
             ),
         ];
     }

@@ -10,16 +10,9 @@ enum DropdownVariant: string
 {
     case LIST_ITEM = 'list-item';
     
+    case BUTTON = 'button';
+    
     case GOST = 'gost';
-
-    case ROUNDED = 'rounded';
-
-    case ROUNDED_START = 'rounded-start';
-
-    case ROUNDED_END = 'rounded-end';
-
-    case ROUNDED_NONE = 'rounded-none';
-
 
     use EnumTrait;
 }

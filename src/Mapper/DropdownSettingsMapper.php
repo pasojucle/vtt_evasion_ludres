@@ -8,6 +8,7 @@ use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\HtmlAttributDto;
 use App\Repository\ParameterRepository;
 use App\Service\MessageService;
@@ -27,11 +28,12 @@ class DropdownSettingsMapper
      * @param ButtonDto[] $menuItems
      * @return DropdownDto
      */
-    public function mapToView(string $sectionName, DropdownVariant $variant, array $menuItems = []): DropdownDto
+    public function mapToView(string $sectionName, RoundedVariant $rounded, array $menuItems = []): DropdownDto
     {
         return  new DropdownDto(
             trigger: 'lucide:settings',
-            variant: $variant,
+            variant: DropdownVariant::BUTTON,
+            rounded: $rounded,
             menuItems: array_merge(
                 $menuItems,
                 $this->getParameters($sectionName),
