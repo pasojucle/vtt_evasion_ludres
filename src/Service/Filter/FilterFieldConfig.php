@@ -21,7 +21,7 @@ readonly class FilterFieldConfig
         public array $options,
     ) {
         $dataClass = $this->options['class'] ?? null;
-        [$this->hiddenType, $this->hiddenOptions] = match(true) {
+        [$this->hiddenType, $this->hiddenOptions] = match (true) {
             $dataClass && EntityType::class === $this->type => [HiddenEntityType::class, ['class' => $dataClass]],
             $dataClass && EnumType::class === $this->type => [HiddenEnumType::class, ['class' => $dataClass]],
             default => [HiddenType::class, []]

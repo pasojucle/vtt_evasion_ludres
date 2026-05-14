@@ -7,13 +7,10 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\GuestRegistryType;
-use App\Form\SessionGuestAddType;
-use App\Service\ProjectDirService;
 use App\UseCase\BikeRide\GetSchedule;
 use App\UseCase\BikeRide\GetTrackFile;
 use App\UseCase\Guest\SendLink;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,14 +23,12 @@ class BikeRideController extends AbstractController
     ) {
     }
 
-
     #[Route('/member/programme', name: 'member_schedule', methods: ['GET'])]
     #[IsGranted('USER_LIST')]
     public function memberList(): Response
     {
         return $this->redirectToRoute('schedule');
     }
-
 
     #[Route('/programme/{period}/{year}/{month}/{day}', name: 'schedule', methods: ['GET', 'POST'], defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null])]
     public function list(
@@ -50,7 +45,6 @@ class BikeRideController extends AbstractController
 
         return $this->render('bike_ride/list.html.twig', $response['parameters']);
     }
-
 
     #[Route('/randonnee/{bikeRide}/{slug}', name: 'bike_ride_detail', requirements:['bikeRide' => '\d+'], methods: ['GET', 'POST', 'POST'])]
     public function detail(

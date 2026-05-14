@@ -10,6 +10,7 @@ use App\Dto\DtoTransformer\BikeRideTypeDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Mapper\DropdownSettingsMapper;
 use App\Repository\BikeRideTypeRepository;
 use App\Service\PaginatorService;

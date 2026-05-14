@@ -1,12 +1,22 @@
 {% block switch_row %}
-    <div class="form-group switch-group ">
+    <div 
+        class="form-group switch-group" 
+        data-controller="switch"
+        {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off'] is defined %}
+            data-switch-on-value="{{form.vars.attr['data-switch-on']}}"
+            data-switch-off-value="{{form.vars.attr['data-switch-off']}}"
+        {% endif %}
+    >
         <label class="switch">
-            {{ form_widget(form) }}
+            {{ form_widget(form, {'attr': {
+                'data-action': 'change->switch#change',
+                'data-switch-target': "input"
+            }}) }}
             <span class="slider round{% if form.vars.disabled %} disabled{% endif %}"></span>
         </label>
         <b>
-            {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off']is defined %}
-                <label for="{{ form.vars.id }}" {% if form.vars.disabled %}class="disabled"{% endif %}>
+            {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off'] is defined %}
+                <label for="{{ form.vars.id }}" {% if form.vars.disabled %}class="disabled"{% endif %} data-switch-target="label">
                 {% if form.vars.checked %} {{form.vars.attr['data-switch-on'] }} {% else %} {{form.vars.attr['data-switch-off'] }} {% endif %}
                 </label>
             {% else %}

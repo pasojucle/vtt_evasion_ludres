@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\State\Activity\Provider;
 
 use App\Dto\Enum\ActivityPeriod;
+use App\Dto\Enum\ActivityRestriction;
+use App\Dto\Enum\ActivityVisibility;
 use App\Dto\Filter\ActivityFilter;
 use App\Dto\ListDto;
 use App\Mapper\Activity\ActivityAdminListMapper;
@@ -17,6 +19,7 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use function PHPUnit\Framework\matches;
 
 class ActivityAdminListProvider
 {
@@ -40,15 +43,29 @@ class ActivityAdminListProvider
             default => null,
         };
         
-
         if ($filter->sort) {
             $this->bikeRideRepository->filterSort($qb, $filter->sort);
+        }
+
+        if ($filter->type) {
+            $this->bikeRideRepository->filterType($qb, $filter->type);
+        }
+
+        if ($filter->restriction) {
+            match ($filter->restriction) {
+                ActivityRestriction::MEMBERS => $this->bikeRideRepository->filterHasMembers($qb),
+                ActivityRestriction::AGE => $this->bikeRideRepository->filterHasAge($qb),
+            };
+        }
+
+        if ($filter->visibility) {
+            $this->bikeRideRepository->filterIsPrivate($qb, ActivityVisibility::PRIVATE === $filter->visibility);
         }
 
         $entities = $this->paginator->paginate(
             $qb,
             $currentPage,
-            PaginatorService::PAGINATOR_PER_PAGE
+            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(

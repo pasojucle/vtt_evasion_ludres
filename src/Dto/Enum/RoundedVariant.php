@@ -8,7 +8,6 @@ use App\Entity\Enum\EnumTrait;
 
 enum RoundedVariant: string
 {
-
     case ROUNDED = 'rounded';
 
     case ROUNDED_START = 'rounded-start';

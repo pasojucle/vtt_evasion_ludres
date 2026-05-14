@@ -2,7 +2,6 @@
 import { handleCheckChange, formToggle } from './form.js';
 import { Form } from './formValidator.js';
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
-import { switchEventListener } from './switch.js';
 
 var formValidator;
 

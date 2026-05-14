@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Member;
 use App\Entity\Session;
@@ -94,6 +95,42 @@ class BikeRideRepository extends ServiceEntityRepository
         $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
         $qb
             ->orderBy('a.startAt', $direction);
+    }
+
+    public function filterType(QueryBuilder $qb, BikeRideType $type): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('a.bikeRideType', ':type')
+            )
+            ->setParameter('type', $type);
+    }
+
+    public function filterIsPrivate(QueryBuilder $qb, bool $isPrivate): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('a.private', ':isPrivate')
+            )
+            ->setParameter('isPrivate', $isPrivate);
+    }
+
+    public function filterHasMembers(QueryBuilder $qb): void
+    {
+        $qb
+            ->innerJoin('a.members', 'm')
+            ->distinct();
+    }
+
+    public function filterHasAge(QueryBuilder $qb): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNotNull('a.minAge'),
+                    $qb->expr()->isNotNull('a.maxAge'),
+                )
+            );
     }
 
     /**

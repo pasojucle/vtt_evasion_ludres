@@ -260,3 +260,9 @@ activity:
     month: Mois
     upcoming: Prochainement
     all: Tous
+  restriction:
+    members: Limiter à des participants
+    age: Limiter une tranche d'âge
+  visibility:
+    private: Activité privée
+    public: Activité pubique

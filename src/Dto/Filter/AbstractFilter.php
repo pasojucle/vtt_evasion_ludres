@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\Filter;
 
 use BackedEnum;
+use phpDocumentor\Reflection\Types\Object_;
 
 abstract class AbstractFilter
 {
@@ -12,23 +13,21 @@ abstract class AbstractFilter
     {
         $properties = [];
         foreach (get_object_vars($this) as $name => $value) {
-            if ($value) {
-                $properties[$name] = $value instanceof BackedEnum
-                    ? $value->value
-                    : $value;
+            if (null !== $value && '' !== $value) {
+                $properties[$name] = match (true) {
+                    $value instanceof BackedEnum => $value->value,
+                    is_object($value) && method_exists($value, 'getId') => $value->getId(),
+                    default => $value
+                };
             }
         }
+
         return $properties;
     }
 
     public function toQueryParams(?int $page = null): array
     {
-        $params = [];
-        foreach (get_object_vars($this) as $name => $value) {
-            if ($value !== null) {
-                $params[$name] = ($value instanceof BackedEnum) ? $value->value : $value;
-            }
-        }
+        $params = $this->toArray();
 
         if ($page && $page > 1) {
             $params['p'] = $page;
