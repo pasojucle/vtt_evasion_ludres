@@ -4,30 +4,34 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Dto\Enum\ActivityPeriod;
 use App\Dto\Filter\ActivityFilter;
 use App\Form\EventListener\ActivityFilterSubscriber;
 use App\Service\Filter\FilterFieldConfig;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ActivityListFilterType extends AbstractType
+class ListFilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->setMethod('GET')
-            ->add('period', EnumType::class, [
-                'label' => false,
-                'class' => ActivityPeriod::class,
-                'attr' => [
-                    'data-action' => 'change->filter#change'
-                ],
-            ])
-            ->addEventSubscriber(new ActivityFilterSubscriber());
+        foreach ($options['fields'] as $fieldConfig) {
+            if (!$fieldConfig->isSubscriberFlield) {
+                /** @var FilterFieldConfig $fieldConfig */
+                $builder->add(
+                    $fieldConfig->name,
+                    $fieldConfig->type,
+                    $fieldConfig->options
+                );
+            }
+        }
 
+        $builder ->setMethod('GET');
+        
+        if ($options['event_subscriber']) {
+            $builder->addEventSubscriber($options['event_subscriber']);
+        }
+            
         foreach ($options['advanced_fields'] as $fieldConfig) {
             /** @var FilterFieldConfig $fieldConfig */
             $builder->add(
@@ -43,13 +47,17 @@ class ActivityListFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ActivityFilter::class,
+            'fields' => [],
             'advanced_fields' => [],
+            'event_subscriber' => null,
             'csrf_protection' => false,
             'attr' => [
                 'data-controller' => "filter",
                 'data-turbo-frame' => '_top',
             ],
         ]);
+
+        $resolver->setAllowedTypes('fields', 'array');
 
         $resolver->setAllowedTypes('advanced_fields', 'array');
     }

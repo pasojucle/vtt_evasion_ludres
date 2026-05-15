@@ -25,7 +25,7 @@ class SurveyListFilterType extends AbstractType
                 'class' => SurveyStatusEnum::class,
                 'attr' => [
                     'class' => 'btn',
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
             ])

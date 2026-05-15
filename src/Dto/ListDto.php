@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Filter\FilterChip;
 
 readonly class ListDto
 {
@@ -13,6 +14,8 @@ readonly class ListDto
      * @param ?PaginatorDto $paginator
      * @param ?DropdownDto $tools
      * @param ?DropdownDto $settings
+     * @param ?ButtonDto $advancedFilter,
+     * @param FilterChip[] $filterChips,
      * @param ?ButtonDto $addItem
      * @param ?ButtonDto $wiki
      */
@@ -23,6 +26,7 @@ readonly class ListDto
         public ?DropdownDto $settings = null,
         public ?ButtonDto $addItem = null,
         public ?ButtonDto $advancedFilter = null,
+        public array $filterChips = [],
         public ?ButtonDto $wiki = null,
     ) {
     }

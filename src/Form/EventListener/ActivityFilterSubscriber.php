@@ -68,7 +68,7 @@ class ActivityFilterSubscriber implements EventSubscriberInterface
                     'choices' => $this->getPreviousAndFollowingMonths($month),
                     'choice_attr' => function ($choice, string $key, mixed $value) {
                         return [
-                            'data-action' => 'change->filter#change'
+                            'data-action' => 'change->filter#submit'
                         ];
                     },
                     'block_prefix' => 'month_filter',

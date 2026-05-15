@@ -35,7 +35,7 @@ class ParticipationFilterType extends AbstractType
                     'class' => 'js-datepicker',
                     'autocomplete' => 'off',
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
                 'row_attr' => [
                     'class' => 'form-group-inline',
@@ -50,7 +50,7 @@ class ParticipationFilterType extends AbstractType
                     'class' => 'js-datepicker',
                     'autocomplete' => 'off',
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
                 'row_attr' => [
                     'class' => 'form-group-inline',
@@ -60,7 +60,7 @@ class ParticipationFilterType extends AbstractType
             ->add('bikeRideType', BikeRideTypeAutocompleteField::class, [
                 'attr' => [
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
             ])
             ;
@@ -77,7 +77,7 @@ class ParticipationFilterType extends AbstractType
                         'data-width' => '100%',
                         'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
                         'data-controller' => "filter",
-                        'data-action' => 'change->filter#change'
+                        'data-action' => 'change->filter#submit'
                     ],
                 ])
                 ->add('practice', EnumType::class, [
@@ -88,7 +88,7 @@ class ParticipationFilterType extends AbstractType
                         'data-width' => '100%',
                         'data-placeholder' => 'Sélectionnez une pratique',
                         'data-controller' => "filter",
-                        'data-action' => 'change->filter#change'
+                        'data-action' => 'change->filter#submit'
                     ],
                     'required' => false,
                 ]);

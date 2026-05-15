@@ -6,7 +6,7 @@ export default class extends Controller {
         console.log("filter_controller")
     }
 
-    change(event) {
+    submit(event) {
         console.log('filter_controller change', event.target)
         const form = event.target.closest('form');
         if (form) {
@@ -22,6 +22,16 @@ export default class extends Controller {
             setTimeout(() => {
                 inputs.forEach(input => input.disabled = false);
             }, 100);
+        }
+    }
+
+    clear(event) {
+        const name = event.currentTarget.dataset.filterName;
+        const input = this.element.querySelector(`[name="${name}"]`);
+        
+        if (input) {
+            input.value = "";
+            this.submit(event);
         }
     }
 }

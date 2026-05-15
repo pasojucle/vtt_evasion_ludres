@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/filter/', name: 'admin_fiter_')]
 class FilterController extends AbstractController
 {
-    #[Route('/filter/advanced/{route}', name: 'admin_fiter_advanced', methods: ['GET', 'POST'])]
+    #[Route('advanced/{route}', name: 'advanced', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function filter(
         Request $request,

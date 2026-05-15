@@ -25,7 +25,7 @@ class FramerFilterType extends AbstractType
                 'multiple' => false,
                 'autocomplete_url' => $this->urlGenerator->generate('admin_framer_autocomplete', $options['filters']),
                 'attr' => [
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
             ])
             ->add('availability', EnumType::class, [
@@ -35,7 +35,7 @@ class FramerFilterType extends AbstractType
                 'attr' => [
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionnez une disponibilité',
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
             ])

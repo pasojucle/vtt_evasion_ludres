@@ -2,19 +2,21 @@
     <div>
         {{ form_start(form) }}
         <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
-            
-            <div class="border border-border rounded-sm flex items-center gap-2">
-                <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
-                <div class="flex items-center gap-4">
-                    {{ form_row(form.period)}}    
-                    {% if form.month is defined %}
-                        {{ form_row(form.month)}}    
-                    {% endif %}          
+            <div class="flex items-center gap-4">
+                <div class="border border-border rounded-sm flex items-center gap-2">
+                    <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
+                    <div class="flex items-center gap-4">
+                        {{ form_row(form.period)}}    
+                        {% if form.month is defined %}
+                            {{ form_row(form.month)}}    
+                        {% endif %}     
+                    </div>
+                </div>
+                <div class="ml-auto">
+                    {% include 'component/_button.html.twig' with {button: list.advancedFilter} %}     
                 </div>
             </div>
-            <div>
-                {% include 'component/_button.html.twig' with {button: list.advancedFilter} %}
-            </div>
+            {% include 'component/_filter_chips.html.twig' with {chips: list.filterChips} %}
             <div class="lg:ml-auto">
                 {% include 'component/_button.html.twig' with {button: list.addItem} %}
             </div>

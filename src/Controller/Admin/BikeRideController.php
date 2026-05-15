@@ -6,11 +6,10 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
-use App\Dto\Enum\ActivityPeriod;
 use App\Dto\Filter\ActivityFilter;
 use App\Entity\BikeRide;
-use App\Form\ActivityListFilterType;
 use App\Form\Admin\BikeRideType;
+use App\Form\ListFilterType;
 use App\Repository\BikeRideRepository;
 use App\State\Activity\Provider\ActivityAdminListProvider;
 use App\UseCase\BikeRide\EditBikeRide;
@@ -54,8 +53,10 @@ class BikeRideController extends AbstractController
         if (!$filterConfig) {
             throw $this->createNotFoundException();
         }
-        $form = $this->createForm(ActivityListFilterType::class, $filter, [
+        $form = $this->createForm(ListFilterType::class, $filter, [
+            'fields' => $filterConfig->getFields(),
             'advanced_fields' => $filterConfig->getAdvancedFields(),
+            'event_subscriber' => $filterConfig->getEventSubscriber(),
         ]);
         $form->handleRequest($request);
 
@@ -63,6 +64,7 @@ class BikeRideController extends AbstractController
             'form' => $form->createView(),
             'list' => $provider->getCollection(
                 $filter,
+                $filterConfig,
                 $request->attributes->get('_route'),
                 $request->query->getInt('page', 1),
             ),

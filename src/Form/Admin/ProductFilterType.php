@@ -23,7 +23,7 @@ class ProductFilterType extends AbstractType
                 'class' => ProductState::class,
                 'attr' => [
                     'class' => 'btn',
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
             ])

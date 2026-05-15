@@ -34,7 +34,7 @@ class ActivityAdminListProvider
     ) {
     }
     
-    public function getCollection(ActivityFilter $filter, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(ActivityFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
     {
         $qb = $this->bikeRideRepository->findActivityQuery();
         match ($filter->period) {
@@ -73,7 +73,8 @@ class ActivityAdminListProvider
             $this->getParticipantTotalByActivity($entities),
             $route,
             $currentPage,
-            $filter
+            $filter,
+            $filterConfig
         );
     }
 

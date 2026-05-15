@@ -29,7 +29,7 @@ class UserFilterType extends AbstractType
                 'autocomplete_url' => $this->urlGenerator->generate($options['remote_route'], $options['filters']),
                 'attr' => [
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
             ])
             ->add('levels', ChoiceType::class, [
@@ -41,7 +41,7 @@ class UserFilterType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Sélectionnez un niveau',
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
             ])
             ;
@@ -59,7 +59,7 @@ class UserFilterType extends AbstractType
                         'required' => $options['status_is_require'],
                         'attr' => [
                             'data-controller' => "filter",
-                            'data-action' => 'change->filter#change'
+                            'data-action' => 'change->filter#submit'
                         ],
                     ])
                 ;
@@ -76,7 +76,7 @@ class UserFilterType extends AbstractType
                         'attr' => [
                             'placeholder' => 'Selectionnez une permission',
                             'data-controller' => "filter",
-                            'data-action' => 'change->filter#change'
+                            'data-action' => 'change->filter#submit'
                         ],
                     ])
                 ;

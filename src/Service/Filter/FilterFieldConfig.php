@@ -19,6 +19,8 @@ readonly class FilterFieldConfig
         public string $name,
         public string $type,
         public array $options,
+        public bool $isSubscriberFlield = false,
+        public bool $chipCcomputed = false,
     ) {
         $dataClass = $this->options['class'] ?? null;
         [$this->hiddenType, $this->hiddenOptions] = match (true) {

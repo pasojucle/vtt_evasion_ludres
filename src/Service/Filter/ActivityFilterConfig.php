@@ -9,8 +9,9 @@ use App\Dto\Enum\ActivityRestriction;
 use App\Dto\Enum\ActivityVisibility;
 use App\Dto\Filter\ActivityFilter;
 use App\Entity\BikeRideType;
+use App\Form\EventListener\ActivityFilterSubscriber;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
@@ -28,7 +29,11 @@ class ActivityFilterConfig implements FilterConfigInterface
                 name: 'period',
                 type: EnumType::class,
                 options: [
+                    'label' => false,
                     'class' => ActivityPeriod::class,
+                    'attr' => [
+                        'data-action' => 'change->filter#submit'
+                    ],
                 ]
             ),
             new FilterFieldConfig(
@@ -92,6 +97,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
                     'attr' => ['class' => 'form-control']
                 ],
+                chipCcomputed: true,
             ),
             new FilterFieldConfig(
                 name: 'sort',
@@ -108,6 +114,11 @@ class ActivityFilterConfig implements FilterConfigInterface
                 ],
             ),
         ];
+    }
+
+    public function getEventSubscriber(): ?EventSubscriberInterface
+    {
+        return new ActivityFilterSubscriber();
     }
 
     public function getDataClass(): ?string

@@ -18,7 +18,9 @@ use App\Dto\ListDto;
 use App\Dto\ListItemDto;
 use App\Entity\BikeRide;
 use App\Mapper\DropdownSettingsMapper;
+use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Service\Filter\FilterConfigInterface;
 use DateTime;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -26,15 +28,22 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ActivityAdminListMapper
 {
     public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private ActivityAdminDropdownMapper $activityAdminDropdownMapper,
-        private UrlGeneratorInterface $urlGenerator,
+        private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
     ) {
     }
 
-    public function mapToView(Paginator $entities, array $participantTotalByEntity, string $route, int $currentPage, ActivityFilter $filter): ListDto
-    {
+    public function mapToView(
+        Paginator $entities,
+        array $participantTotalByEntity,
+        string $route,
+        int $currentPage,
+        ActivityFilter $filter,
+        FilterConfigInterface $filterConfig
+    ): ListDto {
         $items = [];
         /** @var BikeRide $entity */
         foreach ($entities as $entity) {
@@ -71,6 +80,7 @@ class ActivityAdminListMapper
                     new HtmlAttributDto('data-action', 'click->dropdown#close')
                 ],
             ),
+            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             addItem: new ButtonDto(
                 label: 'Ajouter une activité',
                 url: $this->urlGenerator->generate('admin_bike_ride_add'),

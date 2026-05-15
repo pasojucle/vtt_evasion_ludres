@@ -23,7 +23,7 @@ class SurveyFilterType extends AbstractType
                 'autocomplete' => true,
                 'attr' => [
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
             ])
             ->add('value', ChoiceType::class, [
@@ -34,7 +34,7 @@ class SurveyFilterType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
             ])
         ;

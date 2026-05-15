@@ -24,7 +24,7 @@ class RegistrationFilterType extends AbstractType
                 'attr' => [
                     'class' => 'btn',
                     'data-controller' => "filter",
-                    'data-action' => 'change->filter#change'
+                    'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
             ])
