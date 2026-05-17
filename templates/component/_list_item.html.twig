@@ -1,18 +1,21 @@
-{% for label in item.labels %}
-    {% if label.type == 'number' %}
-        <div class="text-right font-mono">{{ label.value }}</div>
-    {% else %}
-        <div class="text-left">{{ label.value }}</div>
-    {% endif %}
-{% endfor %}
-{% if item.indicators is not null %}
-    <div class="flex gap-1">
-    {% for indicator in item.indicators %}
-        {% include 'component/_badge.html.twig' with {'badge': indicator} %}
+
+<div class="grid {{ grid_template_labels }}">
+    {% for label in item.labels %}
+        {% if label.type == 'number' %}
+            <div class="text-right font-mono">{{ label.value }}</div>
+        {% else %}
+            <div class="text-left">{{ label.value }}</div>
+        {% endif %}
     {% endfor %}
-    </div>
-{% endif %}
-<div class="grid grid-cols-[1fr_30px]">
+</div>
+<div class="grid {{ grid_template_badges }}">
+    {% if item.indicators is not null %}
+        <div class="flex gap-1">
+        {% for indicator in item.indicators %}
+            {% include 'component/_badge.html.twig' with {'badge': indicator} %}
+        {% endfor %}
+        </div>
+    {% endif %}
     {% if item.status is not null %}
         <div class="flex justify-start lg:justify-center">
             {% include 'component/_badge.html.twig' with {'badge': item.status} %}

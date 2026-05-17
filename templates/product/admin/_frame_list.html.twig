@@ -1,27 +1,21 @@
-<turbo-frame id="product-list">
-    <div>
-        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
-            <div class="border border-border rounded-sm flex items-stretch gap-2">
-                <div class="flex items-center p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
-                {{ form_start(form) }}
-                {{ form_widget(form.state)}}                
-                {{ form_end(form) }}
-            </div>
-            <div class="lg:ml-auto">
-                {% include 'component/_button.html.twig' with {button: list.addItem} %}
-            </div>
-        </div>
+<turbo-frame id="product-list" data-with-skeleton="true">
+    {% include "component/_list_skeleton.html.twig" with {title: "Produits"} %}
+    <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
         <div class="border border-border rounded-md">
             <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
                 Produits - <span class="">{{ list.paginator.total }}
             </div>
             <ul id="products_container">
                 {% for item in list.items %}
-                    <li class="group relative grid grid-cols-1 lg:grid-cols-[1fr_1fr_120px] items-center gap-4 px-4 py-2 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors not-last:border-b not-last:border-border first:rounded-t-md last:rounded-b-md">
+                    <li class="group relative grid grid-cols-1 lg:grid-cols-2 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors not-last:border-b not-last:border-border first:rounded-t-md last:rounded-b-md">
                         <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Modifier l'article" data-turbo-frame="_top">
                             <span class="sr-only">Modifier l'article</span>
                         </a>
-                        {% include 'component/_list_item.html.twig' with {item: item} %}
+                        {% include 'component/_list_item.html.twig' with {
+                            item: item, 
+                            grid_template_labels: '', 
+                            grid_template_badges: 'grid-cols-[1fr_70px]'
+                        } %} 
                         {% include 'component/_dropdown.html.twig' with {dropdown: item.dropdown} %}
                     </li>
                 {% endfor %}

@@ -10,6 +10,7 @@ use App\Dto\Filter\ProductFilter;
 use App\Entity\Product;
 use App\Form\Admin\ProductFilterType;
 use App\Form\Admin\ProductType;
+use App\Form\ListFilterType;
 use App\Service\Product\ProductEditService;
 use App\State\Product\Provider\ProductAdminListProvider;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,16 +35,27 @@ class ProductController extends AbstractController
         ProductAdminListProvider $provider,
         Request $request
     ): Response {
-        $stateQuery = $request->query->get('state');
-        $filter = new ProductFilter($stateQuery ? ProductState::tryFrom($stateQuery) : $stateQuery);
-        $form = $this->createForm(ProductFilterType::class, $filter);
-        $form ->handleRequest($request);
+        /**  @var ProductFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), ProductFilter::class);
 
+        $filterConfig = $provider->getFilterConfig('admin_products');
+        if (!$filterConfig) {
+            throw $this->createNotFoundException();
+        }
+        $form = $this->createForm(ListFilterType::class, $filter, [
+            'data_class' => $filterConfig->getDataClass(),
+            'fields' => $filterConfig->getFields(),
+            'advanced_fields' => $filterConfig->getAdvancedFields(),
+            'event_subscriber' => $filterConfig->getEventSubscriber(),
+        ]);
+
+        $form->handleRequest($request);
 
         return $this->render('product/admin/list.html.twig', [
             'form' => $form->createView(),
             'list' => $provider->getCollection(
                 $filter,
+                $filterConfig,
                 $request->attributes->get('_route'),
                 $request->query->getInt('page', 1),
             ),

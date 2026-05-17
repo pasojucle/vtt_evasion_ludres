@@ -7,12 +7,11 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Dto\Filter\SurveyFilter;
-use App\Entity\Enum\SurveyStatusEnum;
 use App\Entity\History;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
-use App\Form\Admin\SurveyListFilterType;
 use App\Form\Admin\SurveyType;
+use App\Form\ListFilterType;
 use App\Repository\SurveyIssueRepository;
 use App\Service\SurveyService;
 use App\State\Survey\Provider\SurveyAdminListProvider;
@@ -47,29 +46,32 @@ class SurveyController extends AbstractController
         Request $request,
         SurveyAdminListProvider $provider,
     ): Response {
-        $statusQuery = $request->query->get('status');
-        $filter = new SurveyFilter($statusQuery ? SurveyStatusEnum::tryFrom($statusQuery) : $statusQuery);
+        /**  @var SurveyFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), SurveyFilter::class);
+        $currentRoute = $request->attributes->get('_route');
+        $filterConfig = $provider->getFilterConfig($currentRoute);
+        if (!$filterConfig) {
+            throw $this->createNotFoundException();
+        }
+        $form = $this->createForm(ListFilterType::class, $filter, [
+            'data_class' => $filterConfig->getDataClass(),
+            'fields' => $filterConfig->getFields(),
+            'advanced_fields' => $filterConfig->getAdvancedFields(),
+            'event_subscriber' => $filterConfig->getEventSubscriber(),
+        ]);
 
-        $form = $this->createForm(SurveyListFilterType::class, $filter);
         $form->handleRequest($request);
 
         return $this->render('survey/admin/list.html.twig', [
             'form' => $form->createView(),
             'list' => $provider->getCollection(
                 $filter,
-                $request->attributes->get('_route'),
+                $filterConfig,
+                $currentRoute,
                 $request->query->getInt('page', 1),
             ),
         ]);
-        // $query = $surveyRepository->findAllDESCQuery();
-        // $surveys = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-
-        // return $this->render('survey/admin/list.html.twig', [
-        //     'surveys' => $this->surveyDtoTransformer->listFromEntities($surveys),
-        //     'paginator' => $paginatorDtoTransformer->fromEntities($surveys),
-        // ]);
     }
-
 
     #[Route('/', name: 'admin_survey_add', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_ADD')]

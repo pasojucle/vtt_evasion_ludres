@@ -1,13 +1,6 @@
-<turbo-frame id="order-list">
-    <div>
-        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
-            <div class="border border-border rounded-sm flex items-stretch gap-2">
-                <div class="flex items-center p-2 rounded-t-sm lg:rounded-none lg:rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
-                {{ form_start(form) }}
-                {{ form_widget(form.status)}}                
-                {{ form_end(form) }}
-            </div>
-        </div>
+<turbo-frame id="order-list" class="block" data-with-skeleton="true">
+    {% include "component/_list_skeleton.html.twig" with {title: "Commandes"} %}
+    <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
         <div class="border border-border rounded-md">
             <div class="bg-slate-300 pl-4 py-2 flex items-center">
                 <div class="uppercase text-white text-sm">
@@ -19,14 +12,16 @@
             </div>
             <ul id="orders_container">
                 {% for item in list.items %}
-                    <li class="group relative grid grid-cols-1 lg:grid-cols-[auto_112px] items-center lg:gap-4 not-last:border-b not-last:border-border lg:pr-4">
-                        <div class="group relative items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
+                    <li class="group relative grid grid-cols-1 lg:grid-cols-[1fr_112px] items-center lg:gap-4 not-last:border-b not-last:border-border lg:pr-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] group relative items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
                             <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
                                 <span class="sr-only">Voir la commande</span>
                             </a>
-                            <div class="grid grid-cols-[70px_1fr] lg:grid-cols-[1fr_2fr_1fr_1fr] gap-2">
-                                {% include 'component/_list_item.html.twig' with {item: item} %}
-                            </div>
+                            {% include 'component/_list_item.html.twig' with {
+                                item: item, 
+                                grid_template_labels: 'grid-cols-[80px_auto_80px] lg:grid-cols-3', 
+                                grid_template_badges: 'grid-cols-1'
+                            } %} 
                             {% include 'component/_dropdown.html.twig' with {dropdown: item.dropdown} %}
                         </div>
                         <div>

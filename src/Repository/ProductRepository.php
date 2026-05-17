@@ -24,24 +24,40 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findProductQuery(?ProductState $state): QueryBuilder
+    public function findProductQuery(): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('p')
+        return $this->createQueryBuilder('p')
             ->where(
                 (new Expr())->eq('p.deleted', ':isDeleted'),
             )
             ->setParameter('isDeleted', false)
             ->orderBy('p.name', 'ASC')
         ;
-        if ($state) {
-            $qb
-                ->andWhere(
-                    $qb->expr()->eq('p.isDisabled', ':state')
-                )
-                ->setParameter('state', ProductState::DISABLED === $state);
-        }
+    }
 
-        return $qb;
+    public function filterState(QueryBuilder $qb, ProductState $state): void
+    {
+        $qb
+        ->andWhere(
+            $qb->expr()->eq('p.isDisabled', ':state')
+        )
+        ->setParameter('state', ProductState::DISABLED === $state);
+    }
+
+    public function filterPartNumber(QueryBuilder $qb, string $partNumber): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->like('p.ref', ':partNumber')
+            )
+            ->setParameter('partNumber', '%' . $partNumber . '%');
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('p.name', $direction);
     }
 
     public function findAllQuery(): QueryBuilder

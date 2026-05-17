@@ -1,0 +1,15 @@
+<div class="hidden [turbo-frame[busy]>&]:flex flex-col gap-4 transition-opacity duration-200">        
+    <div class="border border-border rounded-md">
+        <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">{{ title }}</div>
+        <div class="animate-pulse">
+            {% for item in 1..8 %}
+                <div class="w-full bg-slate-100 not-last:border-b not-last:border-border grid grid-cols-4 items-center p-3">
+                <div class="h-4 bg-slate-200 rounded w-20"></div>
+                    <div class="h-4 bg-slate-200 rounded w-36"></div>
+                <div class="h-4 bg-slate-200 rounded w-36"></div>
+                <div class="h-4 bg-slate-200 rounded w-24 justify-self-end"></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -8,10 +8,13 @@ use App\Dto\Filter\ProductFilter;
 use App\Dto\ListDto;
 use App\Mapper\Product\ProductAdminListMapper;
 use App\Repository\ProductRepository;
+use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
+use App\State\FilterHydratorTrait;
 
 class ProductAdminListProvider
 {
+    use FilterHydratorTrait;
     public function __construct(
         private ProductRepository $productRepository,
         private PaginatorService $paginator,
@@ -19,14 +22,29 @@ class ProductAdminListProvider
     ) {
     }
     
-    public function getCollection(ProductFilter $filter, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(ProductFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
     {
+        $qb = $this->productRepository->findProductQuery();
+
+        if ($filter->state) {
+            $this->productRepository->filterState($qb, $filter->state);
+        }
+
+        if ($filter->partNumber) {
+            $this->productRepository->filterPartNumber($qb, $filter->partNumber);
+        }
+
+        if ($filter->sort) {
+            $this->productRepository->filterSort($qb, $filter->sort);
+        }
+
         $entities = $this->paginator->paginate(
-            $this->productRepository->findProductQuery($filter->state),
+            $qb,
             $currentPage,
-            PaginatorService::PAGINATOR_PER_PAGE
+            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
+
         );
 
-        return $this->mapper->mapToView($entities, $route, $currentPage, $filter);
+        return $this->mapper->mapToView($entities, $route, $currentPage, $filter, $filterConfig);
     }
 }

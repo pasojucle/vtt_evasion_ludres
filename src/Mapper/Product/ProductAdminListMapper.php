@@ -9,12 +9,15 @@ use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\ProductState;
+use App\Dto\Filter\ProductFilter;
 use App\Dto\HtmlAttributDto;
 use App\Dto\LabelDto;
 use App\Dto\ListDto;
 use App\Dto\ListItemDto;
 use App\Entity\Product;
+use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Service\Filter\FilterConfigInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,12 +26,13 @@ class ProductAdminListMapper
 {
     public function __construct(
         private PaginatorMapper $paginatorMapper,
+        private FilterChipsMapper $filterChipsMapper,
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage, $filter): ListDto
+    public function mapToView(Paginator $entities, string $route, int $currentPage, ProductFilter $filter, FilterConfigInterface $filterConfig): ListDto
     {
         $items = [];
         /** @var Product $entity */
@@ -54,7 +58,16 @@ class ProductAdminListMapper
                 url: $this->urlGenerator->generate('admin_product_add'),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+            ),            
+            advancedFilter: new ButtonDto(
+                url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_products'], $filter->toQueryParams())),
+                icon: 'lucide:settings-2',
+                htmlAttributes: [
+                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
+                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                ],
             ),
+            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             wiki: new ButtonDto(
                 url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),
                 title: 'wiki',

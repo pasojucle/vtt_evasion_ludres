@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Provider;
 
+use App\Dto\Enum\SurveyRestriction;
 use App\Dto\Filter\SurveyFilter;
 use App\Dto\ListDto;
 use App\Entity\Enum\SurveyStatusEnum;
 use App\Mapper\Survey\SurveyAdminListMapper;
 use App\Repository\SurveyRepository;
+use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
+use App\State\FilterHydratorTrait;
 use DateTime;
 
 class SurveyAdminListProvider
 {
+    use FilterHydratorTrait;
+    
     public function __construct(
         private SurveyRepository $surveyRepository,
         private PaginatorService $paginator,
@@ -21,7 +26,7 @@ class SurveyAdminListProvider
     ) {
     }
     
-    public function getCollection(SurveyFilter $filter, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(SurveyFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
     {
         $today = (new DateTime())->setTime(0, 0, 0);
         $qb = $this->surveyRepository->findSurveyQuery();
@@ -32,12 +37,30 @@ class SurveyAdminListProvider
             default => null
         };
 
+        if ($filter->restriction) {
+            match ($filter->restriction) {
+                SurveyRestriction::MEMBERS => $this->surveyRepository->filterHasMembers($qb),
+                SurveyRestriction::Activity => $this->surveyRepository->filterHasActivity($qb),
+            };
+        }
+
+        if ($filter->sort) {
+            $this->surveyRepository->filterSort($qb, $filter->sort);
+        }
+
         $entities = $this->paginator->paginate(
             $qb,
             $currentPage,
-            PaginatorService::PAGINATOR_PER_PAGE
+            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
+
         );
 
-        return $this->mapper->mapToView($entities, $route, $currentPage, $filter);
+        return $this->mapper->mapToView(
+            $entities, 
+            $route, 
+            $currentPage, 
+            $filter,
+            $filterConfig
+        );
     }
 }

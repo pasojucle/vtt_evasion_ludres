@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper;
 
+use App\Dto\Filter\AbstractFilter;
 use BackedEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
@@ -16,7 +17,7 @@ class FilterMapper
     ) {
     }
 
-    public function mapToDto(array $data, string $objectClass): object
+    public function mapToDto(array $data, string $objectClass): AbstractFilter
     {
         $data = array_map(fn ($value) => $value === "" ? null : $value, $data);
         $reflection = new ReflectionClass($objectClass);

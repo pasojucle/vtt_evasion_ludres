@@ -10,30 +10,27 @@ use App\Dto\Enum\ActivityVisibility;
 use App\Dto\Filter\ActivityFilter;
 use App\Dto\ListDto;
 use App\Mapper\Activity\ActivityAdminListMapper;
-use App\Mapper\FilterMapper;
 use App\Repository\BikeRideRepository;
 use App\Repository\SessionRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
+use App\State\FilterHydratorTrait;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
-use function PHPUnit\Framework\matches;
 
 class ActivityAdminListProvider
 {
+    use FilterHydratorTrait;
+
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
         private SessionRepository $sessionRepository,
         private PaginatorService $paginator,
         private ActivityAdminListMapper $mapper,
-        private FilterMapper $filterMapper,
-        #[TaggedIterator('app.filter_config')]
-        private iterable $filterConfigs,
     ) {
     }
-    
+
     public function getCollection(ActivityFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
     {
         $qb = $this->bikeRideRepository->findActivityQuery();
@@ -78,11 +75,6 @@ class ActivityAdminListProvider
         );
     }
 
-    public function getHydratedDto(array $rawData, string $dataClass): ?object
-    {
-        return $this->filterMapper->mapToDto($rawData, $dataClass);
-    }
-
     private function getInterval(?string $month): array
     {
         if (!$month) {
@@ -108,16 +100,5 @@ class ActivityAdminListProvider
             ];
             return $acc;
         }, []);
-    }
-
-    public function getFilterConfig(string $route): ?FilterConfigInterface
-    {
-        foreach ($this->filterConfigs as $config) {
-            if ($config->supports($route)) {
-                return $config;
-            }
-        }
-
-        return null;
     }
 }

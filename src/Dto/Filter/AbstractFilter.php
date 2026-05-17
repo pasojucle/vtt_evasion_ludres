@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Dto\Filter;
 
 use BackedEnum;
-use phpDocumentor\Reflection\Types\Object_;
 
 abstract class AbstractFilter
 {

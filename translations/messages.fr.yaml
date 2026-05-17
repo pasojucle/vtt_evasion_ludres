@@ -216,6 +216,9 @@ survey:
     pending: En cours
     expired: Expiré
     disabled: Désactivé
+  restriction:
+    members: Limiter à des participants
+    activity: Limiter aux participants d'une activité
 
 second_hand:
   valided: Validées

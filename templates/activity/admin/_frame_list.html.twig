@@ -1,40 +1,21 @@
-<turbo-frame id="activity-list" data-turbo-action="advance">
-    <div>
-        {{ form_start(form) }}
-        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4">
-            <div class="flex items-center gap-4">
-                <div class="border border-border rounded-sm flex items-center gap-2">
-                    <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
-                    <div class="flex items-center gap-4">
-                        {{ form_row(form.period)}}    
-                        {% if form.month is defined %}
-                            {{ form_row(form.month)}}    
-                        {% endif %}     
-                    </div>
-                </div>
-                <div class="ml-auto">
-                    {% include 'component/_button.html.twig' with {button: list.advancedFilter} %}     
-                </div>
-            </div>
-            {% include 'component/_filter_chips.html.twig' with {chips: list.filterChips} %}
-            <div class="lg:ml-auto">
-                {% include 'component/_button.html.twig' with {button: list.addItem} %}
-            </div>
-        </div>
-        {{ form_end(form) }}
+<turbo-frame id="activity-list" data-with-skeleton="true">
+    {% include "component/_list_skeleton.html.twig" with {title: "Activités"} %}
+    <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
         <div class="border border-border rounded-md">
             <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
                 Activités - <span class="">{{ list.paginator.total }}
             </div>
             <ul id="activities_container">
                 {% for item in list.items %}
-                    <li class="group relative pr-8 items-center gap-4 p-3 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
+                    <li class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] group relative items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors not-last:border-b not-last:border-border">
                         <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir l'activité'" data-turbo-frame="_top">
                             <span class="sr-only">Voir l'activité'</span>
                         </a>
-                        <div class="grid grid-cols-[70px_1fr] lg:grid-cols-[1fr_2fr_1fr_1fr] gap-2">
-                            {% include 'component/_list_item.html.twig' with {item: item} %}
-                        </div>
+                        {% include 'component/_list_item.html.twig' with {
+                            item: item, 
+                            grid_template_labels: 'grid-cols-[80px_auto]', 
+                            grid_template_badges: 'grid-cols-[80px_auto_40px]'
+                            } %} 
                         {% include 'component/_dropdown.html.twig' with {dropdown: item.dropdown} %}
                     </li>
                 {% endfor %}

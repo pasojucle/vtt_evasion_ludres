@@ -8,8 +8,8 @@ use App\Dto\DtoTransformer\OrderDtoTransformer;
 use App\Dto\Filter\OrderFilter;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
-use App\Form\Admin\OrderFilterType;
 use App\Form\Admin\OrderType as AdminOrderType;
+use App\Form\ListFilterType;
 use App\Repository\OrderHeaderRepository;
 use App\Service\ExportService;
 use App\Service\FilterDecoderService;
@@ -38,16 +38,27 @@ class OrderController extends AbstractController
         Request $request,
         OrderAdminListProvider $provider,
     ): Response {
-        $statusQuery = $request->query->get('status');
-        $filter = new OrderFilter($statusQuery ? OrderStatusEnum::tryFrom($statusQuery) : $statusQuery);
+        /**  @var OrderFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), OrderFilter::class);
 
-        $form = $this->createForm(OrderFilterType::class, $filter);
+        $filterConfig = $provider->getFilterConfig('admin_orders');
+        if (!$filterConfig) {
+            throw $this->createNotFoundException();
+        }
+        $form = $this->createForm(ListFilterType::class, $filter, [
+            'data_class' => $filterConfig->getDataClass(),
+            'fields' => $filterConfig->getFields(),
+            'advanced_fields' => $filterConfig->getAdvancedFields(),
+            'event_subscriber' => $filterConfig->getEventSubscriber(),
+        ]);
+
         $form->handleRequest($request);
 
         return $this->render('order/admin/list.html.twig', [
             'form' => $form->createView(),
             'list' => $provider->getCollection(
                 $filter,
+                $filterConfig,
                 $request->attributes->get('_route'),
                 $request->query->getInt('page', 1),
             ),

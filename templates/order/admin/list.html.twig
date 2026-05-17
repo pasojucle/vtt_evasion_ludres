@@ -16,6 +16,22 @@
                 </div>
             </div>
         </div>
+        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4" data-controller="filter">
+            <div class="flex items-center gap-4">
+                <div class="border border-border rounded-sm flex items-center gap-2">
+                    <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
+                    {{ form_start(form) }}
+                        <div class="flex items-center gap-4">
+                            {{ form_row(form.status)}}
+                        </div>
+                    {{ form_end(form) }} 
+                </div>
+                <div class="ml-auto">
+                    {% include 'component/_button.html.twig' with {button: list.advancedFilter} %}     
+                </div>
+            </div>
+            {% include 'component/_filter_chips.html.twig' with {chips: list.filterChips} %}
+        </div>
         {% include('order/admin/_frame_list.html.twig') %}
     </div>
 {% endblock %}

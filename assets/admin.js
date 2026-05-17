@@ -31,4 +31,5 @@ import './js/form.js';
 import './js/modal.js';
 import './js/media_position.js';
 import './js/isGranted.js';
-import './js/uploadFile.js'
+import './js/uploadFile.js';
+import './js/turbo/skeleton.js';

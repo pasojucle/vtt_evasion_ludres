@@ -185,19 +185,19 @@ class SurveyRepository extends ServiceEntityRepository
 
         try {
             return $this->createQueryBuilder('s')
-                    ->andWhere(
-                        (new Expr())->eq('s.id', ':surveyId'),
-                        (new Expr())->gt('(' . $histories->getDQL() . ')', ':noneResponse'),
-                        (new Expr())->gt('(' . $responses->getDQL() . ')', ':noneResponse')
-                    )
-                    ->setParameters(new ArrayCollection([
-                        new Parameter('classNameSurvey', 'survey'),
-                        new Parameter('classNameSurveyIssue', 'surveyIssue'),
-                        new Parameter('surveyId', $surveyId),
-                        new Parameter('noneResponse', 0),
-                    ]))
-                    ->getQuery()
-                    ->getOneOrNullResult();
+                ->andWhere(
+                    (new Expr())->eq('s.id', ':surveyId'),
+                    (new Expr())->gt('(' . $histories->getDQL() . ')', ':noneResponse'),
+                    (new Expr())->gt('(' . $responses->getDQL() . ')', ':noneResponse')
+                )
+                ->setParameters(new ArrayCollection([
+                    new Parameter('classNameSurvey', 'survey'),
+                    new Parameter('classNameSurveyIssue', 'surveyIssue'),
+                    new Parameter('surveyId', $surveyId),
+                    new Parameter('noneResponse', 0),
+                ]))
+                ->getQuery()
+                ->getOneOrNullResult();
         } catch (NonUniqueResultException) {
             return null;
         }
@@ -205,9 +205,29 @@ class SurveyRepository extends ServiceEntityRepository
 
     public function findSurveyQuery(): QueryBuilder
     {
-        return $this->createQueryBuilder('s')
-            ->orderBy('s.startAt', 'DESC')
-        ;
+        return $this->createQueryBuilder('s');
+    }
+
+    public function filterHasMembers(QueryBuilder $qb): void
+    {
+        $qb
+            ->innerJoin('s.members', 'm')
+            ->distinct();
+    }
+
+    public function filterHasActivity(QueryBuilder $qb): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->isNotNull('s.bikeRide'),
+            );
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('s.startAt', $direction);
     }
 
     public function filterPending(QueryBuilder $qb, DateTime $today): void

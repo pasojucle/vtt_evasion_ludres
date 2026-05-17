@@ -89,24 +89,38 @@ class OrderHeaderRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOrdersQuery(?OrderStatusEnum $orderStatus = null): QueryBuilder
+    public function findOrdersQuery(): QueryBuilder
     {
         $qb = $this->createQueryBuilder('oh');
 
-        if ($orderStatus) {
-            $qb
-                ->andWhere(
-                    (new Expr())->eq('oh.status', ':status'),
-                )
-                ->setParameter('status', $orderStatus)
-            ;
-        }
-
         $this->addHavingOrderLineCriteria($qb);
 
-        return $qb
-            ->orderBy('oh.id', 'DESC')
-        ;
+        return $qb;
+    }
+
+    public function filterStatus(QueryBuilder $qb, OrderStatusEnum $orderStatus): void
+    {
+        $qb
+            ->andWhere(
+                (new Expr())->eq('oh.status', ':status'),
+            )
+            ->setParameter('status', $orderStatus);
+    }
+
+    public function filterMember(QueryBuilder $qb, Member $member): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('oh.member', ':member')
+            )
+            ->setParameter('member', $member);
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('oh.createdAt', $direction);
     }
 
     private function addHavingOrderLineCriteria(QueryBuilder &$qb): QueryBuilder

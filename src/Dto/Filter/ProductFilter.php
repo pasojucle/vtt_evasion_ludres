@@ -11,6 +11,9 @@ class ProductFilter extends AbstractFilter
 {
     public function __construct(
         public ?ProductState $state = null,
+        public ?string $partNumber = null,
+        public ?int $itemsPerPage = null,
+        public ?string $sort = null,
     ) {
     }
 }

@@ -1,24 +1,29 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
+    static targets = ['form'];
 
     connect() {
-        console.log("filter_controller")
+        console.log("filter_controller", this.hasFormTarget, this.formTarget)
     }
 
-    submit(event) {
-        console.log('filter_controller change', event.target)
-        const form = event.target.closest('form');
-        if (form) {
+    submit() {
+        console.log('filter_controller change')
+        if (this.hasFormTarget) {
             // On désactive temporairement les champs vides avant la soumission
             // pour nettoyer l'ur des champs vides
-            const inputs = form.querySelectorAll('input, select');
+            const inputs = this.formTarget.querySelectorAll('input, select');
             inputs.forEach(input => {
                 if (input.value === "") {
                     input.disabled = true;
                 }
             });
-            form.requestSubmit();
+            const frame = this.element.closest('[data-with-skeleton="true"]');
+            console.log("frame", frame);
+            if (frame) {
+                frame.setAttribute("busy", "");
+            }
+            this.formTarget.requestSubmit();
             setTimeout(() => {
                 inputs.forEach(input => input.disabled = false);
             }, 100);
@@ -28,7 +33,8 @@ export default class extends Controller {
     clear(event) {
         const name = event.currentTarget.dataset.filterName;
         const input = this.element.querySelector(`[name="${name}"]`);
-        
+        console.log('filter_controller clear', input)
+
         if (input) {
             input.value = "";
             this.submit(event);

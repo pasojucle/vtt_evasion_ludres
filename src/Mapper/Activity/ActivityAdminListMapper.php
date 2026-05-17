@@ -57,7 +57,7 @@ class ActivityAdminListMapper
                     new LabelDto($entity->getStartAt()->format('d/m/y')),
                     new LabelDto($entity->getTitle()),
                 ],
-                indicators: $this->getBadges($entity),
+                indicators: $this->getIndicators($entity),
                 status: $this->getStatus($entity, $isComplete),
                 counter: new BadgeDto(
                     $participantsTotal,
@@ -126,39 +126,39 @@ class ActivityAdminListMapper
         ]);
     }
 
-    private function getBadges(BikeRide $entity): array
+    private function getIndicators(BikeRide $entity): array
     {
-        $badges = [];
+        $indicators = [];
         if (!$entity->getMembers()->isEmpty()) {
-            $badges[] = new BadgeDto(
+            $indicators[] = new BadgeDto(
                 value: 'lucide:users',
                 variant: ColorVariant::ACCENT,
                 size: Size::ICON
             );
         }
         if ($entity->getMaxAge() || $entity->getMinAge()) {
-            $badges[] = new BadgeDto(
+            $indicators[] = new BadgeDto(
                 value: 'lucide:cake',
                 variant: ColorVariant::ACCENT,
                 size: Size::ICON
             );
         }
         if (!$entity->registrationEnabled()) {
-            $badges[] = new BadgeDto(
+            $indicators[] = new BadgeDto(
                 value: 'lucide:lock',
                 variant: ColorVariant::WARNING,
                 size: Size::ICON
             );
         }
         if ($entity->isPrivate()) {
-            $badges[] = new BadgeDto(
+            $indicators[] = new BadgeDto(
                 value: 'lucide:eye-off',
                 variant: ColorVariant::WARNING,
                 size: Size::ICON
             );
         }
 
-        return $badges;
+        return $indicators;
     }
 
     private function getStatus(BikeRide $entity, bool $isComplete): BadgeDto

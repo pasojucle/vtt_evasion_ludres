@@ -18,7 +18,9 @@ use App\Dto\ListItemDto;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Mapper\DropdownSettingsMapper;
+use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Service\Filter\FilterConfigInterface;
 use App\Service\OrderService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,10 +34,11 @@ class OrderAdminListMapper
         private OrderService $orderService,
         private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
+        private FilterChipsMapper $filterChipsMapper,
     ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter): ListDto
+    public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter, FilterConfigInterface $filterConfig): ListDto
     {
         $items = [];
         /** @var OrderHeader $entity */
@@ -58,6 +61,15 @@ class OrderAdminListMapper
             items: $items,
             settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED_END),
             tools: $this->getTools(),
+            advancedFilter: new ButtonDto(
+                url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_orders'], $filter->toQueryParams())),
+                icon: 'lucide:settings-2',
+                htmlAttributes: [
+                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
+                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                ],
+            ),
+            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
             wiki: new ButtonDto(
                 url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),

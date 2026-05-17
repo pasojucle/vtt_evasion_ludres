@@ -46,13 +46,13 @@ class ListFilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ActivityFilter::class,
+            'data_class' => null,
             'fields' => [],
             'advanced_fields' => [],
             'event_subscriber' => null,
             'csrf_protection' => false,
             'attr' => [
-                'data-controller' => "filter",
+                'data-filter-target' => "form",
                 'data-turbo-frame' => '_top',
             ],
         ]);
