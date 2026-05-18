@@ -11,15 +11,14 @@ use App\Entity\OrderHeader;
 use App\Form\Admin\OrderType as AdminOrderType;
 use App\Form\ListFilterType;
 use App\Repository\OrderHeaderRepository;
-use App\Service\ExportService;
 use App\Service\FilterDecoderService;
 use App\State\Order\Provider\OrderAdminListProvider;
 use App\UseCase\Order\SetOrder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -108,21 +107,17 @@ class OrderController extends AbstractController
     #[Route('/admin/export/commande', name: 'admin_order_headers_export', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminOrderHeadersExport(
-        ExportService $exportService,
+        OrderAdminListProvider $provider,
         Request $request,
-    ): Response {
-        $filters = $request->getSession()->get('admin_orders_filters');
+    ): StreamedResponse {
+        /**  @var OrderFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), OrderFilter::class);
 
-        $orderHeaders = $this->orderHeaderRepository->findOrdersQuery($filters)->getQuery()->getResult();
-        $content = $exportService->exportOrderHeaders($this->orderDtoTransformer->fromEntities($orderHeaders));
-
-        $response = new Response($content);
-        $disposition = HeaderUtils::makeDisposition(
-            HeaderUtils::DISPOSITION_ATTACHMENT,
-            'export_commandes.csv'
-        );
-        
-        $response->headers->set('Content-Disposition', $disposition);
+        $response = new StreamedResponse(function () use ($provider, $filter) {
+            $provider->streamExportContent($filter);
+        });
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export_commandes.csv"');
 
         return $response;
     }

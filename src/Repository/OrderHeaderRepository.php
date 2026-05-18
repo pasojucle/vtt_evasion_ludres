@@ -91,9 +91,12 @@ class OrderHeaderRepository extends ServiceEntityRepository
 
     public function findOrdersQuery(): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('oh');
-
-        $this->addHavingOrderLineCriteria($qb);
+        $qb = $this->createQueryBuilder('oh')
+            ->leftJoin('oh.member', 'm')->addSelect('m')
+            ->leftJoin('m.identity', 'i')->addSelect('i')
+            ->join('oh.orderLines', 'ol')->addSelect('ol')
+            ->leftJoin('ol.product', 'p')->addSelect('p')
+        ;
 
         return $qb;
     }

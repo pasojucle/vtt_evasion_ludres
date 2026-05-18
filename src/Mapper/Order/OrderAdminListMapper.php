@@ -60,7 +60,7 @@ class OrderAdminListMapper
         return new ListDto(
             items: $items,
             settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED_END),
-            tools: $this->getTools(),
+            tools: $this->getTools($filter->toArray()),
             advancedFilter: new ButtonDto(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_orders'], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
@@ -137,14 +137,14 @@ class OrderAdminListMapper
         );
     }
 
-    private function getTools(): DropdownDto
+    private function getTools(array $filter): DropdownDto
     {
         $dropdown = new DropdownDto(
             variant: DropdownVariant::GOST,
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',
-                    url: $this->urlGenerator->generate('admin_order_headers_export'),
+                    url: $this->urlGenerator->generate('admin_order_headers_export',  $filter),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                 ),
