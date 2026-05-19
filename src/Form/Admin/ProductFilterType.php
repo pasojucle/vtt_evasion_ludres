@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Dto\Enum\ProductState;
+use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\ProductFilter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -20,7 +20,7 @@ class ProductFilterType extends AbstractType
             ->add('state', EnumType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
-                'class' => ProductState::class,
+                'class' => PublishStatus::class,
                 'attr' => [
                     'class' => 'btn',
                     'data-action' => 'change->filter#submit'

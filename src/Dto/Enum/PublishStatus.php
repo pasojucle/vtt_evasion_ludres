@@ -9,7 +9,7 @@ use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-enum ProductState: string implements TranslatableInterface
+enum PublishStatus: string implements TranslatableInterface
 {
     case ENABLED = 'enabled';
 
@@ -30,6 +30,6 @@ enum ProductState: string implements TranslatableInterface
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
-        return $translator->trans('product.state.' . $this->value, locale: $locale);
+        return $translator->trans('publishStatus.' . $this->value, locale: $locale);
     }
 }

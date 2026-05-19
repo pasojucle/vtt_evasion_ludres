@@ -14,6 +14,8 @@ use App\Service\LogService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
 use App\Service\PdfService;
+use App\State\Order\Processor\OrderDeleteProcessor;
+use App\State\Order\Provider\OrderDeleteProvider;
 use App\UseCase\Order\OrderEdit;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -112,6 +114,8 @@ class OrderController extends AbstractController
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function orderDelete(
         Request $request,
+        OrderDeleteProcessor $processor,
+        OrderDeleteProvider $provider,
         OrderHeader $orderHeader
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -123,19 +127,15 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $orderHeader->setStatus(OrderStatusEnum::CANCELED);
-                $this->entityManager->persist($orderHeader);
-                $this->entityManager->flush();
+                $processor->process($orderHeader);
 
                 return $this->redirect($this->requestStack->getSession()->get('order_return'));
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une commande',
-            'content' => sprintf('Etes vous certain de supprimer la commande  %s ?', $orderHeader->getId()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
+            'dialog' => $provider->mapToView($orderHeader),
             'form' => $form->createView(),
         ], $response);
     }

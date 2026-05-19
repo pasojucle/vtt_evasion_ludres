@@ -25,11 +25,11 @@
                 </div>
             </div>
             {% include 'component/_filter_chips.html.twig' with {chips: list.filterChips} %}
+            <div class="lg:ml-auto">
+                {% include 'component/_button.html.twig' with {button: list.addItem} %}
+            </div>
         </div>
         {% include('survey/admin/_frame_list.html.twig') %}
-        <div class="lg:ml-auto">
-            {% include 'component/_button.html.twig' with {button: list.addItem} %}
-        </div>
     </div>
 {% endblock %}
 

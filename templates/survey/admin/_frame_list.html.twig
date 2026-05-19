@@ -7,7 +7,7 @@
             </div>
             <ul id="surveys_container">
                 {% for item in list.items %}
-                    <li class="group relative grid grid-cols-1 lg:grid-cols-2 pr-8 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
+                    <li class="group relative grid grid-cols-1 lg:grid-cols-2 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors border-b border-border">
                         <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir les réponses" data-turbo-frame="_top">
                             <span class="sr-only">Voir le sondage</span>
                         </a>

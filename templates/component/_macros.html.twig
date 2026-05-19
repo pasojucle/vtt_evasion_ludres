@@ -25,3 +25,12 @@
     } %}
     {{ classes[variant] ?? classes.default }}
 {% endmacro %}
+
+{% macro dialog_type_class(variant) %}
+    {% set classess = {
+        (enum('App\\Dto\\Enum\\DialogType').DESTRUCTIVE.value): 'bg-destructive text-white',
+        (enum('App\\Dto\\Enum\\DialogType').WARNING.value): 'bg-warning text-white',
+        (enum('App\\Dto\\Enum\\DialogType').SUCCESS.value): 'bg-success text-white',
+        (enum('App\\Dto\\Enum\\DialogType').DEFAULT.value): 'bg-slate-200 text-primary',
+    } %}
+{% endmacro %}

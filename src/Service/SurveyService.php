@@ -55,18 +55,6 @@ class SurveyService
         $this->respondentRepository->deleteResponsesByUserAndSurvey($member, $survey);
     }
 
-    public function deleteSurvey(Survey $survey): void
-    {
-        $this->surveyResponseRepository->deleteBySurvey($survey);
-        $this->respondentRepository->deleteBySurvey($survey);
-        if ($survey->getBikeRide()) {
-            $survey->getBikeRide()->setSurvey(null);
-        }
-        $survey->removeMembers();
-        $this->entityManager->remove($survey);
-        $this->entityManager->flush();
-    }
-
     public function getSurveyResponsesFromBikeRide(BikeRide $bikeRide): ?array
     {
         if (!$bikeRide->getSurvey() || $bikeRide->getSurvey()->getSurveyIssues()->isEmpty()) {

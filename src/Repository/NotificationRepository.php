@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\Enum\PublishStatus;
 use App\Dto\UserDto;
 use App\Entity\Log;
 use App\Entity\Member;
@@ -12,6 +13,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -105,5 +107,47 @@ class NotificationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findNotificationQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('n');
+    }
+
+    public function filterDisabled(QueryBuilder $qb, PublishStatus $state): void
+    {
+        $qb
+        ->andWhere(
+            $qb->expr()->eq('n.isDisabled', ':state')
+        )
+        ->setParameter('state', PublishStatus::DISABLED === $state);
+    }
+
+    public function filterIsPublic(QueryBuilder $qb, bool $isPublic): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('n.public', ':isPublic')
+            )
+            ->setParameter('isPublic', $isPublic);
+    }
+
+
+    public function filterHasAge(QueryBuilder $qb): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNotNull('n.minAge'),
+                    $qb->expr()->isNotNull('n.maxAge'),
+                )
+            );
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('n.startAt', $direction);
     }
 }

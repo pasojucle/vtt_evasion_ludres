@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\ProductDtoTransformer;
-use App\Dto\Enum\ProductState;
 use App\Dto\Filter\ProductFilter;
 use App\Entity\Product;
-use App\Form\Admin\ProductFilterType;
 use App\Form\Admin\ProductType;
 use App\Form\ListFilterType;
 use App\Service\Product\ProductEditService;
@@ -156,7 +154,6 @@ class ProductController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
                 $product->setDisabled(!$product->isDisabled());
-                $this->entityManager->persist($product);
                 $this->entityManager->flush();
 
                 return $this->redirectToRoute('admin_products');
@@ -164,7 +161,7 @@ class ProductController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('product/admin/disabled.modal.html.twig', [
+        return $this->render('notification/admin/disabled.modal.html.twig', [
             'product' => $this->productDtoTransformer->fromEntity($product),
             'form' => $form->createView(),
         ], $response);

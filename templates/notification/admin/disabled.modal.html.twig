@@ -1,0 +1,17 @@
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = product.isDisabled ? 'success' : 'warning' %}
+{% set action = product.isDisabled ? 'activer' : 'désactiver' %}
+{% block modal_title %}{{ action|capitalize }}{% endblock %}
+{% block body %}
+    <p>Etes vous certain de vouloir {{ action }} le produit {{ product.name }} ?</p>
+{% endblock %}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+    <div class="flex gap-3 items-center ">
+        {{ ux_icon('lucide:x', {class: 'size-6'}) }} {{ action|capitalize }}
+    </div>
+    </button>
+{% endblock %}

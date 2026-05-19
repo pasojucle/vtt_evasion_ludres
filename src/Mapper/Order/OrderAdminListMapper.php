@@ -131,6 +131,7 @@ class OrderAdminListMapper
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
                         new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
+                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
                     ],
                 )
             ]
@@ -147,6 +148,9 @@ class OrderAdminListMapper
                     url: $this->urlGenerator->generate('admin_order_headers_export',  $filter),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
+                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    ]
                 ),
             ],
         );

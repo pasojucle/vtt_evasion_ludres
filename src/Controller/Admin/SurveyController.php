@@ -14,7 +14,9 @@ use App\Form\Admin\SurveyType;
 use App\Form\ListFilterType;
 use App\Repository\SurveyIssueRepository;
 use App\Service\SurveyService;
+use App\State\Survey\Processor\SurveyDeleteProcessor;
 use App\State\Survey\Provider\SurveyAdminListProvider;
+use App\State\Survey\Provider\SurveyDeleteProvider;
 use App\UseCase\Survey\ExportSurvey;
 use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
@@ -267,7 +269,12 @@ class SurveyController extends AbstractController
 
     #[Route('detele/{survey}', name: 'admin_survey_delete', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
-    public function delete(Request $request, SurveyService $surveyService, Survey $survey): Response
+    public function delete(
+        Request $request, 
+        SurveyDeleteProcessor $processor,
+        SurveyDeleteProvider $provider,
+        Survey $survey
+    ): Response
     {
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
@@ -277,17 +284,15 @@ class SurveyController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $surveyService->deleteSurvey($survey);
+                $processor->process($survey);
     
                 return $this->redirectToRoute('admin_surveys');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer un vote',
-            'content' => sprintf('<p>Toutes les données relative à ce vote seront supprimées.</p><p>Etes-vous certain de supprimer le vote %s ?</p>', $survey->getTitle()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
+            'dialog' => $provider->mapToView($survey),
             'form' => $form->createView(),
         ], $response);
     }

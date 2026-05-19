@@ -1,39 +1,34 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}Gestion de la pop'up{% endblock %}
+{% block title %}Pop'up{% endblock %}
 
 {% block body %}
-    <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Gestion de la pop'up</h1>
-            <div class="tool-group">
-                {% include 'component/dropdown_settings.html.twig' %}
+    <div class="p-4 lg:p-6">
+        <div class="flex mt-4">
+            <div>
+                <h1 class="font-bold text-3xl">Notification Pop'up</span></h1>
+                <div class="text-muted mt-1">Administration des messages affichés dans les pop'up</div>
             </div>
         </div>
-        <div class="wrapper-body">
-            <a href="{{ path('admin_notification_add') }}" class="btn btn-primary" title="Ajouter une info"><i class="fas fa-plus"></i> Ajouter une info</a>
-            <ul class="sortable padding-10" 
-                data-controller="sortable"
-                data-sortable-route-value="{{ path('admin_level_order', {'level': 0}) }}"
-            >
-                {% for notification in notification_list %}     
-                    <li class="col-list col-list-2btn">  
-                        <div class="list-item">{{ notification.title }}</div>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <div>
-                                <a class="btn btn-primary btn-ico" href="{{ path('admin_notification_edit', {'notification': notification.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                            </div>
-                            <div>
-                                {% if not notification.isDisabled %}
-                                    <a class="btn btn-success btn-ico" href="{{ path('admin_notification_toggle_disable', {'notification': notification.id})}}" title="Désactiver"><i class="fas fa-toggle-on"></i></a>
-                                {% else %}
-                                    <a class="btn btn-danger btn-ico" href="{{ path('admin_notification_toggle_disable', {'notification': notification.id})}}" title="Activer"><i class="fas fa-toggle-off"></i></a>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+        <div class="flex flex-col lg:flex-row gap-4 lg:items-center my-4" data-controller="filter">
+            <div class="flex items-center gap-4">
+                <div class="border border-border rounded-sm flex items-center gap-2">
+                    <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
+                    {{ form_start(form) }}
+                        <div class="flex items-center gap-4">
+                            {{ form_row(form.status)}}
+                        </div>
+                    {{ form_end(form) }} 
+                </div>
+                <div class="ml-auto">
+                    {% include 'component/_button.html.twig' with {button: list.advancedFilter} %}     
+                </div>
+            </div>
+            {% include 'component/_filter_chips.html.twig' with {chips: list.filterChips} %}
+            <div class="lg:ml-auto">
+                {% include 'component/_button.html.twig' with {button: list.addItem} %}
+            </div>
         </div>
+        {% include('notification/admin/_frame_list.html.twig') %}
     </div>
 {% endblock %}

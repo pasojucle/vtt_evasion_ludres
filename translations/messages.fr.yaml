@@ -253,10 +253,9 @@ agreement:
     authorization: Autorisations
     consent: Consentement
 
-product:
-  state: 
-    enabled: Activé
-    disabled: Désactivé
+publishStatus: 
+  enabled: Activé
+  disabled: Désactivé
 
 activity:
   period: 
@@ -269,3 +268,10 @@ activity:
   visibility:
     private: Activité privée
     public: Activité pubique
+
+notification:
+  visibility:
+    private: Afficher aux utilisateurs connectés
+    public: Afficher à tous le monde
+  restriction:
+    age: Limiter une tranche d'âge

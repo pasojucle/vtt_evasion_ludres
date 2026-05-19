@@ -49,6 +49,7 @@ class SurveyAdminDropdownMapper
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
                     new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
+                    new HtmlAttributDto('data-action', 'click->dropdown#close')
                 ],
             );
         }
@@ -59,6 +60,7 @@ class SurveyAdminDropdownMapper
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
                 new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
+                new HtmlAttributDto('data-action', 'click->dropdown#close')
             ],
         );
 

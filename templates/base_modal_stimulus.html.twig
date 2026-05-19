@@ -1,20 +1,10 @@
 <turbo-frame id="modal_content">
-    {% if type is not defined %}
-        {% set type = 'primary' %}
-    {% endif %}
-    {% set title_text = 'text-white'%}
-    {% set background = {
-        'destructive': 'bg-destructive',
-        'warning': 'bg-warning',
-        'success': 'bg-success',
-        'primary': 'bg-slate-200',
-    } %}
-
+    {% import "component/_macros.html.twig" as utils %}
     {% if form is defined and form is not null %}
         {{ form_start(form)}}
     {% endif %}
-    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 {{ background[type] }}">
-        <h3 class="!mt-0 !mb-0 text-xl font-semibold {{ type == 'primary' ? 'text-primary' : 'text-white'}}">
+    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 {{ utils.color_class(type.value) ??  utils.color_class('default')}}">
+        <h3 class="!mt-0 !mb-0 text-xl font-semibold">
             {% block modal_title %}{% endblock %}
         </h3>
         <button 
