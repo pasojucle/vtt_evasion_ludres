@@ -12,6 +12,8 @@ use App\Repository\DocumentationRepository;
 use App\Service\MessageService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\State\Documentation\Processor\DocumentationDeleteProcessor;
+use App\State\Documentation\Provider\DocumentationDeleteProvider;
 use App\UseCase\Documentation\EditDocumentation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -100,6 +102,8 @@ class DocumentationController extends AbstractController
     #[IsGranted('DOCUMENTATION_EDIT', 'documentation')]
     public function adminDocumentationDelete(
         Request $request,
+        DocumentationDeleteProcessor $processor,
+        DocumentationDeleteProvider $provider,
         Documentation $documentation
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -111,22 +115,17 @@ class DocumentationController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->entityManager->remove($documentation);
-                $this->entityManager->flush();
-
-                $documentations = $this->documentationRepository->findAll();
-                $this->orderByService->ResetOrders($documentations);
+                $processor->process($documentation);
 
                 return $this->redirectToRoute('admin_documentation_list');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
+        
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Supprimer une documentation',
-            'content' => sprintf('Etes vous certain de supprimer la documentation %s', $documentation->getName()),
-            'btn_label' => 'Supprimer',
+            'dialog' => $provider->mapToView($documentation),
         ], $response);
     }
 

@@ -16,7 +16,7 @@ class DestructiveModalMapper
             title: 'Suppression',
             action: 'Supprimer',
             message: $confirmationMessage,
-            icon: 'lucide:trash-2'
+            icon: 'lucide:delete'
         );
     }
 }

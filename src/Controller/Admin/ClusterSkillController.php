@@ -11,6 +11,8 @@ use App\Entity\Skill;
 use App\Form\Admin\ClusterSkillAddType;
 use App\Form\Admin\MemberSkillCollectionType;
 use App\Form\Admin\MemberSkillType;
+use App\State\Cluster\Processor\ClusterSkillDeleteProcessor;
+use App\State\Cluster\Provider\ClusterSkillDeleteProvider;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -86,9 +88,11 @@ class ClusterSkillController extends AbstractController
     #[Route('/admin/groupe/evaluation/delete/{cluster}/{skill}', name: 'admin_cluster_skill_delete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluationdDelete(
+        Request $request,
+        ClusterSkillDeleteProcessor $processor,
+        ClusterSkillDeleteProvider $provider,
         Cluster $cluster,
         Skill $skill,
-        Request $request,
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
@@ -99,14 +103,13 @@ class ClusterSkillController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $skillId = $skill->getId();
-                $cluster->removeSkill($skill);
-                $this->entityManager->flush();
+                $processor->process($cluster, $skill);
+                
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
                 if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
                     return $this->render('cluster/admin/skill_deleted.stream.html.twig', [
-                        'skillId' => $skillId,
+                        'skillId' => $skill->getId(),
                     ]);
                 }
 
@@ -115,11 +118,9 @@ class ClusterSkillController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une évaluation',
-            'content' => sprintf('Etes vous certain de supprimer l\'évaluation %s ?', $skill->getContent()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($skill),
         ], $response);
     }
 

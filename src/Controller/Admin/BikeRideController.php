@@ -11,7 +11,9 @@ use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Form\ListFilterType;
 use App\Repository\BikeRideRepository;
+use App\State\Activity\Processor\ActivityDeleteProcessor;
 use App\State\Activity\Provider\ActivityAdminListProvider;
+use App\State\Activity\Provider\ActivityDeleteProvider;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
@@ -200,6 +202,8 @@ class BikeRideController extends AbstractController
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminLevelDelete(
         Request $request,
+        ActivityDeleteProvider $provider,
+        ActivityDeleteProcessor $processor,
         BikeRide $bikeRide
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -211,21 +215,16 @@ class BikeRideController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $bikeRide->setDeleted(true);
-                $this->entityManager->flush();
+                $processor->process($bikeRide);
 
                 return $this->redirectToRoute('admin_bike_rides');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
-
-        return $this->render('component/destructive.modal.html.twig', [
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Supprimer une sortie',
-            'content' => sprintf('<p>Etes vous certain de supprimer<br>la sortie %s du %s', $bikeRideDto->title, $bikeRideDto->period),
-            'btn_label' => 'Supprimer',
+            'dialog' => $provider->mapToView($bikeRide),
         ], $response);
     }
 

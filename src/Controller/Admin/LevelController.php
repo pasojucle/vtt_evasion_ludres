@@ -10,6 +10,8 @@ use App\Form\Admin\LevelType;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\State\Level\Processor\LevelDeleteProcessor;
+use App\State\Level\Provider\LevelDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -79,6 +81,8 @@ class LevelController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelDelete(
         Request $request,
+        LevelDeleteProcessor $processor,
+        LevelDeleteProvider $provider,
         Level $level
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -86,29 +90,21 @@ class LevelController extends AbstractController
             'action' => $request->getUri(),
             'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
-        $type = $level->getType();
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $level->setIsDeleted(true);
-                $this->entityManager->flush();
-
-                $levels = $this->levelRepository->findByType($type);
-                $this->orderByService->ResetOrders($levels);
 
                 return $this->redirectToRoute('admin_levels', [
-                    'type' => $type,
+                    'type' => $processor->process($level),
                 ]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Supprimer un niveau',
-            'content' => sprintf('Etes vous certain de supprimer le niveau %s', $level->getTitle()),
-            'btn_label' => 'Supprimer',
+            'dialog' => $provider->mapToView($level),
         ], $response);
     }
 

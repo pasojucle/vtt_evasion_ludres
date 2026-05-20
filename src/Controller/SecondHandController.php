@@ -16,6 +16,8 @@ use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
+use App\State\SecondHand\Processor\SecondHandDeleteProcessor;
+use App\State\SecondHand\Provider\SecondHandDeleteProvider;
 use App\UseCase\SecondHand\EditSecondHand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -135,6 +137,8 @@ class SecondHandController extends AbstractController
     #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function delete(
         Request $request,
+        SecondHandDeleteProcessor $processor,
+        SecondHandDeleteProvider $provider,
         SecondHand $secondHand
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -146,18 +150,16 @@ class SecondHandController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->secondHandRepository->remove($secondHand, true);
+                $processor->process($secondHand);
 
                 return $this->redirectToRoute('second_hand_user_list');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une annonce',
-            'content' => sprintf('Etes vous certain de supprimer l\'annonce %s ?', $secondHand->getName()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($secondHand),
         ], $response);
     }
 

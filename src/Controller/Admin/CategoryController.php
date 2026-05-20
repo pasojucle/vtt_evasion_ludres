@@ -7,6 +7,8 @@ namespace App\Controller\Admin;
 use App\Entity\Category;
 use App\Form\Admin\CategoryType;
 use App\Repository\CategoryRepository;
+use App\State\Category\Processor\CategoryDeleteProcessor;
+use App\State\Category\Provider\CategoryDeleteProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,6 +61,8 @@ class CategoryController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
+        CategoryDeleteProcessor $processor,
+        CategoryDeleteProvider $provider,
         Category $category
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -70,19 +74,16 @@ class CategoryController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $category->setDeleted(true);
-                $this->categoryRepository->save($category, true);
-
+                $processor->process($category);
+                
                 return $this->redirectToRoute('admin_category_list');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Supprimer une cathégorie',
-            'content' => sprintf('Etes vous certain de supprimer la catégorie %s', $category->getName()),
-            'btn_label' => 'Supprimer',
+            'dialog' => $provider->mapToView($category),
         ], $response);
     }
 }

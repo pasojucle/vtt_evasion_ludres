@@ -10,6 +10,8 @@ use App\Entity\Background;
 use App\Form\Admin\BackgroundType;
 use App\Repository\BackgroundRepository;
 use App\Service\PaginatorService;
+use App\State\Background\Processor\BackgroundDeleteProcessor;
+use App\State\Background\Provider\BackgroundDeleteProvider;
 use App\UseCase\Background\EditBackground;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,6 +71,8 @@ class BackgroundController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminBackgroundDelete(
         Request $request,
+        BackgroundDeleteProcessor $processor,
+        BackgroundDeleteProvider $provider,
         Background $background
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -88,11 +92,9 @@ class BackgroundController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Supprimer une image de fond',
-            'content' => sprintf('Etes vous certain de supprimer l\'image de fond %s', $background->getFilename()),
-            'btn_label' => 'Supprimer',
+            'dialog' => $provider->mapToView($background),
         ], $response);
     }
 }

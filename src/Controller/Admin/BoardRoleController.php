@@ -9,6 +9,8 @@ use App\Repository\BoardRoleRepository;
 use App\Repository\MemberRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\State\BoardRole\Processor\BoardRoleDeleteProcessor;
+use App\State\BoardRole\Provider\BoardRoleDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -72,7 +74,8 @@ class BoardRoleController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleDelete(
         Request $request,
-        MemberRepository $memberRepository,
+        BoardRoleDeleteProcessor $processor,
+        BoardRoleDeleteProvider $provider,
         BoardRole $boardRole
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -84,23 +87,16 @@ class BoardRoleController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $memberRepository->removeBoardRole($boardRole);
-                $this->entityManager->remove($boardRole);
-                $this->entityManager->flush();
-
-                $boardRoles = $this->boardRoleRepository->findAllOrdered();
-                $this->orderByService->ResetOrders($boardRoles);
+                $processor->process($boardRole);
 
                 return $this->redirectToRoute('admin_board_role_list');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Supprimer un role',
-            'content' => sprintf('Etes vous certain de supprimer le role %s', $boardRole->getName()),
-            'btn_label' => 'Supprimer',
+            'dialog' => $provider->mapToView($boardRole),
         ], $response);
     }
 
