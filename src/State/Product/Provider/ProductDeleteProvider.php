@@ -12,13 +12,10 @@ class ProductDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(Product  $entity): DialogModalDto
     {
-
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'article <b>%s</b> ?', $entity->getName()));
     }
 }

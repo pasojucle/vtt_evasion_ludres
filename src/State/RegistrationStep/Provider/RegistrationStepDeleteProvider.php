@@ -12,14 +12,12 @@ class RegistrationStepDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(RegistrationStep  $entity): DialogModalDto
     {
-
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'étape <b>%s</b> ?', 
+        return $this->destructiveModalMapper->mapToView(sprintf(
+            'Etes vous certain de supprimer l\'étape <b>%s</b> ?',
             $entity->getTitle()
         ));
     }

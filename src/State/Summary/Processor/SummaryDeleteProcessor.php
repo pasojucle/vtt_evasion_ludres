@@ -11,7 +11,8 @@ class SummaryDeleteProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function process(Summary $entity): int
     {

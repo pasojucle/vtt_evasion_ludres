@@ -17,7 +17,8 @@ class BoardRoleDeleteProcessor
         private MemberRepository $memberRepository,
         private BoardRoleRepository $boardRoleRepository,
         private OrderByService $orderByService,
-    ) {}
+    ) {
+    }
 
     public function process(BoardRole $entity): void
     {

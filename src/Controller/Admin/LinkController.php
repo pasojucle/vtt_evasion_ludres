@@ -120,7 +120,6 @@ class LinkController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                
                 return $this->redirectToRoute('admin_links', [
                     'position' => $processor->process($link),
                 ]);

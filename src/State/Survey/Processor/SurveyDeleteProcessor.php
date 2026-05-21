@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Processor;
 
-
 use App\Entity\Survey;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
@@ -16,7 +15,8 @@ class SurveyDeleteProcessor
         private EntityManagerInterface $entityManager,
         private SurveyResponseRepository $surveyResponseRepository,
         private RespondentRepository $respondentRepository,
-    ) {}
+    ) {
+    }
 
     public function process(Survey $entity): void
     {

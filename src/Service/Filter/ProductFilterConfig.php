@@ -27,7 +27,7 @@ class ProductFilterConfig implements FilterConfigInterface
     {
         return [
             new FilterFieldConfig(
-                name: 'state', 
+                name: 'state',
                 type: EnumType::class,
                 options:  [
                     'label' => false,

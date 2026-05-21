@@ -12,17 +12,15 @@ class SlideshowDirectoryDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(SlideshowDirectory  $entity): DialogModalDto
     {
-
-        return $this->destructiveModalMapper->mapToView(sprintf($$entity->getSlideshowImages()->isEmpty()
+        return $this->destructiveModalMapper->mapToView(sprintf(
+            $$entity->getSlideshowImages()->isEmpty()
             ? 'Etes vous certain de supprimer le répetroire %s ?'
             : 'Etes vous certain de supprimer le répetroire %s et tous les fichiers qu\'il contient ?',
-             $entity->getName()
+            $entity->getName()
         ));
     }
 }

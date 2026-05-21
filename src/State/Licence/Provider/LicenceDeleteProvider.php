@@ -12,15 +12,13 @@ class LicenceDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(Licence  $entity): DialogModalDto
     {
-
         return $this->destructiveModalMapper->mapToView(
-            sprintf('Etes vous certain de supprimer l\'inscription de <b>%s</b> ?', 
+            sprintf(
+                'Etes vous certain de supprimer l\'inscription de <b>%s</b> ?',
                 $entity->getMember()->getIdentity()->getFullName()
             )
         );

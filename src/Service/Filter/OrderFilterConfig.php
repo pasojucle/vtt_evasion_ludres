@@ -28,7 +28,7 @@ class OrderFilterConfig implements FilterConfigInterface
     {
         return [
             new FilterFieldConfig(
-                name: 'status', 
+                name: 'status',
                 type: EnumType::class,
                 options:  [
                 'label' => false,
@@ -38,7 +38,8 @@ class OrderFilterConfig implements FilterConfigInterface
                     'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
-            ])
+            ]
+            )
         ];
     }
 

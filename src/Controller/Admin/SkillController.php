@@ -164,8 +164,7 @@ class SkillController extends AbstractController
         SkillDeleteProcessor $processor,
         SkillDeleteProvider $provider,
         Skill $skill
-    ): Response
-    {
+    ): Response {
         $queryParams = $request->query->all();
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [

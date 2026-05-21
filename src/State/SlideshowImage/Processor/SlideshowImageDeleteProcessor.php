@@ -14,7 +14,8 @@ class SlideshowImageDeleteProcessor
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ProjectDirService $projectDir,
-    ) {}
+    ) {
+    }
 
     public function process(SlideshowImage $entity): int
     {

@@ -69,7 +69,7 @@ class RegistrationStepController extends AbstractController
     ): Response {
         $newOrder = $request->request->get('newOrder');
         if (null !== $newOrder) {
-            $regitrationSteps = $this->registrationStepRepository->findByGroup($registrationStep->getRegistrationStepGroup());
+            $regitrationSteps = $this->registrationStepRepository->findByGroup($registrationStep->getRegistrationStepGroup()->getId());
             $this->orderByService->setNewOrders($registrationStep, $regitrationSteps, (int) $newOrder);
         }
 

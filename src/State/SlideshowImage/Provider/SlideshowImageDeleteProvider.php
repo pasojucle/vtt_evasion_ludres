@@ -12,14 +12,12 @@ class SlideshowImageDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(SlideshowImage  $entity): DialogModalDto
     {
-
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'image <b>%s</b> ?', 
+        return $this->destructiveModalMapper->mapToView(sprintf(
+            'Etes vous certain de supprimer l\'image <b>%s</b> ?',
             $entity->getFilename()
         ));
     }

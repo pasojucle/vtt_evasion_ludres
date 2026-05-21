@@ -11,7 +11,8 @@ class ProductDeleteProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function process(Product $entity): void
     {

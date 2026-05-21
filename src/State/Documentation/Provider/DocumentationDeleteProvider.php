@@ -12,13 +12,10 @@ class DocumentationDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(Documentation  $entity): DialogModalDto
     {
-
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la documentation %s', $entity->getName()));
     }
 }

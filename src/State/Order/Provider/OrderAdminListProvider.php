@@ -24,21 +24,19 @@ class OrderAdminListProvider
         private OrderAdminListMapper $mapper,
         private OrderAdminListExportMapper $exportMapper,
     ) {
-
     }
-    public function getCollection(OrderFilter $filter,  FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(OrderFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
     {
         $entities = $this->paginator->paginate(
             $this->getQueryBuilder($filter),
             $currentPage,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
-
         );
 
         return $this->mapper->mapToView(
-            $entities, 
-            $route, 
-            $currentPage, 
+            $entities,
+            $route,
+            $currentPage,
             $filter,
             $filterConfig
         );

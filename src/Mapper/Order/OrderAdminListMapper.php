@@ -145,7 +145,7 @@ class OrderAdminListMapper
             menuItems: [
                 new ButtonDto(
                     label: 'Exporter la sélection',
-                    url: $this->urlGenerator->generate('admin_order_headers_export',  $filter),
+                    url: $this->urlGenerator->generate('admin_order_headers_export', $filter),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

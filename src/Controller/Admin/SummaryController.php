@@ -100,7 +100,6 @@ class SummaryController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-
                 return $this->redirectToRoute('admin_summary_list', [
                     'bikeRide' => $processor->process($summary),
                 ]);

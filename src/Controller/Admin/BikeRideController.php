@@ -19,10 +19,7 @@ use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
-
-
 use App\UseCase\User\GetFramersFiltered;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,7 +33,6 @@ class BikeRideController extends AbstractController
 {
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
-        private EntityManagerInterface $entityManager,
         private GetFilters $getFilters,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private ClusterDtoTransformer $clusterDtoTransformer,

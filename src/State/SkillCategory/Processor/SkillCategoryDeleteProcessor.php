@@ -11,7 +11,8 @@ class SkillCategoryDeleteProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function process(SkillCategory $entity): int
     {

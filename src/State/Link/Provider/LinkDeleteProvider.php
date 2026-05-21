@@ -12,14 +12,12 @@ class LinkDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(Link  $entity): DialogModalDto
     {
-
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le lien  <b>%s</b> ?', 
+        return $this->destructiveModalMapper->mapToView(sprintf(
+            'Etes vous certain de supprimer le lien  <b>%s</b> ?',
             $entity->getTitle()
         ));
     }

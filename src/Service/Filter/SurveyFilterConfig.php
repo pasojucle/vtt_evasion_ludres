@@ -27,7 +27,7 @@ class SurveyFilterConfig implements FilterConfigInterface
     {
         return [
             new FilterFieldConfig(
-                name: 'status', 
+                name: 'status',
                 type: EnumType::class,
                 options:  [
                 'label' => false,
@@ -37,7 +37,8 @@ class SurveyFilterConfig implements FilterConfigInterface
                     'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
-            ])
+            ]
+            )
         ];
     }
 

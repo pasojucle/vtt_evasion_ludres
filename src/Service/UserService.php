@@ -7,16 +7,11 @@ namespace App\Service;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use App\Entity\Member;
-use App\Repository\OrderLineRepository;
 use App\Repository\SessionRepository;
-use App\Repository\SurveyResponseRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class UserService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SurveyResponseRepository $surveyResponseRepository,
         private readonly LicenceService $licenceService,
         private SessionRepository $sessionRepository,
         private SeasonService $seasonService,

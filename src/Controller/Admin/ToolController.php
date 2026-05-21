@@ -72,7 +72,8 @@ class ToolController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->addFlash('success', sprintf('Les données de l\'utilisateur %s ont bien été supprimées',
+                $this->addFlash('success', sprintf(
+                    'Les données de l\'utilisateur %s ont bien été supprimées',
                     $processor->process($member)
                 ));
 

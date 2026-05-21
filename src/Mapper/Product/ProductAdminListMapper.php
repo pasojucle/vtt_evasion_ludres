@@ -58,7 +58,7 @@ class ProductAdminListMapper
                 url: $this->urlGenerator->generate('admin_product_add'),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
-            ),            
+            ),
             advancedFilter: new ButtonDto(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_products'], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',

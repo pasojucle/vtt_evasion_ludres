@@ -15,7 +15,8 @@ class DocumentationDeleteProcessor
         private EntityManagerInterface $entityManager,
         private DocumentationRepository $documentationRepository,
         private OrderByService $orderByService,
-    ) {}
+    ) {
+    }
 
     public function process(Documentation $entity): void
     {

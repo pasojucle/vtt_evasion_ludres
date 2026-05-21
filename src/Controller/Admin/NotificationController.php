@@ -108,8 +108,7 @@ class NotificationController extends AbstractController
         NotificationToggleProvider $provider,
         NotificationToggleProcessor $processor,
         Notification $notification
-        ): Response
-    {
+    ): Response {
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),

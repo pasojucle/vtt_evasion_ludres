@@ -11,7 +11,8 @@ class NotificationToggleProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function process(Notification $entity): void
     {

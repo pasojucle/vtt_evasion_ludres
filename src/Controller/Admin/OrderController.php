@@ -10,7 +10,6 @@ use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderType as AdminOrderType;
 use App\Form\ListFilterType;
-use App\Repository\OrderHeaderRepository;
 use App\Service\FilterDecoderService;
 use App\State\Order\Provider\OrderAdminListProvider;
 use App\UseCase\Order\SetOrder;
@@ -26,7 +25,6 @@ class OrderController extends AbstractController
 {
     public function __construct(
         private OrderDtoTransformer $orderDtoTransformer,
-        private OrderHeaderRepository $orderHeaderRepository,
         private EntityManagerInterface $entityManager,
     ) {
     }

@@ -31,16 +31,16 @@ class OrderAdminListExportMapper
             $status = $entity->getStatus();
             $mainRow = [
                     $identity->getFirstName(),
-                    $identity->getName(), 
+                    $identity->getName(),
                     $entity->getId(),
                     '',
-                    '', 
-                    '', 
-                    '', 
-                    $this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), 
+                    '',
+                    '',
+                    '',
+                    $this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()),
                     $status->trans($this->translator)
                 ];
-                fputcsv($fp, $mainRow, self::CSV_SEPARATOR);
+            fputcsv($fp, $mainRow, self::CSV_SEPARATOR);
             /** @var OrderLine $line */
             foreach ($entity->getOrderLines() as $line) {
                 $product = $line->getProduct();
@@ -50,12 +50,12 @@ class OrderAdminListExportMapper
                 $lineState = $line->getState();
                 $lineRow = [
                     '',
-                    '', 
-                    '', 
-                    $product->getName(), 
-                    $product->getRef(), 
-                    $line->getSize()->getName(), 
-                    $line->getQuantity(), 
+                    '',
+                    '',
+                    $product->getName(),
+                    $product->getRef(),
+                    $line->getSize()->getName(),
+                    $line->getQuantity(),
                     sprintf('%s €', number_format($amount, 2)),
                     $lineState->trans($this->translator)
                 ];

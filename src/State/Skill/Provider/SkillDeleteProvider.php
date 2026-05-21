@@ -12,14 +12,12 @@ class SkillDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(Skill  $entity): DialogModalDto
     {
-
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la compétence <b>%s</b> ?', 
+        return $this->destructiveModalMapper->mapToView(sprintf(
+            'Etes vous certain de supprimer la compétence <b>%s</b> ?',
             $entity->getContent()
         ));
     }

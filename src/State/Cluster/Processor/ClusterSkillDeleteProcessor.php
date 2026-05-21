@@ -12,7 +12,8 @@ class ClusterSkillDeleteProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function process(Cluster $cluster, Skill $skill): void
     {

@@ -15,7 +15,6 @@ use App\Service\PaginatorService;
 use App\State\Documentation\Processor\DocumentationDeleteProcessor;
 use App\State\Documentation\Provider\DocumentationDeleteProvider;
 use App\UseCase\Documentation\EditDocumentation;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +26,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DocumentationController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private DocumentationRepository $documentationRepository,
         private OrderByService $orderByService,
         private DocumentationDtoTransformer $documentationDtoTransformer

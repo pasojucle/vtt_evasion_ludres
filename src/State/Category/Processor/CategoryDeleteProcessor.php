@@ -11,7 +11,8 @@ class CategoryDeleteProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function process(Category $entity): void
     {

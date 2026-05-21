@@ -159,7 +159,6 @@ class MessageController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-
                 return $this->redirectToRoute('admin_message_list', [
                     'section' => $processor->process($message),
                 ]);

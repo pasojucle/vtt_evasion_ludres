@@ -11,7 +11,8 @@ class MessageDeleteProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function process(Message $entity): int
     {

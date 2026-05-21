@@ -42,7 +42,6 @@ class ProductAdminListProvider
             $qb,
             $currentPage,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
-
         );
 
         return $this->mapper->mapToView($entities, $route, $currentPage, $filter, $filterConfig);

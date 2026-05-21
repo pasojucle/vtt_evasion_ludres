@@ -8,7 +8,6 @@ use App\Dto\DialogModalDto;
 use App\Dto\Enum\DialogType;
 use App\Entity\Notification;
 
-
 class NotificationToggleProvider
 {
     public function mapToView(Notification $entity): DialogModalDto

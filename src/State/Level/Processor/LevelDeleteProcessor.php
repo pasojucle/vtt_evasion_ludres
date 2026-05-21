@@ -15,7 +15,8 @@ class LevelDeleteProcessor
         private EntityManagerInterface $entityManager,
         private LevelRepository $levelRepository,
         private OrderByService $orderByService,
-    ) {}
+    ) {
+    }
 
     public function process(Level $entity): int
     {

@@ -12,13 +12,10 @@ class BoardRoleDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(BoardRole  $entity): DialogModalDto
     {
-
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le role %s', $entity->getName()));
     }
 }

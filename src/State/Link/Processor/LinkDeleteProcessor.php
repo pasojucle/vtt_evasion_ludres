@@ -15,7 +15,8 @@ class LinkDeleteProcessor
         private EntityManagerInterface $entityManager,
         private LinkRepository $linkRepository,
         private OrderByService $orderByService,
-    ) {}
+    ) {
+    }
 
     public function process(Link $entity): int
     {

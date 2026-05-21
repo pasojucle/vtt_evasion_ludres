@@ -15,7 +15,8 @@ class RegistrationStepDeleteProcessor
         private EntityManagerInterface $entityManager,
         private RegistrationStepRepository $registrationStepRepository,
         private OrderByService $orderByService,
-    ) {}
+    ) {
+    }
 
     public function process(RegistrationStep $entity): void
     {

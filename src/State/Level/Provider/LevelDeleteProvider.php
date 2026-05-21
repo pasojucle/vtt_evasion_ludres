@@ -12,13 +12,10 @@ class LevelDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
-    )
-    {
-
+    ) {
     }
     public function mapToView(Level  $entity): DialogModalDto
     {
-
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le niveau %s', $entity->getTitle()));
     }
 }

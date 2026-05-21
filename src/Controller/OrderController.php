@@ -17,7 +17,6 @@ use App\Service\PdfService;
 use App\State\Order\Processor\OrderDeleteProcessor;
 use App\State\Order\Provider\OrderDeleteProvider;
 use App\UseCase\Order\OrderEdit;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -33,7 +32,6 @@ class OrderController extends AbstractController
     public function __construct(
         private OrderDtoTransformer $orderDtoTransformer,
         private OrderHeaderRepository $orderHeaderRepository,
-        private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
         private MessageService $messageService,
     ) {

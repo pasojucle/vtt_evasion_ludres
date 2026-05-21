@@ -14,14 +14,12 @@ class MemberDeleteProvider
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
         private UserService $userService,
-    )
-    {
-
+    ) {
     }
     public function mapToView(Member  $entity): DialogModalDto
     {
-
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'utilisateur <b>%s</b> ?', 
+        return $this->destructiveModalMapper->mapToView(sprintf(
+            'Etes vous certain de supprimer l\'utilisateur <b>%s</b> ?',
             $this->userService->getFullname($entity)
         ));
     }

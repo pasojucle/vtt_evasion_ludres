@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\State\Member\Processor;
 
+use App\Entity\Licence;
 use App\Entity\Member;
+use App\Entity\OrderHeader;
 use App\Repository\OrderLineRepository;
 use App\Repository\SurveyResponseRepository;
 use App\Service\UserService;
@@ -17,7 +19,8 @@ class MemberDeleteProcessor
         private OrderLineRepository $orderLineRepository,
         private SurveyResponseRepository $surveyResponseRepository,
         private UserService $userService,
-    ) {}
+    ) {
+    }
 
     public function process(Member $member): string
     {

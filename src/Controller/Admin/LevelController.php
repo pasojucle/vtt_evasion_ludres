@@ -94,7 +94,6 @@ class LevelController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-
                 return $this->redirectToRoute('admin_levels', [
                     'type' => $processor->process($level),
                 ]);
