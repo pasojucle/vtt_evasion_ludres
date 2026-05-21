@@ -10,7 +10,9 @@ use App\Entity\Product;
 use App\Form\Admin\ProductType;
 use App\Form\ListFilterType;
 use App\Service\Product\ProductEditService;
+use App\State\Product\Processor\ProductDeleteProcessor;
 use App\State\Product\Provider\ProductAdminListProvider;
+use App\State\Product\Provider\ProductDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -110,6 +112,8 @@ class ProductController extends AbstractController
     #[IsGranted('PRODUCT_EDIT', 'product')]
     public function adminProduitDelete(
         Request $request,
+        ProductDeleteProcessor $processor,
+        ProductDeleteProvider $provider,
         Product $product
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -121,20 +125,17 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $product->setDeleted(true);
-                $this->entityManager->persist($product);
-                $this->entityManager->flush();
+                $processor->process($product);
 
                 return $this->redirectToRoute('admin_products');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer un article',
-            'content' => sprintf('Etes vous certain de supprimer l\'article %s ?', $product->getName()),
-            'btn_label' => 'Supprimer',
+        
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($product),
         ], $response);
     }
 

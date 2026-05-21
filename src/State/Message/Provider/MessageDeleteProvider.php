@@ -19,6 +19,8 @@ class MessageDeleteProvider
     public function mapToView(Message  $entity): DialogModalDto
     {
 
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le message  <b>%s</b> ?', $entity->getLabel()));
+        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le message  <b>%s</b> ?', 
+            $entity->getLabel()
+        ));
     }
 }

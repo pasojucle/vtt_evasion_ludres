@@ -13,9 +13,18 @@ class LicenceDeleteProcessor
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function process(Licence $entity): void
+    public function process(Licence $entity): string
     {
+        $fullName = $entity->getMember()->getIdentity()->getFullName();
+        foreach ($entity->getLicenceAgreements() as $licenceAgreement) {
+            $this->entityManager->remove($licenceAgreement);
+        }
+
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+
+        return sprintf('La licence de l\'utilisateur %s a bien été supprimée', 
+            $fullName
+        );
     }
 }

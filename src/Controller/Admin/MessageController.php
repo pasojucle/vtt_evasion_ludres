@@ -13,6 +13,8 @@ use App\Form\Admin\MessageType;
 use App\Repository\MessageRepository;
 use App\Repository\ParameterGroupRepository;
 use App\Service\PaginatorService;
+use App\State\Message\Processor\MessageDeleteProcessor;
+use App\State\Message\Provider\MessageDeleteProvider;
 use App\State\Message\Provider\MessageProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -144,6 +146,8 @@ class MessageController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelDelete(
         Request $request,
+        MessageDeleteProcessor $processor,
+        MessageDeleteProvider $provider,
         Message $message
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -151,25 +155,21 @@ class MessageController extends AbstractController
             'action' => $request->getUri(),
             'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
-        $section = $message->getSection();
+        
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->entityManager->remove($message);
-                $this->entityManager->flush();
 
                 return $this->redirectToRoute('admin_message_list', [
-                    'section' => $section,
+                    'section' => $processor->process($message),
                 ]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer un message',
-            'content' => sprintf('Etes vous certain de supprimer le message  %s ?', $message->getLabel()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($message),
         ], $response);
     }
 

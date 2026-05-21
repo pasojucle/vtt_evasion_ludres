@@ -19,6 +19,8 @@ class SlideshowImageDeleteProvider
     public function mapToView(SlideshowImage  $entity): DialogModalDto
     {
 
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'image <b>%s</b> ?', $entity->getFilename()));
+        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'image <b>%s</b> ?', 
+            $entity->getFilename()
+        ));
     }
 }

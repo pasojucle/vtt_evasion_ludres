@@ -13,9 +13,13 @@ class SkillCategoryDeleteProcessor
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function process(SkillCategory $entity): void
+    public function process(SkillCategory $entity): int
     {
+        $id = $entity->getId();
+
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+
+        return $id;
     }
 }

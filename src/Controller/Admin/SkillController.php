@@ -10,6 +10,8 @@ use App\Form\Admin\SkillFilterType;
 use App\Form\Admin\SkillType;
 use App\Repository\SkillRepository;
 use App\Service\ExportService;
+use App\State\Skill\Processor\SkillDeleteProcessor;
+use App\State\Skill\Provider\SkillDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -157,7 +159,12 @@ class SkillController extends AbstractController
 
     #[Route(path: '/delete/{skill}', name: 'delete', methods: ['GET', 'POST'], options: ['expose' => true])]
     #[IsGranted('SKILL_EDIT', 'skill')]
-    public function delete(Request $request, Skill $skill): Response
+    public function delete(
+        Request $request,
+        SkillDeleteProcessor $processor,
+        SkillDeleteProvider $provider,
+        Skill $skill
+    ): Response
     {
         $queryParams = $request->query->all();
         $response = new Response("OK", Response::HTTP_OK);
@@ -169,14 +176,11 @@ class SkillController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $skillId = $skill->getId();
-                $this->entityManager->remove($skill);
-                $this->entityManager->flush();
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
                 if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
                     return $this->render('cluster/admin/skill_deleted.stream.html.twig', [
-                        'skillId' => $skillId,
+                        'skillId' => $processor->process($skill),
                     ]);
                 }
 
@@ -184,12 +188,11 @@ class SkillController extends AbstractController
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une compétence',
-            'content' => sprintf('Etes vous certain de supprimer la compétence %s ?', $skill->getContent()),
-            'btn_label' => 'Supprimer',
+
+
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($skill),
         ], $response);
     }
 }

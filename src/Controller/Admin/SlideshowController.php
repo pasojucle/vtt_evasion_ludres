@@ -14,6 +14,10 @@ use App\Repository\SlideshowImageRepository;
 use App\Service\ProjectDirService;
 use App\Service\SlideshowService;
 use App\Service\UploadService;
+use App\State\SlideshowDirectory\Processor\SlideshowDirectoryDeleteProcessor;
+use App\State\SlideshowDirectory\Provider\SlideshowDirectoryDeleteProvider;
+use App\State\SlideshowImage\Processor\SlideshowImageDeleteProcessor;
+use App\State\SlideshowImage\Provider\SlideshowImageDeleteProvider;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -146,6 +150,8 @@ class SlideshowController extends AbstractController
     #[IsGranted('SLIDESHOW_EDIT', 'directory')]
     public function adminSlideshowDirectoryDelete(
         Request $request,
+        SlideshowDirectoryDeleteProcessor $processor,
+        SlideshowDirectoryDeleteProvider $provider,
         SlideshowDirectory $directory,
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -156,29 +162,17 @@ class SlideshowController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                foreach ($directory->getSlideshowImages() as $image) {
-                    $this->entityManager->remove($image);
-                }
+                $processor->process($directory);
 
-                $filesystem = new Filesystem();
-                $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId()));
-
-                $this->entityManager->remove($directory);
-                $this->entityManager->flush();
-                return $this->redirect($this->generateUrl('admin_slideshow_list'));
+                return $this->redirectToRoute('admin_slideshow_list');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $message = $directory->getSlideshowImages()->isEmpty()
-            ? 'Etes vous certain de supprimer le répetroire %s ?'
-            : 'Etes vous certain de supprimer le répetroire %s et tous les fichiers qu\'il contient ?';
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer un répertoire',
-            'content' => sprintf($message, $directory->getName()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($directory),
         ], $response);
     }
 
@@ -186,9 +180,10 @@ class SlideshowController extends AbstractController
     #[IsGranted('SLIDESHOW_EDIT', 'image')]
     public function adminSlideshowImageDelete(
         Request $request,
+        SlideshowImageDeleteProcessor $processor,
+        SlideshowImageDeleteProvider $provider,
         SlideshowImage $image,
     ): Response {
-        $directory = $image->getDirectory();
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
@@ -197,20 +192,17 @@ class SlideshowController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $filesystem = new Filesystem();
-                $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId(), $image->getFilename()));
-                $this->entityManager->remove($image);
-                $this->entityManager->flush();
-                return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
+                
+                return $this->redirectToRoute('admin_slideshow_list', [
+                    'directory' => $processor->process($image),
+                ]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer un image',
-            'content' => sprintf('Etes vous certain de supprimer l\'image %s', $image->getFilename()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($image),
         ], $response);
     }
 

@@ -10,6 +10,8 @@ use App\Form\Admin\LicenceRegisterType;
 use App\Form\Admin\LicenceRejectType;
 use App\Service\LicenceService;
 use App\Service\MailerService;
+use App\State\Licence\Processor\LicenceDeleteProcessor;
+use App\State\Licence\Provider\LicenceDeleteProvider;
 use App\UseCase\Licence\ValidateLicence;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,11 +31,11 @@ class LicenceController extends AbstractController
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminDeleteLicence(
         Request $request,
+        LicenceDeleteProcessor $processor,
+        LicenceDeleteProvider $provider,
         Licence $licence
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
-        $user = $licence->getMember();
-        $fullName = $user->getIdentity()->getFullName();
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
             'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
@@ -42,13 +44,7 @@ class LicenceController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                foreach ($licence->getLicenceAgreements() as $licenceAgreement) {
-                    $this->entityManager->remove($licenceAgreement);
-                }
-                $this->entityManager->remove($licence);
-                $this->entityManager->flush();
-
-                $this->addFlash('success', "La licence de l'utilisateur {$fullName} a bien été supprimée");
+                $this->addFlash('success', $processor->process($licence));
 
                 return $this->redirectToRoute('admin_registration_list', [
                     'filtered' => true,
@@ -58,11 +54,9 @@ class LicenceController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une inscription',
-            'content' => sprintf('Etes vous certain de supprimer l\'inscription de %s ?', $fullName),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($licence),
         ], $response);
     }
 

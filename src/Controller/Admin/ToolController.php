@@ -16,6 +16,8 @@ use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
 use App\Service\UserService;
+use App\State\Member\Processor\MemberDeleteProcessor;
+use App\State\Member\Provider\MemberDeleteProvider;
 use App\UseCase\CronTab\CronTabLog;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,7 +59,8 @@ class ToolController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminConfirmDeleteUser(
         Request $request,
-        UserService $userService,
+        MemberDeleteProcessor $processor,
+        MemberDeleteProvider $provider,
         ?Member $member,
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -66,26 +69,21 @@ class ToolController extends AbstractController
             'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
-        $fullname = $member->getLicenceNumber();
-        if ($member->getIdentity()) {
-            $fullname .= ' - ' . $member->getIdentity()->getFullName();
-        }
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $userService->deleteUser($member);
-                $this->addFlash('success', "Les données de l'utilisateur {$fullname} ont bien été supprimées");
+                $this->addFlash('success', sprintf('Les données de l\'utilisateur %s ont bien été supprimées',
+                    $processor->process($member)
+                ));
 
                 return $this->redirectToRoute('admin_tool_delete_user');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer un adhérent',
-            'content' => sprintf('Etes vous certain de supprimer l\'utilisateur <b>%s</b> ?', $fullname),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($member),
         ], $response);
     }
 

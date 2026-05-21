@@ -15,7 +15,7 @@ class ProductDeleteProcessor
 
     public function process(Product $entity): void
     {
-        $this->entityManager->remove($entity);
+        $entity->setDeleted(true);
         $this->entityManager->flush();
     }
 }

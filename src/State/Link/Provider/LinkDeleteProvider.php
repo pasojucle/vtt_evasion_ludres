@@ -19,6 +19,8 @@ class LinkDeleteProvider
     public function mapToView(Link  $entity): DialogModalDto
     {
 
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le lien  <b>%s</b> ?', $entity->getTitle()));
+        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le lien  <b>%s</b> ?', 
+            $entity->getTitle()
+        ));
     }
 }

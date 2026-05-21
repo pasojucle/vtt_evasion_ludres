@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\State\SkillCategory\Provider;
+namespace App\State\Skill\Provider;
 
 use App\Dto\DialogModalDto;
-use App\Entity\SkillCategory;
+use App\Entity\Skill;
 use App\Mapper\DestructiveModalMapper;
 
-class SkillCategoryDeleteProvider
+class SkillDeleteProvider
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
@@ -16,11 +16,11 @@ class SkillCategoryDeleteProvider
     {
 
     }
-    public function mapToView(SkillCategory  $entity): DialogModalDto
+    public function mapToView(Skill  $entity): DialogModalDto
     {
 
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la compétence <b>%s</b> ?', 
-            $entity->getName())
-        );
+            $entity->getContent()
+        ));
     }
 }

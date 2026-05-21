@@ -7,7 +7,6 @@ namespace App\Service;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use App\Entity\Member;
-use App\Entity\OrderHeader;
 use App\Repository\OrderLineRepository;
 use App\Repository\SessionRepository;
 use App\Repository\SurveyResponseRepository;
@@ -18,43 +17,20 @@ class UserService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private SurveyResponseRepository $surveyResponseRepository,
-        private OrderLineRepository $orderLineRepository,
         private readonly LicenceService $licenceService,
         private SessionRepository $sessionRepository,
         private SeasonService $seasonService,
     ) {
     }
 
-    public function deleteUser(Member $member): void
+    public function getFullname(Member $member): string
     {
-        $allData = [
-            [
-                'entity' => $member,
-                'methods' => ['getSessions', 'getLicences', 'getIdentity', 'getmemberGardians', 'getOrderHeaders', 'getRespondents'],
-            ],
-        ];
-        foreach ($allData as $data) {
-            foreach ($data['methods'] as $method) {
-                foreach ($data['entity']->{$method}() as $entity) {
-                    if ($entity instanceof OrderHeader) {
-                        $this->orderLineRepository->deleteByOrderHeader($entity);
-                    }
-                    if ($entity instanceof Licence) {
-                        foreach ($entity->getLicenceAgreements() as $licenceAgreement) {
-                            $entity->removeLicenceAgreement($licenceAgreement);
-                            $this->entityManager->remove($licenceAgreement);
-                        }
-                    }
-                    if ($entity) {
-                        $this->entityManager->remove($entity);
-                    }
-                }
-            }
+        $fullname = $member->getLicenceNumber();
+        if ($member->getIdentity()) {
+            $fullname .= ' - ' . $member->getIdentity()->getFullName();
         }
-        $this->surveyResponseRepository->deleteResponsesByUser($member);
 
-        $this->entityManager->remove($member);
-        $this->entityManager->flush();
+        return $fullname;
     }
 
     public function licenceIsActive(?Member $member): bool

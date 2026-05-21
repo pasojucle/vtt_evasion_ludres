@@ -2,20 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\State\BoardRole\Processor;
+namespace App\State\Skill\Processor;
 
-use App\Entity\BoardRole;
+use App\Entity\Skill;
 use Doctrine\ORM\EntityManagerInterface;
 
-class BoardRoleDeleteProcessor
+class SkillDeleteProcessor
 {
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function process(BoardRole $entity): void
+    public function process(Skill $entity): int
     {
+        $id = $entity->getId();
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+
+        return $id;
     }
 }

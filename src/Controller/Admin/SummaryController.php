@@ -8,6 +8,8 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Summary;
 use App\Form\Admin\SummaryType;
+use App\State\Summary\Processor\SummaryDeleteProcessor;
+use App\State\Summary\Provider\SummaryDeleteProvider;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -86,6 +88,8 @@ class SummaryController extends AbstractController
     #[IsGranted('SUMMARY_EDIT', 'summary')]
     public function delete(
         Request $request,
+        SummaryDeleteProcessor $processor,
+        SummaryDeleteProvider $provider,
         Summary $summary
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -96,22 +100,17 @@ class SummaryController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $bikeRide = $summary->getBikeRide();
-                $this->entityManager->remove($summary);
-                $this->entityManager->flush();
 
                 return $this->redirectToRoute('admin_summary_list', [
-                    'bikeRide' => $bikeRide->getId(),
+                    'bikeRide' => $processor->process($summary),
                 ]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une actualité',
-            'content' => sprintf('Etes vous certain de supprimer l\'actualité %s', $summary->getTitle()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($summary),
         ], $response);
     }
 }

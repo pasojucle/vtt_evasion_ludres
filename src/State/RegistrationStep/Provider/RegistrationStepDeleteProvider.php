@@ -19,6 +19,8 @@ class RegistrationStepDeleteProvider
     public function mapToView(RegistrationStep  $entity): DialogModalDto
     {
 
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'étape <b>%s</b> ?', $entity->getTitle()));
+        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'étape <b>%s</b> ?', 
+            $entity->getTitle()
+        ));
     }
 }

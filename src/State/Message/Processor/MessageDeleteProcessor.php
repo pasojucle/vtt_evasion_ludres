@@ -13,9 +13,13 @@ class MessageDeleteProcessor
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function process(Message $entity): void
+    public function process(Message $entity): int
     {
+        $section = $entity->getSection();
+
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+
+        return $section->getId();
     }
 }

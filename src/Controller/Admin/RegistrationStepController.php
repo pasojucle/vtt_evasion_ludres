@@ -11,6 +11,8 @@ use App\Form\Admin\RegistrationStepType;
 use App\Repository\RegistrationStepGroupRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\OrderByService;
+use App\State\RegistrationStep\Processor\RegistrationStepDeleteProcessor;
+use App\State\RegistrationStep\Provider\RegistrationStepDeleteProvider;
 use App\UseCase\Registration\GetRegistrationByTypes;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -98,6 +100,8 @@ class RegistrationStepController extends AbstractController
     #[Route('/supprimer/{registrationStep}', name: '_delete', methods: ['GET', 'POST'])]
     public function adminRegistrationStepDelete(
         Request $request,
+        RegistrationStepDeleteProcessor $processor,
+        RegistrationStepDeleteProvider $provider,
         RegistrationStep $registrationStep
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -105,26 +109,20 @@ class RegistrationStepController extends AbstractController
             'action' => $request->getUri(),
             'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
-        $group = $registrationStep->getRegistrationStepGroup();
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->registrationStepRepository->remove($registrationStep, true);
-
-                $registrationSteps = $this->registrationStepRepository->findByGroup($group);
-                $this->orderByService->ResetOrders($registrationSteps);
+                $processor->process($registrationStep);
 
                 return $this->redirectToRoute('admin_registration_step_list');
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer une étape',
-            'content' => sprintf('Etes vous certain de supprimer l\'étape %s ?', $registrationStep->getTitle()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($registrationStep),
         ], $response);
     }
 }

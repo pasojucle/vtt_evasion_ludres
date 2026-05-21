@@ -19,6 +19,8 @@ class SummaryDeleteProvider
     public function mapToView(Summary  $entity): DialogModalDto
     {
 
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'actualité <b>%s</b> ?', $entity->getTitle()));
+        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'actualité <b>%s</b> ?', 
+            $entity->getTitle()
+        ));
     }
 }

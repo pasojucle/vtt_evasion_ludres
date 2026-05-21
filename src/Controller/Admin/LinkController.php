@@ -10,6 +10,8 @@ use App\Form\Admin\LinkType;
 use App\Repository\LinkRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\State\Link\Processor\LinkDeleteProcessor;
+use App\State\Link\Provider\LinkDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -105,6 +107,8 @@ class LinkController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminLinkDelete(
         Request $request,
+        LinkDeleteProcessor $processor,
+        LinkDeleteProvider $provider,
         Link $link
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);
@@ -112,29 +116,21 @@ class LinkController extends AbstractController
             'action' => $request->getUri(),
             'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
-        $position = $link->getPosition();
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->entityManager->remove($link);
-                $this->entityManager->flush();
-
-                $links = $this->linkRepository->findByPosition($position);
-                $this->orderByService->ResetOrders($links);
-
+                
                 return $this->redirectToRoute('admin_links', [
-                    'position' => $position,
+                    'position' => $processor->process($link),
                 ]);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/destructive.modal.html.twig', [
-            'title' => 'Supprimer un lien',
-            'content' => sprintf('Etes vous certain de supprimer le lien  %s ?', $link->getTitle()),
-            'btn_label' => 'Supprimer',
+        return $this->render('component/_dialog.modal.html.twig', [
             'form' => $form->createView(),
+            'dialog' => $provider->mapToView($link),
         ], $response);
     }
 

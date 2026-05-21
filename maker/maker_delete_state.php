@@ -6,7 +6,7 @@ declare(strict_types=1);
 $entities = [
     // ['className' => 'BoardRole', 'label' => 'Etes vous certain de supprimer le role %s', 'field' => 'getName()'],
     // ['className' => 'Category', 'label' => 'Etes vous certain de supprimer la catégorie %s', 'field' => 'getName()'],
-    ['className' => 'Cluster', 'label' => 'Etes vous certain de supprimer l\'évaluation <b>%s</b> ?', 'field' => 'getContent()'],
+    // ['className' => 'Cluster', 'label' => 'Etes vous certain de supprimer l\'évaluation <b>%s</b> ?', 'field' => 'getContent()'],
     // ['className' => 'Documentation', 'label' => 'Etes vous certain de supprimer la documentation %s', 'field' => 'getName()'],
     // ['className' => 'Level', 'label' => 'Etes vous certain de supprimer le niveau %s', 'field' => 'getTitle()'],
     // ['className' => 'Licence', 'label' => 'Etes vous certain de supprimer l\'inscription de <b>%s</b> ?', 'field' => 'getMember()->getIdentity()->getFullName()'],
@@ -15,7 +15,7 @@ $entities = [
     // ['className' => 'Product', 'label' => 'Etes vous certain de supprimer l\'article <b>%s</b> ?', 'field' => 'getName()'],
     // ['className' => 'RegistrationStep', 'label' => 'Etes vous certain de supprimer l\'étape <b>%s</b> ?', 'field' => 'getTitle()'],
     // ['className' => 'SkillCategory', 'label' => 'Etes vous certain de supprimer la compétence <b>%s</b> ?', 'field' => 'getName()'],
-    // ['className' => 'Skill', 'label' => 'Etes vous certain de supprimer la compétence <b>%s</b> ?', 'field' => 'getContent()'],
+    ['className' => 'Skill', 'label' => 'Etes vous certain de supprimer la compétence <b>%s</b> ?', 'field' => 'getContent()'],
     // ['className' => 'SlideshowDirectory', 'label' => 'Etes vous certain de supprimer le répetroire <b>%s</b> ?', 'field' => 'getName()'],
     // ['className' => 'SlideshowImage', 'label' => 'Etes vous certain de supprimer l\'image <b>%s</b> ?', 'field' => 'getFilename()'],
     // ['className' => 'Summary', 'label' => 'EEtes vous certain de supprimer l\'actualité <b>%s</b> ?', 'field' => 'getTitle()'],

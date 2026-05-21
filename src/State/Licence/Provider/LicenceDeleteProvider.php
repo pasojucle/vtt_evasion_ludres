@@ -19,6 +19,10 @@ class LicenceDeleteProvider
     public function mapToView(Licence  $entity): DialogModalDto
     {
 
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer l\'inscription de <b>%s</b> ?', $entity->getMember->getIdentity()->getFullName()));
+        return $this->destructiveModalMapper->mapToView(
+            sprintf('Etes vous certain de supprimer l\'inscription de <b>%s</b> ?', 
+                $entity->getMember()->getIdentity()->getFullName()
+            )
+        );
     }
 }

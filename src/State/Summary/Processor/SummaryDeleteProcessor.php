@@ -13,9 +13,13 @@ class SummaryDeleteProcessor
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function process(Summary $entity): void
+    public function process(Summary $entity): int
     {
+        $id = $entity->getBikeRide()->getId();
+  
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+
+        return $id;
     }
 }
