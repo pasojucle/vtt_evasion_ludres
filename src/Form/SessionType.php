@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Enum\AvailabilityEnum;
-use App\Entity\Level;
+use App\Entity\Enum\LevelType;
 use App\Entity\Session;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SessionType extends AbstractType
 {
-    private int $levelType;
+    private LevelType $levelType;
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -45,7 +45,7 @@ class SessionType extends AbstractType
             $this->levelType = $session->getUser()->getLevel()->getType();
 
             $showSurvey = ($options['is_writable_availability'])
-            ? Level::TYPE_FRAME === $this->levelType && AvailabilityEnum::REGISTERED === $session->getAvailability()
+            ? LevelType::FRAME === $this->levelType && AvailabilityEnum::REGISTERED === $session->getAvailability()
             : true;
 
             $responsesClass = (!$showSurvey || null === $data['responses']) ? 'd-none' : '';

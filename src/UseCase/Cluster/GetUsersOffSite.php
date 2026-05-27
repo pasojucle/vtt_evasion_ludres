@@ -7,6 +7,7 @@ namespace App\UseCase\Cluster;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -36,8 +37,8 @@ class GetUsersOffSite
         if (!$cluster->isComplete() && RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
             foreach ($cluster->getSessions() as $session) {
                 $level = $session->getMember()->getLevel();
-                $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
-                if (!$session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $levelType) {
+                $levelType = (null !== $level) ? $level->getType() : LevelType::SCHOOL;
+                if (!$session->isPresent() && LevelType::SCHOOL === $levelType) {
                     $userIdentifiers = $this->userDtoTransformer->identifiersFromEntity($session->getMember());
                     $usersOffSite['users'][] = $userIdentifiers;
                     $usersOffSite['fullnames'][] = $userIdentifiers->member->fullName;

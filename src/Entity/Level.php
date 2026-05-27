@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\LevelType;
 use App\Repository\LevelRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -52,8 +53,8 @@ class Level
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
 
-    #[ORM\Column(type: 'integer')]
-    private int $type;
+    #[ORM\Column(length: 255, enumType: LevelType::class, options: ['default' => LevelType::SCHOOL->value])]
+    private LevelType $type = LevelType::SCHOOL;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isProtected = false;
@@ -199,12 +200,12 @@ class Level
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType(): ?LevelType
     {
         return $this->type;
     }
 
-    public function setType(int $type): self
+    public function setType(LevelType $type): self
     {
         $this->type = $type;
 

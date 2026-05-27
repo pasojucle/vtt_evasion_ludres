@@ -8,6 +8,7 @@ use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use App\Entity\Member;
 use App\Entity\Session;
@@ -279,7 +280,7 @@ class BikeRideDtoTransformer
         /** @var Member $user */
         $user = $this->security->getUser();
 
-        return $bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME;
+        return $bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === LevelType::FRAME;
     }
 
     private function getTracks(BikeRide $bikeRide): array

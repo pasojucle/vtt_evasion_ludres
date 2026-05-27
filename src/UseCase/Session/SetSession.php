@@ -6,7 +6,7 @@ namespace App\UseCase\Session;
 
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
-use App\Entity\Level;
+use App\Entity\Enum\LevelType;
 use App\Entity\Member;
 use App\Entity\Respondent;
 use App\Entity\Session;
@@ -77,7 +77,7 @@ class SetSession
         }
         $userSession->setUser($member)
             ->setCluster($userCluster);
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && $member->getLevel()->getType() === Level::TYPE_FRAME) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && $member->getLevel()->getType() === LevelType::FRAME) {
             $userSession->setAvailability(AvailabilityEnum::REGISTERED);
         }
         $member->addSession($userSession);
@@ -131,7 +131,7 @@ class SetSession
             return false;
         }
 
-        if (Level::TYPE_FRAME === $member->getLevel()->getType() && $bikeRide->getBikeRideType()->isNeedFramers() && AvailabilityEnum::REGISTERED !== $session->getAVailability()) {
+        if (LevelType::FRAME === $member->getLevel()->getType() && $bikeRide->getBikeRideType()->isNeedFramers() && AvailabilityEnum::REGISTERED !== $session->getAVailability()) {
             return false;
         }
 

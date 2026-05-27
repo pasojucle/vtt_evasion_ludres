@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -35,7 +36,7 @@ class IsWritableAvailability
         $today = (new DateTimeImmutable())->setTime(0, 0, 0);
         $dateTimerPeriod = $this->bikeRideService->getDateTimePeriod($bikeRide);
         if ($bikeRideType->isNeedFramers()) {
-            return $this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) && Level::TYPE_FRAME === $member->getLevel()?->getType() && $today <= $dateTimerPeriod['closingAt'];
+            return $this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) && LevelType::FRAME === $member->getLevel()?->getType() && $today <= $dateTimerPeriod['closingAt'];
         }
 
         $users = $bikeRide->getMembers();

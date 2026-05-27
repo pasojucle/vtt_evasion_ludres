@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use App\Repository\LevelRepository;
 use Doctrine\Common\Collections\Collection;
@@ -40,8 +41,8 @@ class LevelService
     {
         foreach ($levels as $level) {
             match ($level->getType()) {
-                Level::TYPE_SCHOOL_MEMBER => $array[self::LEVEL_GROUP_SCHOOL][$level->getTitle()] = $level->getId(),
-                Level::TYPE_FRAME => $array[self::LEVEL_GROUP_FRAME][$level->getTitle()] = $level->getId(),
+                LevelType::SCHOOL => $array[self::LEVEL_GROUP_SCHOOL][$level->getTitle()] = $level->getId(),
+                LevelType::FRAME => $array[self::LEVEL_GROUP_FRAME][$level->getTitle()] = $level->getId(),
                 default => $array[$level->getTitle()] = $level->getId()
             };
         }

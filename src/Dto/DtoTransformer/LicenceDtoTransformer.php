@@ -8,6 +8,7 @@ use App\Dto\ButtonDto;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\HtmlAttributDto;
 use App\Dto\LicenceDto;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
@@ -246,7 +247,7 @@ class LicenceDtoTransformer
                 $amount->sub($indemnities);
 
                 $coveragesToString = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
-                if ($member->getLevel()?->getType() === Level::TYPE_FRAME) {
+                if ($member->getLevel()?->getType() === LevelType::FRAME) {
                     $amountToStr .= sprintf('Le montant des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
                 }

@@ -13,9 +13,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ProductFilterConfig implements FilterConfigInterface
 {
+    public function getRouteName(): string
+    {
+        return 'admin_products';
+    }
+
     public function supports(string $route): bool
     {
-        return $route === 'admin_products';
+        return $route === $this->getRouteName();
     }
 
     public function getDataClass(): ?string

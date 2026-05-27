@@ -11,6 +11,7 @@ use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\GardianKindEnum;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Guest;
 use App\Entity\Level;
@@ -319,8 +320,8 @@ class ClusterDtoTransformer
         foreach ($sessionEntities as $session) {
             if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
                 $level = $session->getMember()->getLevel();
-                $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
-                if ($session->isPresent() && Level::TYPE_FRAME !== $levelType) {
+                $levelType = (null !== $level) ? $level->getType() : LevelType::SCHOOL;
+                if ($session->isPresent() && LevelType::FRAME !== $levelType) {
                     $userOnSiteSessions[] = $session;
                 }
             } else {

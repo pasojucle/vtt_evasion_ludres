@@ -4,24 +4,31 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Dto\Filter\ActivityFilter;
-use App\Form\EventListener\ActivityFilterSubscriber;
 use App\Service\Filter\FilterFieldConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ListFilterType extends AbstractType
 {
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
+    ) 
+    {
+
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['fields'] as $fieldConfig) {
             if (!$fieldConfig->isSubscriberFlield) {
+
                 /** @var FilterFieldConfig $fieldConfig */
                 $builder->add(
                     $fieldConfig->name,
                     $fieldConfig->type,
-                    $fieldConfig->options
+                    $this->generateAutocompleteUrl($fieldConfig->options, $options['active_filters'])
                 );
             }
         }
@@ -42,6 +49,16 @@ class ListFilterType extends AbstractType
         }
     }
 
+    private function generateAutocompleteUrl(array $options, array $filters): array
+    {   
+        if (array_key_exists('autocomplete_url', $options)) {
+            $route = $options['autocomplete_url'];
+            $options['autocomplete_url'] = $this->urlGenerator->generate($route, $filters);
+        }
+
+        return $options;
+    }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -49,6 +66,7 @@ class ListFilterType extends AbstractType
             'data_class' => null,
             'fields' => [],
             'advanced_fields' => [],
+            'active_filters' => [],
             'event_subscriber' => null,
             'csrf_protection' => false,
             'attr' => [

@@ -1,17 +1,16 @@
-<turbo-frame id="filter_chips" class="flex flex-wrap gap-2">
+<turbo-frame id="filter_chips" class="flex flex-wrap gap-2 mt-4">
     {% for chip in chips %}
         <div class="flex items-center gap-2 text-slate-400 bg-slate-200 px-2 py-1 rounded-sm text-sm font-semibold">
             <div class="">
                 {{ chip.label }}
             </div>
-            <button 
+            <a 
                 class="hover:text-slate-500"
-                type="button" 
-                data-action="click->filter#clear" 
-                data-filter-name="{{ chip.name }}"
+                href="{{ chip.url }}"
+                data-turbo-frame="_top"
             >
                 {{ ux_icon('lucide:x')}}
-            </button>
+            </a>
         </div>
     {% endfor %}
 </turbo-frame>

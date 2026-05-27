@@ -44,7 +44,7 @@ final class Version20240420141904 extends AbstractMigration
                 'name' => 'EMAIL_CONFIRMATION_SESSION_REGISTRATION_BIKE_RIDE',
                 'label' => 'Envoie mail suite à l\'inscription à une sortie VTT',
                 'content' => '<p>Votre inscription &agrave; la sortie {{ bikeRideTitleAndPeriod }} a bien &eacute;t&eacute; prise en compte.</p><p>Nous vous rappelons que pour participer &agrave; une sortie, il est imp&eacute;ratif d&#39;avoir un VTT en parfait &eacute;tat de fonctionnement, un casque, une paire de gants et une paire de lunettes.</p>',
-                'levelType' => Level::TYPE_ADULT_MEMBER,
+                'levelType' => 3,
                 'protected' => 1,
             ],
             [
@@ -52,7 +52,7 @@ final class Version20240420141904 extends AbstractMigration
                 'name' => 'EMAIL_CONFIRMATION_SESSION_REGISTRATION_SCHOLL',
                 'label' => 'Envoie mail suite à l\'inscription à une sortie L\'école VTT',
                 'content' => '<p>Votre inscription &agrave; la sortie {{ bikeRideTitleAndPeriod }} a bien &eacute;t&eacute; prise en compte.</p><p>Nous vous rappelons que pour participer &agrave; une sortie, il est imp&eacute;ratif d&#39;avoir un VTT en parfait &eacute;tat de fonctionnement, un casque, une paire de gants et une paire de lunettes.</p> <p>En cas d&#39;&eacute;quipement incomplet ou de VTT en mauvais &eacute;tat, l&#39;Encadrant pourra refuser, pour des raisons de s&eacute;curit&eacute;, de prendre en charge un jeune dans son groupe. Les parents seront alors contact&eacute;s afin de venir r&eacute;cup&eacute;rer leur enfant.</p>',
-                'levelType' => Level::TYPE_SCHOOL_MEMBER,
+                'levelType' => 1,
                 'protected' => 0,
             ],
             [
@@ -60,7 +60,7 @@ final class Version20240420141904 extends AbstractMigration
                 'name' => 'EMAIL_CONFIRMATION_SESSION_REGISTRATION_FRAMER',
                 'label' => 'Envoie mail suite à l\'inscription à une sortie pour les encadrant',
                 'content' => '<p>Votre disponibilit&eacute; &agrave; la sortie {{ bikeRideTitleAndPeriod }} a bien &eacute;t&eacute; prise en compte.</p>',
-                'levelType' => Level::TYPE_FRAME,
+                'levelType' => 2,
                 'protected' => 0,
             ],
             [

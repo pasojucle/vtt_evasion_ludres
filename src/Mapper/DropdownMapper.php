@@ -11,6 +11,7 @@ use App\Dto\HtmlAttributDto;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\OrderHeader;
@@ -47,7 +48,7 @@ class DropdownMapper
     {
         $menuItems = [];
         $level = $user->getLevel();
-        if ($this->security->isGranted('USER_LIST') && $level?->getType() === Level::TYPE_SCHOOL_MEMBER) {
+        if ($this->security->isGranted('USER_LIST') && $level?->getType() === LevelType::SCHOOL) {
             $menuItems[] = new ButtonDto(
                 label: 'Compétences',
                 url: $this->urlGenerator->generate('admin_member_skill_edit', ['member' => $user->getId()]),

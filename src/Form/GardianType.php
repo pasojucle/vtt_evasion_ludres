@@ -9,8 +9,6 @@ use App\Entity\Enum\KinshipEnum;
 use App\Entity\Licence;
 use App\Entity\MemberGardian;
 use App\Form\GardianIdentityType;
-use App\Form\IdentityType;
-use App\Service\LicenceService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;

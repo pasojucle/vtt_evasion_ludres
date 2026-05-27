@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -140,7 +141,7 @@ class SessionRepository extends ServiceEntityRepository
                 (new Expr())->eq('l.type', ':levelType'),
             )
             ->setParameter('bikeRideId', $bikeRideId)
-            ->setParameter('levelType', Level::TYPE_FRAME)
+            ->setParameter('levelType', LevelType::FRAME)
             ->getQuery()
             ->getResult()
         ;
@@ -221,8 +222,8 @@ class SessionRepository extends ServiceEntityRepository
 
         foreach ($filterLevels as $level) {
             match ($level) {
-                Level::TYPE_ALL_MEMBER => $types[] = Level::TYPE_SCHOOL_MEMBER,
-                Level::TYPE_ALL_FRAME => $types[] = Level::TYPE_FRAME,
+                Level::TYPE_ALL_MEMBER => $types[] = LevelType::SCHOOL,
+                Level::TYPE_ALL_FRAME => $types[] = LevelType::FRAME,
                 Level::TYPE_BOARD_MEMBER => $isBoardmember = true,
                 default => $levels[] = $level,
             };

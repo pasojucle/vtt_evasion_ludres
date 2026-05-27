@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BoardRole;
-use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
@@ -211,10 +211,10 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             foreach ($filterLevels as $level) {
                 switch ($level) {
                     case Level::TYPE_ALL_MEMBER:
-                        $types[] = Level::TYPE_SCHOOL_MEMBER;
+                        $types[] = LevelType::SCHOOL;
                         break;
                     case Level::TYPE_ALL_FRAME:
-                        $types[] = Level::TYPE_FRAME;
+                        $types[] = LevelType::FRAME;
                         break;
                     case Level::TYPE_BOARD_MEMBER:
                         $isBoardmember = true;
@@ -656,7 +656,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             ->andWhere(
                 (new Expr())->eq('l.type', ':levelType'),
             )
-            ->setParameter('levelType', Level::TYPE_FRAME)
+            ->setParameter('levelType', LevelType::FRAME)
             ->orderBy('i.name', 'ASC')
             ;
     }
@@ -736,7 +736,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('season', $season),
-                new Parameter('levelType', Level::TYPE_FRAME)
+                new Parameter('levelType', LevelType::FRAME)
             ]))
             ->getQuery()
             ->getResult()
@@ -885,5 +885,82 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         } catch (NonUniqueResultException) {
             return null;
         }
+    }
+
+    public function getMemberQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.identity', 'i')->addSelect('i')
+            ->leftJoin('m.level', 'le')->addSelect('le')
+        ;
+    }
+    
+    public function filterSeason(QueryBuilder $qb, int $season): void
+    {
+        $qb
+            ->join('m.licences', 'li')
+            ->andWhere(
+                $qb->expr()->eq('li.season', ':season')
+            )
+            ->setParameter('season', $season);
+    }
+    
+    public function filterMember(QueryBuilder $qb, int $id): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('m.id', ':id')
+            )
+            ->setParameter('id', $id);
+    }
+    
+    public function filterPermission(QueryBuilder $qb, array $permissions): void
+    {
+        $qb
+            ->leftJoin('m.memberPermissions', 'up')
+            ->andWhere(
+                $qb->expr()->in('up.permission', ':permissions'),
+            )
+            ->setParameter('permissions', $permissions)
+        ;
+    }
+
+    public function filterLevels(QueryBuilder $qb, array $types, array $ids, bool $isBoardMember): void
+    {
+        $orX = $qb->expr()->orX();
+
+        if (!empty($types)) {
+            $orX->add($qb->expr()->in('le.type', ':types'));
+            $qb->setParameter('types', $types);
+        }
+
+        if (!empty($ids)) {
+            $orX->add($qb->expr()->in('le.id', ':ids'));
+            $qb->setParameter('ids', $ids);
+        }
+
+        if ($isBoardMember) {
+            $orX->add($qb->expr()->isNotNull('m.boardRole'));
+        }
+
+        if ($orX->count() > 0) {
+            $qb
+                ->andWhere($orX);
+        }
+    }
+
+    public function filterBoardMember(QueryBuilder $qb, bool $isBoadMember): void
+    {
+        $qb->andWhere(($isBoadMember) 
+            ? $qb->expr()->isNotNull('m.boardRole')
+            : $qb->expr()->isNull('m.boardRole')
+        );
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('i.name', $direction);
     }
 }

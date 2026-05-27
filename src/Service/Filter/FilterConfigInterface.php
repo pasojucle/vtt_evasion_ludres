@@ -10,6 +10,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 #[AutoconfigureTag('app.filter_config')]
 interface FilterConfigInterface
 {
+    public function getRouteName(): string;
+
     public function supports(string $route): bool;
 
     /** @return FilterFieldConfig[] */

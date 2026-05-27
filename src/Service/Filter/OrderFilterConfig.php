@@ -14,9 +14,14 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class OrderFilterConfig implements FilterConfigInterface
 {
+    public function getRouteName(): string
+    {
+        return 'admin_orders';
+    }
+
     public function supports(string $route): bool
     {
-        return $route === 'admin_orders';
+        return $route === $this->getRouteName();
     }
 
     public function getDataClass(): ?string

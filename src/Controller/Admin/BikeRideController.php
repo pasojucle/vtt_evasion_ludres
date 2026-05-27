@@ -47,7 +47,6 @@ class BikeRideController extends AbstractController
     ): Response {
         /**  @var ActivityFilter $filter */
         $filter = $provider->getHydratedDto($request->query->all(), ActivityFilter::class);
-
         $filterConfig = $provider->getFilterConfig('admin_bike_rides');
         if (!$filterConfig) {
             throw $this->createNotFoundException();
@@ -57,6 +56,7 @@ class BikeRideController extends AbstractController
             'fields' => $filterConfig->getFields(),
             'advanced_fields' => $filterConfig->getAdvancedFields(),
             'event_subscriber' => $filterConfig->getEventSubscriber(),
+            'active_filters' => $filter->toArray(),
         ]);
         $form->handleRequest($request);
 

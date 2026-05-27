@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\LevelType;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,7 +25,7 @@ class Message
     private string $content = '';
 
     #[ORM\Column(nullable: true)]
-    private ?int $levelType = null;
+    private ?LevelType $levelType = null;
 
     #[ORM\ManyToOne]
     private ?ParameterGroup $section = null;
@@ -78,12 +79,12 @@ class Message
         return $this;
     }
 
-    public function getLevelType(): ?int
+    public function getLevelType(): ?LevelType
     {
         return $this->levelType;
     }
 
-    public function setLevelType(?int $levelType): static
+    public function setLevelType(?LevelType $levelType): static
     {
         $this->levelType = $levelType;
 

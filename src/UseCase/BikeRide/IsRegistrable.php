@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Identity;
 use App\Entity\Level;
@@ -50,7 +51,7 @@ class IsRegistrable
 
     private function canParticipateByAge(BikeRide $bikeRide, Member $member, Identity $identity): bool
     {
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_FRAME === $member->getLevel()->getType()) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && LevelType::FRAME === $member->getLevel()->getType()) {
             return true;
         }
 

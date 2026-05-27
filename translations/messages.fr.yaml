@@ -135,11 +135,10 @@ role:
 
 level:
   type:
-    school_member: Ecole VTT
-    adult_member: Adulte
+    school: École VTT
+    adult: Adulte
     frame: Encradrement
     awaiting_evaluation: En attente d'évaluation
-    adult: Adulte
 
 link:
   position:

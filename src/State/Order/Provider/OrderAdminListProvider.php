@@ -49,7 +49,7 @@ class OrderAdminListProvider
         $this->exportMapper->streamToCsv($entities);
     }
 
-    public function getQueryBuilder(OrderFilter $filter): QueryBuilder
+    private function getQueryBuilder(OrderFilter $filter): QueryBuilder
     {
         $qb = $this->orderHeaderRepository->findOrdersQuery();
 

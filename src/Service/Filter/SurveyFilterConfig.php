@@ -13,9 +13,14 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class SurveyFilterConfig implements FilterConfigInterface
 {
+    public function getRouteName(): string
+    {
+        return 'admin_surveys';
+    }
+
     public function supports(string $route): bool
     {
-        return $route === 'admin_surveys';
+        return $route === $this->getRouteName();
     }
 
     public function getDataClass(): ?string

@@ -13,6 +13,7 @@ readonly class BadgeDto
         public string $value,
         public ColorVariant $variant = ColorVariant::DEFAULT,
         public Size $size = Size::SM,
+        public ?string $color = null,
     ) {
     }
 }

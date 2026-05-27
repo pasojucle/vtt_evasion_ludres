@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BoardRole;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -48,7 +49,7 @@ class UserBoardRoleType extends AbstractType
                     ;
                 },
                 'group_by' => function ($choice, $key, $value) {
-                    if (Level::TYPE_SCHOOL_MEMBER === $choice->getType()) {
+                    if (LevelType::SCHOOL === $choice->getType()) {
                         return 'Adhérent';
                     }
 

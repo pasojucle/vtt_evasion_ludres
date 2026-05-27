@@ -21,7 +21,10 @@
 } %}
     
 <div class="flex items-center">
-    <div class="{{ size_classes[badge.size.value] ?? size_classes.sm }} {{ color_classes[badge.variant.value] ?? color_classes.default }}">
+    <div 
+        class="{{ size_classes[badge.size.value] ?? size_classes.sm }} {% if badge.color is null %}{{ color_classes[badge.variant.value] ?? color_classes.default }}{% else %} custom-badge{% endif %}"
+        {% if badge.color %}style="--badge-color: {{ badge.color }};"{% endif %}
+    >
         {% if badge.size == enum('App\\Dto\\Enum\\Size').ICON %}
             {{ ux_icon(badge.value, {class: 'size-4'})}}
         {% else %}

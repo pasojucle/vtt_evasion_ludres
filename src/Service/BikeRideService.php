@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use App\Entity\Member;
 use App\Entity\User;
@@ -48,7 +49,7 @@ class BikeRideService
             return true;
         }
 
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_ADULT_MEMBER === $user?->getLevel()->getType()) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && LevelType::ADULT === $user?->getLevel()->getType()) {
             return false;
         }
 

@@ -1,0 +1,101 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\State\User\Provider;
+
+use App\Dto\ListDto;
+use App\Dto\Filter\UserFilter;
+use App\Entity\Enum\LevelType;
+use App\Entity\Level;
+use App\Mapper\User\UserAutocompleteMapper;
+use App\Mapper\User\UserListMapper;
+use App\Repository\MemberRepository;
+use App\Service\Filter\FilterConfigInterface;
+use App\Service\PaginatorService;
+use App\State\FilterHydratorTrait;
+use Doctrine\ORM\QueryBuilder;
+
+class UserListProvider
+{
+    use FilterHydratorTrait;
+
+    public function __construct(
+        private MemberRepository $memberRepository,
+        private PaginatorService $paginator,
+        private UserListMapper $mapper,
+        private UserAutocompleteMapper $autocompleteMapper,
+    ) {
+    }
+
+    public function getCollection(UserFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    {
+        $qb = $this->getQueryBuilder($filter);
+
+        $entities = $this->paginator->paginate(
+            $qb,
+            $currentPage,
+            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
+        );
+
+        return $this->mapper->mapToView(
+            $entities,
+            $route,
+            $currentPage,
+            $filter,
+            $filterConfig
+        );
+    }
+
+    public function getAutocompleteChoices(UserFilter $filter): array
+    {
+        $qb = $this->getQueryBuilder($filter);
+
+        return $this->autocompleteMapper->mapToChoices($qb->getQuery()->getResult());
+    }
+
+    private function getQueryBuilder(UserFilter $filter): QueryBuilder
+    {
+        $qb = $this->memberRepository->getMemberQuery();
+        
+        if ($filter->member) {
+            $this->memberRepository->filterMember($qb, $filter->member->getId());
+        }
+
+        if (is_int($filter->season)) {
+            $this->memberRepository->filterSeason($qb, $filter->season);
+        }
+
+        if ($filter->isBoardMember) {
+            $this->memberRepository->filterBoardMember($qb, $filter->isBoardMember);
+        }
+
+        if (!empty($filter->levels)) {
+            $levelTypes = [];
+            $levels = [];
+            $boardMember = false;
+            foreach($filter->levels as $level) {
+                if (is_string($level)) {
+                    $levelType = LevelType::tryFrom($level);
+                    if ($levelType) {
+                        $levelTypes[] = $levelType;
+                        continue;
+                    }
+                    
+                }
+                $levels[] = (int) $level;
+            }
+            $this->memberRepository->filterLevels($qb, $levelTypes, $levels, $boardMember);
+        }
+
+        if ($filter->permissions) {
+            $this->memberRepository->filterPermission($qb, $filter->permissions);
+        }
+
+        if ($filter->sort) {
+            $this->memberRepository->filterSort($qb, $filter->sort);
+        }
+
+        return $qb;
+    }
+}

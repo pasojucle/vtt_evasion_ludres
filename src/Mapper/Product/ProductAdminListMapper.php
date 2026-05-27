@@ -17,6 +17,7 @@ use App\Dto\ListItemDto;
 use App\Entity\Product;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Mapper\WikiMapper;
 use App\Service\Filter\FilterConfigInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,6 +30,7 @@ class ProductAdminListMapper
         private FilterChipsMapper $filterChipsMapper,
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
+        private WikiMapper $wikiMapper,
     ) {
     }
 
@@ -68,15 +70,7 @@ class ProductAdminListMapper
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
-            wiki: new ButtonDto(
-                url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),
-                title: 'wiki',
-                icon: 'lucide:circle-help',
-                variant: ColorVariant::DEFAULT,
-                htmlAttributes: [
-                    new HtmlAttributDto('target', '_blank'),
-                ],
-            ),
+            wiki:  $this->wikiMapper->mapToView('boutique'),
         );
     }
 

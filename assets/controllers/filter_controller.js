@@ -29,15 +29,4 @@ export default class extends Controller {
             }, 100);
         }
     }
-
-    clear(event) {
-        const name = event.currentTarget.dataset.filterName;
-        const input = this.element.querySelector(`[name="${name}"]`);
-        console.log('filter_controller clear', input)
-
-        if (input) {
-            input.value = "";
-            this.submit(event);
-        }
-    }
 }

@@ -7,6 +7,7 @@ namespace App\UseCase\Session;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\LevelType;
 use App\Entity\Session;
 use App\Service\MailerService;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -52,10 +53,10 @@ class ConfirmationSession
         return null;
     }
 
-    private function getMessageByLevelType(array $messages, int $levelType): string
+    private function getMessageByLevelType(array $messages, LevelType $levelType): string
     {
-        if (array_key_exists($levelType, $messages)) {
-            return $messages[$levelType];
+        if (array_key_exists($levelType->value, $messages)) {
+            return $messages[$levelType->value];
         }
 
         return $messages['default'];

@@ -8,12 +8,12 @@ readonly class FilterChip
 {
     /**
      * Summary of __construct
-     * @param string $name
      * @param string $label
+     * @param string $url
      */
     public function __construct(
-        public string $name,
         public string $label,
+        public string $url,
     ) {
     }
 }

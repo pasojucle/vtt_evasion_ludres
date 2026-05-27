@@ -8,7 +8,6 @@ use App\Dto\BadgeDto;
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\ActivityFilter;
@@ -86,15 +85,6 @@ class ActivityAdminListMapper
                 url: $this->urlGenerator->generate('admin_bike_ride_add'),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
-            ),
-            wiki: new ButtonDto(
-                url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),
-                title: 'wiki',
-                icon: 'lucide:circle-help',
-                variant: ColorVariant::DEFAULT,
-                htmlAttributes: [
-                    new HtmlAttributDto('target', '_blank'),
-                ],
             ),
         );
     }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\UseCase\Dashboard;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
-use App\Entity\Level;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
 use App\Service\LevelService;
@@ -25,7 +25,7 @@ class GetSchoolBikeRideClusters
         $sessionsByClusters = [];
         /** @var Session $session */
         foreach ($this->sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
-            $clusterId = ($isSchoolBikeRide && Level::TYPE_FRAME === $session->getMember()->getLevel()->getType())
+            $clusterId = ($isSchoolBikeRide && LevelType::FRAME === $session->getMember()->getLevel()->getType())
                 ? 'framers'
                 : $session->getCluster()->getId();
             $sessionsByClusters[$clusterId][] = $session;

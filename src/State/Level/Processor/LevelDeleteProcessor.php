@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Level\Processor;
 
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
@@ -18,7 +19,7 @@ class LevelDeleteProcessor
     ) {
     }
 
-    public function process(Level $entity): int
+    public function process(Level $entity): LevelType
     {
         $type = $entity->getType();
 

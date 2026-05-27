@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 
 class LevelDto
@@ -14,7 +15,7 @@ class LevelDto
 
     public ?string $title = null;
 
-    public ?int $type = null;
+    public ?LevelType $type = null;
 
     public ?array $colors = ['background' => '#aaaaaa', 'color' => '#ffffff'];
 

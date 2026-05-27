@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Level;
+use App\Entity\Enum\LevelType as LevelTypeEnum;
 use App\Form\Admin\LevelType;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
@@ -36,13 +37,13 @@ class LevelController extends AbstractController
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request,
-        int $type
+        LevelTypeEnum $type
     ): Response {
         $query = $this->levelRepository->findLevelQuery($type);
         $levels = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('level/admin/list.html.twig', [
             'levels' => $levels,
-            'paginator' => $paginatorDtoTransformer->fromEntities($levels, ['type' => (int) $type]),
+            'paginator' => $paginatorDtoTransformer->fromEntities($levels, ['type' => $type->value]),
             'current_type' => $type,
         ]);
     }

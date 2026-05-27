@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\Filter\UserFilter;
 use App\Entity\User;
 use App\Form\Admin\MemberType;
 use App\Form\Admin\UserBoardRoleType;
+use App\Form\ListFilterType;
 use App\Repository\MemberRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
+use App\Service\SeasonService;
+use App\State\User\Provider\UserListProvider;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetOverviewSeason;
@@ -34,20 +38,39 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/adherents/{filtered}', name: 'user_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[Route('/adherents', name: 'user_list', methods: ['GET'])]
     #[IsGranted('USER_LIST')]
     public function adminUsers(
-        GetMembersFiltered $getMembersFiltered,
+        UserListProvider $provider,
+        SeasonService $seasonService,
         Request $request,
-        bool $filtered
     ): Response {
-        $params = $getMembersFiltered->list($request, $filtered);
-        
-        if ($request->isMethod('POST')) {
-            return $this->render('user/admin/_user_list.html.twig', $params);
+        /**  @var UserFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
+        $filter->setDefaultSeason($seasonService);
+        $filterConfig = $provider->getFilterConfig('admin_user_list');
+        if (!$filterConfig) {
+            throw $this->createNotFoundException();
         }
-        
-        return $this->render('user/admin/users.html.twig', $params);
+
+        $form = $this->createForm(ListFilterType::class, $filter, [
+            'data_class' => $filterConfig->getDataClass(),
+            'fields' => $filterConfig->getFields(),
+            'advanced_fields' => $filterConfig->getAdvancedFields(),
+            'event_subscriber' => $filterConfig->getEventSubscriber(),
+            'active_filters' => $filter->toArray(),
+        ]);
+        $form->handleRequest($request);
+
+        return $this->render('user/admin/list.html.twig', [
+            'form' => $form->createView(),
+            'list' => $provider->getCollection(
+                $filter,
+                $filterConfig,
+                $request->attributes->get('_route'),
+                $request->query->getInt('page', 1),
+            ),
+        ]);
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
@@ -180,10 +203,13 @@ class UserController extends AbstractController
     #[Route('/adherent/autocomplete', name: 'member_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
     public function memberAutocomplete(
-        GetMembersFiltered $getMembersFiltered,
+        UserListProvider $provider,
         Request $request
     ): JsonResponse {
-        return new JsonResponse(['results' => $getMembersFiltered->choices($request->query->all())]);
+        /**  @var UserFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
+
+        return new JsonResponse(['results' => $provider->getAutocompleteChoices($filter)]);
     }
 
     #[Route('/encadrant/autocomplete', name: 'framer_autocomplete', methods: ['GET'])]

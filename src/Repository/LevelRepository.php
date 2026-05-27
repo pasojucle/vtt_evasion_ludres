@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -24,7 +25,7 @@ class LevelRepository extends ServiceEntityRepository
         parent::__construct($registry, Level::class);
     }
 
-    public function findLevelQuery(int $type): QueryBuilder
+    public function findLevelQuery(LevelType $type): QueryBuilder
     {
         return $this->createQueryBuilder('l')
             ->andWhere(
@@ -41,7 +42,7 @@ class LevelRepository extends ServiceEntityRepository
     /**
      * @return Level[] Returns an array of Level objects
      */
-    public function findByType(int $type): array
+    public function findByType(LevelType $type): array
     {
         $qb = $this->findLevelQuery($type);
 
@@ -56,7 +57,7 @@ class LevelRepository extends ServiceEntityRepository
      */
     public function findAllTypeMember(): array
     {
-        $qb = $this->findLevelQuery(Level::TYPE_SCHOOL_MEMBER);
+        $qb = $this->findLevelQuery(LevelType::SCHOOL);
 
         return $qb
             ->getQuery()
@@ -69,7 +70,7 @@ class LevelRepository extends ServiceEntityRepository
      */
     public function findAllTypeMemberNotProtected(): array
     {
-        $qb = $this->findLevelQuery(Level::TYPE_SCHOOL_MEMBER);
+        $qb = $this->findLevelQuery(LevelType::SCHOOL);
 
         return $qb
             ->andWhere(
@@ -85,7 +86,7 @@ class LevelRepository extends ServiceEntityRepository
      */
     public function findAllTypeFramer(): array
     {
-        $qb = $this->findLevelQuery(Level::TYPE_FRAME);
+        $qb = $this->findLevelQuery(LevelType::FRAME);
 
         return $qb
             ->getQuery()
@@ -110,7 +111,7 @@ class LevelRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findNexOrderByType(int $type): int
+    public function findNexOrderByType(LevelType $type): int
     {
         $nexOrder = 0;
         $maxOrder = $this->createQueryBuilder('l')
@@ -131,7 +132,7 @@ class LevelRepository extends ServiceEntityRepository
         return $nexOrder;
     }
 
-    private function findDefaultByType(int $type): ?Level
+    private function findDefaultByType(LevelType $type): ?Level
     {
         try {
             return $this->createQueryBuilder('l')
@@ -150,11 +151,11 @@ class LevelRepository extends ServiceEntityRepository
 
     public function findAwaitingEvaluation(): ?Level
     {
-        return $this->findDefaultByType(Level::TYPE_SCHOOL_MEMBER);
+        return $this->findDefaultByType(LevelType::SCHOOL);
     }
 
     public function findUnframedAdult(): ?Level
     {
-        return $this->findDefaultByType(Level::TYPE_ADULT_MEMBER);
+        return $this->findDefaultByType(LevelType::ADULT);
     }
 }

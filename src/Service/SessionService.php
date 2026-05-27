@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -64,7 +65,7 @@ class SessionService
     {
         $userCluster = null;
 
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_SCHOOL_MEMBER !== $member->getLevel()->getType()) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && LevelType::SCHOOL !== $member->getLevel()->getType()) {
             foreach ($bikeRide->getClusters() as $cluster) {
                 if ('ROLE_FRAME' === $cluster->getRole()) {
                     return $cluster;

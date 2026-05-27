@@ -21,7 +21,7 @@
         </div>
         <div class="wrapper-body">
             <h2>{{ user.member.fullName }}</h2>
-            {% if user.level.type == constant('App\\Entity\\Level::TYPE_FRAME') %}
+            {% if user.level.type == enum('App\\Entity\\Enum\\LevelType').FRAME %}
                 <p>Total des indemnités : {{ total_indemnities.toString }}</p>
             {% endif %}
             {{ form_start(form) }}
@@ -37,7 +37,7 @@
             <ul>
                 {% for session in sessions %}       
                     <li class="row row-list light-separator">
-                        {% set col_md = user.level.type == constant('App\\Entity\\Level::TYPE_FRAME') ? 3 : 4 %}
+                        {% set col_md = user.level.type == enum('App\\Entity\\Enum\\LevelType').FRAME ? 3 : 4 %}
                         <div class="col-md-{{ col_md}} col-xs-12">{{ session.bikeRide.period }}</div>
                         <div class="col-md-{{ col_md}} col-xs-12">{{ session.bikeRide.title }} </div>
                         <div class="col-md-{{ col_md}} col-xs-12">{{ session.userIsOnSiteToHtml|raw }}</div>

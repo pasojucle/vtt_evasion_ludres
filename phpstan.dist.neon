@@ -7,3 +7,7 @@ parameters:
         - src/
         - tests/
     treatPhpDocTypesAsCertain: false
+
+    excludePaths:
+        - src/Resources/skeleton/*
+        - config/reference.php 

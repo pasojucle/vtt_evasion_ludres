@@ -14,9 +14,14 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class NotificationFilterConfig implements FilterConfigInterface
 {
+    public function getRouteName(): string
+    {
+        return 'admin_notification_list';
+    }
+
     public function supports(string $route): bool
     {
-        return $route === 'admin_notification_list';
+        return $route === $this->getRouteName();
     }
 
     public function getDataClass(): ?string

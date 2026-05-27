@@ -20,6 +20,7 @@ use App\Entity\OrderHeader;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Mapper\WikiMapper;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\OrderService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -35,6 +36,7 @@ class OrderAdminListMapper
         private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
         private FilterChipsMapper $filterChipsMapper,
+        private WikiMapper $wikiMapper,
     ) {
     }
 
@@ -71,16 +73,7 @@ class OrderAdminListMapper
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
-            wiki: new ButtonDto(
-                url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),
-                title: 'wiki',
-                icon: 'lucide:circle-help',
-                variant: ColorVariant::DEFAULT,
-                rounded: RoundedVariant::ROUNDED_START,
-                htmlAttributes: [
-                    new HtmlAttributDto('target', '_blank'),
-                ],
-            ),
+            wiki:  $this->wikiMapper->mapToView('boutique', RoundedVariant::ROUNDED_START),
         );
     }
 

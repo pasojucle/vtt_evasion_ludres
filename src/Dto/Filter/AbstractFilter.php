@@ -13,15 +13,25 @@ abstract class AbstractFilter
         $properties = [];
         foreach (get_object_vars($this) as $name => $value) {
             if (null !== $value && '' !== $value) {
-                $properties[$name] = match (true) {
-                    $value instanceof BackedEnum => $value->value,
-                    is_object($value) && method_exists($value, 'getId') => $value->getId(),
-                    default => $value
-                };
+                // On extrait la logique de normalisation dans une méthode dédiée
+                $properties[$name] = $this->normalizeValue($value);
             }
         }
 
         return $properties;
+    }
+
+    private function normalizeValue(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map(fn ($item) => $this->normalizeValue($item), $value);
+        }
+
+        return match (true) {
+            $value instanceof BackedEnum => $value->value,
+            is_object($value) && method_exists($value, 'getId') => $value->getId(),
+            default => $value
+        };
     }
 
     public function toQueryParams(?int $page = null): array
@@ -44,5 +54,10 @@ abstract class AbstractFilter
         }
 
         return base64_encode(http_build_query($params));
+    }
+
+    public function getUnsetValue(string $name): mixed
+    {
+        return null;
     }
 }

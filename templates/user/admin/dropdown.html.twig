@@ -57,7 +57,7 @@
           </li>
         {% endif %}
       {% endif %}
-      {% if is_granted('USER_LIST') and user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER')%}
+      {% if is_granted('USER_LIST') and user.level.type == enum('App\\Entity\\Enum\\LevelType').TYPE_SCHOOL_MEMBER %}
         <li >
           <a 
             class="block px-3 py-2 bg-slate-200 hover:bg-slate-300"

@@ -17,9 +17,14 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class ActivityFilterConfig implements FilterConfigInterface
 {
+    public function getRouteName(): string
+    {
+        return 'admin_bike_rides';
+    }
+
     public function supports(string $route): bool
     {
-        return $route === 'admin_bike_rides';
+        return $route === $this->getRouteName();
     }
 
     public function getEventSubscriber(): ?EventSubscriberInterface
