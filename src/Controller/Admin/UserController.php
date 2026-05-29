@@ -16,7 +16,6 @@ use App\Service\MessageService;
 use App\Service\SeasonService;
 use App\State\User\Provider\UserListProvider;
 use App\UseCase\User\GetFramersFiltered;
-use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetOverviewSeason;
 use App\UseCase\User\GetParticipation;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,6 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -76,19 +76,32 @@ class UserController extends AbstractController
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
     public function adminUsersExport(
-        GetMembersFiltered $getMembersFiltered,
+        UserListProvider $provider,
         Request $request
-    ): Response {
-        return $getMembersFiltered->export($request);
+    ): StreamedResponse {
+        /**  @var UserFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
+
+        $response = new StreamedResponse(function() use ($provider, $filter) {
+            $provider->streamExportContent($filter);
+        });
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export_adherents.csv"');
+
+        return $response;
     }
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
     public function adminEmailUsers(
-        GetMembersFiltered $getMembersFiltered,
+        UserListProvider $provider,
         Request $request
     ): JsonResponse {
-        return new JsonResponse($getMembersFiltered->emailsToClipboard($request));
+
+        /**  @var UserFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
+
+        return new JsonResponse($provider->copyEmailListToClipboard($filter));
     }
 
     #[Route('/adherent/{user}', name: 'user', requirements:['user' => '\d+'], methods: ['GET'])]

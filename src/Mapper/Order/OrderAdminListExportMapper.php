@@ -20,6 +20,9 @@ class OrderAdminListExportMapper
 
     public function streamToCsv(array $entities): void
     {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
         $fp = fopen('php://output', 'w');
         
         $headers = ['Prénom', 'Nom', 'N°CDE', 'Produit', 'Ref', 'Taille', 'Quantité', 'Prix', 'Statut'];

@@ -40,7 +40,7 @@ class MakeListPattern extends AbstractMaker
 
         $generator->generateClass(
             'App\\Dto\\Filter\\' . $entity . 'Filter',
-            'templates/bundles/MakerBundle/skeleton/Filter.tpl.php',
+            dirname(__DIR__) . '/Resources/skeleton/Filter.tpl.php',
             [
                 'entity_name' => $entity,
             ]
@@ -48,7 +48,7 @@ class MakeListPattern extends AbstractMaker
 
         $generator->generateClass(
             'App\\Service\\Filter\\' . $entity . 'FilterConfig',
-            'templates/bundles/MakerBundle/skeleton/FilterConfig.tpl.php',
+            dirname(__DIR__) . '/Resources/skeleton/FilterConfig.tpl.php',
             [
                 'entity_name' => $entity,
                 'route' => $route,
@@ -57,7 +57,7 @@ class MakeListPattern extends AbstractMaker
 
         $generator->generateClass(
             'App\\State\\' . $entity . '\\Provider\\' . $entity . 'ListProvider',
-            'templates/bundles/MakerBundle/skeleton/ListProvider.tpl.php',
+            dirname(__DIR__) . '/Resources/skeleton/ListProvider.tpl.php',
             [
                 'entity_name' => $entity,
             ]
@@ -65,7 +65,7 @@ class MakeListPattern extends AbstractMaker
 
         $generator->generateClass(
             'App\\Mapper\\' . $entity . '\\' . $entity . 'ListMapper',
-            'templates/bundles/MakerBundle/skeleton/ListMapper.tpl.php',
+            dirname(__DIR__) . '/Resources/skeleton/ListMapper.tpl.php',
             [
                 'entity_name' => $entity,
                 'route' => $route,
@@ -74,7 +74,7 @@ class MakeListPattern extends AbstractMaker
 
         $generator->generateFile(
             'templates/' . strtolower($entity) . '/admin/_frame_list.html.twig',
-            'templates/bundles/MakerBundle/skeleton/_frame_list.tpl.php',
+            dirname(__DIR__) . '/Resources/skeleton/_frame_list.tpl.php',
             [
                 'entity_name' => $entity,
             ]

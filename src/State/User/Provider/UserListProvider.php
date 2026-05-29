@@ -7,7 +7,8 @@ namespace App\State\User\Provider;
 use App\Dto\ListDto;
 use App\Dto\Filter\UserFilter;
 use App\Entity\Enum\LevelType;
-use App\Entity\Level;
+use App\Mapper\EmailClipboardMapper;
+use App\Mapper\User\UserAdminListExportMapper;
 use App\Mapper\User\UserAutocompleteMapper;
 use App\Mapper\User\UserListMapper;
 use App\Repository\MemberRepository;
@@ -25,6 +26,8 @@ class UserListProvider
         private PaginatorService $paginator,
         private UserListMapper $mapper,
         private UserAutocompleteMapper $autocompleteMapper,
+        private UserAdminListExportMapper $exportMapper,
+        private EmailClipboardMapper $emailClipboardMapper,
     ) {
     }
 
@@ -45,6 +48,20 @@ class UserListProvider
             $filter,
             $filterConfig
         );
+    }
+
+    public function streamExportContent(UserFilter $filter): void
+    {
+        $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
+
+        $this->exportMapper->streamToCsv($entities);
+    }
+
+    public function copyEmailListToClipboard(UserFilter $filter): string
+    {
+        $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
+
+        return $this->emailClipboardMapper->mapToEmailCsvString($entities);
     }
 
     public function getAutocompleteChoices(UserFilter $filter): array

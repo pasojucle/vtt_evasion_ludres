@@ -83,7 +83,8 @@ class GetMembersFiltered extends GetUsersFiltered
                     url: $this->urlGenerator->generate('admin_members_export'),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
+                        new HtmlAttributDto('data-turbo', 'false')
                     ],
                 ),
                 new ButtonDto(

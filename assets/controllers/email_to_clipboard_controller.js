@@ -8,9 +8,9 @@ export default class extends Controller {
     emailToClipboard = (event) => {
         event.preventDefault();
         const url = this.urlValue;
-        fetch(url).then ((response) => {
-            return response.json();
-        }).then((data) => {
+        fetch(url)
+        .then ((response) => response.json())
+        .then((data) => {
             navigator.clipboard.writeText(data);
         });
     }

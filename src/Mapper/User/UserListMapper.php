@@ -68,7 +68,7 @@ class UserListMapper
         return new ListDto(
             items: $items,
             settings: $this->settings(),
-            tools: $this->getTools(),
+            tools: $this->getTools($filter),
             paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonDto(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_user_list'], $filter->toQueryParams())),
@@ -122,7 +122,7 @@ class UserListMapper
         return $indicators;
     }
 
-    private function getTools(): DropdownDto
+    private function getTools(UserFilter $filter): DropdownDto
     {
         return new DropdownDto(
             variant: DropdownVariant::GOST,
@@ -131,16 +131,17 @@ class UserListMapper
                 new ButtonDto(
                     label: 'Exporter la sélection',
                     variant: ColorVariant::DROPDOWN,
-                    url: $this->urlGenerator->generate('admin_members_export'),
+                    url: $this->urlGenerator->generate('admin_members_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
+                        new HtmlAttributDto('data-turbo', 'false')
                     ],
                 ),
                 new ButtonDto(
                     label: 'Exporter les évaluations de la sélection',
                     variant: ColorVariant::DROPDOWN,
-                    url: $this->urlGenerator->generate('admin_user_skill_export'),
+                    url: $this->urlGenerator->generate('admin_user_skill_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
                         new HtmlAttributDto('data-action', 'click->dropdown#close')
@@ -163,7 +164,10 @@ class UserListMapper
                     htmlAttributes: [
                         new HtmlAttributDto('data-controller', 'email-to-clipboard'),
                         new HtmlAttributDto('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_members_email_to_clipboard')),
+                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
+                            'admin_members_email_to_clipboard', 
+                            $filter->toArray()
+                        )),
                     ],
                 ),
             ],

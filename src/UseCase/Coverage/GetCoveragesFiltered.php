@@ -68,7 +68,8 @@ class GetCoveragesFiltered extends GetUsersFiltered
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
+                        new HtmlAttributDto('data-turbo', 'false')
                     ],
                 )
             ],
