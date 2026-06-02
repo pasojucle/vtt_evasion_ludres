@@ -29,24 +29,14 @@
         ></turbo-frame>
         {% block background %}{% endblock %}
         <div class="security" data-role="ROLE_USER"></div>
-        <div class="notification">
-            <div class="flashes">
-                {% for label, messages in app.flashes %}
-                    {% for message in messages %}
-                        <div class="flash-{{ label }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endfor %}
-            </div>
-        </div>
         {% include 'navigation/admin.html.twig' %}
         <main>
             <section class="lg:pl-64">
                 {% block body %}{% endblock %}
             </section>
-            {% include "component/_dialog.html.twig" %}
-            {% include "component/_sheet.html.twig" %}
+            {% include "components/_dialog.html.twig" %}
+            {% include "components/_sheet.html.twig" %}
+            <turbo-frame id="turbo_flash_messages" src="{{ path('app_flashes') }}"></turbo-frame>
         </main>
     </body>
 </html>

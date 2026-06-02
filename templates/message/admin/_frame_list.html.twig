@@ -13,7 +13,7 @@
             {{ form_row(form.section) }}
             {{ form_end(form) }}
         </div>
-        {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
+        {% include 'components/pagination.html.twig' with {'margin': 'bottom'} %}
         <ul>
             {% for message in messages %}     
                 <li class="list-dropdown">
@@ -53,6 +53,6 @@
                 </li>
             {% endfor %}
         </ul>
-        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+        {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
     </div>
 </turbo-frame>

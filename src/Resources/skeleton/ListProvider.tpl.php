@@ -11,6 +11,7 @@ use App\Repository\<?= $entity_name ?>Repository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use Doctrine\ORM\QueryBuilder;
 
 
 class <?= $entity_name ?>ListProvider
@@ -26,13 +27,7 @@ class <?= $entity_name ?>ListProvider
 
     public function getCollection(<?= $entity_name ?>Filter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
     {
-        $qb = $this-><?= lcfirst($entity_name) ?>Repository->find<?= $entity_name ?>Query();
-        
-        // TODO: Ajoutez les filtres spécifiques à votre entité ici
-
-        if ($filter->sort) {
-            $this-><?= lcfirst($entity_name) ?>Repository->filterSort($qb, $filter->sort);
-        }
+        $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
             $qb,
@@ -47,5 +42,18 @@ class <?= $entity_name ?>ListProvider
             $filter,
             $filterConfig
         );
+    }
+
+    private function getQueryBuilder(UserFilter $filter): QueryBuilder
+    {
+        $qb = $this-><?= lcfirst($entity_name) ?>Repository->find<?= $entity_name ?>Query();
+        
+        // TODO: Ajoutez les filtres spécifiques à votre entité ici
+
+        if ($filter->sort) {
+            $this-><?= lcfirst($entity_name) ?>Repository->filterSort($qb, $filter->sort);
+        }
+
+        return $qb;
     }
 }

@@ -20,7 +20,7 @@
     </nav>
     <div class="wrapper-body">
         <a href="{{ path('admin_level_edit') }}" class="btn btn-primary" title="Ajouter un niveau"><i class="fas fa-plus"></i> Ajouter un niveau</a>
-        {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
+        {% include 'components/pagination.html.twig' with {'margin': 'bottom'} %}
         <ul 
             class="list-group sortable"
             data-controller="sortable"
@@ -49,7 +49,7 @@
                 </li>
             {% endfor %}
         </ul>
-        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+        {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
     </div>
 </div>
 {% endblock %}

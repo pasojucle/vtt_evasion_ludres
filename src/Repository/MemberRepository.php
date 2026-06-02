@@ -892,13 +892,13 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         return $this->createQueryBuilder('m')
             ->leftJoin('m.identity', 'i')->addSelect('i')
             ->leftJoin('m.level', 'le')->addSelect('le')
+            ->leftJoin('m.licences', 'li')->addSelect('li')
         ;
     }
     
     public function filterSeason(QueryBuilder $qb, int $season): void
     {
         $qb
-            ->join('m.licences', 'li')
             ->andWhere(
                 $qb->expr()->eq('li.season', ':season')
             )
@@ -925,7 +925,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterLevels(QueryBuilder $qb, array $types, array $ids, bool $isBoardMember): void
+    public function filterLevels(QueryBuilder $qb, array $types, array $ids): void
     {
         $orX = $qb->expr()->orX();
 
@@ -937,10 +937,6 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         if (!empty($ids)) {
             $orX->add($qb->expr()->in('le.id', ':ids'));
             $qb->setParameter('ids', $ids);
-        }
-
-        if ($isBoardMember) {
-            $orX->add($qb->expr()->isNotNull('m.boardRole'));
         }
 
         if ($orX->count() > 0) {
@@ -962,5 +958,169 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
         $qb
             ->orderBy('i.name', $direction);
+    }
+
+    public function filterTestinInProgress(QueryBuilder &$qb, int $season): void
+    {
+        $usersWithSessionsPresent = $this->getEntityManager()->createQueryBuilder()
+            ->select('sessionsinprogresspresent.id')
+            ->from(Session::class, 'sessionsinprogresspresent')
+            ->join('sessionsinprogresspresent.user', 'userinprogresspresent')
+            ->groupBy('userinprogresspresent.id')
+            ->andWhere(
+                $qb->expr()->eq('sessionsinprogresspresent.isPresent', 1)
+            )
+            ->andHaving(
+                $qb->expr()->lt($qb->expr()->count('sessionsinprogresspresent.id'), 3)
+            );
+        $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
+            ->select('userinprogress.id')
+            ->from(Session::class, 'sessionsinprogress')
+            ->join('sessionsinprogress.user', 'userinprogress')
+            ->groupBy('userinprogress.id')
+            ->andHaving(
+                $qb->expr()->lt($qb->expr()->count('sessionsinprogress.id'), 3)
+            );
+        $qb
+            ->leftjoin('m.sessions', 's')
+            ->andWhere(
+                $qb->expr()->eq('li.season', ':season'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.state', ':trialSubmitted'),
+                    $qb->expr()->eq('li.state', ':trialReceived'),
+                ),
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('s'),
+                    $qb->expr()->in('m.id', $usersWithSessions->getDQL()),
+                    $qb->expr()->in('m.id', $usersWithSessionsPresent->getDQL())
+                )
+            )
+            ->setParameter('season', $season)
+            ->setParameter('trialSubmitted', LicenceStateEnum::TRIAL_FILE_SUBMITTED)
+            ->setParameter('trialReceived', LicenceStateEnum::TRIAL_FILE_RECEIVED)
+        ;
+    }
+
+    public function filterTestinComplete(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('li.season', ':season'),
+                $qb->expr()->eq('li.state', ':trialValidate'),
+            )
+            ->setParameter('season', $season)
+            ->setParameter('trialValidate', LicenceStateEnum::TRIAL_COMPLETED)
+        ;
+    }
+
+
+    public function filterNew(QueryBuilder &$qb, int $season): void
+    {
+        $usersWhithOnlyOneLicence = $this->getEntityManager()->createQueryBuilder()
+            ->select('user')
+            ->from(User::class, 'user')
+            ->join('user.licences', 'userLicence')
+            ->groupBy('user.id')
+            ->andHaving(
+                $qb->expr()->eq($qb->expr()->count('userLicence.id'), 1),
+                $qb->expr()->eq($qb->expr()->max('userLicence.season'), ':season'),
+            );
+
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('li.state', ':statusNew'),
+                $qb->expr()->in('m', $usersWhithOnlyOneLicence->getDQL()),
+            )
+            ->setParameter('statusNew', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
+            ->setParameter('season', $season)
+            ->orderBy('i.name', 'ASC')
+        ;
+    }
+
+    public function filterWaitingRenew(QueryBuilder &$qb, int $currentSeason): void
+    {
+        $usersWhithCurrentSeasonLicence = $this->getEntityManager()->createQueryBuilder()
+            ->select('user')
+            ->from(User::class, 'user')
+            ->join('user.licences', 'userLicence')
+            ->andWhere(
+                $qb->expr()->eq('userLicence.season', ':currentSeason'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('userLicence.state', ':stateSubmitted'),
+                    $qb->expr()->eq('userLicence.state', ':stateValidated'),
+                    $qb->expr()->eq('userLicence.state', ':stateSentToFederation'),
+                )
+            );
+
+        $qb
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.state', ':stateValidated'),
+                    $qb->expr()->eq('li.state', ':stateSentToFederation'),
+                    $qb->expr()->eq('li.state', ':stateExpired'),
+                ),
+                $qb->expr()->eq('li.season', ':previousSeason'),
+                $qb->expr()->notIn('m', $usersWhithCurrentSeasonLicence->getDQL()),
+            )
+            ->setParameter('previousSeason', $currentSeason - 1)
+            ->setParameter('currentSeason', $currentSeason)
+            ->setParameter('stateSubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
+            ->setParameter('stateValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED)
+            ->setParameter('stateSentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED)
+            ->setParameter('stateExpired', LicenceStateEnum::EXPIRED)
+            ->orderBy('i.name', 'ASC')
+        ;
+    }
+
+    public function filterInProcessing(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->leftjoin('m.sessions', 's')
+            ->andWhere(
+                $qb->expr()->eq('li.season', ':season'),
+                $qb->expr()->orx(
+                    $qb->expr()->eq('li.state', ':stateTrialPending'),
+                    $qb->expr()->eq('li.state', ':stateYearlyPending'),
+                )
+            )
+            ->setParameter('season', $season)
+            ->setParameter('stateTrialPending', LicenceStateEnum::TRIAL_FILE_PENDING)
+            ->setParameter('stateYearlyPending', LicenceStateEnum::YEARLY_FILE_PENDING)
+        ;
+    }
+
+    public function filterToRegister(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('li.season', ':season'),
+                $qb->expr()->eq('li.state', ':yearlyReceived'),
+            )
+            ->setParameter('season', $season)
+            ->setParameter('yearlyReceived', LicenceStateEnum::YEARLY_FILE_RECEIVED)
+        ;
+    }
+
+    public function filterRegistrationBySeason(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->orWhere(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('li.state', ':stateYearlySubmitted'),
+                    $qb->expr()->eq('li.season', ':season')
+                ),
+                $qb->expr()->andX(
+                    $qb->expr()->orX(
+                        $qb->expr()->eq('li.state', ':stateTrialSubmitted'),
+                        $qb->expr()->eq('li.state', ':stateTrialValidated'),
+                    ),
+                    $qb->expr()->eq('li.season', ':season')
+                ),
+            )
+            ->setParameter('season', $season)
+            ->setParameter('stateTrialSubmitted', LicenceStateEnum::TRIAL_FILE_SUBMITTED)
+            ->setParameter('stateTrialValidated', LicenceStateEnum::TRIAL_FILE_RECEIVED)
+            ->setParameter('stateYearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
+        ;
     }
 }

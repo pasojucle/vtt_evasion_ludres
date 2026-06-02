@@ -54,7 +54,7 @@
         "symfony/ux-autocomplete": "^2.16",
         "symfony/ux-icons": "^2.32",
         "symfony/ux-turbo": "^2.32",
-        "symfony/ux-twig-component": "^2.32",
+        "symfony/ux-twig-component": "^3.1",
         "symfony/validator": "7.4.*",
         "symfony/web-link": "7.4.*",
         "symfony/workflow": "7.4.*",

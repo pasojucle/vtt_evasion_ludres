@@ -21,10 +21,10 @@
                             </div>
                             <div class="flex gap-2 ml-0 xl:ml-auto">
                                 {% if session.practice %}
-                                    {{ include('component/_badge.html.twig', { badge: session.practice }) }}
+                                    {{ include('components/_badge.html.twig', { badge: session.practice }) }}
                                 {% endif %}
                                 {% if session.bikeType %}
-                                    {{ include('component/_badge.html.twig', { badge: session.bikeType }) }}
+                                    {{ include('components/_badge.html.twig', { badge: session.bikeType }) }}
                                 {% endif %}
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </a>
-        {% include 'component/_dropdown.html.twig' with {dropdown: user.dropdown} %}
+        {% include 'components/_dropdown.html.twig' with {dropdown: user.dropdown} %}
 
         {# {% include 'user/admin/_dropdown.html.twig' with {'session' : session} %} #}
     </div>

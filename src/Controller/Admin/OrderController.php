@@ -9,7 +9,7 @@ use App\Dto\Filter\OrderFilter;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderType as AdminOrderType;
-use App\Form\ListFilterType;
+use App\Form\Filter\ListFilterType;
 use App\Service\FilterDecoderService;
 use App\State\Order\Provider\OrderAdminListProvider;
 use App\UseCase\Order\SetOrder;

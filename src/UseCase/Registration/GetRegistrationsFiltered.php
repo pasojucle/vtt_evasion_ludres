@@ -93,6 +93,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
                 new ButtonDto(
+                    variant: ColorVariant::DROPDOWN,
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_registrations_export'),
                     icon: 'lucide:file-down',

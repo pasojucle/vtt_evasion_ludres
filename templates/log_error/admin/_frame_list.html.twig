@@ -1,5 +1,5 @@
 <turbo-frame id="error-list">
-    {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
+    {% include 'components/pagination.html.twig' with {'margin': 'bottom'} %}
     <ul id="errors_container">
         <a 
             href="{{ path('admin_log_errors_delete', {'statusCode': status_code})}}" 
@@ -32,5 +32,5 @@
         {% endfor %}
         {% if errors is empty %}<li>Aucune erreur</li>{% endif %}
     </ul>
-    {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+    {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
 </turbo-frame>

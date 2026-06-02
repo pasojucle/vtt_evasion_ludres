@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Form\Admin\FilterAdvancedType;
+use App\Form\Filter\FilterAdvancedType;
 use App\State\Filter\FilterProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,9 @@ class FilterController extends AbstractController
             throw $this->createNotFoundException();
         }
         $dataClass = $filterConfig->getDataClass();
-        $form = $this->createForm(FilterAdvancedType::class, $provider->getHydratedDto($request->query->all(), $dataClass), [
+        $filter = $provider->getHydratedDto($request->query->all(), $dataClass);
+
+        $form = $this->createForm(FilterAdvancedType::class, $filter, [
             'action' => $request->getPathInfo(),
             'fields' => $filterConfig->getFields(),
             'advanced_fields' => $filterConfig->getAdvancedFields(),

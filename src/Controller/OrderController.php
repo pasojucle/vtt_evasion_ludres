@@ -132,7 +132,7 @@ class OrderController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         
-        return $this->render('component/_dialog.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'dialog' => $provider->mapToView($orderHeader),
             'form' => $form->createView(),
         ], $response);

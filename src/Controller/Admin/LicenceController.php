@@ -11,7 +11,9 @@ use App\Form\Admin\LicenceRejectType;
 use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\State\Licence\Processor\LicenceDeleteProcessor;
+use App\State\Licence\Processor\LicenceReceiveProcessor;
 use App\State\Licence\Provider\LicenceDeleteProvider;
+use App\State\Licence\Provider\LicenceReceiveProvider;
 use App\UseCase\Licence\ValidateLicence;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +56,7 @@ class LicenceController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/_dialog.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'form' => $form->createView(),
             'dialog' => $provider->mapToView($licence),
         ], $response);
@@ -64,11 +66,10 @@ class LicenceController extends AbstractController
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionReceive(
         Request $request,
-        LicenceService $licenceService,
+        LicenceReceiveProvider $provider,
+        LicenceReceiveProcessor $processor,
         Licence $licence
     ): Response {
-        $user = $licence->getMember();
-        $fullName = $user->getIdentity()->getFullName();
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
@@ -77,32 +78,21 @@ class LicenceController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $tansition = ($licence->getState()->isYearly()) ? 'receive_yearly_file' : 'receive_trial_file';
-                if ($licenceService->applyTransition($licence, $tansition)) {
-                    $this->entityManager->flush();
-
-                    $this->addFlash('success', "Le dossier de {$fullName} a bien été reçu");
-
-                    return $this->redirectToRoute('admin_registration_list', [
-                        'filtered' => true,
-                        'p' => $request->query->get('p'),
-                    ]);
+                $result = $processor->process($licence, $request->query->get('filter'));
+                $this->addFlash($result->flashType, $result->messageKey);
+                if ($result->targetRoute) {
+                    $response = $this->redirectToRoute($result->targetRoute, $result->routeParams);
+                    return $response;
                 }
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-            $this->addFlash('danger', "Une erreur est survenue lors de la réception du dossier de {$fullName}");
         }
 
-        return $this->render('licence/admin/receive.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'form' => $form->createView(),
-            'licence' => $licence,
-            'fullname' => $fullName,
-            'message' => ($licence->getState()->isYearly())
-                ? 'Réception du dossier d\'inscription signé avec le paiement.'
-                : 'Réception du dossier d\'inscription signé'
+            'dialog' => $provider->mapToView($licence)
         ], $response);
     }
-
 
     #[Route('/admin/inscription/reject/{licence}', name: 'admin_registration_reject', methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'licence')]

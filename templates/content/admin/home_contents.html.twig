@@ -14,7 +14,7 @@
             {% endfor %}
         </nav>
         <div class="wrapper-body">
-            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
+            {% include 'components/pagination.html.twig' with {'margin': 'bottom'} %} 
             {% if kind == enum('App\\Entity\\Enum\\ContentKindEnum').HOME_FLASH or kind == enum('App\\Entity\\Enum\\ContentKindEnum').HOME_CONTENT %}
                 <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un contenu"><i class="fas fa-plus"></i> Ajouter un contenu</a>
                 <ul 
@@ -55,7 +55,7 @@
                 </div>
                 {{ form_end(form)}}
             {% endif %}
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %} 
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %} 
         </div>
     </div>
 {% endblock %}

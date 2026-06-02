@@ -290,12 +290,12 @@ class Licence
         return $this;
     }
 
-    public function getState(): ?object
+    public function getState(): ?LicenceStateEnum
     {
         return $this->state;
     }
 
-    public function setState(object $state): static
+    public function setState(LicenceStateEnum $state): static
     {
         $this->state = $state;
 

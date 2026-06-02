@@ -12,3 +12,50 @@
   --color-border: oklch(86.9% 0.022 252.894);
   --color-accent: oklch(50% 0.134 242.749);
 }
+
+@layer components {
+  .form-group {
+    @apply mb-4 flex flex-col space-y-1;
+  }
+  
+  .form-control {
+    @apply block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+  }
+}
+
+.custom-badge {
+  /* On assombrit la couleur du texte en la mélangeant à 60% avec du noir */
+  color: color-mix(in srgb, var(--badge-color, currentColor) 70%, black);
+  
+  /* Le fond reste très léger */
+  background-color: color-mix(in srgb, var(--badge-color, transparent) 15%, white);
+}
+
+.ts-wrapper.single .ts-control {
+  border-radius: 0.125rem;
+  border-color: rgb(226, 232, 240);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  height: 100% !important;
+  min-width: 200px;
+  box-sizing: border-box;
+}
+
+.ts-dropdown {
+  z-index: 50;
+  background-color: white;
+}
+
+.ts-wrapper.single {
+    --ts-pr-min-height: 2rem !important;
+    min-height: 32px;
+    height: 32px !important; 
+    box-sizing: border-box;
+    padding: 0 !important;
+}
+
+.ts-wrapper.single .ts-control input {
+    height: 100%;
+    padding: 0 !important;
+}

@@ -127,7 +127,7 @@ class LinkController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/_dialog.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'form' => $form->createView(),
             'dialog' => $provider->mapToView($link),
         ], $response);

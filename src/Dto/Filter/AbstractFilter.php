@@ -13,7 +13,17 @@ abstract class AbstractFilter
         $properties = [];
         foreach (get_object_vars($this) as $name => $value) {
             if (null !== $value && '' !== $value) {
-                // On extrait la logique de normalisation dans une méthode dédiée
+                $properties[$name] = $this->normalizeValue($value);
+            }
+        }
+
+        return $properties;
+    }
+    public function AllowedtoArray(array $names): array
+    {
+        $properties = [];
+        foreach (get_object_vars($this) as $name => $value) {
+            if (in_array($name, $names) && null !== $value && '' !== $value) {
                 $properties[$name] = $this->normalizeValue($value);
             }
         }

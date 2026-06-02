@@ -1,7 +1,7 @@
 <turbo-frame id="coverage-list">
     {% include('user/admin/filters.html.twig') %}
     <div class="wrapper-body">
-        {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
+        {% include 'components/pagination.html.twig' with {'margin': 'bottom'} %} 
         <ul>
             {% for user in users %}
                 <li class="col-list col-1md-btn">
@@ -17,16 +17,16 @@
                                 {% endif %}
                             </div>
                         </a>
-                        {% include 'component/_dropdown.html.twig' with {dropdown: user.dropdown} %}
+                        {% include 'components/_dropdown.html.twig' with {dropdown: user.dropdown} %}
                     </div>
                     <div>
                         {% if user.lastLicence.stateAction %}
-                            {% include "component/_button.html.twig" with {button: user.lastLicence.stateAction} %}
+                            {% include "components/_button.html.twig" with {button: user.lastLicence.stateAction} %}
                         {% endif %}
                     </div>
                 </li>
             {% endfor %}
         </ul>
-        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+        {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
     </div>
 </turbo-frame>

@@ -9,7 +9,7 @@
             <h1 class="font-bold text-3xl">{{ title }}</h1>
         </div>
         <div class="wrapper-body">
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %} 
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %} 
             <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
                 {% for content in contents %}     
                     <li class="sortable-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" data-id="{{ content.id }}">
@@ -28,7 +28,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %} 
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %} 
         </div>
     </div>
 {% endblock %}

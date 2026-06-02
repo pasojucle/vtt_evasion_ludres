@@ -11,8 +11,8 @@
             </div>
             <div class="ml-auto">
                 <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
-                    {% include 'component/_button.html.twig' with {button: list.wiki} %}
-                    {% include 'component/_dropdown.html.twig' with {dropdown: list.settings} %}
+                    {% include 'components/_button.html.twig' with {button: list.wiki} %}
+                    {% include 'components/_dropdown.html.twig' with {dropdown: list.settings} %}
                 </div>
             </div>
         </div>
@@ -29,11 +29,11 @@
                         {{ form_end(form) }} 
                     </div>
                     <div class="ml-auto">
-                        {% include 'component/_button.html.twig' with {button: list.advancedFilter} %}     
+                        {% include 'components/_button.html.twig' with {button: list.advancedFilter} %}     
                     </div>
                 </div>
             </div>
-            {% include 'component/_filter_chips.html.twig' with {chips: list.filterChips} %}
+            {% include 'components/_filter_chips.html.twig' with {chips: list.filterChips} %}
         </div>
         {% include('order/admin/_frame_list.html.twig') %}
     </div>

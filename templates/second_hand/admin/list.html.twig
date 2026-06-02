@@ -6,7 +6,7 @@
  <div class="wrapper">
         <div class="wrapper-title">
             <h1 class="font-bold text-3xl">Gestion des annonces</h1>
-            {% include 'component/dropdown_settings.html.twig' %}
+            {% include 'components/dropdown_settings.html.twig' %}
         </div>
         <nav  class="nav-tab">
             {% for type, label in constant('App\\Dto\\DtoTransformer\\SecondHandDtoTransformer::TYPES') %}
@@ -14,7 +14,7 @@
             {% endfor %}
         </nav>
         <div class="wrapper-body">
-            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
+            {% include 'components/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul>
                 {% for second_hand in second_hands %}
                     <li class="list-dropdown">
@@ -38,7 +38,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 {% endblock %}

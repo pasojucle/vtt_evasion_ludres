@@ -53,6 +53,7 @@ class UserFilterConfig implements FilterConfigInterface
                     ],
                     'required' => false,
                 ],
+                allowedFilterNames: ['levels', 'season', 'isBoardMember', 'permissions']
             )
         ];
     }
@@ -70,6 +71,9 @@ class UserFilterConfig implements FilterConfigInterface
                     'autocomplete' => true,
                     'required' => false,
                     'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'attr' => [
+                        'data-action' => 'change->filter#submit',
+                    ],
                 ],
             ),
             new FilterFieldConfig(
@@ -137,6 +141,7 @@ class UserFilterConfig implements FilterConfigInterface
                         'Nom (de Z à A)' => 'DESC',
                     ],
                     'required' => false,
+                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
                     'attr' => ['class' => 'form-control']
                 ],
             ),

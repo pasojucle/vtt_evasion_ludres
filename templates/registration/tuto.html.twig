@@ -7,7 +7,7 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper background-blue background-color col-content">
-        {{ include('component/carrousel.html.twig') }}
+        {{ include('components/carrousel.html.twig') }}
         <div class="wrapper-content" style="height:100vh; overflow-y: scroll">
             <div class="reveal" data-controller="reveal" data-reveal-threshold-value="0.05">
                 {{ content.content | raw}}

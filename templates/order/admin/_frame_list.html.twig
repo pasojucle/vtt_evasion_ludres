@@ -1,13 +1,13 @@
 <turbo-frame id="order-list" class="block" data-with-skeleton="true">
-    {% include "component/_list_skeleton.html.twig" with {title: "Commandes"} %}
+    {% include "components/_list_skeleton.html.twig" with {title: "Commandes"} %}
     <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
         <div class="border border-border rounded-md">
-            <div class="bg-slate-300 pl-4 py-2 flex items-center">
+            <div class="bg-slate-300 pl-4 py-0.5 flex items-center">
                 <div class="uppercase text-white text-sm">
                     Commandes - <span class="">{{ list.paginator.total }}
                 </div>
                 <div class="ml-auto">
-                    {% include 'component/_dropdown.html.twig'  with {dropdown: list.tools} %}
+                    {% include 'components/_dropdown.html.twig'  with {dropdown: list.tools} %}
                 </div>
             </div>
             <ul id="orders_container">
@@ -17,17 +17,17 @@
                             <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir la commande" data-turbo-frame="_top">
                                 <span class="sr-only">Voir la commande</span>
                             </a>
-                            {% include 'component/_list_item.html.twig' with {
+                            {% include 'components/_list_item.html.twig' with {
                                 item: item, 
                                 grid_template_labels: 'grid-cols-[80px_auto_80px] lg:grid-cols-3', 
                                 grid_template_badges: 'grid-cols-1'
                             } %} 
-                            {% include 'component/_dropdown.html.twig' with {dropdown: item.dropdown} %}
+                            {% include 'components/_dropdown.html.twig' with {dropdown: item.dropdown} %}
                         </div>
                         <div>
                             {% if item.action %}
                             <div class="px-4 py-2 lg:p-0">
-                                {% include 'component/_button.html.twig' with {button: item.action} %}
+                                {% include 'components/_button.html.twig' with {button: item.action} %}
                             </div>
                             {% endif %}
                         </div>
@@ -35,9 +35,9 @@
                 {% endfor %}
             </ul>
             {% if list.items is empty %}
-                {% include "component/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucune commande'} %}
+                {% include "components/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucune commande'} %}
             {% endif %}
         </div>
-        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
+        {% include 'components/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>
 </turbo-frame>

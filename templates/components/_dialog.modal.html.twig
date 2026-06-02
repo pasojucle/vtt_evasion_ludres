@@ -1,6 +1,8 @@
 {% extends 'base_modal_stimulus.html.twig' %}
+
 {% set type = dialog.type %}
-{% import "component/_macros.html.twig" as utils %}
+
+{% import "components/_macros.html.twig" as utils %}
 {% block modal_title %}{{ dialog.title|capitalize }}{% endblock %}
 {% block body %}
     <p>{{ dialog.message|raw }}</p>

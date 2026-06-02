@@ -12,16 +12,16 @@
     {% if item.indicators is not null %}
         <div class="flex gap-1">
         {% for indicator in item.indicators %}
-            {% include 'component/_badge.html.twig' with {'badge': indicator} %}
+            {% include 'components/_badge.html.twig' with {'badge': indicator} %}
         {% endfor %}
         </div>
     {% endif %}
     {% if item.status is not null %}
         <div class="flex justify-start lg:justify-center">
-            {% include 'component/_badge.html.twig' with {'badge': item.status} %}
+            {% include 'components/_badge.html.twig' with {'badge': item.status} %}
         </div>
     {% endif %}
     {% if item.counter is not null %}
-        {% include 'component/_badge.html.twig' with {'badge': item.counter} %}
+        {% include 'components/_badge.html.twig' with {'badge': item.counter} %}
     {% endif %}
 </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Enum;
 
+use App\Dto\Enum\ColorVariant;
 use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -98,6 +99,25 @@ enum LicenceStateEnum: string implements TranslatableInterface
         ];
         
         return in_array($this, $validStates);
+    }
+
+    public function icon(): string
+    {
+        if ($this->isYearly()) {
+            return 'lucide:calendar-check';
+        }
+
+        return 'lucide:calendar-clock';
+    }
+
+
+    public function variant(): ColorVariant
+    {
+        if ($this->isYearly()) {
+            return ColorVariant::ACCENT;
+        }
+
+        return ColorVariant::WARNING;
     }
 
 

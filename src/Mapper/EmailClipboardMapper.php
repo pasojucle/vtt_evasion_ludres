@@ -13,7 +13,6 @@ class EmailClipboardMapper
         foreach ($entities as $entity) {
             $emails[] = $entity->getIdentity()->getEmail();
         }
-        dump(implode(',', $emails));
 
         return implode(',', $emails);
     }

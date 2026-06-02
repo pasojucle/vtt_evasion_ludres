@@ -9,7 +9,7 @@ use App\Dto\Enum\ActivityRestriction;
 use App\Dto\Enum\ActivityVisibility;
 use App\Dto\Filter\ActivityFilter;
 use App\Entity\BikeRideType;
-use App\Form\EventListener\ActivityFilterSubscriber;
+use App\Form\Filter\EventListener\ActivityFilterSubscriber;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

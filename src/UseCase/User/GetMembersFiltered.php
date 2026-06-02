@@ -79,6 +79,7 @@ class GetMembersFiltered extends GetUsersFiltered
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
                 new ButtonDto(
+                    variant: ColorVariant::DROPDOWN,
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_members_export'),
                     icon: 'lucide:file-down',
@@ -88,6 +89,7 @@ class GetMembersFiltered extends GetUsersFiltered
                     ],
                 ),
                 new ButtonDto(
+                    variant: ColorVariant::DROPDOWN,
                     label: 'Exporter les évaluations de la sélection',
                     url: $this->urlGenerator->generate('admin_user_skill_export'),
                     icon: 'lucide:file-down',
@@ -96,6 +98,7 @@ class GetMembersFiltered extends GetUsersFiltered
                     ],
                 ),
                 new ButtonDto(
+                    variant: ColorVariant::DROPDOWN,
                     label: 'Synthèse par saison',
                     url: $this->urlGenerator->generate('admin_overview_season'),
                     icon: 'lucide:chart-scatter',

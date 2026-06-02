@@ -9,7 +9,7 @@ use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\Filter\ActivityFilter;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
-use App\Form\ListFilterType;
+use App\Form\Filter\ListFilterType;
 use App\Repository\BikeRideRepository;
 use App\State\Activity\Processor\ActivityDeleteProcessor;
 use App\State\Activity\Provider\ActivityAdminListProvider;
@@ -56,7 +56,6 @@ class BikeRideController extends AbstractController
             'fields' => $filterConfig->getFields(),
             'advanced_fields' => $filterConfig->getAdvancedFields(),
             'event_subscriber' => $filterConfig->getEventSubscriber(),
-            'active_filters' => $filter->toArray(),
         ]);
         $form->handleRequest($request);
 
@@ -218,7 +217,7 @@ class BikeRideController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/_dialog.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'form' => $form->createView(),
             'dialog' => $provider->mapToView($bikeRide),
         ], $response);

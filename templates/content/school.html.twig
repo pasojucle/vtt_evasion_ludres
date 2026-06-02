@@ -10,7 +10,7 @@
 {% block body %}
     <div class="wrapper background-{{ background_color }} background-color col-content">
         {% if content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').CARROUSEL_AND_TEXT %}
-            {{ include('component/carrousel.html.twig') }}
+            {{ include('components/carrousel.html.twig') }}
         {% elseif content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').VIDEO_AND_TEXT %}
             <div class="wrapper-youtube lg:min-h-full w-full" data-controller="youtube-center">
                 <iframe 

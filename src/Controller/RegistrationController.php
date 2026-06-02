@@ -235,7 +235,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('contact', [], Response::HTTP_SEE_OTHER);
         }
     
-        return $this->render('component/alert.modal.html.twig', [
+        return $this->render('components/alert.modal.html.twig', [
             'form' => $form->createView(),
             'title' => 'Inscription école vtt',
             'message' => $parameterService->getSchoolTestingRegistration()['message'],

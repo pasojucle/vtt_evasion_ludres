@@ -141,7 +141,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('user_account', [], Response::HTTP_SEE_OTHER);
         }
     
-        return $this->render('component/alert.modal.html.twig', [
+        return $this->render('components/alert.modal.html.twig', [
             'form' => $form->createView(),
             'title' => 'Compte existant',
             'message' => sprintf('Le compte %s %s exite déjà', $name, $firstName),

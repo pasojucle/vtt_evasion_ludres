@@ -9,7 +9,7 @@ use App\Dto\Filter\UserFilter;
 use App\Entity\User;
 use App\Form\Admin\MemberType;
 use App\Form\Admin\UserBoardRoleType;
-use App\Form\ListFilterType;
+use App\Form\Filter\ListFilterType;
 use App\Repository\MemberRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
@@ -58,7 +58,6 @@ class UserController extends AbstractController
             'fields' => $filterConfig->getFields(),
             'advanced_fields' => $filterConfig->getAdvancedFields(),
             'event_subscriber' => $filterConfig->getEventSubscriber(),
-            'active_filters' => $filter->toArray(),
         ]);
         $form->handleRequest($request);
 
@@ -97,7 +96,6 @@ class UserController extends AbstractController
         UserListProvider $provider,
         Request $request
     ): JsonResponse {
-
         /**  @var UserFilter $filter */
         $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
 

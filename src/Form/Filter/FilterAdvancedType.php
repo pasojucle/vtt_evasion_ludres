@@ -2,17 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Filter;
 
+use App\Dto\Filter\AbstractFilter;
 use App\Service\Filter\FilterFieldConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ListFilterType extends AbstractType
+class FilterAdvancedType extends AbstractType
 {
-    public function __construct(
+        public function __construct(
         private UrlGeneratorInterface $urlGenerator,
     ) 
     {
@@ -21,25 +24,22 @@ class ListFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        foreach ($options['fields'] as $fieldConfig) {
-            if (!$fieldConfig->isSubscriberFlield) {
-
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $form = $event->getForm();
+            /** @var AbstractFilter $data */
+            $data = $event->getData();
+            $options = $form->getConfig()->getOptions();
+            foreach ($options['advanced_fields'] as $fieldConfig) {
                 /** @var FilterFieldConfig $fieldConfig */
-                $builder->add(
+                $form->add(
                     $fieldConfig->name,
                     $fieldConfig->type,
-                    $this->generateAutocompleteUrl($fieldConfig->options, $options['active_filters'])
+                    $this->generateAutocompleteUrl($fieldConfig->options, $data->AllowedtoArray($fieldConfig->allowedFilterNames))
                 );
             }
-        }
+        });
 
-        $builder ->setMethod('GET');
-        
-        if ($options['event_subscriber']) {
-            $builder->addEventSubscriber($options['event_subscriber']);
-        }
-            
-        foreach ($options['advanced_fields'] as $fieldConfig) {
+        foreach ($options['fields'] as $fieldConfig) {
             /** @var FilterFieldConfig $fieldConfig */
             $builder->add(
                 $fieldConfig->name,
@@ -59,20 +59,19 @@ class ListFilterType extends AbstractType
         return $options;
     }
 
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => null,
             'fields' => [],
             'advanced_fields' => [],
-            'active_filters' => [],
-            'event_subscriber' => null,
             'csrf_protection' => false,
             'attr' => [
                 'data-filter-target' => "form",
+                'data-controller' => "filter",
                 'data-turbo-frame' => '_top',
-            ],
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit'
+                ],
         ]);
 
         $resolver->setAllowedTypes('fields', 'array');

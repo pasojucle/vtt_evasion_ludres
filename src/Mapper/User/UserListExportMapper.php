@@ -7,7 +7,7 @@ namespace App\Mapper\User;
 use App\Service\IdentityService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class UserAdminListExportMapper
+class UserListExportMapper
 {
     private const CSV_SEPARATOR = ",";
     
@@ -24,7 +24,7 @@ class UserAdminListExportMapper
         }
         $fp = fopen('php://output', 'w');
         
-        $headers = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Lieu de naissance', 'Département de naissance', 'Pays de naissance', 'Année', '3 séances d\'essai'];
+        $headers = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Lieu de naissance', 'Département de naissance', 'Pays de naissance', 'Année', 'Licence'];
         fputcsv($fp, $headers, self::CSV_SEPARATOR);
 
         foreach ($entities as $entity) {
@@ -45,7 +45,7 @@ class UserAdminListExportMapper
                 $birthDepartment,
                 $birthCountry,
                 sprintf('%s - %s', (string) ($season - 1), (string) $season),
-                $licenceState->isYearly() ? 0 : 1,
+                $licenceState->isYearly() ? 'Saison' : '3 séances d\'essai',
                 $licenceState->trans($this->translator)
             ];
             

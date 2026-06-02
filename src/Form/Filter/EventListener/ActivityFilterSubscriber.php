@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Form\EventListener;
+namespace App\Form\Filter\EventListener;
 
 use App\Dto\Enum\ActivityPeriod;
 use DateTime;

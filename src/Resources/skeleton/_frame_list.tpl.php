@@ -1,5 +1,5 @@
 <turbo-frame id="<?= strtolower($entity_name) ?>-list" data-with-skeleton="true">
-    {% include "component/_list_skeleton.html.twig" with {title: "<?= ucfirst($entity_name) ?>s"} %}
+    {% include "components/_list_skeleton.html.twig" with {title: "<?= ucfirst($entity_name) ?>s"} %}
     <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
         <div class="border border-border rounded-md">
             <div class="bg-slate-300 uppercase px-4 py-2 text-white text-sm">
@@ -11,19 +11,19 @@
                         <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir l'élément" data-turbo-frame="_top">
                             <span class="sr-only">Voir l'élément</span>
                         </a>
-                        {% include 'component/_list_item.html.twig' with {
+                        {% include 'components/_list_item.html.twig' with {
                             item: item, 
                             grid_template_labels: 'grid-cols-[80px_auto]', 
                             grid_template_badges: 'grid-cols-[80px_auto_40px]'
                             } %} 
-                        {% include 'component/_dropdown.html.twig' with {dropdown: item.dropdown} %}
+                        {% include 'components/_dropdown.html.twig' with {dropdown: item.dropdown} %}
                     </li>
                 {% endfor %}
             </ul>
             {% if list.items is empty %}
-                {% include "component/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucun résultat'} %}
+                {% include "components/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucun résultat'} %}
             {% endif %}
         </div>
-        {% include 'component/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
+        {% include 'components/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
     </div>
 </turbo-frame>

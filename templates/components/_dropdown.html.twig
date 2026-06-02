@@ -5,7 +5,7 @@
     (enum('App\\Dto\\Enum\\RoundedVariant').ROUNDED_NONE.value): '',
 } %}
 
-{% import "component/_macros.html.twig" as utils %}
+{% import "components/_macros.html.twig" as utils %}
 
 {% set position_classes = (enum('App\\Dto\\Enum\\DropdownVariant').LIST_ITEM == dropdown.variant)
   ? 'absolute h-full w-8 right-0 top-0'
@@ -41,7 +41,7 @@
       {{ dropdown.title }}
     </div>
     {% endif %}
-    <ul class="[&>*:not(:first-child)]:border-t-1 [&>*:not(:first-child)]:border-border">
+    <ul class="[&>*:not(:first-child)]:border-t-1 [&>*:not(:first-child)]:border-border max-h-80 overflow-y-auto">
       {% for item in dropdown.infoItems %}
           <li class="px-3 py-2 text-primary italic flex items-center gap-2">
             {{ ux_icon(item.icon) }} {{ item.label }}
@@ -50,7 +50,7 @@
 
       {% for item in dropdown.menuItems %}
           <li>
-            {% include 'component/_button.html.twig'  with {button: item} %}
+            {% include 'components/_button.html.twig'  with {button: item} %}
           </li>
       {% endfor %}
       {% for item in dropdown.actionItems %}

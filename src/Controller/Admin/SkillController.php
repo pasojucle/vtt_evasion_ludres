@@ -189,7 +189,7 @@ class SkillController extends AbstractController
         }
 
 
-        return $this->render('component/_dialog.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'form' => $form->createView(),
             'dialog' => $provider->mapToView($skill),
         ], $response);

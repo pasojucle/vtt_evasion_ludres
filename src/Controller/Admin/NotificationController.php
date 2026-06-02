@@ -7,7 +7,7 @@ namespace App\Controller\Admin;
 use App\Dto\Filter\NotificationFilter;
 use App\Entity\Notification;
 use App\Form\Admin\NotificationType;
-use App\Form\ListFilterType;
+use App\Form\Filter\ListFilterType;
 use App\State\Notification\Processor\NotificationToggleProcessor;
 use App\State\Notification\Provider\NotificationAdminListProvider;
 use App\State\Notification\Provider\NotificationToggleProvider;
@@ -125,7 +125,7 @@ class NotificationController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/_dialog.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'dialog' => $provider->mapToView($notification),
             'form' => $form->createView(),
         ], $response);

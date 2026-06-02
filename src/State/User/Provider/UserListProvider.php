@@ -6,9 +6,9 @@ namespace App\State\User\Provider;
 
 use App\Dto\ListDto;
 use App\Dto\Filter\UserFilter;
-use App\Entity\Enum\LevelType;
 use App\Mapper\EmailClipboardMapper;
-use App\Mapper\User\UserAdminListExportMapper;
+use App\Mapper\LevelFilterMapper;
+use App\Mapper\User\UserListExportMapper;
 use App\Mapper\User\UserAutocompleteMapper;
 use App\Mapper\User\UserListMapper;
 use App\Repository\MemberRepository;
@@ -24,9 +24,10 @@ class UserListProvider
     public function __construct(
         private MemberRepository $memberRepository,
         private PaginatorService $paginator,
+        private LevelFilterMapper $levelFilterMapper,
         private UserListMapper $mapper,
         private UserAutocompleteMapper $autocompleteMapper,
-        private UserAdminListExportMapper $exportMapper,
+        private UserListExportMapper $exportMapper,
         private EmailClipboardMapper $emailClipboardMapper,
     ) {
     }
@@ -88,21 +89,8 @@ class UserListProvider
         }
 
         if (!empty($filter->levels)) {
-            $levelTypes = [];
-            $levels = [];
-            $boardMember = false;
-            foreach($filter->levels as $level) {
-                if (is_string($level)) {
-                    $levelType = LevelType::tryFrom($level);
-                    if ($levelType) {
-                        $levelTypes[] = $levelType;
-                        continue;
-                    }
-                    
-                }
-                $levels[] = (int) $level;
-            }
-            $this->memberRepository->filterLevels($qb, $levelTypes, $levels, $boardMember);
+            [$levelTypes, $levels] = $this->levelFilterMapper->parseRawLevels($filter->levels);
+            $this->memberRepository->filterLevels($qb, $levelTypes, $levels);
         }
 
         if ($filter->permissions) {

@@ -15,7 +15,7 @@
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_board_role_edit') }}" class="btn btn-primary" title="Ajouter un role"><i class="fas fa-plus"></i> Ajouter un role</a>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
             <ul 
                 class="list-group sortable"
                 data-controller="sortable"
@@ -41,7 +41,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 </div>

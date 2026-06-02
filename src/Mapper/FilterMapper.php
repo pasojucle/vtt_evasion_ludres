@@ -54,9 +54,15 @@ class FilterMapper
                 continue;
             }
 
-            if ($type->getName() === 'array' && is_array($rawValue)) {
-                $arguments[$name] = $this->mapArrayValue($rawValue, $name, $docBlock);
-                continue;
+            if ($type->getName() === 'array') {
+
+                if (is_string($rawValue)) {
+                    $rawValue = explode(',', $rawValue);
+                }
+                if (is_array($rawValue)) {
+                    $arguments[$name] = $this->mapArrayValue($rawValue, $name, $docBlock);
+                    continue;
+                }
             }
 
             if ($type->isBuiltin()) {

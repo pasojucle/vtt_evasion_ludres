@@ -11,7 +11,7 @@ use App\Entity\History;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
 use App\Form\Admin\SurveyType;
-use App\Form\ListFilterType;
+use App\Form\Filter\ListFilterType;
 use App\Repository\SurveyIssueRepository;
 use App\Service\SurveyService;
 use App\State\Survey\Processor\SurveyDeleteProcessor;
@@ -290,7 +290,7 @@ class SurveyController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('component/_dialog.modal.html.twig', [
+        return $this->render('components/_dialog.modal.html.twig', [
             'dialog' => $provider->mapToView($survey),
             'form' => $form->createView(),
         ], $response);

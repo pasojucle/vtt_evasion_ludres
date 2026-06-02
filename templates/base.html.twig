@@ -33,7 +33,7 @@
         {% block background %}{% endblock %}
         {% set display_nav =  not isAdmin and app.request.get('_route') != 'splash' %}
         {% if display_nav %}
-            {% include 'component/header.html.twig' %}
+            {% include 'components/header.html.twig' %}
             {% include 'navigation/front.html.twig' %}
             {% include 'navigation/navbar.html.twig' %}
         {% endif %}
@@ -62,9 +62,9 @@
                 </div>
             {% block body %}{% endblock %}
             {% if display_nav %}
-                {% include 'component/footer.html.twig' %}
+                {% include 'components/footer.html.twig' %}
             {% endif %}
-            {% include "component/_dialog.html.twig" %}
+            {% include "components/_dialog.html.twig" %}
         </main>
     </body>
     {% block javascripts %}

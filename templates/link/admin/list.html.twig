@@ -14,7 +14,7 @@
             </nav>
         <div class="wrapper-body">
             <a href="{{ path('admin_link_edit') }}" class="btn btn-primary" title="Ajouter un lien"><i class="fas fa-plus"></i> Ajouter un lien</a>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
             <ul 
                 class="list-group sortable"
                 data-controller="sortable"
@@ -31,7 +31,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'components/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 </div>
