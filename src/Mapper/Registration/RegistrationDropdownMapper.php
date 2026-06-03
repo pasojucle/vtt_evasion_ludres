@@ -9,13 +9,11 @@ use App\Dto\DropdownDto;
 use App\Dto\HtmlAttributDto;
 use App\Entity\User;
 use App\Mapper\User\UserDropdownMapper;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationDropdownMapper
 {
     public function __construct(
-        private Security $security,
         private UrlGeneratorInterface $urlGenerator,
         private UserDropdownMapper $userDropdownMapper,
     ) {

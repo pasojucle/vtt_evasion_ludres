@@ -78,18 +78,16 @@ class RegistrationListProvider
     {
         $qb = $this->memberRepository->getMemberQuery();
 
-        if ($filter->status) {
-            $currentSeason = $this->seasonService->getCurrentSeason();
-            match($filter->status) {
-                RegistrationStatus::TESTING_IN_PROGRESS => $this->memberRepository->filterTestinInProgress($qb, $currentSeason),
-                RegistrationStatus::TESTING_COMPLETE => $this->memberRepository->filterTestinComplete($qb, $currentSeason),
-                RegistrationStatus::NEW => $this->memberRepository->filterNew($qb, $currentSeason),
-                RegistrationStatus::WAITING_RENEW => $this->memberRepository->filterWaitingRenew($qb, $currentSeason),
-                RegistrationStatus::IN_PROCESSING => $this->memberRepository->filterInProcessing($qb, $currentSeason),
-                RegistrationStatus::TO_REGISTER => $this->memberRepository->filterToRegister($qb, $currentSeason),
-                default => $this->memberRepository->filterRegistrationBySeason($qb, $currentSeason),
-            };
-        }
+        $currentSeason = $this->seasonService->getCurrentSeason();
+        match($filter->status) {
+            RegistrationStatus::TESTING_IN_PROGRESS => $this->memberRepository->filterTestinInProgress($qb, $currentSeason),
+            RegistrationStatus::TESTING_COMPLETE => $this->memberRepository->filterTestinComplete($qb, $currentSeason),
+            RegistrationStatus::NEW => $this->memberRepository->filterNew($qb, $currentSeason),
+            RegistrationStatus::WAITING_RENEW => $this->memberRepository->filterWaitingRenew($qb, $currentSeason),
+            RegistrationStatus::IN_PROCESSING => $this->memberRepository->filterInProcessing($qb, $currentSeason),
+            RegistrationStatus::TO_REGISTER => $this->memberRepository->filterToRegister($qb, $currentSeason),
+            default => $this->memberRepository->filterRegistrationBySeason($qb, $currentSeason),
+        };
 
         if ($filter->member) {
             $this->memberRepository->filterMember($qb, $filter->member->getId());

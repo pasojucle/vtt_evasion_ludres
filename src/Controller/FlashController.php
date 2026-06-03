@@ -16,6 +16,7 @@ class FlashController extends AbstractController
         Request $request
     ): Response
     {
+        /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
         $session = $request->getSession();
 
         return $this->render('components/_flashes_frame.html.twig', [

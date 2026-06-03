@@ -19,7 +19,6 @@ use App\Dto\ListDto;
 use App\Dto\ListItemDto;
 use App\Entity\Licence;
 use App\Entity\Member;
-use App\Entity\User;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
@@ -136,7 +135,7 @@ class RegistrationListMapper
         );
     }
 
-    private function getIndicators(User $entity): array
+    private function getIndicators(Member $entity): array
     {
         $indicators = [];
         $licence = $entity->getLastLicence();

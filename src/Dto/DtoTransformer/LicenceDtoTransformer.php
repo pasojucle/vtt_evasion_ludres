@@ -229,7 +229,7 @@ class LicenceDtoTransformer
         $member = $licence->getUser();
         if ($member instanceof Member && $licence->getState()->isYearly()) {
             $isRenovating = $this->isRenovating($member, $currentSeason);
-            $membershipFee = (null !== $licence->getCoverage() && $licence->getState()->isYearly())
+            $membershipFee = (null !== $licence->getCoverage())
                 ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), !$isRenovating, $licence->getFamilyMember())
                 : null;
             if (null !== $membershipFee) {

@@ -12,13 +12,11 @@ use App\Form\ChoiceProvider\LevelChoiceProvider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationFilterConfig implements FilterConfigInterface
 {
     public function __construct(
         private LevelChoiceProvider $levelChoiceProvider,
-        private UrlGeneratorInterface $urlGenerator,
     )
     { 
 
@@ -50,6 +48,7 @@ class RegistrationFilterConfig implements FilterConfigInterface
                     'label' => false,
                     'class' => RegistrationStatus::class,
                     'autocomplete' => true,
+                    'required' => true,
                     'attr' => [
                         'data-action' => 'change->filter#submit'
                     ],

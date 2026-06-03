@@ -50,17 +50,16 @@ class GetCurrentSeasonUsers
         return $usersByType;
     }
 
-    private function getYearlyType(Licence $licence, array $lastSeasonLicences): ?string
+    private function getYearlyType(Licence $licence, array $lastSeasonLicences): string
     {
         if ($licence->getState()->isValid()) {
             return self::MEMBER;
         }
-        if (!$licence->getState()->isValid()) {
-            if (array_key_exists($licence->getUser()->getId(), $lastSeasonLicences)) {
-                return self::RE_REGISTRATION;
-            }
-            return self::REGISTRATION;
+
+        if (array_key_exists($licence->getUser()->getId(), $lastSeasonLicences)) {
+            return self::RE_REGISTRATION;
         }
-        return null;
+
+        return self::REGISTRATION;
     }
 }
