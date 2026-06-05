@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Controller\AbstractCrudController;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\Form\LicenceRegister;
 use App\Entity\Licence;
 use App\Form\Admin\LicenceRegisterType;
 use App\Form\Admin\LicenceRejectType;
@@ -12,18 +14,18 @@ use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\State\Licence\Processor\LicenceDeleteProcessor;
 use App\State\Licence\Processor\LicenceReceiveProcessor;
+use App\State\Licence\Processor\LicenceRegisterProcessor;
 use App\State\Licence\Provider\LicenceDeleteProvider;
 use App\State\Licence\Provider\LicenceReceiveProvider;
-use App\UseCase\Licence\ValidateLicence;
+use App\State\Licence\Provider\LicenceRegisterProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class LicenceController extends AbstractController
+class LicenceController extends AbstractCrudController
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -70,28 +72,7 @@ class LicenceController extends AbstractController
         LicenceReceiveProcessor $processor,
         Licence $licence
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $result = $processor->process($licence, $request->query->get('filter'));
-                $this->addFlash($result->flashType, $result->messageKey);
-                if ($result->targetRoute) {
-                    $response = $this->redirectToRoute($result->targetRoute, $result->routeParams);
-                    return $response;
-                }
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($licence)
-        ], $response);
+        return $this->handleDialogAction($request, $licence, $provider, $processor);
     }
 
     #[Route('/admin/inscription/reject/{licence}', name: 'admin_registration_reject', methods: ['GET', 'POST'])]
@@ -145,40 +126,25 @@ class LicenceController extends AbstractController
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionRegister(
         Request $request,
-        ValidateLicence $validateLicence,
+        LicenceRegisterProvider $provider,
+        LicenceRegisterProcessor $processor,
         Licence $licence
     ): Response {
-        $user = $licence->getMember();
-        $fullName = $user->getIdentity()->getFullName();
-        $response = new Response("OK", Response::HTTP_OK);
-        $data = [
-            'licenceNumber' => $user->getLicenceNumber(),
-            'medicalCertificateDate' => $user->getHealth()->getMedicalCertificateDate(),
-        ];
-        $form = $this->createForm(LicenceRegisterType::class, $data, [
-            'is_yearly' => $licence->getState()->isYearly(),
-            'licences' => $user->getLicences(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $validateLicence->execute($request, $licence);
+        $member = $licence->getMember();
 
-                $this->addFlash('success', "Le dossier de {$fullName} a bien été inscrit à la fédération");
-
-                return $this->redirectToRoute('admin_registration_list', [
-                    'filtered' => true,
-                    'p' => $request->query->get('p'),
-                ]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('licence/admin/register.modal.html.twig', [
-            'form' => $form->createView(),
-            'licence' => $licence,
-            'fullname' => $fullName,
-        ], $response);
+        return $this->handleDialogAction(
+            request: $request,
+            object: new LicenceRegister(
+                $licence,
+                $member->getLicenceNumber(),
+                $member->getHealth()->getMedicalCertificateDate()
+            ),
+            provider: $provider,
+            processor: $processor,
+            formClass: LicenceRegisterType::class,
+            formOptions: [ 
+                'disabled_licence_number' => count($member->getLicences()) > 1 || !$licence->getState()->isYearly(),
+            ]
+        );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Dto\Form\LicenceRegister;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -15,12 +16,10 @@ class LicenceRegisterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $disabled = count($options['licences']) > 1 || !$options['is_yearly'];
-
         $builder
             ->add('licenceNumber', TextType::class, [
                 'label' => 'Numéro de licence',
-                'disabled' => $disabled,
+                'disabled' => $options['disabled_licence_number'],
                 'constraints' => [
                     new Length([
                         'max' => 25,
@@ -50,8 +49,8 @@ class LicenceRegisterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'licences' => [],
-            'is_yearly' => false,
+            'data_class' => LicenceRegister::class,
+            'disabled_licence_number' => false,
         ]);
     }
 }

@@ -36,6 +36,16 @@ licence:
     yearly_file_submitted: Licence annuelle enregistrée
     yearly_file_received: Licence annuelle reçue par le club
     yearly_file_registred: Licence annuelle enregistrée par la fédération
+  short_state:
+    trial_file_pending: Création
+    trial_file_submitted: Enregistrée
+    trial_file_received: Reçue
+    trial_completed: Terminée
+    yearly_file_pending: Création
+    yearly_file_submitted: Enregistrée
+    yearly_file_received: Reçue
+    yearly_file_registred: FFVélo
+    
 
     cancelled: Licence annulée
     expired: Licence expirée

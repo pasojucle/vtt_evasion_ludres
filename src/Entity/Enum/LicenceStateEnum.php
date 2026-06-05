@@ -121,6 +121,12 @@ enum LicenceStateEnum: string implements TranslatableInterface
     }
 
 
+    public function shortTrans(TranslatorInterface $translator, ?string $locale = null): string
+    {
+        return $translator->trans('licence.short_state.' . $this->value, locale: $locale);
+    }
+
+
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
         return $translator->trans('licence.state.' . $this->value, locale: $locale);

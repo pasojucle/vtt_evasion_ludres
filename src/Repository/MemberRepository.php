@@ -1037,6 +1037,29 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
+    public function filterRenew(QueryBuilder &$qb, int $season): void
+    {
+        $usersWhithMoreThanLicence = $this->getEntityManager()->createQueryBuilder()
+            ->select('user')
+            ->from(User::class, 'user')
+            ->join('user.licences', 'userLicence')
+            ->groupBy('user.id')
+            ->andHaving(
+                $qb->expr()->gt($qb->expr()->count('userLicence.id'), 1),
+            );
+
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('li.state', ':statusRenew'),
+                $qb->expr()->in('m', $usersWhithMoreThanLicence->getDQL()),
+                $qb->expr()->eq('li.season', ':season'),
+            )
+            ->setParameter('statusRenew', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
+            ->setParameter('season', $season)
+            ->orderBy('i.name', 'ASC')
+        ;
+    }
+
     public function filterWaitingRenew(QueryBuilder &$qb, int $currentSeason): void
     {
         $usersWhithCurrentSeasonLicence = $this->getEntityManager()->createQueryBuilder()

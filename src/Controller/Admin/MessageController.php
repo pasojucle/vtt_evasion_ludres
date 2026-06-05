@@ -15,7 +15,7 @@ use App\Repository\ParameterGroupRepository;
 use App\Service\PaginatorService;
 use App\State\Message\Processor\MessageDeleteProcessor;
 use App\State\Message\Provider\MessageDeleteProvider;
-use App\State\Message\Provider\MessageProvider;
+use App\State\Message\Provider\MessageEditProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -94,7 +94,7 @@ class MessageController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminEditContent(
         Request $request,
-        MessageProvider $provider,
+        MessageEditProvider $provider,
         Message $message
     ): Response {
         $response = new Response("OK", Response::HTTP_OK);

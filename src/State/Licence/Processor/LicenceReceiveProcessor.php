@@ -8,9 +8,10 @@ use App\Dto\ProcessorResult;
 use App\Entity\Licence;
 use App\Service\FilterDecoderService;
 use App\Service\LicenceService;
+use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class LicenceReceiveProcessor
+class LicenceReceiveProcessor implements DialogProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -19,8 +20,10 @@ class LicenceReceiveProcessor
     ) {
     }
 
-    public function process(Licence $entity, ?string $filter): ProcessorResult
+    public function process(object $entity, ?string $filter): ProcessorResult
     {
+        assert($entity instanceof Licence);
+        
         $tansition = ($entity->getState()->isYearly()) ? 'receive_yearly_file' : 'receive_trial_file';
         if ($this->licenceService->applyTransition($entity, $tansition)) {
             $this->entityManager->flush();

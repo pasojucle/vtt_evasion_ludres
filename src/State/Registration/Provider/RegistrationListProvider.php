@@ -83,6 +83,7 @@ class RegistrationListProvider
             RegistrationStatus::TESTING_IN_PROGRESS => $this->memberRepository->filterTestinInProgress($qb, $currentSeason),
             RegistrationStatus::TESTING_COMPLETE => $this->memberRepository->filterTestinComplete($qb, $currentSeason),
             RegistrationStatus::NEW => $this->memberRepository->filterNew($qb, $currentSeason),
+            RegistrationStatus::RENEW => $this->memberRepository->filterRenew($qb, $currentSeason),
             RegistrationStatus::WAITING_RENEW => $this->memberRepository->filterWaitingRenew($qb, $currentSeason),
             RegistrationStatus::IN_PROCESSING => $this->memberRepository->filterInProcessing($qb, $currentSeason),
             RegistrationStatus::TO_REGISTER => $this->memberRepository->filterToRegister($qb, $currentSeason),

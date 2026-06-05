@@ -9,6 +9,7 @@ use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Member;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -166,7 +167,7 @@ class ReplaceKeywordsService
         return (DisplayModeEnum::FILE === $render) ? sprintf('<b>%s</b>', $authorizations['rightToTheImage']?->toString) : 'autorise';
     }
 
-    public function replaceCurrentSaison(string|bool|array|int|null $content): string|bool|array|int|null
+    public function replaceCurrentSaison(?string $content): ?string
     {
         if (is_string($content)) {
             $session = $this->requestStack->getSession();
@@ -176,10 +177,26 @@ class ReplaceKeywordsService
         return $content;
     }
 
-    public function replaceUserFullName(string|bool|array|int|null $content, UserDto $user): string|bool|array|int|null
+    public function replaceUserData(?string $content, Member $member): ?string
     {
         if (is_string($content)) {
-            return str_replace('{{ prenom_nom }}', (string) $user->member->fullName, $content);
+            $replaces = [
+                '{{ prenom_nom }}' => (string) $member->getMainIdentity()->getFullName(),
+                '{{ numero_licence }}' => $member->getLicenceNumber(),
+                '{{ email_principal }}' => $member->getMainIdentity()->getEmail(),
+            ];
+
+
+            $keyWords = $this->getKeyWords($content);
+
+            return str_replace(
+                array_map(function($keyWord) use  ($replaces) {
+                    if (array_key_exists($keyWord, $replaces)) return $keyWord;
+                }, $keyWords), 
+                array_map(fn($keyWord) => $replaces[$keyWord], $keyWords), $content);
+
+
+            return str_replace('{{ prenom_nom }}', (string) $member->getMainIdentity()->getFullName(), $content);
         }
 
         return $content;

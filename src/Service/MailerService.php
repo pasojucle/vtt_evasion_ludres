@@ -67,17 +67,18 @@ class MailerService
         }
     }
 
-    public function sendMailToMember(array|UserDto $user, string $subject, string $content, ?array $attachements = null, ?array $additionalParams = []): array
+    public function sendMailToMember(
+        string $userEmail,
+        string $fullName, 
+        string $subject, 
+        string $content, 
+        ?array $attachements = null,
+    ): array
     {
-        list($userEmail, $fullName) = $this->getUserData($user);
         [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
 
         if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
             $userEmail = $clubEmail->getAddress();
-        }
-
-        if ($user instanceof UserDto) {
-            $content = $this->replaceKeywords->replace($content, $user, DisplayModeEnum::FILE, $additionalParams);
         }
 
         try {

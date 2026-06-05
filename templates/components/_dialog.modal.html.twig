@@ -6,6 +6,9 @@
 {% block modal_title %}{{ dialog.title|capitalize }}{% endblock %}
 {% block body %}
     <p>{{ dialog.message|raw }}</p>
+    {% for child in form.children %}
+        {{ form_row(child) }}
+    {% endfor %}
 {% endblock %}
 {% block action %}
     <button 

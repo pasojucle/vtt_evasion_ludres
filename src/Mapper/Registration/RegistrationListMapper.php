@@ -27,6 +27,7 @@ use App\Service\Filter\FilterConfigInterface;
 use App\Service\UserService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationListMapper
 {
@@ -37,6 +38,7 @@ class RegistrationListMapper
         private PaginatorMapper $paginatorMapper,
         private RegistrationDropdownMapper $registrationDropdownMapper,
         private UserService $userService,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -51,16 +53,16 @@ class RegistrationListMapper
         /** @var Member $entity */
         foreach ($entities as $entity) {
             $identity = $entity->getIdentity();
-            $level = $entity->getLevel();
             $licence = $entity->getLastLicence();
+            $state = $licence->getState();
             $items[] = new ListItemDto(
                 labels: [
                     new LabelDto($identity->getFullName()),
                 ],
                 indicators: $this->getIndicators($entity),
                 status: new BadgeDto(
-                    value:$level->getTitle(), 
-                    color: $level->getColor(),
+                    value:$state->shortTrans($this->translator), 
+                    variant: $state->variant(),
                 ),
                 dropdown: $this->registrationDropdownMapper->mapToView($entity),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
@@ -151,6 +153,11 @@ class RegistrationListMapper
                 variant: ColorVariant::DEFAULT,
             );
         }
+        $level = $entity->getLevel();
+        $indicators[] = new BadgeDto(
+            value:$level->getTitle(), 
+            color: $level->getColor(),
+        );
 
         return $indicators;
     }
