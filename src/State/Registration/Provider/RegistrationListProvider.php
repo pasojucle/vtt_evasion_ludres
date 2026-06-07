@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\Registration\Provider;
 
 use App\Dto\Enum\RegistrationStatus;
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\RegistrationFilter;
 use App\Dto\ListDto;
 use App\Mapper\EmailClipboardMapper;
@@ -17,9 +18,10 @@ use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use App\State\FilterHydratorTrait;
+use App\State\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class RegistrationListProvider
+class RegistrationListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
 
@@ -35,8 +37,10 @@ class RegistrationListProvider
     ) {
     }
 
-    public function getCollection(RegistrationFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
     {
+        assert($filter instanceof RegistrationFilter);
+
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
@@ -61,8 +65,10 @@ class RegistrationListProvider
         return $this->autocompleteMapper->mapToChoices($qb->getQuery()->getResult());
     }
 
-    public function streamExportContent(RegistrationFilter $filter): void
+    public function streamExportContent(AbstractFilter $filter): void
     {
+        assert($filter instanceof RegistrationFilter);
+
         $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
 
         $this->exportMapper->streamToCsv($entities);
