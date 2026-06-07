@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\UseCase\Registration;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
 use App\Service\MailerService;
@@ -18,7 +17,6 @@ class FramerParticipation
         private readonly SessionRepository $sessionRepository,
         private readonly MessageService $messageService,
         private readonly MailerService $mailerService,
-        private readonly UserDtoTransformer $userDtoTransformer,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -33,13 +31,13 @@ class FramerParticipation
 
             /** @var Session $session */
             foreach ($sessions as $session) {
-                $user = $this->userDtoTransformer->fromEntity($session->getMember());
+                $mainIdentity = $session->getMember()->getMainIdentity();
                 $bikeRideDto = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
                 $params = [
                     '{{ rando }}' => sprintf('%s du %s', $bikeRideDto->title, $bikeRideDto->period),
                     '{{ lien_modifier_disponibilite }}' => $this->urlGenerator->generate('session_availability_edit', ['session' => $session->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
                 ];
-                $this->mailerService->sendMailToMember($user, $subject, $message, null, $params);
+                $this->mailerService->sendMailToMember($$mainIdentity->getEmail(), $mainIdentity->getFullName(), $subject, $message);
             }
         }
 

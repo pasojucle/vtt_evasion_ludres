@@ -6,6 +6,7 @@ namespace App\State\Licence\Processor;
 
 use App\Dto\Form\LicenceRegister;
 use App\Dto\ProcessorResult;
+use App\Dto\Service\MailerResult;
 use App\Entity\Member;
 use App\Service\FilterDecoderService;
 use App\Service\LicenceService;
@@ -39,25 +40,34 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
 
         $this->entityManager->flush();
 
-        $this->sendMail($licenceNumber, $member);
-
-        return new ProcessorResult(
+        $result = $this->sendMail($licenceNumber, $member);
+        if (false === $result?->success) {
+            return new ProcessorResult(
             success: false,
             targetRoute: 'admin_registration_list',
             routeParams: $this->filterDecoder->decode($filter),
-            messageKey: 'registration.flash.error.received',
+            messageKey: 'registration.flash.danger.received',
             flashType: 'danger',
+        );
+        }
+
+        return new ProcessorResult(
+            success: true,
+            targetRoute: 'admin_registration_list',
+            routeParams: $this->filterDecoder->decode($filter),
+            messageKey: 'registration.flash.success.received',
+            flashType: 'success',
         );
     }
 
-    private function setLicenceNumber(LicenceRegister $licenceRegister, Member $member)
+    private function setLicenceNumber(LicenceRegister $licenceRegister, Member $member): void
     {
         if ($licenceRegister->licenceNumber) {
             $member->setLicenceNumber($licenceRegister->licenceNumber);
         }
     }
 
-    private function setMedicalCertificateDate(LicenceRegister $licenceRegister, Member $member)
+    private function setMedicalCertificateDate(LicenceRegister $licenceRegister, Member $member): void
     {
         if ($licenceRegister->medicalCertificateDate) {
             $health = $member->getHealth();
@@ -65,17 +75,18 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
         }
     }
 
-    private function sendMail(string $licenceNumber, Member $member)
+    private function sendMail(string $licenceNumber, Member $member): ?MailerResult
     {
         if ($licenceNumber !== $member->getLicenceNumber()) {
             $mainIdentity = $member->getMainIdentity();
-            $subject = 'Votre numero de licence';
-            $this->mailerService->sendMailToMember(
+            return $this->mailerService->sendMailToMember(
                 $mainIdentity->getEmail(),
                 $mainIdentity->getFullName(),
-                $subject, 
+                'Votre numero de licence', 
                 $this->messageProvider->getMessageByName('EMAIL_LICENCE_VALIDATE', $member)
             );
         }
+
+        return null;
     }
 }

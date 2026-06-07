@@ -119,11 +119,10 @@ class SessionService
     {
         $trialSessionsPresent = $this->userService->trialSessionsPresent($member->getLastLicence(), $member);
         $isEndTesting = $this->userService->isEndTesting($member->getLastLicence(), $trialSessionsPresent);
-        $identity = $member->getIdentity();
-        $user = ['email' => $member->getContactEmail(), 'name' => $identity->getName(), 'firstName' => $identity->getFirstName()];
+        $identity = $member->getMainIdentity();
         if ($isEndTesting) {
             $subject = 'Fin de la période d\'essai';
-            $this->mailerService->sendMailToMember($user, $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
+            $this->mailerService->sendMailToMember($identity->getEmail(), $identity->getFullName(), $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
         }
     }
 

@@ -9,6 +9,7 @@ use App\Entity\BikeRide;
 use App\Entity\Member;
 use App\Service\MailerService;
 use App\Service\MessageService;
+use App\Service\ReplaceKeywordsService;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class MailerSendUsersOffSite
@@ -16,6 +17,7 @@ class MailerSendUsersOffSite
     public function __construct(
         private MailerService $mailerService,
         private MessageService $messageService,
+        private ReplaceKeywordsService $replaceKeywords,
         private Security $security,
         private UserDtoTransformer $userDtoTransformer,
     ) {
@@ -27,7 +29,8 @@ class MailerSendUsersOffSite
             $content = $this->messageService->getMessageByName('BIKE_RIDE_ABSENCE_EMAIL');
             $bikeRideTitle = $bikeRide->getTitle();
             foreach ($usersOffSite['users'] as $member) {
-                $this->mailerService->sendMailToMember($member, $bikeRideTitle, $content, null, $this->additionalParams($bikeRideTitle));
+                $this->replaceKeywords->replaceFromParams($content, $this->additionalParams($bikeRideTitle));
+                $this->mailerService->sendMailToMember($member->email, $member->fullName, $bikeRideTitle, $content);
             }
         }
     }

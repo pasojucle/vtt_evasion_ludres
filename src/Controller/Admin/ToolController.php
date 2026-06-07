@@ -15,7 +15,6 @@ use App\Repository\ParameterRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
-use App\Service\UserService;
 use App\State\Member\Processor\MemberDeleteProcessor;
 use App\State\Member\Provider\MemberDeleteProvider;
 use App\UseCase\CronTab\CronTabLog;
@@ -103,7 +102,7 @@ class ToolController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $licence = $data['user']->getLastLicence();
-            $member = $userDtoTransformer->identifiersFromEntity($data['user']);
+            $identity = $data['user']->getMainIdentity();
             /** @var SubmitButton $submit */
             $submit = $form->get('submit');
             $content = ($submit->isClicked())
@@ -116,15 +115,15 @@ class ToolController extends AbstractController
             if ($submit instanceof ClickableInterface && $submit->isClicked()) {
                 $subject = 'Votre inscription au club de Vtt Évasion Ludres';
 
-                $result = $mailerService->sendMailToMember($member, $subject, $content);
-                if ($result['success']) {
+                $result = $mailerService->sendMailToMember($identity->getEmail(), $identity->getFullName(), $subject, $content);
+                if ($result->success) {
                     $licence->setState((LicenceStateEnum::TRIAL_FILE_SUBMITTED === $licence->getState())
                         ? LicenceStateEnum::TRIAL_FILE_PENDING
                         : LicenceStateEnum::YEARLY_FILE_PENDING);
                     $this->entityManager->persist($licence);
                     $this->entityManager->flush();
                 } else {
-                    $form->addError(new FormError($result['message']));
+                    $form->addError(new FormError($result->errorMessage));
                 }
             }
         }

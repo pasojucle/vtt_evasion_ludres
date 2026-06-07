@@ -39,7 +39,7 @@ class ReplaceKeywordsService
         return $content;
     }
 
-    public function replaceWhithParams(string $content, array $parrams)
+    public function replaceFromParams(string $content, array $parrams)
     {
         $keyWords = $this->getKeyWords($content);
         return str_replace($keyWords, $parrams, $content);
@@ -194,9 +194,6 @@ class ReplaceKeywordsService
                     if (array_key_exists($keyWord, $replaces)) return $keyWord;
                 }, $keyWords), 
                 array_map(fn($keyWord) => $replaces[$keyWord], $keyWords), $content);
-
-
-            return str_replace('{{ prenom_nom }}', (string) $member->getMainIdentity()->getFullName(), $content);
         }
 
         return $content;

@@ -6,6 +6,7 @@ namespace App\Mapper\Registration;
 
 use App\Dto\ButtonDto;
 use App\Dto\DropdownDto;
+use App\Dto\Enum\ColorVariant;
 use App\Dto\HtmlAttributDto;
 use App\Entity\User;
 use App\Mapper\User\UserDropdownMapper;
@@ -27,6 +28,7 @@ class RegistrationDropdownMapper
                 label: 'Inscription incompète',
                 url: $this->urlGenerator->generate('admin_registration_reject', ['licence' => $licence->getId()]),
                 icon: 'lucide:message-circle-warning',
+                variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
                     new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
                 ],
@@ -35,6 +37,7 @@ class RegistrationDropdownMapper
                 label: 'Supprimer l\'inscription',
                 url: $this->urlGenerator->generate('admin_delete_licence', ['licence' => $licence->getId()]),
                 icon: 'lucide:delete',
+                variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
                     new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
                 ],

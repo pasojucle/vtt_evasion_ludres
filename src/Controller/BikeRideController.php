@@ -62,12 +62,12 @@ class BikeRideController extends AbstractController
             if ($form->isValid()) {
                 $email = trim($form->getData()->getEmail());
                 $result = $sendLink->execute($email, $bikeRide);
-                if ($result['success']) {
+                if ($result->success) {
                     return $this->render('bike_ride/_frame_detail.html.twig', [
                         'email' => $email,
                     ]);
                 }
-                $errrorMessage = $result['message'];
+                $errrorMessage = $result->errorMessage;
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -77,7 +77,7 @@ class BikeRideController extends AbstractController
             'form' => $form->createView(),
             'bikeRide' => $bikeRideDtoTransformer->fromEntity($bikeRide),
             'isRegistrationEnabled' => $bikeRide->registrationEnabled(),
-        ], );
+        ], $response);
     }
 
     #[Route('/randonnee/traces/{bikeRide}/{slug}', name: 'bike_ride_tracks', methods: ['GET'])]

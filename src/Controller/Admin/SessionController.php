@@ -102,13 +102,15 @@ class SessionController extends AbstractController
         $form->add('sessionId', HiddenType::class, ['data' => $session->getId()]);
 
 
-        $user = $userDtoTransformer->getHeaderFromEntity($session->getMember());
+        $userDto = $userDtoTransformer->getHeaderFromEntity($session->getMember());
+        $member = $session->getMember();
+
         $message = '';
-        if ($user->mustProvideRegistration) {
-            $message = $messageService->getMessageByName('BIKE_RIDE_MUST_PROVIDE_REGISTRATION', $user);
+        if ($userDto->mustProvideRegistration) {
+            $message = $messageService->getMessageByName('BIKE_RIDE_MUST_PROVIDE_REGISTRATION', $member);
         }
-        if ($user->isEndTesting) {
-            $message = $messageService->getMessageByName('BIKE_RIDE_END_TESTING', $user);
+        if ($userDto->isEndTesting) {
+            $message = $messageService->getMessageByName('BIKE_RIDE_END_TESTING', $member);
         }
 
         return $this->render('session/admin/message.html.twig', [

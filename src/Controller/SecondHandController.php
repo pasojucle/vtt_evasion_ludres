@@ -16,6 +16,7 @@ use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
+use App\Service\ReplaceKeywordsService;
 use App\State\SecondHand\Processor\SecondHandDeleteProcessor;
 use App\State\SecondHand\Provider\SecondHandDeleteProvider;
 use App\UseCase\SecondHand\EditSecondHand;
@@ -32,6 +33,7 @@ class SecondHandController extends AbstractController
     public function __construct(
         private SecondHandDtoTransformer $secondHandDtoTransformer,
         private SecondHandRepository $secondHandRepository,
+        private ReplaceKeywordsService $replaceKeywords,
     ) {
     }
 
@@ -196,17 +198,18 @@ class SecondHandController extends AbstractController
             $buyer = $this->getUser();
             $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);
             $content = $messageService->getMessageByName('SECOND_HAND_CONTACT');
-            $additionalParams = [
+            $params = [
                 '{{ nom_annonce }}' => $secondHand->getName(),
                 '{{ telephone }}' => $buyerDto->member->phone,
                 '{{ email }}' => $buyerDto->mainEmail,
                 '{{ prenom_nom }}' => $buyerDto->member->fullName,
             ];
-            $seller = $secondHand->getMember();
-            $sellerDto = $userDtoTransformer->identifiersFromEntity($seller);
+            $content = $this->replaceKeywords->replaceFromParams($content, $params);
+            $identity = $secondHand->getMember()->getIdentity();
             $subject = sprintf('Votre annonce %s', $secondHand->GetName());
             
-            if ($mailerService->sendMailToMember($sellerDto, $subject, $content, null, $additionalParams)) {
+            $result = $mailerService->sendMailToMember($identity->getEmail(), $identity->getFullName(), $subject, $content);
+            if ($result->success) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
             } else {
                 $this->addFlash('danger', 'Une erreure est survenue');

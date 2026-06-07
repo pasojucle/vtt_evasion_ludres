@@ -28,4 +28,24 @@ class LicenceRegisterProvider implements DialogProviderInterface
             icon: 'lucide:check-check'
         );
     }
+
+    public function createContextObject(Licence $licence): LicenceRegister
+    {
+        $member = $licence->getMember();
+
+        return new LicenceRegister(
+            $licence,
+            $member->getLicenceNumber(),
+            $member->getHealth()->getMedicalCertificateDate()
+        );
+    }
+
+    public function getFormOptions(Licence $licence): array
+    {
+        $member = $licence->getMember();
+
+        return [
+            'disabled_licence_number' => count($member->getLicences()) > 1 || !$licence->getState()->isYearly(),
+        ];
+    }
 }

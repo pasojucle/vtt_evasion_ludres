@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\UserDto;
+use App\Entity\Member;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
 use App\Service\ReplaceKeywordsService;
@@ -33,14 +34,14 @@ class MessageService
         return $messages;
     }
 
-    public function getMessageByName(string $name, ?UserDto $user = null): string|bool|array|int|null
+    public function getMessageByName(string $name, ?Member $user = null): string|bool|array|int|null
     {
         $message = $this->messageRepository->findOneByName($name);
 
         if ($message) {
             $content = $message->getContent();
             if ($user) {
-                $content = $this->replaceKeywords->replaceUserFullName($content, $user);
+                $content = $this->replaceKeywords->replaceUserData($content, $user);
             }
 
             return $this->replaceKeywords->replaceCurrentSaison($content);

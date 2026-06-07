@@ -15,10 +15,11 @@ use App\Service\MailerService;
 use App\State\Licence\Processor\LicenceDeleteProcessor;
 use App\State\Licence\Processor\LicenceReceiveProcessor;
 use App\State\Licence\Processor\LicenceRegisterProcessor;
+use App\State\Licence\Processor\LicenceRejectProcessor;
 use App\State\Licence\Provider\LicenceDeleteProvider;
 use App\State\Licence\Provider\LicenceReceiveProvider;
 use App\State\Licence\Provider\LicenceRegisterProvider;
-use Doctrine\ORM\EntityManagerInterface;
+use App\State\Licence\Provider\LicenceRejectProvider;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,10 +28,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class LicenceController extends AbstractCrudController
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
-    }
-
     #[Route('/admin/inscription/delete/{licence}', name: 'admin_delete_licence', methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminDeleteLicence(
@@ -79,47 +76,17 @@ class LicenceController extends AbstractCrudController
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionReject(
         Request $request,
-        LicenceService $licenceService,
-        MailerService $mailerService,
-        UserDtoTransformer $userDtoTransformer,
+        LicenceRejectProcessor $processor,
+        LicenceRejectProvider $provider,
         Licence $licence
     ): Response {
-        $user = $licence->getMember();
-        $fullName = $user->getIdentity()->getFullName();
-        $content = 'Le dossier d\'inscription au club est incomplet ou non conforme. Merci de le transmettre à nouveau, signé, en tenant compte des modifications suivantes :';
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(LicenceRejectType::class, ['content' => $content], [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $subject = 'Votre inscription au club de Vtt Évasion Ludres';
-                $data = $form->getData();
-
-                $result = $mailerService->sendMailToMember($userDtoTransformer->fromEntity($licence->getMember()), $subject, $data['content']);
-                $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
-                if ($result['success'] && $licenceService->applyTransition($licence, $tansition)) {
-                    $this->entityManager->persist($licence);
-                    $this->entityManager->flush();
-                    $this->addFlash('success', "Le message a bien été envoyé");
-                } else {
-                    $this->addFlash('danger', "Une erreur est survenue");
-                }
-                return $this->redirectToRoute('admin_registration_list', [
-                    'filtered' => true,
-                    'p' => $request->query->get('p'),
-                ]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('licence/admin/reject.modal.html.twig', [
-            'form' => $form->createView(),
-            'licence' => $licence,
-            'fullname' => $fullName,
-        ], $response);
+        return $this->handleDialogAction(
+            request: $request,
+            object: $provider->createContextObject($licence),
+            provider: $provider,
+            processor: $processor,
+            formClass: LicenceRejectType::class,
+        );
     }
 
     #[Route('/admin/inscription/register/{licence}', name: 'admin_registration_register', methods: ['GET', 'POST'])]
@@ -130,21 +97,14 @@ class LicenceController extends AbstractCrudController
         LicenceRegisterProcessor $processor,
         Licence $licence
     ): Response {
-        $member = $licence->getMember();
 
         return $this->handleDialogAction(
             request: $request,
-            object: new LicenceRegister(
-                $licence,
-                $member->getLicenceNumber(),
-                $member->getHealth()->getMedicalCertificateDate()
-            ),
+            object: $provider->createContextObject($licence),
             provider: $provider,
             processor: $processor,
             formClass: LicenceRegisterType::class,
-            formOptions: [ 
-                'disabled_licence_number' => count($member->getLicences()) > 1 || !$licence->getState()->isYearly(),
-            ]
+            formOptions: $provider->getFormOptions($licence)
         );
     }
 }

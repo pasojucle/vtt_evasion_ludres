@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationProgressDto;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
@@ -35,7 +34,6 @@ class EditRegistration
         private EntityManagerInterface $entityManager,
         private UploadService $uploadService,
         private MemberRepository $memberRepository,
-        private UserDtoTransformer $userDtoTransformer,
         private UserPasswordHasherInterface $passwordHasher,
         private UrlGeneratorInterface $urlGenerator,
         private GardianService $gardianService,
@@ -123,13 +121,12 @@ class EditRegistration
 
     private function sendMailToUser(Member $member, bool $isLoginSend): void
     {
-        $userDto = $this->userDtoTransformer->identifiersFromEntity($member);
-
+        $mainIdentity = $member->getMainIdentity();
         $content = $this->messageService->getMessageByName((!$isLoginSend) ? 'EMAIL_ACCOUNT_CREATED' : 'EMAIL_REGISTRATION');
         $subject = 'Votre inscription sur le site VTT Evasion Ludres';
         $attachements = $this->getRegistrationFile->execute($member);
 
-        $this->mailerService->sendMailToMember($userDto, $subject, $content, $attachements);
+        $this->mailerService->sendMailToMember($$mainIdentity->getEmail(), $mainIdentity->getFullName(), $subject, $content, $attachements);
     }
 
     private function UploadFile(Request $request, Member $member): void
@@ -161,14 +158,14 @@ class EditRegistration
     private function error(Member $member): array
     {
         $message = 'Une erreure s\'est produite pendant l\'enregistrement de l\'inscription.';
-        $userDto = $this->userDtoTransformer->identifiersFromEntity($member);
+        $mainIdentity = $member->getMainIdentity();
         $data = [
             'subject' => 'Erreur d\'inscription',
             'message' => $message,
-            'name' => $userDto->member->name,
-            'firstName' => $userDto->member->firstName,
-            'email' => $userDto->mainEmail,
-            'user' => $userDto,
+            'name' => $mainIdentity->getName(),
+            'firstName' => $mainIdentity->getFirstName(),
+            'email' => $mainIdentity->getEmail(),
+            'user' => $member,
             'error' => true,
         ];
         $this->mailerService->sendMailToClub($data);

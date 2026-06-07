@@ -87,7 +87,6 @@ class RegistrationListProvider
             RegistrationStatus::WAITING_RENEW => $this->memberRepository->filterWaitingRenew($qb, $currentSeason),
             RegistrationStatus::IN_PROCESSING => $this->memberRepository->filterInProcessing($qb, $currentSeason),
             RegistrationStatus::TO_REGISTER => $this->memberRepository->filterToRegister($qb, $currentSeason),
-            default => $this->memberRepository->filterRegistrationBySeason($qb, $currentSeason),
         };
 
         if ($filter->member) {

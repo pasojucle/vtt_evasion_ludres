@@ -10,12 +10,14 @@ use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
 use App\Entity\Session;
 use App\Service\MailerService;
+use App\Service\ReplaceKeywordsService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ConfirmationSession
 {
     public function __construct(
         private MailerService $mailerService,
+        private ReplaceKeywordsService $replaceKeywords,
         private UserDtoTransformer $userDtoTransformer,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private TranslatorInterface $translator,
@@ -28,14 +30,18 @@ class ConfirmationSession
         $bikeRide = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
 
         $messages = $bikeRide->bikeRideType->messages;
-        $content = (is_string($messages)) ? $messages : $this->getMessageByLevelType($messages, $member->level->type);
+        $content = (is_string($messages)) 
+            ? $messages 
+            : $this->getMessageByLevelType($messages, $member->level->type);
+        $params = [
+            '{{ bikeRideTitleAndPeriod }}' => sprintf('%s du %s', $bikeRide->title, $bikeRide->period),
+            '{{ disponibilite }}' => $this->availabilityToString($session->getAvailability()),
+        ];
+        $content = $this->replaceKeywords->replaceFromParams($content, $params);
         $subject = sprintf('Confirmation d\'inscription à %s du %s', $bikeRide->title, $bikeRide->period);
-        $additionalParams = [
-                '{{ bikeRideTitleAndPeriod }}' => sprintf('%s du %s', $bikeRide->title, $bikeRide->period),
-                '{{ disponibilite }}' => $this->availabilityToString($session->getAvailability()),
-            ];
 
-        $this->mailerService->sendMailToMember($member, $subject, $content, null, $additionalParams);
+        $mainIdentity = $session->getMember()->getMainIdentity();
+        $this->mailerService->sendMailToMember($mainIdentity->getEmail(), $mainIdentity->getFullName(), $subject, $content);
     }
 
     private function availabilityToString(AvailabilityEnum $availability): ?string

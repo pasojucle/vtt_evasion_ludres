@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\UseCase\Licence;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\Entity\Member;
 use App\Service\LicenceService;
@@ -19,7 +18,6 @@ class ValidateLicence
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MailerService $mailerService,
-        private UserDtoTransformer $userDtoTransformer,
         private MessageService $messageService,
         private LicenceService $licenceService,
     ) {
@@ -65,11 +63,14 @@ class ValidateLicence
 
     private function sendMail(string $licenceNumber, Member $member)
     {
-        $userDto = $this->userDtoTransformer->fromEntity($member);
-        if ($licenceNumber !== $userDto->licenceNumber) {
-            $userDto = $this->userDtoTransformer->identifiersFromEntity($member);
+        if ($licenceNumber !== $member->getLicenceNumber()) {
+            $mainIdentity = $member->getMainIdentity();
             $subject = 'Votre numero de licence';
-            $this->mailerService->sendMailToMember($userDto, $subject, $this->messageService->getMessageByName('EMAIL_LICENCE_VALIDATE'));
+            $this->mailerService->sendMailToMember(
+                $$mainIdentity->getEmail(), 
+                $mainIdentity->getFullName(), 
+                $subject, $this->messageService->getMessageByName('EMAIL_LICENCE_VALIDATE')
+            );
         }
     }
 }

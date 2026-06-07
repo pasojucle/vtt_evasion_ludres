@@ -151,7 +151,7 @@ class NotificationService
         return [
             'index' => sprintf('Session_%s', $session->getId()),
             'title' => 'Inscription à une sortie',
-            'content' => $this->replaceKeywordsService->replaceWhithParams($content, $additionalParams),
+            'content' => $this->replaceKeywordsService->replaceFromParams($content, $additionalParams),
             'modalLink' => $this->getModalLinkFromEntity($session),
             'btnLabel' => 'J\'ai compris',
         ];

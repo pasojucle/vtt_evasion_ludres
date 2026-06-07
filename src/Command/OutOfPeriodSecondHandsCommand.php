@@ -2,12 +2,12 @@
 
 namespace App\Command;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\SecondHand;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ParameterService;
+use App\Service\ReplaceKeywordsService;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,8 +34,8 @@ class OutOfPeriodSecondHandsCommand extends Command
         private SecondHandRepository $secondHandRepository,
         private EntityManagerInterface $entityManager,
         private MailerService $mailerService,
-        private UserDtoTransformer $userDtoTransformer,
         private UrlGeneratorInterface $urlGenerator,
+        private ReplaceKeywordsService $replaceKeywords,
     ) {
         parent::__construct();
     }
@@ -65,15 +65,16 @@ class OutOfPeriodSecondHandsCommand extends Command
 
     private function sendMailToSeller(SecondHand $secondHand): void
     {
-        $userDto = $this->userDtoTransformer->identifiersFromEntity($secondHand->getMember());
+        $identity = $secondHand->getMember()->getMainIdentity();
         $subject = sprintf('Votre annonce %s', $secondHand->getName());
         $content = $this->messageService->getMessageByName('SECOND_HAND_DISABLED_MESSAGE');
-        $additionalParams = [
+        $params = [
             '{{ url }}' => $this->urlGenerator->generate('second_hand_user_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
             '{{ nom_annonce }}' => $secondHand->getName(),
             '{{ durree }}' => $this->parameterService->getParameterByName('SECOND_HAND_DURATION'),
         ];
+        $content = $this->replaceKeywords->replaceFromParams($content, $params);
         
-        $this->mailerService->sendMailToMember($userDto, $subject, $content, null, $additionalParams);
+        $this->mailerService->sendMailToMember($identity->getEmail(), $identity->getFullName(), $subject, $content);
     }
 }

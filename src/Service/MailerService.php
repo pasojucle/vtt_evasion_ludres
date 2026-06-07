@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\UserDto;
-use App\Entity\Enum\DisplayModeEnum;
+use App\Dto\Service\MailerResult;
 use App\Entity\User;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -20,7 +19,6 @@ class MailerService
 {
     public function __construct(
         private MailerInterface $mailer,
-        private ReplaceKeywordsService $replaceKeywords,
         private ParameterService $parameterService,
         private ParameterBagInterface $parameterBag,
     ) {
@@ -73,7 +71,7 @@ class MailerService
         string $subject, 
         string $content, 
         ?array $attachements = null,
-    ): array
+    ): MailerResult
     {
         [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
 
@@ -84,10 +82,7 @@ class MailerService
         try {
             $email = new Address($userEmail);
         } catch (Exception) {
-            return [
-                'success' => false,
-                'message' => 'Adresse mail manquante ou erronnée',
-            ];
+            return MailerResult::failure('Adresse mail manquante ou erronnée');
         }
 
         $email = (new TemplatedEmail())
@@ -114,18 +109,13 @@ class MailerService
         try {
             $this->mailer->send($email);
 
-            return [
-                'success' => true,
-            ];
+            return MailerResult::success();
         } catch (TransportExceptionInterface $e) {
-            return [
-                'success' => false,
-                'message' => 'Problème d\'envoi de mail',
-            ];
+            return MailerResult::failure('Problème d\'envoi de mail');
         }
     }
 
-    public function sendMailToParticipant(User $participant, string $subject, string $content, ?array $attachements = null): array
+    public function sendMailToParticipant(User $participant, string $subject, string $content, ?array $attachements = null): MailerResult
     {
         $particpantEmail = $participant->getContactEmail();
         [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
@@ -136,10 +126,7 @@ class MailerService
         try {
             $email = new Address($particpantEmail);
         } catch (Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Adresse mail manquante ou erronnée',
-            ];
+            return MailerResult::failure('Adresse mail manquante ou erronnée');
         }
 
         $email = (new TemplatedEmail())
@@ -164,22 +151,9 @@ class MailerService
         try {
             $this->mailer->send($email);
 
-            return [
-                'success' => true,
-            ];
+            return MailerResult::success();
         } catch (TransportExceptionInterface $e) {
-            return [
-                'success' => false,
-                'message' => 'Problème d\'envoi de mail',
-            ];
+            return MailerResult::failure('Problème d\'envoi de mail');
         }
-    }
-
-    private function getUserData(array|UserDto $user): array
-    {
-        if ($user instanceof UserDto) {
-            return [$user->mainEmail, $user->mainFullName];
-        }
-        return [$user['email'], sprintf('%s %s', $user['name'], $user['firstName'])];
     }
 }

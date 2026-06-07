@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Guest;
 
+use App\Dto\Service\MailerResult;
 use App\Entity\BikeRide;
 use App\Entity\Guest;
 use App\Repository\GuestRepository;
@@ -31,7 +32,7 @@ class SendLink
     ) {
     }
 
-    public function execute(string $email, BikeRide $bikeRide): array
+    public function execute(string $email, BikeRide $bikeRide): MailerResult
     {
         $guest = $this->guestRepository->findOneByEmail($email);
         if (!$guest) {
@@ -52,7 +53,7 @@ class SendLink
                 'slug' => $slugger->slug($bikeRide->getTitle()),
                 'token' => $token
             ], UrlGeneratorInterface::ABSOLUTE_URL);
-        $content = $this->replaceKeywords->replaceWhithParams($this->messageService->getMessageByName('GUEST_LINK_AUTHENTIFICATION'), [
+        $content = $this->replaceKeywords->replaceFromParams($this->messageService->getMessageByName('GUEST_LINK_AUTHENTIFICATION'), [
             '{{ lien_inscription }}' => sprintf('<a href="%s">%s</a>', $link, $link),
         ]);
         $attachments = $bikeRide->getRules()

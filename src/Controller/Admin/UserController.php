@@ -200,9 +200,14 @@ class UserController extends AbstractController
         MessageService $messageService,
         User $user
     ): RedirectResponse {
-        $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
+        $identity = $user->getMainIdentity();
         $subject = 'Votre numero de licence';
-        $mailerService->sendMailToMember($userDto, $subject, $messageService->getMessageByName('EMAIL_LICENCE_VALIDATE'));
+        $mailerService->sendMailToMember(
+            $identity->getEmail(),
+            $identity->getFullName(), 
+            $subject, 
+            $messageService->getMessageByName('EMAIL_LICENCE_VALIDATE')
+        );
 
         $this->addFlash('success', 'Le messsage à été envoyé avec succès');
 

@@ -156,15 +156,14 @@ class ContentController extends AbstractController
     public function contact(
         Request $request,
         MailerService $mailerService,
-        UserDtoTransformer $userDtoTransformer,
         MessageService $messageService,
     ): Response {
         /** @var ?Member $member */
         $member = $this->getUser();
-        $mainContact = $member?->getMainIdentity();
+        $identity = $member?->getMainIdentity();
         
-        $data = ($mainContact)
-            ? ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()]
+        $data = ($identity)
+            ? ['name' => $identity->getName(), 'firstName' => $identity->getFirstName(), 'email' => $identity->getEmail()]
             : null;
 
         $form = $this->createForm(ContactType::class, $data);
@@ -172,13 +171,14 @@ class ContentController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-     
-            $userData = ($member)
-                ? $userDtoTransformer->fromEntity($member)
-                : $data;
-
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
-            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userData, $data['subject'], $messageService->getMessageByName('EMAIL_FORM_CONTACT'))) {
+            if ($mailerService->sendMailToClub($data) && 
+                $mailerService->sendMailToMember(
+                    $data['email'], 
+                    sprintf('%s %s', $data['name'], $data['firstName']),
+                    $data['subject'], 
+                    $messageService->getMessageByName('EMAIL_FORM_CONTACT')
+                )->success) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 
                 return $this->redirectToRoute('contact');
