@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Dto\Enum\DialogType;
 use App\Dto\Form\LicenceRegister;
 use App\Dto\Form\LicenceReject;
@@ -22,12 +22,12 @@ class LicenceRejectProvider implements DialogProviderInterface
     )
     { }
 
-    public function mapToView(object $licenceRegister): DialogModalDto
+    public function mapToView(object $licenceRegister): DialogModalView
     {
         assert($licenceRegister instanceof LicenceRegister);
 
         $licence = $licenceRegister->licence;
-        return new DialogModalDto(
+        return new DialogModalView(
             type: DialogType::WARNING,
             title: sprintf('Inscription de %s', $licence->getMember()->getIdentity()->getFullName()),
             action: 'Envoyer',

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Mapper;
 
-use App\Dto\ButtonDto;
+use App\Dto\View\ButtonView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\HtmlAttributDto;
+use App\Dto\View\HtmlAttributView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
@@ -19,16 +19,16 @@ class WikiMapper
         
     }
 
-    public function mapToView(string $dirName, RoundedVariant $rounded = RoundedVariant::ROUNDED): ButtonDto
+    public function mapToView(string $dirName, RoundedVariant $rounded = RoundedVariant::ROUNDED): ButtonView
     {
-        return new ButtonDto(
+        return new ButtonView(
             url: $this->urlGenerator->generate('wiki_show', ['directory' => $dirName]),
             title: 'wiki',
             icon: 'lucide:circle-help',
             variant: ColorVariant::DEFAULT,
             rounded: $rounded,
             htmlAttributes: [
-                new HtmlAttributDto('target', '_blank'),
+                new HtmlAttributView('target', '_blank'),
             ],
         );
     }

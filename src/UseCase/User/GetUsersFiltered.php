@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\DropdownDto;
+use App\Dto\View\DropdownView;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Member;
@@ -56,9 +56,9 @@ abstract class GetUsersFiltered
 
     abstract protected function listFromEntities(Paginator $users): array;
 
-    abstract protected function settings(): ?DropdownDto;
+    abstract protected function settings(): ?DropdownView;
 
-    abstract protected function tools(): ?DropdownDto;
+    abstract protected function tools(): ?DropdownView;
 
     public function list(Request $request, bool $filtered): array
     {

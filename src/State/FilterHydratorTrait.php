@@ -25,7 +25,7 @@ trait FilterHydratorTrait
         $this->filterConfigs = $filterConfigs;
     }
 
-    public function getHydratedDto(array $rawData, string $dataClass): ?AbstractFilter
+    public function getHydratedDto(array $rawData, string $dataClass): AbstractFilter
     {
         return $this->filterMapper->mapToDto($rawData, $dataClass);
     }

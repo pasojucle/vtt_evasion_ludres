@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\AbstractCrudController;
+
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Form\LicenceRegister;
 use App\Entity\Licence;

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Dto\Filter\AbstractFilter;
+use App\Form\Filter\ListFilterType;
 use App\State\DialogProcessorInterface;
 use App\State\DialogProviderInterface;
 use App\State\ListProviderInterface;
@@ -17,18 +18,19 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 abstract class AbstractCrudController extends AbstractController
 {
     protected function handleListAction(
-        AbstractFilter $filter,
-        string $formClass,
+        string $route,
+        string $filterClass,
         ListProviderInterface $provider,
-        string $template,
         Request $request,
     ): Response {
-        $filterConfig = $provider->getFilterConfig('admin_registration_list');
+        $filter = $provider->getHydratedDto($request->query->all(), $filterClass);
+
+        $filterConfig = $provider->getFilterConfig($route);
         if (!$filterConfig) {
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm($formClass, $filter, [
+        $form = $this->createForm(ListFilterType::class, $filter, [
             'data_class' => $filterConfig->getDataClass(),
             'fields' => $filterConfig->getFields(),
             'advanced_fields' => $filterConfig->getAdvancedFields(),
@@ -37,13 +39,13 @@ abstract class AbstractCrudController extends AbstractController
 
         $form->handleRequest($request);
 
-        return $this->render($template, [
+        return $this->render('components/list/_list.html.twig', [
             'form' => $form->createView(),
             'list' => $provider->getCollection(
                 $filter,
                 $filterConfig,
                 $request->attributes->get('_route'),
-                $request->query->getInt('page', 1),
+                $request->query->getInt('page', 1)
             ),
         ]);
     }
@@ -86,12 +88,13 @@ abstract class AbstractCrudController extends AbstractController
     protected function handleExportAction(
         AbstractFilter $filter,
         ListProviderInterface $provider,
+        string $filename,
     ): StreamedResponse {
         $response = new StreamedResponse(function() use ($provider, $filter) {
             $provider->streamExportContent($filter);
         });
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export_inscriptions.csv"');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
 
         return $response;
     }

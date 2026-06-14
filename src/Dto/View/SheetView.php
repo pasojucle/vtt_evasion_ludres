@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
-readonly class SheetDto
+readonly class SheetView
 {
     public function __construct(
         public string $title,

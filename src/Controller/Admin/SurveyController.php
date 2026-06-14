@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Dto\Filter\SurveyFilter;
@@ -11,29 +12,28 @@ use App\Entity\History;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
 use App\Form\Admin\SurveyType;
-use App\Form\Filter\ListFilterType;
 use App\Repository\SurveyIssueRepository;
-use App\Service\SurveyService;
 use App\State\Survey\Processor\SurveyDeleteProcessor;
+use App\State\Survey\Processor\SurveyDisableProcessor;
 use App\State\Survey\Provider\SurveyAdminListProvider;
+use App\State\Survey\Provider\SurveyAdminProvider;
 use App\State\Survey\Provider\SurveyDeleteProvider;
-use App\UseCase\Survey\ExportSurvey;
+use App\State\Survey\Provider\SurveyDisableProvider;
 use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
 use App\UseCase\Survey\GetSurveyResults;
 use App\UseCase\Survey\SetSurvey;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/sondage')]
-class SurveyController extends AbstractController
+class SurveyController extends AbstractCrudController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -42,38 +42,21 @@ class SurveyController extends AbstractController
     ) {
     }
 
-    #[Route('s', name: 'admin_surveys', methods: ['GET'])]
+    #[Route('s', name: 'admin_survey_list', methods: ['GET'])]
     #[IsGranted('SURVEY_LIST')]
     public function list(
         Request $request,
         SurveyAdminListProvider $provider,
     ): Response {
-        /**  @var SurveyFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), SurveyFilter::class);
-        $currentRoute = $request->attributes->get('_route');
-        $filterConfig = $provider->getFilterConfig($currentRoute);
-        if (!$filterConfig) {
-            throw $this->createNotFoundException();
-        }
-        $form = $this->createForm(ListFilterType::class, $filter, [
-            'data_class' => $filterConfig->getDataClass(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'event_subscriber' => $filterConfig->getEventSubscriber(),
-        ]);
 
-        $form->handleRequest($request);
-
-        return $this->render('survey/admin/list.html.twig', [
-            'form' => $form->createView(),
-            'list' => $provider->getCollection(
-                $filter,
-                $filterConfig,
-                $currentRoute,
-                $request->query->getInt('page', 1),
-            ),
-        ]);
-    }
+        return $this->handleListAction(
+            'admin_survey_list',
+            SurveyFilter::class,
+            $provider,
+            'survey/admin/list.html.twig',
+            $request
+        );
+      }
 
     #[Route('/', name: 'admin_survey_add', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_ADD')]
@@ -90,7 +73,7 @@ class SurveyController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $setSurvey->execute($form, true);
 
-            return $this->redirectToRoute('admin_surveys');
+            return $this->redirectToRoute('admin_survey_list');
         }
 
         return $this->render('survey/admin/edit.html.twig', [
@@ -111,7 +94,7 @@ class SurveyController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $setSurvey->execute($form);
             
-            return $this->redirectToRoute('admin_surveys');
+            return $this->redirectToRoute('admin_survey_list');
         }
 
         return $this->render('survey/admin/edit.html.twig', [
@@ -134,7 +117,7 @@ class SurveyController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $setSurvey->execute($form);
             
-            return $this->redirectToRoute('admin_surveys');
+            return $this->redirectToRoute('admin_survey_list');
         }
 
         return $this->render('survey/admin/edit.html.twig', [
@@ -207,47 +190,34 @@ class SurveyController extends AbstractController
 
     #[Route('/export/{survey}', name: 'admin_survey_export', methods: ['GET'])]
     #[IsGranted('SURVEY_VIEW', 'survey')]
-    public function export(ExportSurvey $export, Survey $survey): Response
+    public function export(
+        SurveyAdminProvider $provider,
+        Survey $survey
+    ): Response
     {
-        $content = $export->execute($survey);
-
-        $response = new Response($content);
-        $disposition = HeaderUtils::makeDisposition(
-            HeaderUtils::DISPOSITION_ATTACHMENT,
-            'export_survey_a_g.csv'
-        );
-
-        $response->headers->set('Content-Disposition', $disposition);
+        $response = new StreamedResponse(function() use ($provider, $survey) {
+            $provider->streamExportContent($survey);
+        });
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export_inscriptions.csv"');
 
         return $response;
     }
 
     #[Route('disable/{survey}', name: 'admin_survey_disable', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
-    public function disable(Request $request, Survey $survey): Response
+    public function disable(
+        Request $request, 
+        SurveyDisableProcessor $processor,
+        SurveyDisableProvider $provider,
+        Survey $survey): Response
     {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $survey->setDisabled(true);
-                $this->entityManager->persist($survey);
-                $this->entityManager->flush();
-    
-                return $this->redirectToRoute('admin_surveys');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('survey/admin/disable.modal.html.twig', [
-            'survey' => $survey,
-            'form' => $form->createView(),
-        ], $response);
+        return $this->handleDialogAction(
+            $request,
+            $survey,
+            $provider,
+            $processor,
+        );
     }
 
     #[Route('/history/notify/{survey}', name: 'admin_survey_history_notify', methods: ['GET'])]
@@ -264,7 +234,7 @@ class SurveyController extends AbstractController
         $this->entityManager->flush();
         $this->addFlash('success', 'La notification est bien activée');
 
-        return $this->redirectToRoute('admin_surveys');
+        return $this->redirectToRoute('admin_survey_list');
     }
 
     #[Route('detele/{survey}', name: 'admin_survey_delete', methods: ['GET', 'POST'])]
@@ -275,24 +245,11 @@ class SurveyController extends AbstractController
         SurveyDeleteProvider $provider,
         Survey $survey
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($survey);
-    
-                return $this->redirectToRoute('admin_surveys');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'dialog' => $provider->mapToView($survey),
-            'form' => $form->createView(),
-        ], $response);
+        return $this->handleDialogAction(
+            $request,
+            $survey,
+            $provider,
+            $processor
+        );
     }
 }

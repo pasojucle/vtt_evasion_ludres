@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 
-readonly class DropdownDto
+readonly class DropdownView
 {
     /**
      * @param string $trigger
      * @param DropdownVariant $variant
      * @param RoundedVariant $rounded
-     * @param DropdownItemDto[] $infoItems
-     * @param ButtonDto[] $menuItems
-     * @param DropdownItemDto[] $actionItems
+     * @param DropdownItemView[] $infoItems
+     * @param ButtonView[] $menuItems
+     * @param DropdownItemView[] $actionItems
      */
     public function __construct(
         public string $trigger = 'lucide:ellipsis-vertical',

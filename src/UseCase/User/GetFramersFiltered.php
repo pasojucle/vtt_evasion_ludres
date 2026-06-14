@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\DropdownDto;
+use App\Dto\View\DropdownView;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
@@ -159,7 +159,7 @@ class GetFramersFiltered
         return $this->userDtoTransformer->listFromEntities($users);
     }
 
-    public function settings(): ?DropdownDto
+    public function settings(): ?DropdownView
     {
         return null;
     }

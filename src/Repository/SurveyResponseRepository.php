@@ -12,6 +12,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -170,5 +171,19 @@ class SurveyResponseRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult()
     ;
+    }
+
+    public function findSurveyResponseBySurvey(Survey $survey): array
+    {
+        return $this->createQueryBuilder('sr')
+            ->leftJoin('sr.member', 'm')->addSelect('m')
+            ->leftJoin('m.identity', 'i')->addSelect('i')
+            ->join('sr.issue', 'si')
+            ->andWhere(
+                (new Expr())->eq('si.survey', ':survey')
+            )
+            ->setParameter('survey', $survey)
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -26,7 +26,7 @@ class SurveyDto
 
     public ?string $bikeRide = null;
 
-    public ?DropdownDto $dropdown = null;
+    public ?DropdownView $dropdown = null;
 
-    public ?ButtonDto $responseAction = null;
+    public ?ButtonView $responseAction = null;
 }

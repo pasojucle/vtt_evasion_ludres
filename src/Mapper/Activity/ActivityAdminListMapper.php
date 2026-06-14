@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Mapper\Activity;
 
-use App\Dto\BadgeDto;
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\ActivityFilter;
-use App\Dto\HtmlAttributDto;
-use App\Dto\LabelDto;
-use App\Dto\ListDto;
-use App\Dto\ListItemDto;
+use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LabelView;
+use App\Dto\View\ListView;
+use App\Dto\View\ListItemView;
 use App\Entity\BikeRide;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
@@ -42,7 +42,7 @@ class ActivityAdminListMapper
         int $currentPage,
         ActivityFilter $filter,
         FilterConfigInterface $filterConfig
-    ): ListDto {
+    ): ListView {
         $items = [];
         /** @var BikeRide $entity */
         foreach ($entities as $entity) {
@@ -51,14 +51,14 @@ class ActivityAdminListMapper
             if (array_key_exists($entity->getId(), $participantTotalByEntity)) {
                 $participantsTotal = (string) $participantTotalByEntity[$entity->getId()][$isComplete ? 'present' : 'count'];
             }
-            $items[] = new ListItemDto(
+            $items[] = new ListItemView(
                 labels: [
-                    new LabelDto($entity->getStartAt()->format('d/m/y')),
-                    new LabelDto($entity->getTitle()),
+                    new LabelView($entity->getStartAt()->format('d/m/y')),
+                    new LabelView($entity->getTitle()),
                 ],
                 indicators: $this->getIndicators($entity),
                 status: $this->getStatus($entity, $isComplete),
-                counter: new BadgeDto(
+                counter: new BadgeView(
                     $participantsTotal,
                     $isComplete ? ColorVariant::SUCCESS : ColorVariant::DEFAULT,
                 ),
@@ -67,20 +67,22 @@ class ActivityAdminListMapper
             );
         }
 
-        return new ListDto(
+        return new ListView(
+            title: 'Programme des activités',
+            description: 'Administration des activités : création, modification.',
             items: $items,
             settings: $this->settings(),
-            paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonDto(
+            paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
+            advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_bike_rides'], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
-                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
-            addItem: new ButtonDto(
+            addItem: new ButtonView(
                 label: 'Ajouter une activité',
                 url: $this->urlGenerator->generate('admin_bike_ride_add'),
                 icon: 'lucide:plus',
@@ -100,15 +102,15 @@ class ActivityAdminListMapper
     //     {% include 'components/_dropdown.html.twig' with {'dropdown': bikeRide.dropdown} %}
     // {% endif %}
 
-    private function settings(): DropdownDto
+    private function settings(): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', RoundedVariant::ROUNDED, [
-            new ButtonDto(
+            new ButtonView(
                 label: 'Types de rando',
                 url: $this->urlGenerator->generate('admin_bike_ride_types'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonDto(
+            new ButtonView(
                 label: 'Indemnités',
                 url: $this->urlGenerator->generate('admin_indemnity_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -120,28 +122,28 @@ class ActivityAdminListMapper
     {
         $indicators = [];
         if (!$entity->getMembers()->isEmpty()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: 'lucide:users',
                 variant: ColorVariant::ACCENT,
                 size: Size::ICON
             );
         }
         if ($entity->getMaxAge() || $entity->getMinAge()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: 'lucide:cake',
                 variant: ColorVariant::ACCENT,
                 size: Size::ICON
             );
         }
         if (!$entity->registrationEnabled()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: 'lucide:lock',
                 variant: ColorVariant::WARNING,
                 size: Size::ICON
             );
         }
         if ($entity->isPrivate()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: 'lucide:eye-off',
                 variant: ColorVariant::WARNING,
                 size: Size::ICON
@@ -151,14 +153,14 @@ class ActivityAdminListMapper
         return $indicators;
     }
 
-    private function getStatus(BikeRide $entity, bool $isComplete): BadgeDto
+    private function getStatus(BikeRide $entity, bool $isComplete): BadgeView
     {
         if ($entity->isDeleted()) {
-            return new BadgeDto('Supprimée', ColorVariant::DESTRUCTIVE);
+            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
         }
 
         return $isComplete
-            ? new BadgeDto('Terminée', ColorVariant::WARNING)
-            : new BadgeDto('A venir', ColorVariant::SUCCESS);
+            ? new BadgeView('Terminée', ColorVariant::WARNING)
+            : new BadgeView('A venir', ColorVariant::SUCCESS);
     }
 }

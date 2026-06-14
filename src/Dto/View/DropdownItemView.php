@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
-readonly class DropdownItemDto
+readonly class DropdownItemView
 {
     /**
      * @param string $label
      * @param string $icon
-     * @param HtmlAttributDto[] $htmlAttributes
+     * @param HtmlAttributView[] $htmlAttributes
      */
     public function __construct(
         public readonly string $label,

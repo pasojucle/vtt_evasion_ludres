@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper;
 
 use App\Dto\Filter\AbstractFilter;
-use App\Dto\PaginatorDto;
+use App\Dto\View\PaginatorView;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -16,9 +16,9 @@ class PaginatorMapper
     ) {
     }
 
-    public function fromEntities(Paginator $paginator, string $route, ?int $currentPage, AbstractFilter $filter): PaginatorDto
+    public function mapToView(Paginator $paginator, string $route, ?int $currentPage, AbstractFilter $filter): PaginatorView
     {
-        $paginatorDto = new PaginatorDto();
+        $paginatorDto = new PaginatorView();
 
         $paginatorDto->lastPage = (int) ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
 
@@ -36,7 +36,7 @@ class PaginatorMapper
         return $paginatorDto;
     }
 
-    private function getPages(PaginatorDto &$paginatorDto, string $route, array $queries): void
+    private function getPages(PaginatorView &$paginatorDto, string $route, array $queries): void
     {
         $start = 1;
         $end = $paginatorDto->lastPage;

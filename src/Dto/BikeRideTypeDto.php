@@ -29,5 +29,5 @@ class BikeRideTypeDto
 
     public bool $displayPractice = false;
 
-    public ?DropdownDto $dropdown = null;
+    public ?DropdownView $dropdown = null;
 }

@@ -7,7 +7,7 @@ namespace App\State\Notification\Provider;
 use App\Dto\Enum\NotificationVisibility;
 use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\NotificationFilter;
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Mapper\Notification\NotificationAdminListMapper;
 use App\Repository\NotificationRepository;
 use App\Service\Filter\FilterConfigInterface;
@@ -25,7 +25,7 @@ class NotificationAdminListProvider
         private NotificationAdminListMapper $mapper,
     ) {
     }
-    public function getCollection(NotificationFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(NotificationFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
         $entities = $this->paginator->paginate(
             $this->getQueryBuilder($filter),

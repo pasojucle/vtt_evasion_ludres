@@ -62,5 +62,5 @@ class LicenceDto
     public ?string $additionalFamilyMember = null;
     public ?array $familyMember = null;
 
-    public ?ButtonDto $stateAction = null;
+    public ?ButtonView $stateAction = null;
 }

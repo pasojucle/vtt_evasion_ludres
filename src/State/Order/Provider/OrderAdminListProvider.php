@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\State\Order\Provider;
 
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\OrderFilter;
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Mapper\Order\OrderAdminListExportMapper;
 use App\Mapper\Order\OrderAdminListMapper;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class OrderAdminListProvider
+class OrderAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
 
@@ -25,8 +27,10 @@ class OrderAdminListProvider
         private OrderAdminListExportMapper $exportMapper,
     ) {
     }
-    public function getCollection(OrderFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
+        assert($filter instanceof OrderFilter);
+
         $entities = $this->paginator->paginate(
             $this->getQueryBuilder($filter),
             $currentPage,

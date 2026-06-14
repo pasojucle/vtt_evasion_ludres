@@ -15,7 +15,7 @@ class ProductFilterConfig implements FilterConfigInterface
 {
     public function getRouteName(): string
     {
-        return 'admin_products';
+        return 'admin_product_list';
     }
 
     public function supports(string $route): bool

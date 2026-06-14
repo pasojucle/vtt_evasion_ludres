@@ -1,0 +1,41 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}{{ list.title }}{% endblock %}
+
+{% set type_classes = {
+    (enum('App\\Entity\\Enum\\SurveyResponseType').TEXT.value): 'grid-cols-1',
+    (enum('App\\Entity\\Enum\\SurveyResponseType').CHOICE.value): 'grid-cols-3',
+    (enum('App\\Entity\\Enum\\SurveyResponseType').CHECK.value): 'grid-cols-2',
+} %}
+
+{% block body %}
+    <div class="p-4 lg:p-6">
+        <div class="flex mt-4">
+            <div>
+                <h1 class="font-bold text-3xl">{{ list.title }}</h1>
+                <div class="text-muted mt-1">{{ list.description|raw}}</div>
+            </div>
+        </div>
+        <div id="surveys_container" class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {% for issue in list.issues %}
+                <div class="border border-border rounded-md flex flex-col">
+                    <div class="bg-slate-300 uppercase pl-4 pr-2 py-2 text-white text-sm flex gap-4 items-center">
+                        <div class="flex items-center">{{ issue.content }}</div>
+                        <div class="ml-auto">
+                            {% include "components/_button.html.twig" with {'button': issue.show} %}
+                        </div>
+                    </div>
+                    <div class="grid {{ type_classes[issue.type.value] ?? type_classes.text }} grow">
+                        {% for type in issue.types %}
+                            <div class="flex flex-1 gap-4 items-center justify-center px-3 py-1 text-foreground  bg-slate-100">
+                                {{ type.label}}  
+                                {% include "components/_badge.html.twig" with {badge: type.total} %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+

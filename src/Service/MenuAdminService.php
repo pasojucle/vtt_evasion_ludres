@@ -88,19 +88,19 @@ class MenuAdminService
             ],
             [
                 'label' => 'Boutique',
-                'route' => 'admin_products',
+                'route' => 'admin_product_list',
                 'pattern' => '/product/',
                 'role' => 'PRODUCT_LIST',
             ],
             [
                 'label' => 'Commandes',
-                'route' => 'admin_orders',
+                'route' => 'admin_order_list',
                 'pattern' => '/order/',
                 'role' => 'PRODUCT_LIST',
             ],
             [
                 'label' => 'Sondages',
-                'route' => 'admin_surveys',
+                'route' => 'admin_survey_list',
                 'pattern' => '/survey/',
                 'role' => 'SURVEY_LIST',
             ],

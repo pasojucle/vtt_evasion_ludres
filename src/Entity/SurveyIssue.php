@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\SurveyResponseType;
 use App\Repository\SurveyIssueRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -44,8 +45,8 @@ class SurveyIssue
     #[OneToMany(targetEntity: SurveyResponse::class, mappedBy: 'surveyIssue', cascade: ['persist', 'remove'])]
     private Collection $surveyResponses;
 
-    #[Column(type: 'integer')]
-    private int $responseType;
+    #[Column(type: 'string', enumType: SurveyResponseType::class, options: ['default' => SurveyResponseType::CHOICE->value])]
+    private SurveyResponseType $responseType = SurveyResponseType::CHOICE;
 
     public function __construct()
     {
@@ -111,12 +112,12 @@ class SurveyIssue
         return $this;
     }
 
-    public function getResponseType(): ?int
+    public function getResponseType(): ?SurveyResponseType
     {
         return $this->responseType;
     }
 
-    public function setResponseType(int $responseType): self
+    public function setResponseType(SurveyResponseType $responseType): self
     {
         $this->responseType = $responseType;
 

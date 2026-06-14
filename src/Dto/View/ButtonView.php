@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 
-readonly class ButtonDto
+readonly class ButtonView
 {
     public const string TOP = '_top';
     public const string MODAL_CONTENT = 'modal_content';
@@ -20,7 +20,7 @@ readonly class ButtonDto
      * @param ?string $label
      * @param string|null $icon
      * @param string|null $className
-     * @param HtmlAttributDto[] $htmlAttributes
+     * @param HtmlAttributView[] $htmlAttributes
      */
     public function __construct(
         public string $url,
@@ -30,7 +30,7 @@ readonly class ButtonDto
         public ?string $icon = null,
         public ?string $className = null,
         public array $htmlAttributes = [
-            new HtmlAttributDto('data-turbo-frame', self::TOP)
+            new HtmlAttributView('data-turbo-frame', self::TOP)
         ],
         public string $title = '',
     ) {

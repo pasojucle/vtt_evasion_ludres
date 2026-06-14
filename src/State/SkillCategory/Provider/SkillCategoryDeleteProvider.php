@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\SkillCategory\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\SkillCategory;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class SkillCategoryDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(SkillCategory  $entity): DialogModalDto
+    public function mapToView(SkillCategory  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf(

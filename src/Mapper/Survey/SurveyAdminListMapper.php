@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Mapper\Survey;
 
-use App\Dto\BadgeDto;
-use App\Dto\ButtonDto;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SurveyFilter;
-use App\Dto\HtmlAttributDto;
-use App\Dto\LabelDto;
-use App\Dto\ListDto;
-use App\Dto\ListItemDto;
+use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LabelView;
+use App\Dto\View\ListView;
+use App\Dto\View\ListItemView;
 use App\Entity\Survey;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
@@ -32,43 +32,47 @@ class SurveyAdminListMapper
     ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage, SurveyFilter $filter, FilterConfigInterface $filterConfig): ListDto
+    public function mapToView(Paginator $entities, string $route, int $currentPage, SurveyFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
         $items = [];
         foreach ($entities as $entity) {
             $status = $entity->getStatus();
-            $items[] = new ListItemDto(
+            $items[] = new ListItemView(
                 labels: [
-                    new LabelDto($entity->getTitle()),
+                    new LabelView($entity->getTitle()),
                 ],
                 indicators: $this->getIndicators($entity),
-                status: new BadgeDto(
+                status: new BadgeView(
                     $status->trans($this->translator),
                     $status->variant()
                 ),
-                counter: new BadgeDto(
+                counter: new BadgeView(
                     (string) $entity->getRespondents()->count(),
                 ),
                 dropdown: $this->surveyAdminDropdownMapper->mapToView($entity),
-                url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey', [
+                url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey_response_list', [
                     'survey' => $entity->getId()
                 ]),
+                gridTemplateBadges: 'grid-cols-[1fr_1fr_30px]'
             );
         }
       
-        return new ListDto(
+        return new ListView(
+            id: 'surveys_container',
+            title: 'Sondages',
+            description: 'Administration des sondages : création des questionnaires et suivi des réponses.',
             items: $items,
-            advancedFilter: new ButtonDto(
+            advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
-                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
-            paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
-            addItem: new ButtonDto(
+            paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
+            addItem: new ButtonView(
                 label: 'Ajouter un sondage',
                 url: $this->urlGenerator->generate('admin_survey_add'),
                 icon: 'lucide:plus',
@@ -81,21 +85,21 @@ class SurveyAdminListMapper
     {
         $indicators = [];
         if (!$entity->getMembers()->isEmpty()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: 'lucide:users',
                 variant: ColorVariant::ACCENT,
                 size: Size::ICON
             );
         }
         if ($entity->getBikeRide()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: 'lucide:bike',
                 variant: ColorVariant::ACCENT,
                 size: Size::ICON
             );
         }
         if ($entity->isAnonymous()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: 'lucide:eye-off',
                 variant: ColorVariant::WARNING,
                 size: Size::ICON

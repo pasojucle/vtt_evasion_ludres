@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\PaginatorDto;
+use App\Dto\View\PaginatorDto;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

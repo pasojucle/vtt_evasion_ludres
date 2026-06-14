@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
-class PaginatorDto
+class PaginatorView
 {
     public ?int $currentPage;
 

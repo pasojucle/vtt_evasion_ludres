@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\BoardRole\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\BoardRole;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class BoardRoleDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(BoardRole  $entity): DialogModalDto
+    public function mapToView(BoardRole  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le role %s', $entity->getName()));
     }

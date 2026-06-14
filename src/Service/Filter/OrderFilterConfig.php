@@ -16,7 +16,7 @@ class OrderFilterConfig implements FilterConfigInterface
 {
     public function getRouteName(): string
     {
-        return 'admin_orders';
+        return 'admin_order_list';
     }
 
     public function supports(string $route): bool

@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\State\Product\Provider;
 
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\ProductFilter;
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Mapper\Product\ProductAdminListMapper;
 use App\Repository\ProductRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\ListProviderInterface;
 
-class ProductAdminListProvider
+class ProductAdminListProvider  implements ListProviderInterface
 {
     use FilterHydratorTrait;
     public function __construct(
@@ -22,8 +24,10 @@ class ProductAdminListProvider
     ) {
     }
     
-    public function getCollection(ProductFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
+        assert($filter instanceof ProductFilter);
+
         $qb = $this->productRepository->findProductQuery();
 
         if ($filter->state) {

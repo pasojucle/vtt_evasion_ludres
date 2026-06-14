@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCase\Survey;
 
+use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Survey;
-use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Repository\SurveyResponseRepository;
 
@@ -27,7 +27,7 @@ class GetAnonymousSurveyResults
         }
         foreach ($surveyResponsesByIssues as $responses) {
             foreach ($responses as $response) {
-                if (SurveyIssue::RESPONSE_TYPE_STRING !== $response->getSurveyIssue()->getResponseType()) {
+                if (SurveyResponseType::TEXT !== $response->getSurveyIssue()->getResponseType()) {
                     $surveyIssueId = $response->getSurveyIssue()->getId();
                     if (!array_key_exists($surveyIssueId, $results)) {
                         $results[$surveyIssueId]['results'] = $values;

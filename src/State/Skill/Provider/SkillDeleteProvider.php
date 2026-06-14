@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Skill\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\Skill;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class SkillDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(Skill  $entity): DialogModalDto
+    public function mapToView(Skill  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer la compétence <b>%s</b> ?',

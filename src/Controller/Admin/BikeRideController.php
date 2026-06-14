@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\Filter\ActivityFilter;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
-use App\Form\Filter\ListFilterType;
 use App\Repository\BikeRideRepository;
 use App\State\Activity\Processor\ActivityDeleteProcessor;
 use App\State\Activity\Provider\ActivityAdminListProvider;
@@ -20,8 +20,6 @@ use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\User\GetFramersFiltered;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +27,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin')]
-class BikeRideController extends AbstractController
+class BikeRideController extends AbstractCrudController
 {
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
@@ -45,29 +43,14 @@ class BikeRideController extends AbstractController
         Request $request,
         ActivityAdminListProvider $provider,
     ): Response {
-        /**  @var ActivityFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), ActivityFilter::class);
-        $filterConfig = $provider->getFilterConfig('admin_bike_rides');
-        if (!$filterConfig) {
-            throw $this->createNotFoundException();
-        }
-        $form = $this->createForm(ListFilterType::class, $filter, [
-            'data_class' => $filterConfig->getDataClass(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'event_subscriber' => $filterConfig->getEventSubscriber(),
-        ]);
-        $form->handleRequest($request);
 
-        return $this->render('activity/admin/list.html.twig', [
-            'form' => $form->createView(),
-            'list' => $provider->getCollection(
-                $filter,
-                $filterConfig,
-                $request->attributes->get('_route'),
-                $request->query->getInt('page', 1),
-            ),
-        ]);
+        return $this->handleListAction(
+            'admin_bike_rides',
+            ActivityFilter::class,
+            $provider,
+            'activity/admin/list.html.twig',
+            $request
+        );
     }
 
     #[Route('/sortie', name: 'admin_bike_ride_add', methods: ['GET', 'POST'])]
@@ -201,26 +184,12 @@ class BikeRideController extends AbstractController
         ActivityDeleteProcessor $processor,
         BikeRide $bikeRide
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($bikeRide);
-
-                return $this->redirectToRoute('admin_bike_rides');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($bikeRide),
-        ], $response);
+        return $this->handleDialogAction(
+            $request,
+            $bikeRide,
+            $provider,
+            $processor,
+        );
     }
 
     #[Route('/emails/adherents/{bikeRide}', name: 'admin_bike_ride_members_email_to_clipboard', methods: ['GET'])]

@@ -56,5 +56,5 @@ class UserDto
 
     public bool $canRenewRegistration = false;
 
-    public ?DropdownDto $dropdown = null;
+    public ?DropdownView $dropdown = null;
 }

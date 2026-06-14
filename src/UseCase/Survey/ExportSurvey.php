@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\UseCase\Survey;
 
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
-use App\Dto\SurveyResponseDto;
+use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Survey;
-use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Repository\SurveyResponseRepository;
 use DateTime;
@@ -86,7 +85,7 @@ class ExportSurvey
                 if (null === $response->getValue()) {
                     continue;
                 }
-                if (SurveyIssue::RESPONSE_TYPE_STRING !== $response->getSurveyIssue()->getResponseType()) {
+                if (SurveyResponseType::TEXT !== $response->getSurveyIssue()->getResponseType()) {
                     $surveyIssueId = $response->getSurveyIssue()->getId();
                     if (array_key_exists($response->getValue(), $results) && !array_key_exists($surveyIssueId, $results[$response->getValue()])) {
                         foreach (array_keys(SurveyResponse::VALUES) as $choice) {

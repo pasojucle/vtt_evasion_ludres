@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
-use App\Dto\DropdownItemDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
+use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\HtmlAttributDto;
+use App\Dto\View\HtmlAttributView;
 use App\Dto\RouteDto;
 use App\Entity\Member;
 use App\Service\LevelService;
@@ -51,20 +51,20 @@ class GetMembersFiltered extends GetUsersFiltered
         return $this->userDtoTransformer->listFromEntities($users);
     }
 
-    public function settings(): DropdownDto
+    public function settings(): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('USER', RoundedVariant::ROUNDED_NONE, [
-            new ButtonDto(
+            new ButtonView(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_levels'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonDto(
+            new ButtonView(
                 label: 'Compétences',
                 url: $this->urlGenerator->generate('admin_skill_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonDto(
+            new ButtonView(
                 label: 'Roles du bureau et comité',
                 url: $this->urlGenerator->generate('admin_board_role_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -72,49 +72,49 @@ class GetMembersFiltered extends GetUsersFiltered
         ]);
     }
 
-    public function tools(): ?DropdownDto
+    public function tools(): ?DropdownView
     {
-        return new DropdownDto(
+        return new DropdownView(
             variant: DropdownVariant::BUTTON,
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
-                new ButtonDto(
+                new ButtonView(
                     variant: ColorVariant::DROPDOWN,
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_members_export'),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
-                        new HtmlAttributDto('data-turbo', 'false')
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo', 'false')
                     ],
                 ),
-                new ButtonDto(
+                new ButtonView(
                     variant: ColorVariant::DROPDOWN,
                     label: 'Exporter les évaluations de la sélection',
                     url: $this->urlGenerator->generate('admin_user_skill_export'),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                        new HtmlAttributView('data-action', 'click->dropdown#close')
                     ],
                 ),
-                new ButtonDto(
+                new ButtonView(
                     variant: ColorVariant::DROPDOWN,
                     label: 'Synthèse par saison',
                     url: $this->urlGenerator->generate('admin_overview_season'),
                     icon: 'lucide:chart-scatter',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                        new HtmlAttributView('data-action', 'click->dropdown#close')
                     ],
                 ),
             ],
             actionItems: [
-                new DropdownItemDto(
+                new DropdownItemView(
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributDto('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_members_email_to_clipboard')),
+                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_members_email_to_clipboard')),
                     ],
                 ),
             ],

@@ -9,19 +9,17 @@ use App\Dto\Filter\OrderFilter;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderType as AdminOrderType;
-use App\Form\Filter\ListFilterType;
 use App\Service\FilterDecoderService;
 use App\State\Order\Provider\OrderAdminListProvider;
 use App\UseCase\Order\SetOrder;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class OrderController extends AbstractController
+class OrderController extends AbstractCrudController
 {
     public function __construct(
         private OrderDtoTransformer $orderDtoTransformer,
@@ -29,37 +27,19 @@ class OrderController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/commandes', name: 'admin_orders', methods: ['GET'])]
+    #[Route('/admin/commandes', name: 'admin_order_list', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminOrders(
         Request $request,
         OrderAdminListProvider $provider,
     ): Response {
-        /**  @var OrderFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), OrderFilter::class);
-
-        $filterConfig = $provider->getFilterConfig('admin_orders');
-        if (!$filterConfig) {
-            throw $this->createNotFoundException();
-        }
-        $form = $this->createForm(ListFilterType::class, $filter, [
-            'data_class' => $filterConfig->getDataClass(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'event_subscriber' => $filterConfig->getEventSubscriber(),
-        ]);
-
-        $form->handleRequest($request);
-
-        return $this->render('order/admin/list.html.twig', [
-            'form' => $form->createView(),
-            'list' => $provider->getCollection(
-                $filter,
-                $filterConfig,
-                $request->attributes->get('_route'),
-                $request->query->getInt('page', 1),
-            ),
-        ]);
+        
+        return $this->handleListAction(
+            'admin_order_list',
+            OrderFilter::class,
+            $provider,
+            $request
+        );
     }
 
     #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['POST'], requirements:['status' => OrderStatusEnum::VALIDED->value . '|' . OrderStatusEnum::COMPLETED->value])]

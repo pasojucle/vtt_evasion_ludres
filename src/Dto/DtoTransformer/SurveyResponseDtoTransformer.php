@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\SurveyResponseDto;
 
+use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Member;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
@@ -19,13 +20,12 @@ class SurveyResponseDtoTransformer
     ) {
     }
 
-
     public function fromEntity(SurveyResponse $surveyResponse): SurveyResponseDto
     {
         $surveyResponseDto = new SurveyResponseDto();
         $surveyResponseDto->issue = $surveyResponse->getSurveyIssue()->getContent();
         $surveyResponseDto->user = $this->getUser($surveyResponse->getMember());
-        $surveyResponseDto->value = (null !== $surveyResponse->getValue() && SurveyIssue::RESPONSE_TYPE_STRING !== $surveyResponse->getSurveyIssue()->getResponseType())
+        $surveyResponseDto->value = (null !== $surveyResponse->getValue() && SurveyResponseType::TEXT !== $surveyResponse->getSurveyIssue()->getResponseType())
             ? $this->translator->trans(SurveyResponse::VALUES[$surveyResponse->getValue()])
             : $surveyResponse->getValue();
         $surveyResponseDto->uuid = $surveyResponse->getUuid();

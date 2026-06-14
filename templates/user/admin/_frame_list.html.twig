@@ -1,5 +1,5 @@
 <turbo-frame id="user-list" data-with-skeleton="true">
-    {% include "components/_list_skeleton.html.twig" with {title: "Users"} %}
+    {% include "components/list/_list_skeleton.html.twig" with {title: "Users"} %}
     <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
         <div class="border border-border rounded-md">
             <div class="bg-slate-300 pl-4 py-0.5 flex items-center">
@@ -16,7 +16,7 @@
                         <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir l'élément" data-turbo-frame="_top">
                             <span class="sr-only">Voir l'élément</span>
                         </a>
-                        {% include 'components/_list_item.html.twig' with {
+                        {% include 'components/list/_list_item.html.twig' with {
                             item: item, 
                             grid_template_labels: 'grid-cols-1', 
                             grid_template_badges: 'grid-cols-[auto_160px]'

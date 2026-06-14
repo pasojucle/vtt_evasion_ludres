@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Category\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\Category;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class CategoryDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(Category  $entity): DialogModalDto
+    public function mapToView(Category  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la catégorie %s', $entity->getName()));
     }

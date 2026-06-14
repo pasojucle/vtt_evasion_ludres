@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\HtmlAttributDto;
+use App\Dto\View\HtmlAttributView;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
 use App\Entity\Member;
@@ -244,20 +244,20 @@ class GetParticipations
         });
     }
 
-    public function tools(): ?DropdownDto
+    public function tools(): ?DropdownView
     {
-        return new DropdownDto(
+        return new DropdownView(
             variant: DropdownVariant::BUTTON,
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
-                new ButtonDto(
+                new ButtonView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_participations_export'),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
-                        new HtmlAttributDto('data-turbo', 'false')
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo', 'false')
                     ]
                 )
             ],

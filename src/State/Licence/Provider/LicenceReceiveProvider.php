@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Dto\Enum\DialogType;
 use App\Entity\Licence;
 use App\State\DialogProviderInterface;
@@ -14,7 +14,7 @@ use App\State\DialogProviderInterface;
  */
 class LicenceReceiveProvider implements DialogProviderInterface
 {
-    public function mapToView(object $entity): DialogModalDto
+    public function mapToView(object $entity): DialogModalView
     {
         assert($entity instanceof Licence);
 
@@ -22,7 +22,7 @@ class LicenceReceiveProvider implements DialogProviderInterface
             ? 'Confirmez-vous la bonne réception du dossier d\'inscription de %s signé avec le paiement?'
             : 'Confirmez-vous la bonne réception du dossier d\'inscription de %s signé';
 
-        return new DialogModalDto(
+        return new DialogModalView(
             type: DialogType::SUCCESS,
             title: 'Inscription',
             action: 'Réceptionner',

@@ -15,7 +15,7 @@ class SurveyFilterConfig implements FilterConfigInterface
 {
     public function getRouteName(): string
     {
-        return 'admin_surveys';
+        return 'admin_survey_list';
     }
 
     public function supports(string $route): bool

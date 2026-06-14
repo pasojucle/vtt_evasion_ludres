@@ -1,0 +1,36 @@
+<turbo-frame id="user-list" data-with-skeleton="true">
+    {% include "components/list/_list_skeleton.html.twig" with {title: list.title} %}
+    <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
+        <div class="border border-border rounded-md">
+            <div class="bg-slate-300 pl-4 py-0.5 flex items-center min-h-8">
+                <div class="uppercase text-white text-sm">
+                    {{ list.title }} - <span class="">{{ list.paginator.total }}
+                </div>
+                <div class="ml-auto">
+                    {% if list.tools is not null %}
+                        {% include 'components/_dropdown.html.twig'  with {dropdown: list.tools} %}
+                    {% endif %}
+                </div>
+            </div>
+            <ul id="users_container">
+                {% for item in list.items %}
+                    <li class="grid {{ item.gridTemplateRow }} group relative items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors not-last:border-b not-last:border-border">
+                        <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir l'élément" data-turbo-frame="_top">
+                            <span class="sr-only">Voir l'élément</span>
+                        </a>
+                        {% include 'components/list/_list_item.html.twig' with {
+                            item: item, 
+                            grid_template_labels: item.gridTemplateLabels, 
+                            grid_template_badges: item.gridTemplateBadges
+                        } %} 
+                        {% include 'components/_dropdown.html.twig' with {dropdown: item.dropdown} %}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if list.items is empty %}
+                {% include "components/_empty.html.twig" with {icon: 'lucide:circle-x', message: 'Aucun résultat'} %}
+            {% endif %}
+        </div>
+        {% include 'components/pagination.html.twig' with {'paginator': list.paginator, 'margin': 'top'} %}
+    </div>
+</turbo-frame>

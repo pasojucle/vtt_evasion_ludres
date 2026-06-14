@@ -7,19 +7,21 @@ namespace App\State\Activity\Provider;
 use App\Dto\Enum\ActivityPeriod;
 use App\Dto\Enum\ActivityRestriction;
 use App\Dto\Enum\ActivityVisibility;
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\ActivityFilter;
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Mapper\Activity\ActivityAdminListMapper;
 use App\Repository\BikeRideRepository;
 use App\Repository\SessionRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\ListProviderInterface;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-class ActivityAdminListProvider
+class ActivityAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
 
@@ -31,8 +33,10 @@ class ActivityAdminListProvider
     ) {
     }
 
-    public function getCollection(ActivityFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
+        assert($filter instanceof ActivityFilter);
+        
         $qb = $this->bikeRideRepository->findActivityQuery();
         match ($filter->period) {
             ActivityPeriod::UPCOMING => $this->bikeRideRepository->filterUpcoming($qb, new DateTime()),

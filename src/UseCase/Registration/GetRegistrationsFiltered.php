@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
-use App\Dto\DropdownItemDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
+use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\HtmlAttributDto;
+use App\Dto\View\HtmlAttributView;
 use App\Dto\RouteDto;
 use App\Entity\Licence;
 use App\Service\LevelService;
@@ -70,15 +70,15 @@ class GetRegistrationsFiltered extends GetUsersFiltered
         return $this->userDtoTransformer->registrationListFromEntities($users);
     }
 
-    public function settings(): DropdownDto
+    public function settings(): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('REGISTRATION', RoundedVariant::ROUNDED_START, [
-            new ButtonDto(
+            new ButtonView(
                 label: 'Étapes des inscriptions',
                 url: $this->urlGenerator->generate('admin_registration_step_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonDto(
+            new ButtonView(
                 label: 'Gestions des autorisations',
                 url: $this->urlGenerator->generate('admin_agreement_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -86,31 +86,31 @@ class GetRegistrationsFiltered extends GetUsersFiltered
         ]);
     }
     
-    public function tools(): ?DropdownDto
+    public function tools(): ?DropdownView
     {
-        return new DropdownDto(
+        return new DropdownView(
             variant: DropdownVariant::BUTTON,
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
-                new ButtonDto(
+                new ButtonView(
                     variant: ColorVariant::DROPDOWN,
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_registrations_export'),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
-                        new HtmlAttributDto('data-turbo', 'false')
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo', 'false')
                     ]
                 )
             ],
             actionItems: [
-                new DropdownItemDto(
+                new DropdownItemView(
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributDto('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_registrations_email_to_clipboard')),
+                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_registrations_email_to_clipboard')),
                     ],
                 ),
             ],

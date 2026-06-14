@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
 use App\Dto\Enum\DialogType;
 
-readonly class DialogModalDto
+readonly class DialogModalView
 {
     public function __construct(
         public DialogType $type,

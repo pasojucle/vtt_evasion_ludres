@@ -1,18 +1,22 @@
 {% extends 'base_admin.html.twig' %}
 
-{% block title %}Boutique{% endblock %}
+{% block title %}{{ list.title }}{% endblock %}
 
 {% block body %}
     <div class="p-4 lg:p-6">
-        <div class="flex mt-4">
+        <div class="flex gap-2 mt-4">
             <div>
-                <h1 class="font-bold text-3xl">Boutique</span></h1>
-                <div class="text-muted mt-1">Administration des produits aux couleurs du club vendus en lignes</div>
+                <h1 class="font-bold text-3xl">{{ list.title }}</h1>
+                <div class="text-muted mt-1">{{ list.description }}</div>
             </div>
-            
             <div class="ml-auto">
-                <div class="flex flex-col lg:flex-row items-center gap-2 border border-border rounded-sm">
-                {% include 'components/_button.html.twig' with {button: list.wiki} %}
+                <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
+                    {% if list.wiki is not null %}
+                        {% include 'components/_button.html.twig' with {button: list.wiki} %}
+                    {% endif %}
+                    {% if list.settings is not null %}
+                        {% include 'components/_dropdown.html.twig' with {dropdown: list.settings} %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -23,7 +27,9 @@
                         <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
                         {{ form_start(form) }}
                             <div class="flex items-center gap-4">
-                                {{ form_row(form.state)}}
+                                {% for child in form.children %}
+                                    {{ form_row(child)}}
+                                {% endfor %}
                             </div>
                         {{ form_end(form) }} 
                     </div>
@@ -31,12 +37,9 @@
                         {% include 'components/_button.html.twig' with {button: list.advancedFilter} %}     
                     </div>
                 </div>
-                <div class="lg:ml-auto">
-                    {% include 'components/_button.html.twig' with {button: list.addItem} %}
-                </div>
             </div>
             {% include 'components/_filter_chips.html.twig' with {chips: list.filterChips} %}
         </div>
-        {% include('product/admin/_frame_list.html.twig') %}
+        {% include('components/list/_frame_list.html.twig') %}
     </div>
 {% endblock %}

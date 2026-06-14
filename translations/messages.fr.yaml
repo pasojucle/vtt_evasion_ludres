@@ -217,6 +217,7 @@ survey:
     yes : Oui
     no: Non
     no_opinion: Ne se prononce pas
+    text: Réponses
   issue:
     check: oui/non
     choice: oui/non/ne se prononce pas

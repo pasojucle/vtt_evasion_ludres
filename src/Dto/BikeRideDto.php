@@ -72,5 +72,5 @@ class BikeRideDto
 
     public array $tracks = [];
 
-    public ?DropdownDto $dropdown = null;
+    public ?DropdownView $dropdown = null;
 }

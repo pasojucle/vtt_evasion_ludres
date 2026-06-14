@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Mapper\Activity;
 
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
-use App\Dto\DropdownItemDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
+use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\HtmlAttributDto;
+use App\Dto\View\HtmlAttributView;
 use App\Entity\BikeRide;
 use DateTimeImmutable;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -22,29 +22,29 @@ class ActivityAdminDropdownMapper
     ) {
     }
 
-    public function mapToView(BikeRide $bikeRide): DropdownDto
+    public function mapToView(BikeRide $bikeRide): DropdownView
     {
         $menuItems = [];
         if ($this->security->isGranted('ROLE_ADMIN')) {
-            $menuItems[] = new ButtonDto(
+            $menuItems[] = new ButtonView(
                 label: 'Modifier',
                 url: $this->urlGenerator->generate('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()]),
                 icon: 'lucide:pencil',
                 variant: ColorVariant::DROPDOWN,
             );
             if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
-                $menuItems[] = new ButtonDto(
+                $menuItems[] = new ButtonView(
                     label: 'Annuler',
                     url: $this->urlGenerator->generate('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()]),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
                     ],
                 );
             }
-            $menuItems[] = new ButtonDto(
+            $menuItems[] = new ButtonView(
                 label: 'Exporter la séance',
                 url: $this->urlGenerator->generate('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
                 icon: 'lucide:file-down',
@@ -52,7 +52,7 @@ class ActivityAdminDropdownMapper
             );
         }
         if ($this->security->isGranted('SUMMARY_LIST')) {
-            $menuItems[] = new ButtonDto(
+            $menuItems[] = new ButtonView(
                 label: 'Actualités',
                 url: $this->urlGenerator->generate('admin_summary_list', ['bikeRide' => $bikeRide->getId()]),
                 icon: 'lucide:image',
@@ -61,11 +61,11 @@ class ActivityAdminDropdownMapper
         }
         $actionItems = [];
         if ($bikeRide->getBikeRideType()->isPublic()) {
-            $actionItems[] = new DropdownItemDto(
+            $actionItems[] = new DropdownItemView(
                 label: 'Copier l\'url',
                 icon: 'lucide:clipboard-copy',
                 htmlAttributes: [
-                    new HtmlAttributDto(
+                    new HtmlAttributView(
                         'data-clipboard-url-value',
                         $this->urlGenerator->generate(
                             'bike_ride_detail',
@@ -73,13 +73,13 @@ class ActivityAdminDropdownMapper
                             UrlGeneratorInterface::ABSOLUTE_URL
                         )
                     ),
-                    new HtmlAttributDto('data-controller', 'clipboard'),
-                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    new HtmlAttributView('data-controller', 'clipboard'),
+                    new HtmlAttributView('data-action', 'click->dropdown#close')
                 ]
             );
         }
                                                          
-        return new DropdownDto(
+        return new DropdownView(
             title: $bikeRide->__toString(),
             menuItems: $menuItems,
             actionItems: $actionItems,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State;
 
-use App\Dto\ProcessorResult;
+use App\Dto\State\ProcessorResult;
 
 /**
  * @template T of object

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\User\Provider;
 
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Dto\Filter\UserFilter;
 use App\Mapper\EmailClipboardMapper;
 use App\Mapper\LevelFilterMapper;
@@ -32,7 +32,13 @@ class UserListProvider
     ) {
     }
 
-    public function getCollection(UserFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(
+        UserFilter $filter, 
+        FilterConfigInterface $filterConfig, 
+        string $route, 
+        ?int $currentPage = 1,
+        ?object $entity = null,
+    ): ListView
     {
         $qb = $this->getQueryBuilder($filter);
 

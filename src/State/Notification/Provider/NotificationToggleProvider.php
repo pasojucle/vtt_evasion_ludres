@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\State\Notification\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Dto\Enum\DialogType;
 use App\Entity\Notification;
 
 class NotificationToggleProvider
 {
-    public function mapToView(Notification $entity): DialogModalDto
+    public function mapToView(Notification $entity): DialogModalView
     {
         if ($entity->isDisabled()) {
-            return new DialogModalDto(
+            return new DialogModalView(
                 type: DialogType::SUCCESS,
                 title: 'Activation',
                 action: 'Activer',
@@ -22,7 +22,7 @@ class NotificationToggleProvider
             );
         }
         
-        return new DialogModalDto(
+        return new DialogModalView(
             type: DialogType::WARNING,
             title: 'Désactivation',
             action: 'Désactiver',

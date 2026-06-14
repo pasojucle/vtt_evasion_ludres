@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRideType;
 
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Dto\DtoTransformer\BikeRideTypeDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\Enum\ColorVariant;
@@ -40,10 +40,10 @@ class GetBikeRideTypeList
         ];
     }
 
-    private function settings(): DropdownDto
+    private function settings(): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', RoundedVariant::ROUNDED, [
-            new ButtonDto(
+            new ButtonView(
                 label: 'Ajouter un message',
                 url: $this->urlGenerator->generate('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
                 icon: 'lucide:message-circle-plus',

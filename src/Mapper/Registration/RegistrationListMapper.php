@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Mapper\Registration;
 
-use App\Dto\BadgeDto;
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
-use App\Dto\DropdownItemDto;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
+use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\RegistrationFilter;
-use App\Dto\HtmlAttributDto;
-use App\Dto\LabelDto;
-use App\Dto\ListDto;
-use App\Dto\ListItemDto;
+use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LabelView;
+use App\Dto\View\ListView;
+use App\Dto\View\ListItemView;
 use App\Entity\Licence;
 use App\Entity\Member;
 use App\Mapper\DropdownSettingsMapper;
@@ -48,19 +48,19 @@ class RegistrationListMapper
         int $currentPage,
         RegistrationFilter $filter,
         FilterConfigInterface $filterConfig,
-    ): ListDto {
+    ): ListView {
         $items = [];
         /** @var Member $entity */
         foreach ($entities as $entity) {
             $identity = $entity->getIdentity();
             $licence = $entity->getLastLicence();
             $state = $licence->getState();
-            $items[] = new ListItemDto(
+            $items[] = new ListItemView(
                 labels: [
-                    new LabelDto($identity->getFullName()),
+                    new LabelView($identity->getFullName()),
                 ],
                 indicators: $this->getIndicators($entity),
-                status: new BadgeDto(
+                status: new BadgeView(
                     value:$state->shortTrans($this->translator), 
                     variant: $state->variant(),
                 ),
@@ -70,32 +70,34 @@ class RegistrationListMapper
             );
         }
 
-        return new ListDto(
+        return new ListView(
+            title: 'Programme des activités',
+            description: 'Administration des activités : création, modification.',
             items: $items,
             settings: $this->settings(),
             tools: $this->tools($filter),
-            paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonDto(
+            paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
+            advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
-                    new HtmlAttributDto('data-action', 'click->dropdown#close'),
+                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
         );
     }
 
-    public function settings(): DropdownDto
+    public function settings(): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('REGISTRATION', RoundedVariant::ROUNDED, [
-            new ButtonDto(
+            new ButtonView(
                 label: 'Étapes des inscriptions',
                 url: $this->urlGenerator->generate('admin_registration_step_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonDto(
+            new ButtonView(
                 label: 'Gestions des autorisations',
                 url: $this->urlGenerator->generate('admin_agreement_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -103,31 +105,31 @@ class RegistrationListMapper
         ]);
     }
 
-    public function tools(RegistrationFilter $filter): ?DropdownDto
+    public function tools(RegistrationFilter $filter): ?DropdownView
     {
-        return new DropdownDto(
+        return new DropdownView(
             variant: DropdownVariant::GOST,
             rounded: RoundedVariant::ROUNDED_NONE,
             menuItems: [
-                new ButtonDto(
+                new ButtonView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_registrations_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
-                        new HtmlAttributDto('data-turbo', 'false')
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo', 'false')
                     ]
                 )
             ],
             actionItems: [
-                new DropdownItemDto(
+                new DropdownItemView(
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributDto('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
+                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
                             'admin_registrations_email_to_clipboard', 
                             $filter->toArray()
                         )),
@@ -141,20 +143,20 @@ class RegistrationListMapper
     {
         $indicators = [];
         $licence = $entity->getLastLicence();
-        $indicators[] = new BadgeDto(
+        $indicators[] = new BadgeView(
             value: $licence->getState()->icon(),
             variant: $licence->getState()->variant(),
             size: Size::ICON,
         );
 
         if (!$entity->getLastLicence()->getState()->isYearly()) {
-            $indicators[] = new BadgeDto(
+            $indicators[] = new BadgeView(
                 value: sprintf('%s/3', $this->userService->trialSessionsPresent($licence, $entity)),
                 variant: ColorVariant::DEFAULT,
             );
         }
         $level = $entity->getLevel();
-        $indicators[] = new BadgeDto(
+        $indicators[] = new BadgeView(
             value:$level->getTitle(), 
             color: $level->getColor(),
         );
@@ -162,7 +164,7 @@ class RegistrationListMapper
         return $indicators;
     }
 
-    private function getAction(Licence $licence, ?int $currentPage, RegistrationFilter $filter): ?ButtonDto
+    private function getAction(Licence $licence, ?int $currentPage, RegistrationFilter $filter): ?ButtonView
     {
         $state = $licence->getState();
         $params = [
@@ -173,24 +175,24 @@ class RegistrationListMapper
         }
 
         return match (true) {
-            $state->toValidate() => new ButtonDto(
+            $state->toValidate() => new ButtonView(
                 label: 'Reçu',
                 url: $this->urlGenerator->generate('admin_registration_receive', $params),
                 icon: 'lucide:square-check-big',
                 variant: ColorVariant::SUCCESS,
                 title: 'Réceptionner le dossier d\'inscription',
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT)
+                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
                 ],
             ),
-            $state->toRegister() => new ButtonDto(
+            $state->toRegister() => new ButtonView(
                 label: 'Inscrit',
                 url: $this->urlGenerator->generate('admin_registration_register', $params),
                 icon: 'lucide:square-check-big',
                 variant: ColorVariant::SUCCESS,
                 title: 'Inscrire à la FFvélo',
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT)
+                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
                 ],
             ),
             default => null

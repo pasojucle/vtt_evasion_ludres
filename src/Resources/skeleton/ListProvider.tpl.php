@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\<?= $entity_name ?>\Provider;
 
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Dto\Filter\<?= $entity_name ?>Filter;
 use App\Mapper\<?= $entity_name ?>\<?= $entity_name ?>ListMapper;
 use App\Repository\<?= $entity_name ?>Repository;
@@ -25,7 +25,7 @@ class <?= $entity_name ?>ListProvider
     ) {
     }
 
-    public function getCollection(<?= $entity_name ?>Filter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(<?= $entity_name ?>Filter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
         $qb = $this->getQueryBuilder($filter);
 

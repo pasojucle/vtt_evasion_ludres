@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\AbstractCrudController;
+
 use App\Dto\Filter\RegistrationFilter;
 use App\Form\Filter\ListFilterType;
 use App\State\Registration\Provider\RegistrationListProvider;
@@ -24,11 +24,10 @@ class RegistrationController extends AbstractCrudController
         RegistrationListProvider $provider,
         Request $request,
     ): Response {
-        $filter = $provider->getHydratedDto($request->query->all(), RegistrationFilter::class);
 
         return $this->handleListAction(
-            $filter,
-            ListFilterType::class,
+            'admin_registration_list',
+            RegistrationFilter::class,
             $provider,
             'registration/admin/list.html.twig',
             $request
@@ -43,7 +42,7 @@ class RegistrationController extends AbstractCrudController
     ): StreamedResponse {
         $filter = $provider->getHydratedDto($request->query->all(), RegistrationFilter::class);
 
-        return $this->handleExportAction($filter, $provider);
+        return $this->handleExportAction($filter, $provider, 'export_inscriptions.csv');
     }
 
     #[Route('/emails/inscriptions', name: 's_email_to_clipboard', methods: ['GET'])]

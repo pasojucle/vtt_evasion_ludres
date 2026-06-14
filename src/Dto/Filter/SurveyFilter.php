@@ -13,7 +13,7 @@ class SurveyFilter extends AbstractFilter
         public ?SurveyStatusEnum $status = null,
         public ?SurveyRestriction $restriction = null,
         public ?int $itemsPerPage = null,
-        public ?string $sort = null,
+        public ?string $sort = 'DESC',
     ) {
     }
 }

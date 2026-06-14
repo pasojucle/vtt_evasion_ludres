@@ -34,5 +34,5 @@ class ProductDto
 
     public bool $isDisabled = false;
 
-    public ?DropdownDto $dropdown = null;
+    public ?DropdownView $dropdown = null;
 }

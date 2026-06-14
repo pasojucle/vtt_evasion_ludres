@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 
-readonly class BadgeDto
+readonly class BadgeView
 {
     public function __construct(
         public string $value,

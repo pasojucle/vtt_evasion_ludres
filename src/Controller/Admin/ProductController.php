@@ -14,14 +14,13 @@ use App\State\Product\Processor\ProductDeleteProcessor;
 use App\State\Product\Provider\ProductAdminListProvider;
 use App\State\Product\Provider\ProductDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ProductController extends AbstractController
+class ProductController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -29,37 +28,18 @@ class ProductController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]
+    #[Route('/admin/produits', name: 'admin_product_list', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminList(
         ProductAdminListProvider $provider,
         Request $request
     ): Response {
-        /**  @var ProductFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), ProductFilter::class);
-
-        $filterConfig = $provider->getFilterConfig('admin_products');
-        if (!$filterConfig) {
-            throw $this->createNotFoundException();
-        }
-        $form = $this->createForm(ListFilterType::class, $filter, [
-            'data_class' => $filterConfig->getDataClass(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'event_subscriber' => $filterConfig->getEventSubscriber(),
-        ]);
-
-        $form->handleRequest($request);
-
-        return $this->render('product/admin/list.html.twig', [
-            'form' => $form->createView(),
-            'list' => $provider->getCollection(
-                $filter,
-                $filterConfig,
-                $request->attributes->get('_route'),
-                $request->query->getInt('page', 1),
-            ),
-        ]);
+        return $this->handleListAction(
+            'admin_product_list',
+            ProductFilter::class,
+            $provider,
+            $request
+        );
     }
 
     #[Route('/admin/produit', name: 'admin_product_add', methods: ['GET', 'POST'])]

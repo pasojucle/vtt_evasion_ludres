@@ -115,15 +115,15 @@ class GetSchedule
         return $this->getFilters->execute($period, $date, $direction);
     }
 
-    // private function settings(): DropdownDto
+    // private function settings(): DropdownView
     // {
     //     return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', [
-    //         new ButtonDto(
+    //         new ButtonView(
     //             label: 'Types de rando',
     //             url: $this->urlGenerator->generate('admin_bike_ride_types'),
     //             variant: ColorVariant::DROPDOWN,
     //         ),
-    //         new ButtonDto(
+    //         new ButtonView(
     //             label: 'Indemnités',
     //             url: $this->urlGenerator->generate('admin_indemnity_list'),
     //             variant: ColorVariant::DROPDOWN,

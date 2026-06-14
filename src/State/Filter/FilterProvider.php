@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Filter;
 
-use App\Dto\SheetDto;
+use App\Dto\View\SheetView;
 use App\Mapper\FilterMapper;
 use App\Service\Filter\FilterConfigInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
@@ -34,9 +34,9 @@ class FilterProvider
         return $this->filterMapper->mapToDto($rawData, $dataClass);
     }
 
-    public function createSheet(): SheetDto
+    public function createSheet(): SheetView
     {
-        return new SheetDto(
+        return new SheetView(
             title: 'Tous les filtres',
             description: 'Affiner votre récherche, trier les résutats',
             action: 'Rechercher',

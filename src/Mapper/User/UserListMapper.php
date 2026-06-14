@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Mapper\User;
 
-use App\Dto\BadgeDto;
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
-use App\Dto\DropdownItemDto;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
+use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\UserFilter;
-use App\Dto\HtmlAttributDto;
-use App\Dto\LabelDto;
-use App\Dto\ListDto;
-use App\Dto\ListItemDto;
+use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LabelView;
+use App\Dto\View\ListView;
+use App\Dto\View\ListItemView;
 use App\Entity\Member;
 use App\Entity\User;
 use App\Mapper\DropdownSettingsMapper;
@@ -45,18 +45,18 @@ class UserListMapper
         int $currentPage,
         UserFilter $filter,
         FilterConfigInterface $filterConfig
-    ): ListDto {
+    ): ListView {
         $items = [];
         /** @var Member $entity */
         foreach ($entities as $entity) {
             $identity = $entity->getIdentity();
             $level = $entity->getLevel();
-            $items[] = new ListItemDto(
+            $items[] = new ListItemView(
                 labels: [
-                    new LabelDto($identity->getFullName()),
+                    new LabelView($identity->getFullName()),
                 ],
                 indicators: $this->getIndicators($entity),
-                status: new BadgeDto(
+                status: new BadgeView(
                     value:$level->getTitle(), 
                     color: $level->getColor(),
                 ),
@@ -65,17 +65,20 @@ class UserListMapper
             );
         }
 
-        return new ListDto(
+        return new ListView(
+            id: 'users_container',
+            title: 'toto',
+            description: 'banane',
             items: $items,
             settings: $this->settings(),
             tools: $this->getTools($filter),
-            paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonDto(
+            paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
+            advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_user_list'], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
-                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
@@ -84,20 +87,20 @@ class UserListMapper
     }
 
 
-    private function settings(): DropdownDto
+    private function settings(): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('USER', RoundedVariant::ROUNDED_END, [
-            new ButtonDto(
+            new ButtonView(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_levels'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonDto(
+            new ButtonView(
                 label: 'Compétences',
                 url: $this->urlGenerator->generate('admin_skill_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonDto(
+            new ButtonView(
                 label: 'Roles du bureau et comité',
                 url: $this->urlGenerator->generate('admin_board_role_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -108,13 +111,13 @@ class UserListMapper
     private function getIndicators(User $entity): array
     {
         $indicators = [];
-        $indicators[] = new BadgeDto(
+        $indicators[] = new BadgeView(
             value: $entity->getLevel()->getType()->getIcon(),
             variant: ColorVariant::ACCENT,
             size: Size::ICON
         );
 
-        $indicators[] = new BadgeDto(
+        $indicators[] = new BadgeView(
             value: (string) $entity->getLastLicence()->getSeason(),
             variant: ColorVariant::AMBER,
         );
@@ -122,49 +125,49 @@ class UserListMapper
         return $indicators;
     }
 
-    private function getTools(UserFilter $filter): DropdownDto
+    private function getTools(UserFilter $filter): DropdownView
     {
-        return new DropdownDto(
+        return new DropdownView(
             variant: DropdownVariant::GOST,
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
-                new ButtonDto(
+                new ButtonView(
                     label: 'Exporter la sélection',
                     variant: ColorVariant::DROPDOWN,
                     url: $this->urlGenerator->generate('admin_members_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
-                        new HtmlAttributDto('data-turbo', 'false')
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo', 'false')
                     ],
                 ),
-                new ButtonDto(
+                new ButtonView(
                     label: 'Exporter les évaluations de la sélection',
                     variant: ColorVariant::DROPDOWN,
                     url: $this->urlGenerator->generate('admin_user_skill_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                        new HtmlAttributView('data-action', 'click->dropdown#close')
                     ],
                 ),
-                new ButtonDto(
+                new ButtonView(
                     label: 'Synthèse par saison',
                     variant: ColorVariant::DROPDOWN,
                     url: $this->urlGenerator->generate('admin_overview_season'),
                     icon: 'lucide:chart-scatter',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close')
+                        new HtmlAttributView('data-action', 'click->dropdown#close')
                     ],
                 ),
             ],
             actionItems: [
-                new DropdownItemDto(
+                new DropdownItemView(
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributDto('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributDto('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributDto('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
+                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
                             'admin_members_email_to_clipboard', 
                             $filter->toArray()
                         )),

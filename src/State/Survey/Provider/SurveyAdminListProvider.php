@@ -5,17 +5,21 @@ declare(strict_types=1);
 namespace App\State\Survey\Provider;
 
 use App\Dto\Enum\SurveyRestriction;
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SurveyFilter;
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Entity\Enum\SurveyStatusEnum;
+use App\Mapper\EmailClipboardMapper;
 use App\Mapper\Survey\SurveyAdminListMapper;
 use App\Repository\SurveyRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\ListProviderInterface;
 use DateTime;
+use Doctrine\ORM\QueryBuilder;
 
-class SurveyAdminListProvider
+class SurveyAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
     
@@ -23,10 +27,43 @@ class SurveyAdminListProvider
         private SurveyRepository $surveyRepository,
         private PaginatorService $paginator,
         private SurveyAdminListMapper $mapper,
+        private EmailClipboardMapper $emailClipboardMapper
     ) {
     }
     
-    public function getCollection(SurveyFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(
+        AbstractFilter $filter, 
+        FilterConfigInterface $filterConfig, 
+        string $route, 
+        ?int $currentPage = 1,
+    ): ListView
+    {
+        assert($filter instanceof SurveyFilter);
+
+        $qb = $this->getQueryBuilder($filter);
+
+        $entities = $this->paginator->paginate(
+            $qb,
+            $currentPage,
+            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
+        );
+
+        return $this->mapper->mapToView(
+            $entities,
+            $route,
+            $currentPage,
+            $filter,
+            $filterConfig
+        );
+    }
+
+    public function copyEmailListToClipboard(SurveyFilter $filter): string
+    {
+        $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
+
+        return $this->emailClipboardMapper->mapToEmailCsvString($entities);
+    }
+    private function getQueryBuilder(SurveyFilter $filter): QueryBuilder
     {
         $today = (new DateTime())->setTime(0, 0, 0);
         $qb = $this->surveyRepository->findSurveyQuery();
@@ -48,18 +85,6 @@ class SurveyAdminListProvider
             $this->surveyRepository->filterSort($qb, $filter->sort);
         }
 
-        $entities = $this->paginator->paginate(
-            $qb,
-            $currentPage,
-            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
-        );
-
-        return $this->mapper->mapToView(
-            $entities,
-            $route,
-            $currentPage,
-            $filter,
-            $filterConfig
-        );
+        return $qb;
     }
 }

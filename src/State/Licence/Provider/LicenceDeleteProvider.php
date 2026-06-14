@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\Licence;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class LicenceDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(Licence  $entity): DialogModalDto
+    public function mapToView(Licence  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf(

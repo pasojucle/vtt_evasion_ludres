@@ -7,7 +7,7 @@ namespace App\State\Registration\Provider;
 use App\Dto\Enum\RegistrationStatus;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\RegistrationFilter;
-use App\Dto\ListDto;
+use App\Dto\View\ListView;
 use App\Mapper\EmailClipboardMapper;
 use App\Mapper\LevelFilterMapper;
 use App\Mapper\Registration\RegistrationListMapper;
@@ -37,7 +37,13 @@ class RegistrationListProvider implements ListProviderInterface
     ) {
     }
 
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListDto
+    public function getCollection(
+        AbstractFilter $filter, 
+        FilterConfigInterface $filterConfig, 
+        string $route, 
+        ?int $currentPage = 1,
+        ?object $entity = null,
+    ): ListView
     {
         assert($filter instanceof RegistrationFilter);
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\State\Licence\Processor;
 
 use App\Dto\Form\LicenceReject;
-use App\Dto\ProcessorResult;
+use App\Dto\State\ProcessorResult;
 use App\Dto\Service\MailerResult;
 use App\Entity\Member;
 use App\Service\FilterDecoderService;

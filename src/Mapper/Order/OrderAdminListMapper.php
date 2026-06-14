@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Mapper\Order;
 
-use App\Dto\BadgeDto;
-use App\Dto\ButtonDto;
-use App\Dto\DropdownDto;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Filter\OrderFilter;
-use App\Dto\HtmlAttributDto;
-use App\Dto\LabelDto;
-use App\Dto\ListDto;
-use App\Dto\ListItemDto;
+use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LabelView;
+use App\Dto\View\ListView;
+use App\Dto\View\ListItemView;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Mapper\DropdownSettingsMapper;
@@ -40,48 +40,54 @@ class OrderAdminListMapper
     ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter, FilterConfigInterface $filterConfig): ListDto
+    public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
         $items = [];
         /** @var OrderHeader $entity */
         foreach ($entities as $entity) {
             $status = $entity->getStatus();
-            $items[] = new ListItemDto(
+            $items[] = new ListItemView(
                 labels: [
-                    new LabelDto($entity->getCreatedAt()->format('d/m/y')),
-                    new LabelDto($entity->getMember()->getIdentity()->getFullName()),
-                    new LabelDto($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), LabelDto::TYPE_NUMBER),
+                    new LabelView($entity->getCreatedAt()->format('d/m/y')),
+                    new LabelView($entity->getMember()->getIdentity()->getFullName()),
+                    new LabelView($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), LabelView::TYPE_NUMBER),
                 ],
-                status: new BadgeDto($status->trans($this->translator), $status->variant()),
+                status: new BadgeView($status->trans($this->translator), $status->variant()),
                 dropdown: $this->getDropdown($entity),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 action: $this->getAction($entity, $currentPage, $filter),
+                gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
+                gridTemplateLabels: 'grid-cols-[80px_auto_80px] lg:grid-cols-3',
+                gridTemplateBadges: 'grid-cols-1',
             );
         }
 
-        return new ListDto(
+        return new ListView(
+            id: 'orders_container',
+            title: 'Commandes',
+            description: 'Administration des commandes de la boutique: état des stocks, validation.',
             items: $items,
             settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED_END),
             tools: $this->getTools($filter->toArray()),
-            advancedFilter: new ButtonDto(
-                url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_orders'], $filter->toQueryParams())),
+            advancedFilter: new ButtonView(
+                url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', ButtonDto::SHEET_CONTENT),
-                    new HtmlAttributDto('data-action', 'click->dropdown#close')
+                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
-            paginator: $this->paginatorMapper->fromEntities($entities, $route, $currentPage, $filter),
+            paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             wiki:  $this->wikiMapper->mapToView('boutique', RoundedVariant::ROUNDED_START),
         );
     }
 
-    private function getAction(OrderHeader $entity, ?int $currentPage, OrderFilter $filter): ?ButtonDto
+    private function getAction(OrderHeader $entity, ?int $currentPage, OrderFilter $filter): ?ButtonView
     {
         $status = $entity->getStatus();
         if ($status === OrderStatusEnum::ORDERED) {
-            return new ButtonDto(
+            return new ButtonView(
                 label: 'Valider',
                 url: $this->urlGenerator->generate('admin_order', ['orderHeader' => $entity->getId()]),
                 icon: 'lucide:check-check',
@@ -96,14 +102,14 @@ class OrderAdminListMapper
             if ($filterHash = $filter->toEncodedString($currentPage)) {
                 $params['filter'] = $filterHash;
             }
-            $action = new ButtonDto(
+            $action = new ButtonView(
                 label: 'Cloturer',
                 url: $this->urlGenerator->generate('admin_order_status', $params),
                 icon: 'lucide:check-check',
                 variant: ColorVariant::ACCENT,
                 htmlAttributes: [
-                    new HtmlAttributDto('data-turbo-frame', 'order-list'),
-                    new HtmlAttributDto('data-turbo-method', 'post'),
+                    new HtmlAttributView('data-turbo-frame', 'order-list'),
+                    new HtmlAttributView('data-turbo-method', 'post'),
                 ]
             );
 
@@ -113,37 +119,37 @@ class OrderAdminListMapper
         return null;
     }
 
-    private function getDropdown(OrderHeader $order): DropdownDto
+    private function getDropdown(OrderHeader $order): DropdownView
     {
-        return  new DropdownDto(
+        return  new DropdownView(
             menuItems: [
-                new ButtonDto(
+                new ButtonView(
                     label: 'Supprimer',
                     url: $this->urlGenerator->generate('order_delete', ['orderHeader' => $order->getId()]),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributDto('data-turbo-frame', ButtonDto::MODAL_CONTENT),
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
                     ],
                 )
             ]
         );
     }
 
-    private function getTools(array $filter): DropdownDto
+    private function getTools(array $filter): DropdownView
     {
-        $dropdown = new DropdownDto(
+        $dropdown = new DropdownView(
             variant: DropdownVariant::GOST,
             menuItems: [
-                new ButtonDto(
+                new ButtonView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_order_headers_export', $filter),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributDto('data-action', 'click->dropdown#close'),
-                        new HtmlAttributDto('data-turbo', 'false')
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributView('data-turbo', 'false')
                     ]
                 ),
             ],

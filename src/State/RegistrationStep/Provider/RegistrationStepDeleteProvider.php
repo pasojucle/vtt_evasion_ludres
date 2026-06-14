@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\RegistrationStep\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\RegistrationStep;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class RegistrationStepDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(RegistrationStep  $entity): DialogModalDto
+    public function mapToView(RegistrationStep  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'étape <b>%s</b> ?',

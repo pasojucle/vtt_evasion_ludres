@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
-use App\Dto\ProcessorResult;
+use App\Dto\State\ProcessorResult;
 use App\Entity\Licence;
 use App\Service\FilterDecoderService;
 use App\Service\LicenceService;

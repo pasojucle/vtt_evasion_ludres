@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\Dto\View;
 
-readonly class HtmlAttributDto
+readonly class HtmlAttributView
 {
     /**
      * @param string $name

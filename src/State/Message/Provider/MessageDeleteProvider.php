@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Message\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\Message;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class MessageDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(Message  $entity): DialogModalDto
+    public function mapToView(Message  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer le message  <b>%s</b> ?',

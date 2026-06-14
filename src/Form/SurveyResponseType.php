@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
+use App\Entity\Enum\SurveyResponseType as SurveyResponseTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -23,9 +24,9 @@ class SurveyResponseType extends AbstractType
             $surveyResponse = $event->getData();
             $form = $event->getForm();
             $responseType = $surveyResponse->getSurveyIssue()->getResponseType();
-            if (SurveyIssue::RESPONSE_TYPE_STRING !== $responseType) {
+            if (SurveyResponseTypeEnum::STRING !== $responseType) {
                 $choices = SurveyResponse::VALUES;
-                if (SurveyIssue::RESPONSE_TYPE_CHECK === $responseType) {
+                if (SurveyResponseTypeEnum::CHECK === $responseType) {
                     unset($choices[SurveyResponse::VALUE_NO_OPINION]);
                 }
                 $form

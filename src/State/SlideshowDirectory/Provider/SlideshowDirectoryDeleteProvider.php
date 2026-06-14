@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\SlideshowDirectory\Provider;
 
-use App\Dto\DialogModalDto;
+use App\Dto\DialogModalView;
 use App\Entity\SlideshowDirectory;
 use App\Mapper\DestructiveModalMapper;
 
@@ -14,7 +14,7 @@ class SlideshowDirectoryDeleteProvider
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(SlideshowDirectory  $entity): DialogModalDto
+    public function mapToView(SlideshowDirectory  $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             $$entity->getSlideshowImages()->isEmpty()
