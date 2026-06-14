@@ -7,12 +7,10 @@ namespace App\Controller\Admin;
 use App\Dto\Filter\NotificationFilter;
 use App\Entity\Notification;
 use App\Form\Admin\NotificationType;
-use App\Form\Filter\ListFilterType;
 use App\State\Notification\Processor\NotificationToggleProcessor;
 use App\State\Notification\Provider\NotificationAdminListProvider;
 use App\State\Notification\Provider\NotificationToggleProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/popup', name: 'admin_notification_')]
-class NotificationController extends AbstractController
+class NotificationController extends AbstractCrudController
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -32,32 +30,12 @@ class NotificationController extends AbstractController
         Request $request,
         NotificationAdminListProvider $provider,
     ): Response {
-
-        /**  @var NotificationFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), NotificationFilter::class);
-
-        $filterConfig = $provider->getFilterConfig('admin_notification_list');
-        if (!$filterConfig) {
-            throw $this->createNotFoundException();
-        }
-        $form = $this->createForm(ListFilterType::class, $filter, [
-            'data_class' => $filterConfig->getDataClass(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'event_subscriber' => $filterConfig->getEventSubscriber(),
-        ]);
-
-        $form->handleRequest($request);
-
-        return $this->render('notification/admin/list.html.twig', [
-            'form' => $form->createView(),
-            'list' => $provider->getCollection(
-                $filter,
-                $filterConfig,
-                $request->attributes->get('_route'),
-                $request->query->getInt('page', 1),
-            ),
-        ]);
+        return $this->handleListAction(
+            'admin_notification_list',
+            NotificationFilter::class,
+            $provider,
+            $request
+        );
     }
 
     #[Route('/', name: 'add', methods: ['GET', 'POST'])]

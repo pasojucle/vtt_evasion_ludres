@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Provider;
 
-use App\Dto\DialogModalView;
+use App\Dto\View\DialogModalView;
 use App\Entity\Survey;
 use App\Mapper\DestructiveModalMapper;
 use App\State\DialogProviderInterface;

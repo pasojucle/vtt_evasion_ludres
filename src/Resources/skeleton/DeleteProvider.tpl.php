@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\<?= $entity_name ?>\Provider;
 
-use App\Dto\DialogModalView;
+use App\Dto\View\DialogModalView;
 use App\Entity\<?= $entity_name ?>;
 use App\Mapper\DestructiveModalMapper;
 

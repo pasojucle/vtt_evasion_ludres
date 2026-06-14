@@ -43,8 +43,6 @@ class LicenceService
 
     public function applyTransition(Licence $licence, string $transition): bool
     {
-        dump($licence->getState(), $transition);
-        dump($this->licenceStateMachine->can($licence, $transition));
         if ($this->licenceStateMachine->can($licence, $transition)) {
             $this->licenceStateMachine->apply($licence, $transition);
             return true;

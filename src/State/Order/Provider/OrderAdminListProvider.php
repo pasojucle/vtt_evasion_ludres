@@ -14,9 +14,10 @@ use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
 use App\State\ListProviderInterface;
+use App\State\StreamExportableInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class OrderAdminListProvider implements ListProviderInterface
+class OrderAdminListProvider implements ListProviderInterface, StreamExportableInterface
 {
     use FilterHydratorTrait;
 
@@ -29,8 +30,7 @@ class OrderAdminListProvider implements ListProviderInterface
     }
     public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
-        assert($filter instanceof OrderFilter);
-
+        /** @var OrderFilter $filter */
         $entities = $this->paginator->paginate(
             $this->getQueryBuilder($filter),
             $currentPage,
@@ -46,8 +46,9 @@ class OrderAdminListProvider implements ListProviderInterface
         );
     }
 
-    public function streamExportContent(OrderFilter $filter): void
+    public function streamExportContent(AbstractFilter $filter): void
     {
+        /**  @var OrderFilter $filter */
         $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
 
         $this->exportMapper->streamToCsv($entities);

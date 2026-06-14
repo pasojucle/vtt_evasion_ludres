@@ -19,9 +19,10 @@ use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use App\State\FilterHydratorTrait;
 use App\State\ListProviderInterface;
+use App\State\StreamExportableInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class RegistrationListProvider implements ListProviderInterface
+class RegistrationListProvider implements ListProviderInterface, StreamExportableInterface
 {
     use FilterHydratorTrait;
 
@@ -42,10 +43,9 @@ class RegistrationListProvider implements ListProviderInterface
         FilterConfigInterface $filterConfig, 
         string $route, 
         ?int $currentPage = 1,
-        ?object $entity = null,
     ): ListView
     {
-        assert($filter instanceof RegistrationFilter);
+        /** @var RegistrationFilter $filter */
 
         $qb = $this->getQueryBuilder($filter);
 
@@ -73,7 +73,7 @@ class RegistrationListProvider implements ListProviderInterface
 
     public function streamExportContent(AbstractFilter $filter): void
     {
-        assert($filter instanceof RegistrationFilter);
+        /** @var RegistrationFilter $filter */
 
         $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
 

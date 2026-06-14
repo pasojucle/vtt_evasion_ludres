@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Link\Provider;
 
-use App\Dto\DialogModalView;
+use App\Dto\View\DialogModalView;
 use App\Entity\Link;
 use App\Mapper\DestructiveModalMapper;
 

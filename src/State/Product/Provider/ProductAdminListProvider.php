@@ -26,7 +26,7 @@ class ProductAdminListProvider  implements ListProviderInterface
     
     public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
-        assert($filter instanceof ProductFilter);
+        /** @var ProductFilter $filter */
 
         $qb = $this->productRepository->findProductQuery();
 

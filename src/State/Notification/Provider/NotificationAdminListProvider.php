@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\State\Notification\Provider;
 
 use App\Dto\Enum\NotificationVisibility;
-use App\Dto\Enum\PublishStatus;
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\NotificationFilter;
 use App\Dto\View\ListView;
 use App\Mapper\Notification\NotificationAdminListMapper;
@@ -13,9 +13,10 @@ use App\Repository\NotificationRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class NotificationAdminListProvider
+class NotificationAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
 
@@ -25,8 +26,9 @@ class NotificationAdminListProvider
         private NotificationAdminListMapper $mapper,
     ) {
     }
-    public function getCollection(NotificationFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
+        /** @var NotificationFilter $filter */
         $entities = $this->paginator->paginate(
             $this->getQueryBuilder($filter),
             $currentPage,
@@ -42,8 +44,7 @@ class NotificationAdminListProvider
         );
     }
 
-
-    public function getQueryBuilder(NotificationFilter $filter): QueryBuilder
+    private function getQueryBuilder(NotificationFilter $filter): QueryBuilder
     {
         $qb = $this->notificationRepository->findNotificationQuery();
 

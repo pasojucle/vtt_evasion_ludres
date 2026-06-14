@@ -38,8 +38,7 @@ class SurveyAdminListProvider implements ListProviderInterface
         ?int $currentPage = 1,
     ): ListView
     {
-        assert($filter instanceof SurveyFilter);
-
+        /** @var SurveyFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(

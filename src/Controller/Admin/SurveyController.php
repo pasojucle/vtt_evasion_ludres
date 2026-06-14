@@ -53,7 +53,6 @@ class SurveyController extends AbstractCrudController
             'admin_survey_list',
             SurveyFilter::class,
             $provider,
-            'survey/admin/list.html.twig',
             $request
         );
       }

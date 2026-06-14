@@ -24,7 +24,7 @@ class SurveyResponseType extends AbstractType
             $surveyResponse = $event->getData();
             $form = $event->getForm();
             $responseType = $surveyResponse->getSurveyIssue()->getResponseType();
-            if (SurveyResponseTypeEnum::STRING !== $responseType) {
+            if (SurveyResponseTypeEnum::TEXT !== $responseType) {
                 $choices = SurveyResponse::VALUES;
                 if (SurveyResponseTypeEnum::CHECK === $responseType) {
                     unset($choices[SurveyResponse::VALUE_NO_OPINION]);

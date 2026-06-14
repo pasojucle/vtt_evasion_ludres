@@ -29,7 +29,6 @@ class RegistrationController extends AbstractCrudController
             'admin_registration_list',
             RegistrationFilter::class,
             $provider,
-            'registration/admin/list.html.twig',
             $request
         );
     }

@@ -35,8 +35,7 @@ class ActivityAdminListProvider implements ListProviderInterface
 
     public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
-        assert($filter instanceof ActivityFilter);
-        
+        /** @var ActivityFilter $filter */
         $qb = $this->bikeRideRepository->findActivityQuery();
         match ($filter->period) {
             ActivityPeriod::UPCOMING => $this->bikeRideRepository->filterUpcoming($qb, new DateTime()),
@@ -78,7 +77,6 @@ class ActivityAdminListProvider implements ListProviderInterface
             $filterConfig
         );
     }
-
     private function getInterval(?string $month): array
     {
         if (!$month) {

@@ -49,12 +49,15 @@ class NotificationAdminListMapper
                 status: new BadgeView($status->trans($this->translator), $status->variant()),
                 dropdown: $this->getDropdown($entity),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
+                gridTemplateContent:' grid-cols-1 lg:grid-cols-[3fr_1fr]',
+                gridTemplateLabels: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
             );
         }
 
         return new ListView(
-            title: 'Programme des activités',
-            description: 'Administration des activités : création, modification.',
+            id: 'notifications_container',
+            title: 'Notification Pop\'up',
+            description: 'Administration des messages affichés dans les pop\'up.',
             items: $items,
             addItem: new ButtonView(
                 label: 'Ajouter une pop\'up',
@@ -62,7 +65,7 @@ class NotificationAdminListMapper
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED_END),
+            settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',

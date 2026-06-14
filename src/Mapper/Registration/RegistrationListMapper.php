@@ -24,6 +24,7 @@ use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\Registration\RegistrationDropdownMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\SeasonService;
 use App\Service\UserService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -39,6 +40,7 @@ class RegistrationListMapper
         private RegistrationDropdownMapper $registrationDropdownMapper,
         private UserService $userService,
         private TranslatorInterface $translator,
+        private SeasonService $seasonService,
     ) {
     }
 
@@ -67,12 +69,15 @@ class RegistrationListMapper
                 dropdown: $this->registrationDropdownMapper->mapToView($entity),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
                 action: $this->getAction($licence, $currentPage, $filter),
+                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_2fr]',
+                gridTemplateBadges: 'grid-cols-[auto_90px] lg:grid-cols-[auto_180px]',
             );
         }
 
         return new ListView(
-            title: 'Programme des activités',
-            description: 'Administration des activités : création, modification.',
+            id: 'Registrations_container',
+            title: 'Inscriptions',
+            description: sprintf('Administration des inscriptions pour la saison %s.', $this->seasonService->getCurrentSeason()),
             items: $items,
             settings: $this->settings(),
             tools: $this->tools($filter),

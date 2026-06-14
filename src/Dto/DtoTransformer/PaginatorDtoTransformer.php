@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\View\PaginatorDto;
+use App\Dto\View\PaginatorView;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -21,15 +21,15 @@ class PaginatorDtoTransformer
     ) {
     }
 
-    public function fromEntities(Paginator $paginator, ?array $filters = [], ?string $targetRoute = null): PaginatorDto
+    public function fromEntities(Paginator $paginator, ?array $filters = [], ?string $targetRoute = null): PaginatorView
     {
-        $paginatorDto = new PaginatorDto();
+        $PaginatorView = new PaginatorView();
 
-        $paginatorDto->lastPage = (int) ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
+        $PaginatorView->lastPage = (int) ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
 
-        $paginatorDto->total = $paginator->count();
+        $PaginatorView->total = $paginator->count();
 
-        $paginatorDto->currentPage = $this->getCurrentPage();
+        $PaginatorView->currentPage = $this->getCurrentPage();
 
         $this->currentRoute = $targetRoute ?? $this->requestStack->getCurrentRequest()->attributes->get('_route');
 
@@ -38,27 +38,27 @@ class PaginatorDtoTransformer
         if (!empty($filters)) {
             $this->currentParams = array_merge($this->currentParams, $filters);
         }
-        $paginatorDto->first = $this->getPageData(1);
-        $paginatorDto->last = $this->getPageData($paginatorDto->lastPage);
-        $this->getPages($paginatorDto);
-        $paginatorDto->previous = (1 < $paginatorDto->currentPage) ? $this->getPageData($paginatorDto->currentPage - 1) : null;
-        $paginatorDto->next = ($paginatorDto->currentPage < $paginatorDto->lastPage) ? $this->getPageData($paginatorDto->currentPage + 1) : null;
+        $PaginatorView->first = $this->getPageData(1);
+        $PaginatorView->last = $this->getPageData($PaginatorView->lastPage);
+        $this->getPages($PaginatorView);
+        $PaginatorView->previous = (1 < $PaginatorView->currentPage) ? $this->getPageData($PaginatorView->currentPage - 1) : null;
+        $PaginatorView->next = ($PaginatorView->currentPage < $PaginatorView->lastPage) ? $this->getPageData($PaginatorView->currentPage + 1) : null;
 
-        return $paginatorDto;
+        return $PaginatorView;
     }
 
 
-    public function fromArray(array $data, int $itemsPerPage, int $currentPage, ?array $filters = [], ?string $targetRoute = null): PaginatorDto
+    public function fromArray(array $data, int $itemsPerPage, int $currentPage, ?array $filters = [], ?string $targetRoute = null): PaginatorView
     {
-        $paginatorDto = new PaginatorDto();
+        $PaginatorView = new PaginatorView();
 
         $total = count($data);
 
-        $paginatorDto->lastPage = (int) ceil($total / $itemsPerPage);
+        $PaginatorView->lastPage = (int) ceil($total / $itemsPerPage);
 
-        $paginatorDto->total = $total;
+        $PaginatorView->total = $total;
 
-        $paginatorDto->currentPage = $currentPage;
+        $PaginatorView->currentPage = $currentPage;
 
         $this->currentRoute = $targetRoute ?? $this->requestStack->getCurrentRequest()->attributes->get('_route');
 
@@ -67,13 +67,13 @@ class PaginatorDtoTransformer
         if (!empty($filters)) {
             $this->currentParams = array_merge($this->currentParams, $filters);
         }
-        $paginatorDto->first = $this->getPageData(1);
-        $paginatorDto->last = $this->getPageData($paginatorDto->lastPage);
-        $this->getPages($paginatorDto);
-        $paginatorDto->previous = (1 < $paginatorDto->currentPage) ? $this->getPageData($paginatorDto->currentPage - 1) : null;
-        $paginatorDto->next = ($paginatorDto->currentPage < $paginatorDto->lastPage) ? $this->getPageData($paginatorDto->currentPage + 1) : null;
+        $PaginatorView->first = $this->getPageData(1);
+        $PaginatorView->last = $this->getPageData($PaginatorView->lastPage);
+        $this->getPages($PaginatorView);
+        $PaginatorView->previous = (1 < $PaginatorView->currentPage) ? $this->getPageData($PaginatorView->currentPage - 1) : null;
+        $PaginatorView->next = ($PaginatorView->currentPage < $PaginatorView->lastPage) ? $this->getPageData($PaginatorView->currentPage + 1) : null;
         
-        return $paginatorDto;
+        return $PaginatorView;
     }
 
     private function getCurrentPage(): int
@@ -85,31 +85,31 @@ class PaginatorDtoTransformer
         return $currentPage;
     }
 
-    private function getPages(PaginatorDto &$paginatorDto): void
+    private function getPages(PaginatorView &$PaginatorView): void
     {
         $start = 1;
-        $end = $paginatorDto->lastPage;
+        $end = $PaginatorView->lastPage;
 
-        if (6 < $paginatorDto->lastPage) {
-            $start = $paginatorDto->currentPage - 3;
+        if (6 < $PaginatorView->lastPage) {
+            $start = $PaginatorView->currentPage - 3;
             if ($start < 1) {
                 $start = 1;
             }
             $end = $start + 5;
-            if ($paginatorDto->lastPage < $end) {
-                $end = $paginatorDto->lastPage;
+            if ($PaginatorView->lastPage < $end) {
+                $end = $PaginatorView->lastPage;
                 $start = $end - 5;
             }
         }
         if (1 === $start) {
-            $paginatorDto->first = null;
+            $PaginatorView->first = null;
         }
-        if ($end === $paginatorDto->lastPage) {
-            $paginatorDto->last = null;
+        if ($end === $PaginatorView->lastPage) {
+            $PaginatorView->last = null;
         }
-        $paginatorDto->pages = [];
+        $PaginatorView->pages = [];
         foreach (range($start, $end) as $page) {
-            $paginatorDto->pages[] = $this->getPageData($page);
+            $PaginatorView->pages[] = $this->getPageData($page);
         }
     }
 

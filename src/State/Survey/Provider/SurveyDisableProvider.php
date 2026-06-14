@@ -4,22 +4,16 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Provider;
 
-use App\Dto\DialogModalView;
+use App\Dto\View\DialogModalView;
 use App\Dto\Enum\DialogType;
 use App\Entity\Survey;
-use App\Mapper\DestructiveModalMapper;
 use App\State\DialogProviderInterface;
 
 class SurveyDisableProvider implements DialogProviderInterface
 {
-    public function __construct(
-        private DestructiveModalMapper $destructiveModalMapper,
-    ) {
-    }
     public function mapToView(object $entity): DialogModalView
     {
-        assert($entity instanceof Survey);
-        
+        /** @var Survey $entity */
         return new DialogModalView(
             type: DialogType::WARNING,
             title: 'Désactivation',

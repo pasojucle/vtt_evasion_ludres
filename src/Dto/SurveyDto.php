@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Entity\Survey;
 
 class SurveyDto

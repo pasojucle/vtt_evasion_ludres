@@ -6,7 +6,6 @@ namespace App\Mapper\Survey;
 
 use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Survey;
-use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Repository\SurveyResponseRepository;
 use DateTime;
@@ -30,7 +29,6 @@ class SurveyExportMapper
         $fp = fopen('php://output', 'w');
         
         $surveyResponsesByUuid = $this->findResponsesByUuid($entity);
-        $content = [];
         $today = new DateTime();
         fputcsv($fp, ['Export du ' . $today->format('d/m/Y H:i:s') . ' - ' . $entity->getTitle()], self::CSV_SEPARATOR);
         fputcsv($fp, [], self::CSV_SEPARATOR);
@@ -45,7 +43,7 @@ class SurveyExportMapper
         fputcsv($fp, $headers, self::CSV_SEPARATOR);
 
         if (!empty($surveyResponsesByUuid)) {
-            $this->addResponses($content, $surveyResponsesByUuid, $fp);
+            $this->addResponses($surveyResponsesByUuid, $fp);
             $results = $this->getResults($surveyResponsesByUuid);
             $this->addRecap($results, $entity, $fp);
             $this->addSurveyUsers($entity, $fp);

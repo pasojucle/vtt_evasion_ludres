@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Category\Provider;
 
-use App\Dto\DialogModalView;
+use App\Dto\View\DialogModalView;
 use App\Entity\Category;
 use App\Mapper\DestructiveModalMapper;
 

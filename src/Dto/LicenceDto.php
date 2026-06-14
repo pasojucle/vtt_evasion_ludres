@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Dto\View\ButtonView;
 use App\Entity\Enum\LicenceCategoryEnum;
 
 class LicenceDto

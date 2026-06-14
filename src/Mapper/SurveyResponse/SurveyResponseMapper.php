@@ -16,8 +16,6 @@ use App\Dto\View\SurveyResponse\SurveyResponseTypeView;
 use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use App\Mapper\FilterChipsMapper;
-use App\Mapper\PaginatorMapper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -26,8 +24,6 @@ class SurveyResponseMapper
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
-        private PaginatorMapper $paginatorMapper,
-        private FilterChipsMapper $filterChipsMapper,
     ) {
     }
 

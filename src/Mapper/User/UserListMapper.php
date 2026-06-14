@@ -62,13 +62,15 @@ class UserListMapper
                 ),
                 dropdown: $this->userDropdownMapper->mapToView($entity),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
+                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
+                gridTemplateBadges: 'grid-cols-[auto_160px]',
             );
         }
 
         return new ListView(
             id: 'users_container',
-            title: 'toto',
-            description: 'banane',
+            title: 'Adhérents ',
+            description: 'Administration des adhérents du club',
             items: $items,
             settings: $this->settings(),
             tools: $this->getTools($filter),

@@ -32,7 +32,6 @@ class LicenceRejectProcessor implements DialogProcessorInterface
         $member = $licence->getMember();
 
         $result = $this->sendMail($licenceReject->content, $member);
-        dump($result);
 
         $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
 

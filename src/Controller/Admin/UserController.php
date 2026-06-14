@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin', name: 'admin_')]
-class UserController extends AbstractController
+class UserController extends AbstractCrudController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -42,34 +42,15 @@ class UserController extends AbstractController
     #[IsGranted('USER_LIST')]
     public function adminUsers(
         UserListProvider $provider,
-        SeasonService $seasonService,
         Request $request,
     ): Response {
-        /**  @var UserFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
-        $filter->setDefaultSeason($seasonService);
-        $filterConfig = $provider->getFilterConfig('admin_user_list');
-        if (!$filterConfig) {
-            throw $this->createNotFoundException();
-        }
 
-        $form = $this->createForm(ListFilterType::class, $filter, [
-            'data_class' => $filterConfig->getDataClass(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'event_subscriber' => $filterConfig->getEventSubscriber(),
-        ]);
-        $form->handleRequest($request);
-
-        return $this->render('user/admin/list.html.twig', [
-            'form' => $form->createView(),
-            'list' => $provider->getCollection(
-                $filter,
-                $filterConfig,
-                $request->attributes->get('_route'),
-                $request->query->getInt('page', 1),
-            ),
-        ]);
+        return $this->handleListAction(
+            'admin_user_list',
+            UserFilter::class,
+            $provider,
+            $request
+        );
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]

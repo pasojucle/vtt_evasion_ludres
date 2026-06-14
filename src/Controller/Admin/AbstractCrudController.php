@@ -8,7 +8,9 @@ use App\Dto\Filter\AbstractFilter;
 use App\Form\Filter\ListFilterType;
 use App\State\DialogProcessorInterface;
 use App\State\DialogProviderInterface;
+use App\State\FilterInitializerInterface;
 use App\State\ListProviderInterface;
+use App\State\StreamExportableInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +26,10 @@ abstract class AbstractCrudController extends AbstractController
         Request $request,
     ): Response {
         $filter = $provider->getHydratedDto($request->query->all(), $filterClass);
-
+        if ($provider instanceof FilterInitializerInterface) {
+            $provider->initializeFilters($filter);
+        }
+    
         $filterConfig = $provider->getFilterConfig($route);
         if (!$filterConfig) {
             throw $this->createNotFoundException();
@@ -49,7 +54,6 @@ abstract class AbstractCrudController extends AbstractController
             ),
         ]);
     }
-
 
     protected function handleDialogAction(
         Request $request,
@@ -87,7 +91,7 @@ abstract class AbstractCrudController extends AbstractController
 
     protected function handleExportAction(
         AbstractFilter $filter,
-        ListProviderInterface $provider,
+        StreamExportableInterface $provider,
         string $filename,
     ): StreamedResponse {
         $response = new StreamedResponse(function() use ($provider, $filter) {

@@ -48,7 +48,6 @@ class BikeRideController extends AbstractCrudController
             'admin_bike_rides',
             ActivityFilter::class,
             $provider,
-            'activity/admin/list.html.twig',
             $request
         );
     }

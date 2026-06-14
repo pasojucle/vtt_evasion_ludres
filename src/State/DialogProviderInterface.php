@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State;
 
-use App\Dto\DialogModalView;
+use App\Dto\View\DialogModalView;
 
 /**
  * @template T of object

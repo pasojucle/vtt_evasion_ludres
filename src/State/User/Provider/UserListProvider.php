@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\User\Provider;
 
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\View\ListView;
 use App\Dto\Filter\UserFilter;
 use App\Mapper\EmailClipboardMapper;
@@ -14,10 +15,14 @@ use App\Mapper\User\UserListMapper;
 use App\Repository\MemberRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
+use App\Service\SeasonService;
 use App\State\FilterHydratorTrait;
+use App\State\FilterInitializerInterface;
+use App\State\ListProviderInterface;
+use App\State\StreamExportableInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class UserListProvider
+class UserListProvider implements ListProviderInterface, FilterInitializerInterface, StreamExportableInterface
 {
     use FilterHydratorTrait;
 
@@ -29,17 +34,18 @@ class UserListProvider
         private UserAutocompleteMapper $autocompleteMapper,
         private UserListExportMapper $exportMapper,
         private EmailClipboardMapper $emailClipboardMapper,
+        private SeasonService $seasonService,
     ) {
     }
 
     public function getCollection(
-        UserFilter $filter, 
+        AbstractFilter $filter, 
         FilterConfigInterface $filterConfig, 
         string $route, 
         ?int $currentPage = 1,
-        ?object $entity = null,
     ): ListView
     {
+        /** @var UserFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
@@ -57,8 +63,15 @@ class UserListProvider
         );
     }
 
-    public function streamExportContent(UserFilter $filter): void
+    public function initializeFilters(AbstractFilter $filter): void
     {
+        /** @var UserFilter $filter */
+        $filter->setDefaultSeason($this->seasonService);
+    }
+
+    public function streamExportContent(AbstractFilter $filter): void
+    {
+        /** @var UserFilter $filter */
         $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
 
         $this->exportMapper->streamToCsv($entities);

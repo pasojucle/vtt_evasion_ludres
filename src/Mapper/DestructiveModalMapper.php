@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper;
 
-use App\Dto\DialogModalView;
+use App\Dto\View\DialogModalView;
 use App\Dto\Enum\DialogType;
 
 class DestructiveModalMapper

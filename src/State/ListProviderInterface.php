@@ -14,17 +14,16 @@ use App\Service\Filter\FilterConfigInterface;
 interface ListProviderInterface
 {
     /**
-     * @template T of AbstractFilter
+     * @template TFilter of AbstractFilter
      * @param array $queryParameters
-     * @param class-string<T> $filterClass
-     * @return T
+     * @param class-string<TFilter> $filterClass
+     * @return TFilter
      */
     public function getHydratedDto(array $queryParameters, string $filterClass): AbstractFilter;
 
     /**
      * Summary of getFilterConfig
      * @param string $route
-     * @return void
      */
     public function getFilterConfig(string $route): ?FilterConfigInterface;
 
@@ -34,7 +33,6 @@ interface ListProviderInterface
      * @param FilterConfigInterface $filterConfig
      * @param string $route
      * @param ?int $currentPage
-     * @return void
      */
     public function getCollection(
         AbstractFilter $filter, 
