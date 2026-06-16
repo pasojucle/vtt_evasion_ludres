@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mapper\Registration;
 
+use App\Dto\Enum\ColorVariant;
 use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownView;
-use App\Dto\Enum\ColorVariant;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\User;
 use App\Mapper\User\UserDropdownMapper;

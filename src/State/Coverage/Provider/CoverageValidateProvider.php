@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\State\Coverage\Provider;
@@ -10,10 +11,8 @@ use App\Entity\Licence;
 use App\Mapper\DestructiveModalMapper;
 use App\State\DialogProviderInterface;
 
-
 class CoverageValidateProvider implements DialogProviderInterface
 {
-
     public function mapToView(object $entity): DialogModalView
     {
 

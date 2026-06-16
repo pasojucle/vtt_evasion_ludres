@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRideType;
 
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
 use App\Dto\DtoTransformer\BikeRideTypeDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Mapper\DropdownSettingsMapper;
 use App\Repository\BikeRideTypeRepository;
 use App\Service\PaginatorService;

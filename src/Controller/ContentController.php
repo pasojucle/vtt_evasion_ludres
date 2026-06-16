@@ -172,11 +172,11 @@ class ContentController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
-            if ($mailerService->sendMailToClub($data) && 
+            if ($mailerService->sendMailToClub($data) &&
                 $mailerService->sendMailToMember(
-                    $data['email'], 
+                    $data['email'],
                     sprintf('%s %s', $data['name'], $data['firstName']),
-                    $data['subject'], 
+                    $data['subject'],
                     $messageService->getMessageByName('EMAIL_FORM_CONTACT')
                 )->success) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');

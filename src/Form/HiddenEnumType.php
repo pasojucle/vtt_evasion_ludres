@@ -31,9 +31,9 @@ class HiddenEnumType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('class');
-        $resolver->setDefault('multiple', false);   
+        $resolver->setDefault('multiple', false);
         $resolver->setAllowedTypes('class', 'string');
-        $resolver->setAllowedTypes('multiple', 'bool');    
+        $resolver->setAllowedTypes('multiple', 'bool');
     }
 
     public function getParent(): string

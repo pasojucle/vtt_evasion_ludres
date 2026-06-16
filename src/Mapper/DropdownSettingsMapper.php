@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Mapper;
 
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Repository\ParameterRepository;
 use App\Service\MessageService;

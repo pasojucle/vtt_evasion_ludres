@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\Filter\ActivityFilter;
@@ -43,7 +42,6 @@ class BikeRideController extends AbstractCrudController
         Request $request,
         ActivityAdminListProvider $provider,
     ): Response {
-
         return $this->handleListAction(
             'admin_bike_rides',
             ActivityFilter::class,

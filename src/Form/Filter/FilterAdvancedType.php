@@ -15,11 +15,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class FilterAdvancedType extends AbstractType
 {
-        public function __construct(
+    public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-    ) 
-    {
-
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -50,7 +48,7 @@ class FilterAdvancedType extends AbstractType
     }
 
     private function generateAutocompleteUrl(array $options, array $filters): array
-    {   
+    {
         if (array_key_exists('autocomplete_url', $options)) {
             $route = $options['autocomplete_url'];
             $options['autocomplete_url'] = $this->urlGenerator->generate($route, $filters);

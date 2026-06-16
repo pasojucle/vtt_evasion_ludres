@@ -18,9 +18,9 @@ class SkillCategoryDeleteProvider
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf(
-            'Etes vous certain de supprimer la compétence <b>%s</b> ?',
-            $entity->getName()
-        )
+                'Etes vous certain de supprimer la compétence <b>%s</b> ?',
+                $entity->getName()
+            )
         );
     }
 }

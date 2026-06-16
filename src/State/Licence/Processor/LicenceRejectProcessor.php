@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\State\Licence\Processor;
 
 use App\Dto\Form\LicenceReject;
-use App\Dto\State\ProcessorResult;
 use App\Dto\Service\MailerResult;
+use App\Dto\State\ProcessorResult;
 use App\Entity\Member;
 use App\Service\FilterDecoderService;
 use App\Service\LicenceService;
@@ -44,7 +44,7 @@ class LicenceRejectProcessor implements DialogProcessorInterface
                 targetRoute: 'admin_registration_list',
                 routeParams: $this->filterDecoder->decode($filter),
                 messageKey: 'registration.flash.success.reject',
-                flashType: 'success', 
+                flashType: 'success',
             );
         }
 

@@ -11,8 +11,8 @@ use App\Dto\View\ListView;
 use App\Mapper\EmailClipboardMapper;
 use App\Mapper\LevelFilterMapper;
 use App\Mapper\Registration\RegistrationListMapper;
-use App\Mapper\User\UserListExportMapper;
 use App\Mapper\User\UserAutocompleteMapper;
+use App\Mapper\User\UserListExportMapper;
 use App\Repository\MemberRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
@@ -39,12 +39,11 @@ class RegistrationListProvider implements ListProviderInterface, StreamExportabl
     }
 
     public function getCollection(
-        AbstractFilter $filter, 
-        FilterConfigInterface $filterConfig, 
-        string $route, 
+        AbstractFilter $filter,
+        FilterConfigInterface $filterConfig,
+        string $route,
         ?int $currentPage = 1,
-    ): ListView
-    {
+    ): ListView {
         /** @var RegistrationFilter $filter */
 
         $qb = $this->getQueryBuilder($filter);
@@ -91,7 +90,7 @@ class RegistrationListProvider implements ListProviderInterface, StreamExportabl
         $qb = $this->memberRepository->getMemberQuery();
 
         $currentSeason = $this->seasonService->getCurrentSeason();
-        match($filter->status) {
+        match ($filter->status) {
             RegistrationStatus::TESTING_IN_PROGRESS => $this->memberRepository->filterTestinInProgress($qb, $currentSeason),
             RegistrationStatus::TESTING_COMPLETE => $this->memberRepository->filterTestinComplete($qb, $currentSeason),
             RegistrationStatus::NEW => $this->memberRepository->filterNew($qb, $currentSeason),

@@ -25,7 +25,9 @@
                                 grid_template_labels: item.gridTemplateLabels, 
                                 grid_template_badges: item.gridTemplateBadges
                                 } %} 
-                            {% include 'components/_dropdown.html.twig' with {dropdown: item.dropdown} %}
+                            {% if item.dropdown %}
+                                {% include 'components/_dropdown.html.twig' with {dropdown: item.dropdown} %}
+                            {% endif %}
                         </div>
                         {% if item.action %}
                             <div class="px-4 py-2 lg:p-0 lg:pr-4">

@@ -30,12 +30,12 @@ readonly class FilterFieldConfig
     ) {
         $dataClass = $this->options['class'] ?? null;
         $multiple = $this->options['multiple'] ?? false;
-        $isEntityField = $this->isInstanceOfFormType($this->type, EntityType::class) 
+        $isEntityField = $this->isInstanceOfFormType($this->type, EntityType::class)
             || $this->isInstanceOfFormType($this->type, BaseEntityAutocompleteType::class);
         [$this->hiddenType, $this->hiddenOptions] = match (true) {
             $dataClass && $isEntityField => [HiddenEntityType::class, ['class' => $dataClass]],
             $dataClass && EnumType::class === $this->type => [HiddenEnumType::class, ['class' => $dataClass, 'multiple' => $multiple]],
-            ChoiceType::class === $this->type => [HiddenChoiceType::class, ['multiple' => $multiple]], 
+            ChoiceType::class === $this->type => [HiddenChoiceType::class, ['multiple' => $multiple]],
             default => [HiddenType::class, []]
         };
     }

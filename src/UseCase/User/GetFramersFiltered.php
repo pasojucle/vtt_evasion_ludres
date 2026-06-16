@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\View\DropdownView;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
+use App\Dto\View\DropdownView;
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Form\Admin\FramerFilterType;

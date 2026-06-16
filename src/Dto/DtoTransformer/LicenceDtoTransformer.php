@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\View\ButtonView;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\HtmlAttributView;
 use App\Dto\LicenceDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\HtmlAttributView;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;

@@ -158,4 +158,31 @@ class LevelRepository extends ServiceEntityRepository
     {
         return $this->findDefaultByType(LevelType::ADULT);
     }
+
+    public function getLevelQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('le');
+    }
+
+    public function filterType(QueryBuilder $qb, LevelType $type): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('le.type', ':type')
+            )
+            ->setParameter('type', $type);
+    }
+
+    public function filterSortByTitle(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('le.title', $direction);
+    }
+
+    public function filterSortByPosition(QueryBuilder $qb): void
+    {
+        $qb
+            ->orderBy('le.orderBy', 'ASC');
+    }
 }

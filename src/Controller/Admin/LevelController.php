@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Entity\Level;
+use App\Dto\Filter\LevelFilter;
 use App\Entity\Enum\LevelType as LevelTypeEnum;
+use App\Entity\Level;
 use App\Form\Admin\LevelType;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\State\Level\Processor\LevelDeleteProcessor;
 use App\State\Level\Provider\LevelDeleteProvider;
+use App\State\Level\Provider\LevelListProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/param/niveau', name: 'admin_level')]
-class LevelController extends AbstractController
+#[Route('/admin/param/niveau', name: 'admin_level_')]
+class LevelController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -31,24 +32,21 @@ class LevelController extends AbstractController
     ) {
     }
 
-    #[Route('x/{type}', name: 's', methods: ['GET'], defaults:['type' => 1])]
+    #[Route('x', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminList(
-        PaginatorService $paginator,
-        PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request,
-        LevelTypeEnum $type
+        LevelListProvider $provider,
     ): Response {
-        $query = $this->levelRepository->findLevelQuery($type);
-        $levels = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        return $this->render('level/admin/list.html.twig', [
-            'levels' => $levels,
-            'paginator' => $paginatorDtoTransformer->fromEntities($levels, ['type' => $type->value]),
-            'current_type' => $type,
-        ]);
+        return $this->handleListAction(
+            'admin_level_list',
+            LevelFilter::class,
+            $provider,
+            $request
+        );
     }
 
-    #[Route('/{level}', name: '_edit', methods: ['GET', 'POST'], defaults:['level' => null])]
+    #[Route('/{level}', name: 'edit', methods: ['GET', 'POST'], defaults:['level' => null])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelEdit(
         Request $request,
@@ -67,7 +65,7 @@ class LevelController extends AbstractController
             $this->entityManager->persist($level);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_levels', [
+            return $this->redirectToRoute('admin_level_list', [
                 'type' => $level->getType(),
             ]);
         }
@@ -78,7 +76,7 @@ class LevelController extends AbstractController
         ]);
     }
 
-    #[Route('/supprimer/{level}', name: '_delete', methods: ['GET', 'POST'])]
+    #[Route('/supprimer/{level}', name: 'delete', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelDelete(
         Request $request,
@@ -86,29 +84,15 @@ class LevelController extends AbstractController
         LevelDeleteProvider $provider,
         Level $level
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                return $this->redirectToRoute('admin_levels', [
-                    'type' => $processor->process($level),
-                ]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($level),
-        ], $response);
+        return $this->handleDialogAction(
+            $request,
+            $level,
+            $provider,
+            $processor
+        );
     }
 
-    #[Route('/ordonner/{level}', name: '_order', methods: ['POST'], options:['expose' => true])]
+    #[Route('/ordonner/{level}', name: 'order', methods: ['POST'], options:['expose' => true])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelOrder(
         Request $request,

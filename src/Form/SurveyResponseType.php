@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Enum\SurveyResponseType as SurveyResponseTypeEnum;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
-use App\Entity\Enum\SurveyResponseType as SurveyResponseTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

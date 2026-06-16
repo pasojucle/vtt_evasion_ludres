@@ -16,9 +16,7 @@ class ListFilterType extends AbstractType
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-    ) 
-    {
-
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -56,7 +54,7 @@ class ListFilterType extends AbstractType
     }
 
     private function generateAutocompleteUrl(array $options, array $filters): array
-    {   
+    {
         if (array_key_exists('autocomplete_url', $options)) {
             $route = $options['autocomplete_url'];
             $options['autocomplete_url'] = $this->urlGenerator->generate($route, $filters);

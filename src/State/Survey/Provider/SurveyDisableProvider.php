@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Provider;
 
-use App\Dto\View\DialogModalView;
 use App\Dto\Enum\DialogType;
+use App\Dto\View\DialogModalView;
 use App\Entity\Survey;
 use App\State\DialogProviderInterface;
 

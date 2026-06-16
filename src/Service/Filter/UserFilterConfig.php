@@ -18,9 +18,7 @@ class UserFilterConfig implements FilterConfigInterface
     public function __construct(
         private LevelChoiceProvider $levelChoiceProvider,
         private SeasonChoiceProvider $seasonChoiceProvider,
-    )
-    { 
-
+    ) {
     }
 
     public function getRouteName(): string
@@ -35,7 +33,6 @@ class UserFilterConfig implements FilterConfigInterface
 
     public function getEventSubscriber(): ?EventSubscriberInterface
     {
-
         return null;
     }
 

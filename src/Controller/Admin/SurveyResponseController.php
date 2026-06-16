@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
 use App\State\SurveyResponse\Provider\SurveyResponseAdminProvider;
@@ -22,7 +21,6 @@ class SurveyResponseController extends AbstractController
         SurveyResponseAdminProvider $provider,
         Survey $survey
     ): Response {
-
         return $this->render('survey_response/admin/list.html.twig', [
             'list' => $provider->getCollection($survey)
         ]);
@@ -33,9 +31,8 @@ class SurveyResponseController extends AbstractController
     public function show(
         SurveyResponse $surveyResponse
     ): Response {
-
         return $this->render('survey_response/admin/list.html.twig', [
             'list' => []
         ]);
-      }
+    }
 }

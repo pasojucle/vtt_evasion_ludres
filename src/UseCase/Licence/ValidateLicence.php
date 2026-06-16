@@ -67,9 +67,10 @@ class ValidateLicence
             $mainIdentity = $member->getMainIdentity();
             $subject = 'Votre numero de licence';
             $this->mailerService->sendMailToMember(
-                $$mainIdentity->getEmail(), 
-                $mainIdentity->getFullName(), 
-                $subject, $this->messageService->getMessageByName('EMAIL_LICENCE_VALIDATE')
+                $$mainIdentity->getEmail(),
+                $mainIdentity->getFullName(),
+                $subject,
+                $this->messageService->getMessageByName('EMAIL_LICENCE_VALIDATE')
             );
         }
     }

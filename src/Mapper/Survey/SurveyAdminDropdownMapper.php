@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Mapper\Survey;
 
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
-use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownItemView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\Survey;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

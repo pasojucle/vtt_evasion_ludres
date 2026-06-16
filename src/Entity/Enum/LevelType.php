@@ -21,7 +21,7 @@ enum LevelType: string implements TranslatableInterface
     public function getIcon(): string
     {
         return match ($this) {
-            self::SCHOOL  => 'lucide:graduation-cap',
+            self::SCHOOL => 'lucide:graduation-cap',
             self::FRAME => 'lucide:shield-user',
             default => 'lucide:circle-user-round'
         };

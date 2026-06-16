@@ -20,8 +20,7 @@ class ActivityDeleteProcessor implements DialogProcessorInterface
 
     public function process(object $entity, ?string $filter): ProcessorResult
     {
-        assert($entity instanceof BikeRide);
-
+        /** @var BikeRide $entity */
         $entity->setDeleted(true);
         $this->entityManager->flush();
 

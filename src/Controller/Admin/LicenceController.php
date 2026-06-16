@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Form\LicenceRegister;
 use App\Entity\Licence;
@@ -97,7 +96,6 @@ class LicenceController extends AbstractCrudController
         LicenceRegisterProcessor $processor,
         Licence $licence
     ): Response {
-
         return $this->handleDialogAction(
             request: $request,
             object: $provider->createContextObject($licence),

@@ -34,7 +34,7 @@ class FilterChipsMapper
                 continue;
             }
             if (is_array($rawValue)) {
-                foreach($rawValue as $key => $rawValueItem) {
+                foreach ($rawValue as $key => $rawValueItem) {
                     $this->addChip($field, $name, $rawValueItem, $filterSchips, $routeName, $queries, $key);
                 }
                 continue;
@@ -47,15 +47,14 @@ class FilterChipsMapper
     }
 
     private function addChip(
-        FilterFieldConfig $field, 
-        string $name, 
-        mixed $rawValue, 
-        array &$filterSchips, 
+        FilterFieldConfig $field,
+        string $name,
+        mixed $rawValue,
+        array &$filterSchips,
         string $routeName,
         array $queries,
         ?int $key = null,
-    ): void
-    {
+    ): void {
         $label = match ($field->type) {
             EnumType::class => $rawValue->trans($this->translator),
             EntityType::class => $rawValue->__toString(),

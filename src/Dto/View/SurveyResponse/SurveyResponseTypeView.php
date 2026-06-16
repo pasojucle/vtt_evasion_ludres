@@ -6,10 +6,8 @@ namespace App\Dto\View\SurveyResponse;
 
 use App\Dto\View\BadgeView;
 
-
 readonly class SurveyResponseTypeView
 {
-
     public function __construct(
         public string $label,
         public BadgeView $total,

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\State\User\Provider;
 
 use App\Dto\Filter\AbstractFilter;
-use App\Dto\View\ListView;
 use App\Dto\Filter\UserFilter;
+use App\Dto\View\ListView;
 use App\Mapper\EmailClipboardMapper;
 use App\Mapper\LevelFilterMapper;
-use App\Mapper\User\UserListExportMapper;
 use App\Mapper\User\UserAutocompleteMapper;
+use App\Mapper\User\UserListExportMapper;
 use App\Mapper\User\UserListMapper;
 use App\Repository\MemberRepository;
 use App\Service\Filter\FilterConfigInterface;
@@ -39,12 +39,11 @@ class UserListProvider implements ListProviderInterface, FilterInitializerInterf
     }
 
     public function getCollection(
-        AbstractFilter $filter, 
-        FilterConfigInterface $filterConfig, 
-        string $route, 
+        AbstractFilter $filter,
+        FilterConfigInterface $filterConfig,
+        string $route,
         ?int $currentPage = 1,
-    ): ListView
-    {
+    ): ListView {
         /** @var UserFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 

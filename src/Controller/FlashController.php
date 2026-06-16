@@ -14,8 +14,7 @@ class FlashController extends AbstractController
     #[Route('/admin/flashes', name: 'app_flashes')]
     public function renderFlashes(
         Request $request
-    ): Response
-    {
+    ): Response {
         /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
         $session = $request->getSession();
 

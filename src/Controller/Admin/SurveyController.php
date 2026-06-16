@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Dto\Filter\SurveyFilter;
@@ -48,14 +47,13 @@ class SurveyController extends AbstractCrudController
         Request $request,
         SurveyAdminListProvider $provider,
     ): Response {
-
         return $this->handleListAction(
             'admin_survey_list',
             SurveyFilter::class,
             $provider,
             $request
         );
-      }
+    }
 
     #[Route('/', name: 'admin_survey_add', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_ADD')]
@@ -192,9 +190,8 @@ class SurveyController extends AbstractCrudController
     public function export(
         SurveyAdminProvider $provider,
         Survey $survey
-    ): Response
-    {
-        $response = new StreamedResponse(function() use ($provider, $survey) {
+    ): Response {
+        $response = new StreamedResponse(function () use ($provider, $survey) {
             $provider->streamExportContent($survey);
         });
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
@@ -206,10 +203,11 @@ class SurveyController extends AbstractCrudController
     #[Route('disable/{survey}', name: 'admin_survey_disable', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
     public function disable(
-        Request $request, 
+        Request $request,
         SurveyDisableProcessor $processor,
         SurveyDisableProvider $provider,
-        Survey $survey): Response
+        Survey $survey
+    ): Response
     {
         return $this->handleDialogAction(
             $request,

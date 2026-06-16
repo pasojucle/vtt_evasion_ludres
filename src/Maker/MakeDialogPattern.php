@@ -45,7 +45,7 @@ class MakeDialogPattern extends AbstractMaker
         $route = $input->getArgument('route');
 
         $generator->generateClass(
-            'App\\State\\' . $entity . '\\Provider\\' . $entity . $action .'Provider',
+            'App\\State\\' . $entity . '\\Provider\\' . $entity . $action . 'Provider',
             dirname(__DIR__) . '/Resources/skeleton/DialogProvider.tpl.php',
             [
                 'entity_name' => $entity,
@@ -56,7 +56,7 @@ class MakeDialogPattern extends AbstractMaker
         );
 
         $generator->generateClass(
-            'App\\State\\' . $entity . '\\Processor\\' . $entity . $action .'Processor',
+            'App\\State\\' . $entity . '\\Processor\\' . $entity . $action . 'Processor',
             dirname(__DIR__) . '/Resources/skeleton/DialogProcessor.tpl.php',
             [
                 'entity_name' => $entity,

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Dto\Filter\RegistrationFilter;
 use App\State\Registration\Provider\RegistrationListProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +22,6 @@ class RegistrationController extends AbstractCrudController
         RegistrationListProvider $provider,
         Request $request,
     ): Response {
-
         return $this->handleListAction(
             'admin_registration_list',
             RegistrationFilter::class,
@@ -38,7 +36,6 @@ class RegistrationController extends AbstractCrudController
         RegistrationListProvider $provider,
         Request $request
     ): StreamedResponse {
-
         return $this->handleExportAction($request, RegistrationFilter::class, $provider, 'export_assurances.csv');
     }
 
@@ -51,7 +48,8 @@ class RegistrationController extends AbstractCrudController
         /**  @var RegistrationFilter $filter */
         $filter = $provider->getHydratedDto($request->query->all(), RegistrationFilter::class);
 
-        return new JsonResponse($provider->copyEmailListToClipboard($filter));    }
+        return new JsonResponse($provider->copyEmailListToClipboard($filter));
+    }
 
     #[Route('/inscription/autocomplete', name: '_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]

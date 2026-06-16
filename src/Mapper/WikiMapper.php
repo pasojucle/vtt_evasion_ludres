@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Mapper;
 
-use App\Dto\View\ButtonView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
+use App\Dto\View\ButtonView;
 use App\Dto\View\HtmlAttributView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 
 class WikiMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
     ) {
-        
     }
 
     public function mapToView(string $dirName, RoundedVariant $rounded = RoundedVariant::ROUNDED): ButtonView

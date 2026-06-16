@@ -6,7 +6,6 @@ namespace App\Mapper;
 
 use App\Entity\Member;
 
-
 class EmailClipboardMapper
 {
     public function mapToEmailCsvString(array $entities): string

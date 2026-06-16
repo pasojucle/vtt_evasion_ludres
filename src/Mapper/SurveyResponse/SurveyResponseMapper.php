@@ -37,7 +37,7 @@ class SurveyResponseMapper
         );
     }
 
-    private function getSurveyResponsesByIssue(Survey $survey) : array
+    private function getSurveyResponsesByIssue(Survey $survey): array
     {
         $surveyResponsesByIssue = [];
         /** @var SurveyIssue $entity */
@@ -45,7 +45,7 @@ class SurveyResponseMapper
             $surveyResponsesByIssue[] = new SurveyResponseIssueView(
                 type: $entity->getResponseType(),
                 content: $entity->getContent(),
-                types: $this->getSurveyResponsesByType($entity), 
+                types: $this->getSurveyResponsesByType($entity),
                 show: new ButtonView(
                     url :$this->urlGenerator->generate('admin_survey_response_show', [
                         'surveyResponse' => $entity->getId()
@@ -61,12 +61,12 @@ class SurveyResponseMapper
         return $surveyResponsesByIssue;
     }
 
-    private function getSurveyResponsesByType(SurveyIssue $issue) : array
+    private function getSurveyResponsesByType(SurveyIssue $issue): array
     {
         $surveyResponsesByType = [];
-        foreach($issue->getSurveyResponses() as $surveyResponse) {
+        foreach ($issue->getSurveyResponses() as $surveyResponse) {
             $valueRaw = null !== $surveyResponse->getValue() ? (bool) $surveyResponse->getValue() : null;
-            $valueType = match(true) {
+            $valueType = match (true) {
                 SurveyResponseType::TEXT === $issue->getResponseType() => SurveyResponseValueType::TEXT->value,
                 true === $valueRaw => SurveyResponseValueType::YES->value,
                 false === $valueRaw => SurveyResponseValueType::NO->value,
@@ -75,10 +75,10 @@ class SurveyResponseMapper
             if (!array_key_exists($valueType, $surveyResponsesByType)) {
                 $surveyResponsesByType[$valueType] = 0;
             }
-            ++$surveyResponsesByType[$valueType]; 
+            ++$surveyResponsesByType[$valueType];
         }
         $types = [];
-        foreach($surveyResponsesByType as $type => $item) {
+        foreach ($surveyResponsesByType as $type => $item) {
             $types[] = new SurveyResponseTypeView(
                 label: SurveyResponseValueType::tryFrom($type)->trans($this->translator),
                 total: new BadgeView(

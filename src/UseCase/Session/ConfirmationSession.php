@@ -30,8 +30,8 @@ class ConfirmationSession
         $bikeRide = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
 
         $messages = $bikeRide->bikeRideType->messages;
-        $content = (is_string($messages)) 
-            ? $messages 
+        $content = (is_string($messages))
+            ? $messages
             : $this->getMessageByLevelType($messages, $member->level->type);
         $params = [
             '{{ bikeRideTitleAndPeriod }}' => sprintf('%s du %s', $bikeRide->title, $bikeRide->period),

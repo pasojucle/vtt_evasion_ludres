@@ -7,9 +7,9 @@ namespace App\State\Coverage\Provider;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\CoverageFilter;
 use App\Dto\View\ListView;
+use App\Mapper\Coverage\CoverageListMapper;
 use App\Mapper\EmailClipboardMapper;
 use App\Mapper\LevelFilterMapper;
-use App\Mapper\Coverage\CoverageListMapper;
 use App\Mapper\User\UserAutocompleteMapper;
 use App\Mapper\User\UserListExportMapper;
 use App\Repository\MemberRepository;
@@ -104,8 +104,8 @@ class CoverageListProvider implements ListProviderInterface, StreamExportableInt
     public function filterNotValidate(QueryBuilder &$qb): void
     {
         $qb->andWhere(
-                $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
-            )
+            $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
+        )
             ->setParameter('currentSeasonForm', false)
         ;
     }

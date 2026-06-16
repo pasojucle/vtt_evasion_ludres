@@ -15,9 +15,7 @@ class LevelsFilterField extends AbstractType
     public function __construct(
         private TranslatorInterface $translator,
         private LevelRepository $levelRepository,
-    )
-    {
-        
+    ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void

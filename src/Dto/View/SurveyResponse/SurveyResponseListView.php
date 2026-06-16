@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\View\SurveyResponse;
 
-
 readonly class SurveyResponseListView
 {
     /**
@@ -19,6 +18,5 @@ readonly class SurveyResponseListView
         public string $backPath,
         public array $issues,
     ) {
-
     }
 }

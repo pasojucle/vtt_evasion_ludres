@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Mapper\Notification;
 
-use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\PublishStatus;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Filter\NotificationFilter;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
-use App\Dto\View\ListView;
 use App\Dto\View\ListItemView;
+use App\Dto\View\ListView;
 use App\Entity\Notification;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;

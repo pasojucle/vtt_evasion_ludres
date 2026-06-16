@@ -15,7 +15,7 @@
     </div>
     <nav  class="nav-tab">
         {% for type, label in constant('App\\Entity\\Level::TYPES') %}
-            <a href="{{ path('admin_levels', {'type': type} )}}"{% if type == current_type %} class="active"{% endif %}>{{ label|trans}}</a>
+            <a href="{{ path('admin_level_list', {'type': type} )}}"{% if type == current_type %} class="active"{% endif %}>{{ label|trans}}</a>
         {% endfor %}
     </nav>
     <div class="wrapper-body">

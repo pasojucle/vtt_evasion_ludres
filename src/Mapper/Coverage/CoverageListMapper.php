@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Mapper\Coverage;
 
-
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Filter\CoverageFilter;
@@ -60,7 +59,6 @@ class CoverageListMapper
                 dropdown: $this->userDropdownMapper->mapToView($entity),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
                 action: $this->getAction($licence, $currentPage, $filter),
-
             );
         }
         $currentSeason = $this->seasonService->getCurrentSeason();
@@ -89,7 +87,7 @@ class CoverageListMapper
         $indicators = [];
         if ($level) {
             $indicators[] = new BadgeView(
-                value:$level->getTitle(), 
+                value:$level->getTitle(),
                 color: $level->getColor(),
             );
         }

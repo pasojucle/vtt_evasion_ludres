@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Provider;
 
-
 use App\Entity\Survey;
 use App\Mapper\Survey\SurveyExportMapper;
 
 class SurveyAdminProvider
 {
-    
     public function __construct(
         private SurveyExportMapper $exportMapper,
     ) {

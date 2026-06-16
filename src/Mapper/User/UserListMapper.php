@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Mapper\User;
 
-use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
-use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\UserFilter;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownItemView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
-use App\Dto\View\ListView;
 use App\Dto\View\ListItemView;
+use App\Dto\View\ListView;
 use App\Entity\Member;
 use App\Entity\User;
 use App\Mapper\DropdownSettingsMapper;
@@ -57,7 +57,7 @@ class UserListMapper
                 ],
                 indicators: $this->getIndicators($entity),
                 status: new BadgeView(
-                    value:$level->getTitle(), 
+                    value:$level->getTitle(),
                     color: $level->getColor(),
                 ),
                 dropdown: $this->userDropdownMapper->mapToView($entity),
@@ -94,7 +94,7 @@ class UserListMapper
         return $this->dropdownSettingsMapper->mapToView('USER', RoundedVariant::ROUNDED_END, [
             new ButtonView(
                 label: 'Niveaux',
-                url: $this->urlGenerator->generate('admin_levels'),
+                url: $this->urlGenerator->generate('admin_level_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
             new ButtonView(
@@ -112,19 +112,16 @@ class UserListMapper
 
     private function getIndicators(User $entity): array
     {
-        $indicators = [];
-        $indicators[] = new BadgeView(
-            value: $entity->getLevel()->getType()->getIcon(),
-            variant: ColorVariant::ACCENT,
-            size: Size::ICON
-        );
-
-        $indicators[] = new BadgeView(
-            value: (string) $entity->getLastLicence()->getSeason(),
-            variant: ColorVariant::AMBER,
-        );
-
-        return $indicators;
+        return [
+            new BadgeView(
+                value: $entity->getLevel()->getType()->getIcon(),
+                variant: ColorVariant::ACCENT,
+            ),
+            new BadgeView(
+                value: (string) $entity->getLastLicence()->getSeason(),
+                variant: ColorVariant::AMBER,
+            )
+        ];
     }
 
     private function getTools(UserFilter $filter): DropdownView
@@ -170,7 +167,7 @@ class UserListMapper
                         new HtmlAttributView('data-controller', 'email-to-clipboard'),
                         new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
                         new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
-                            'admin_members_email_to_clipboard', 
+                            'admin_members_email_to_clipboard',
                             $filter->toArray()
                         )),
                     ],

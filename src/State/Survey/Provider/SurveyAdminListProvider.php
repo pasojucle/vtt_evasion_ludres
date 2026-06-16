@@ -32,12 +32,11 @@ class SurveyAdminListProvider implements ListProviderInterface
     }
     
     public function getCollection(
-        AbstractFilter $filter, 
-        FilterConfigInterface $filterConfig, 
-        string $route, 
+        AbstractFilter $filter,
+        FilterConfigInterface $filterConfig,
+        string $route,
         ?int $currentPage = 1,
-    ): ListView
-    {
+    ): ListView {
         /** @var SurveyFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 

@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Mapper\Registration;
 
-use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
-use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\RegistrationFilter;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownItemView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
-use App\Dto\View\ListView;
 use App\Dto\View\ListItemView;
+use App\Dto\View\ListView;
 use App\Entity\Licence;
 use App\Entity\Member;
 use App\Mapper\DropdownSettingsMapper;
@@ -63,7 +63,7 @@ class RegistrationListMapper
                 ],
                 indicators: $this->getIndicators($entity),
                 status: new BadgeView(
-                    value:$state->shortTrans($this->translator), 
+                    value:$state->shortTrans($this->translator),
                     variant: $state->variant(),
                 ),
                 dropdown: $this->registrationDropdownMapper->mapToView($entity),
@@ -135,7 +135,7 @@ class RegistrationListMapper
                         new HtmlAttributView('data-controller', 'email-to-clipboard'),
                         new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
                         new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
-                            'admin_registrations_email_to_clipboard', 
+                            'admin_registrations_email_to_clipboard',
                             $filter->toArray()
                         )),
                     ],
@@ -162,7 +162,7 @@ class RegistrationListMapper
         }
         $level = $entity->getLevel();
         $indicators[] = new BadgeView(
-            value:$level->getTitle(), 
+            value:$level->getTitle(),
             color: $level->getColor(),
         );
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mapper\User;
 
+use App\Dto\Enum\ColorVariant;
 use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownView;
-use App\Dto\Enum\ColorVariant;
 use App\Entity\Enum\LevelType;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;

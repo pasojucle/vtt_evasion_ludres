@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
-use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\View\HtmlAttributView;
 use App\Dto\RouteDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownItemView;
+use App\Dto\View\DropdownView;
+use App\Dto\View\HtmlAttributView;
 use App\Entity\Member;
 use App\Service\LevelService;
 use Doctrine\ORM\QueryBuilder;
@@ -56,7 +56,7 @@ class GetMembersFiltered extends GetUsersFiltered
         return $this->dropdownSettingsMapper->mapToView('USER', RoundedVariant::ROUNDED_NONE, [
             new ButtonView(
                 label: 'Niveaux',
-                url: $this->urlGenerator->generate('admin_levels'),
+                url: $this->urlGenerator->generate('admin_level_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
             new ButtonView(

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\State\Licence\Processor;
 
 use App\Dto\Form\LicenceRegister;
-use App\Dto\State\ProcessorResult;
 use App\Dto\Service\MailerResult;
+use App\Dto\State\ProcessorResult;
 use App\Entity\Member;
 use App\Service\FilterDecoderService;
 use App\Service\LicenceService;
@@ -82,7 +82,7 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
             return $this->mailerService->sendMailToMember(
                 $mainIdentity->getEmail(),
                 $mainIdentity->getFullName(),
-                'Votre numero de licence', 
+                'Votre numero de licence',
                 $this->messageProvider->getMessageByName('EMAIL_LICENCE_VALIDATE', $member)
             );
         }

@@ -9,7 +9,7 @@ use App\Repository\LevelRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LevelChoiceProvider
-{    
+{
     public function __construct(
         private LevelRepository $levelRepository,
         private TranslatorInterface $translator,
@@ -33,7 +33,7 @@ class LevelChoiceProvider
 
     private function getLabelGroup(LevelType $type): string
     {
-        return match($type) {
+        return match ($type) {
             LevelType::SCHOOL => 'Toute l\'école VTT',
             LevelType::FRAME => 'Tout l\'Encadrement',
             LevelType::ADULT => 'Tout les adultes',

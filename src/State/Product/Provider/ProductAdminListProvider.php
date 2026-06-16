@@ -14,7 +14,7 @@ use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
 use App\State\ListProviderInterface;
 
-class ProductAdminListProvider  implements ListProviderInterface
+class ProductAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
     public function __construct(

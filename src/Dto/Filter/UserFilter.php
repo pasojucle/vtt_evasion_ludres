@@ -29,7 +29,6 @@ class UserFilter extends AbstractFilter
         public ?int $itemsPerPage = null,
         public ?string $sort = 'ASC',
     ) {
-
     }
 
     public function setDefaultSeason(SeasonService $seasonService): void

@@ -33,7 +33,6 @@ class OrderController extends AbstractCrudController
         Request $request,
         OrderAdminListProvider $provider,
     ): Response {
-        
         return $this->handleListAction(
             'admin_order_list',
             OrderFilter::class,

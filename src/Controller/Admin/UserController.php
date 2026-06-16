@@ -44,7 +44,6 @@ class UserController extends AbstractCrudController
         UserListProvider $provider,
         Request $request,
     ): Response {
-
         return $this->handleListAction(
             'admin_user_list',
             UserFilter::class,
@@ -62,7 +61,7 @@ class UserController extends AbstractCrudController
         /**  @var UserFilter $filter */
         $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
 
-        $response = new StreamedResponse(function() use ($provider, $filter) {
+        $response = new StreamedResponse(function () use ($provider, $filter) {
             $provider->streamExportContent($filter);
         });
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
@@ -185,8 +184,8 @@ class UserController extends AbstractCrudController
         $subject = 'Votre numero de licence';
         $mailerService->sendMailToMember(
             $identity->getEmail(),
-            $identity->getFullName(), 
-            $subject, 
+            $identity->getFullName(),
+            $subject,
             $messageService->getMessageByName('EMAIL_LICENCE_VALIDATE')
         );
 

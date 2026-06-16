@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
-use App\Dto\View\DialogModalView;
 use App\Dto\Enum\DialogType;
+use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\State\DialogProviderInterface;
 

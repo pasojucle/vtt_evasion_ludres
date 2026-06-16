@@ -15,9 +15,7 @@ class CoverageFilterConfig implements FilterConfigInterface
 {
     public function __construct(
         private LevelChoiceProvider $levelChoiceProvider
-    )
-    {
-
+    ) {
     }
 
     public function getRouteName(): string

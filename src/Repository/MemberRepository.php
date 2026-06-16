@@ -947,7 +947,8 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
 
     public function filterBoardMember(QueryBuilder $qb, bool $isBoadMember): void
     {
-        $qb->andWhere(($isBoadMember) 
+        $qb->andWhere(
+            ($isBoadMember)
             ? $qb->expr()->isNotNull('m.boardRole')
             : $qb->expr()->isNull('m.boardRole')
         );
@@ -1150,8 +1151,8 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
     public function filterNotValidate(QueryBuilder &$qb): void
     {
         $qb->andWhere(
-                $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
-            )
+            $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
+        )
             ->setParameter('currentSeasonForm', false)
         ;
     }

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
-use App\Dto\View\DropdownItemView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\View\HtmlAttributView;
 use App\Dto\RouteDto;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownItemView;
+use App\Dto\View\DropdownView;
+use App\Dto\View\HtmlAttributView;
 use App\Entity\Licence;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;

@@ -101,12 +101,12 @@ class UserController extends AbstractController
             $data['firstName'] = $identity->getFirstName();
             $data['email'] = $identity->getEmail();
 
-            if ($mailerService->sendMailToClub($data) &&  $mailerService->sendMailToMember(
-                    $identity->getEmail(),
-                    $identity->getFullName(), 
-                    $subject, 
-                    $messageService->getMessageByName('EMAIL_CHANGE_USER_INFOS')
-                )->success) {
+            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember(
+                $identity->getEmail(),
+                $identity->getFullName(),
+                $subject,
+                $messageService->getMessageByName('EMAIL_CHANGE_USER_INFOS')
+            )->success) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 
                 return $this->redirectToRoute('user_change_infos');

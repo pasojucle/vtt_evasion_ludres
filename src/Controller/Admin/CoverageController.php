@@ -54,7 +54,6 @@ class CoverageController extends AbstractCrudController
         Request $request,
         CoverageListProvider $provider,
     ): Response {
-
         return $this->handleExportAction($request, CoverageFilter::class, $provider, 'export_inscriptions.csv');
     }
 

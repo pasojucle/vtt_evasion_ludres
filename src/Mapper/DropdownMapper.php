@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Mapper;
 
 use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
 use App\Dto\View\DropdownItemView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;

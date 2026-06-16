@@ -67,12 +67,11 @@ class MailerService
 
     public function sendMailToMember(
         string $userEmail,
-        string $fullName, 
-        string $subject, 
-        string $content, 
+        string $fullName,
+        string $subject,
+        string $content,
         ?array $attachements = null,
-    ): MailerResult
-    {
+    ): MailerResult {
         [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
 
         if (true === $this->parameterService->getParameterByName('TEST_MODE')) {

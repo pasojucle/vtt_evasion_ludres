@@ -39,7 +39,7 @@ class SurveyExportMapper
             foreach ($entity->getSurveyIssues() as $issue) {
                 $headers[] = $issue->getContent();
             }
-        }        
+        }
         fputcsv($fp, $headers, self::CSV_SEPARATOR);
 
         if (!empty($surveyResponsesByUuid)) {
@@ -71,7 +71,6 @@ class SurveyExportMapper
         foreach ($surveyResponsesByUuid as $uuid => $data) {
             $row = [];
             foreach ($data['responses'] as $key => $surveyResponse) {
-                
                 if (0 === $key) {
                     $member = $surveyResponse->getMember();
                     $row[] = $member ? $member->getIdentity()->getFullName() : $uuid;
@@ -132,7 +131,7 @@ class SurveyExportMapper
         }
     }
 
-    private function addSurveyUsers( Survey $survey, $fp): void
+    private function addSurveyUsers(Survey $survey, $fp): void
     {
         fputcsv($fp, [], self::CSV_SEPARATOR);
         if (!$survey->getRespondents()->isEmpty()) {
@@ -143,7 +142,6 @@ class SurveyExportMapper
                 $row[] = $respondent->getCreatedAt()->format('d/m/Y H:i');
                 $row[] = $identity->getFullName();
                 fputcsv($fp, $row, self::CSV_SEPARATOR);
-
             }
         } else {
             fputcsv($fp, ['Aucun participant'], self::CSV_SEPARATOR);

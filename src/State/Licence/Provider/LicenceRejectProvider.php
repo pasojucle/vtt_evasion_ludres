@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
-use App\Dto\View\DialogModalView;
 use App\Dto\Enum\DialogType;
 use App\Dto\Form\LicenceRegister;
 use App\Dto\Form\LicenceReject;
+use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\State\DialogProviderInterface;
 use App\State\Message\Provider\MessageProvider;
@@ -19,8 +19,8 @@ class LicenceRejectProvider implements DialogProviderInterface
 {
     public function __construct(
         private MessageProvider $messageProvider,
-    )
-    { }
+    ) {
+    }
 
     public function mapToView(object $licenceRegister): DialogModalView
     {
@@ -38,10 +38,9 @@ class LicenceRejectProvider implements DialogProviderInterface
 
     public function createContextObject(Licence $licence): LicenceReject
     {
-
         return new LicenceReject(
             $licence,
             $this->messageProvider->getMessageByName('REGISTRATION_REJECT_MESSAGE', $licence->getMember())
-        ) ;
+        );
     }
 }

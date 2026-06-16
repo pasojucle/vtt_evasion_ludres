@@ -29,7 +29,7 @@ class HiddenEnumMultipleTransformer implements DataTransformerInterface
             return [];
         }
 
-        return array_map(fn($enum) => $this->tryFrom($enum), $values);
+        return array_map(fn ($enum) => $this->tryFrom($enum), $values);
     }
 
     private function tryFrom(string $value)

@@ -190,10 +190,14 @@ class ReplaceKeywordsService
             $keyWords = $this->getKeyWords($content);
 
             return str_replace(
-                array_map(function($keyWord) use  ($replaces) {
-                    if (array_key_exists($keyWord, $replaces)) return $keyWord;
-                }, $keyWords), 
-                array_map(fn($keyWord) => $replaces[$keyWord], $keyWords), $content);
+                array_map(function ($keyWord) use ($replaces) {
+                    if (array_key_exists($keyWord, $replaces)) {
+                        return $keyWord;
+                    }
+                }, $keyWords),
+                array_map(fn ($keyWord) => $replaces[$keyWord], $keyWords),
+                $content
+            );
         }
 
         return $content;

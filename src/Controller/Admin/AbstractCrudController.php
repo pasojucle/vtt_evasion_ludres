@@ -97,7 +97,7 @@ abstract class AbstractCrudController extends AbstractController
     ): StreamedResponse {
         $filter = $provider->getHydratedDto($request->query->all(), $filterClass);
 
-        $response = new StreamedResponse(function() use ($provider, $filter) {
+        $response = new StreamedResponse(function () use ($provider, $filter) {
             $provider->streamExportContent($filter);
         });
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');

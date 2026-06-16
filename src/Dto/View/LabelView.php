@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-
 readonly class LabelView
 {
     public const TYPE_TEXT = 'text';
