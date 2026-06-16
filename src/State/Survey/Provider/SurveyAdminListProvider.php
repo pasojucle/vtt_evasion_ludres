@@ -62,6 +62,7 @@ class SurveyAdminListProvider implements ListProviderInterface
 
         return $this->emailClipboardMapper->mapToEmailCsvString($entities);
     }
+    
     private function getQueryBuilder(SurveyFilter $filter): QueryBuilder
     {
         $today = (new DateTime())->setTime(0, 0, 0);

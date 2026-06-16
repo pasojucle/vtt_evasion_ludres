@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\State\<?= $entity_name ?>\Provider;
 
 use App\Dto\View\ListView;
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\<?= $entity_name ?>Filter;
 use App\Mapper\<?= $entity_name ?>\<?= $entity_name ?>ListMapper;
 use App\Repository\<?= $entity_name ?>Repository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 
-class <?= $entity_name ?>ListProvider
+class <?= $entity_name ?>ListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
 
@@ -25,8 +27,9 @@ class <?= $entity_name ?>ListProvider
     ) {
     }
 
-    public function getCollection(<?= $entity_name ?>Filter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
+        /**  @var <?= $entity_name ?>Filter $filter*/
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
@@ -44,9 +47,9 @@ class <?= $entity_name ?>ListProvider
         );
     }
 
-    private function getQueryBuilder(UserFilter $filter): QueryBuilder
+    private function getQueryBuilder(<?= $entity_name ?>Filter $filter): QueryBuilder
     {
-        $qb = $this-><?= lcfirst($entity_name) ?>Repository->find<?= $entity_name ?>Query();
+        $qb = $this-><?= lcfirst($entity_name) ?>Repository->get<?= $entity_name ?>Query();
         
         // TODO: Ajoutez les filtres spécifiques à votre entité ici
 

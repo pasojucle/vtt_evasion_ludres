@@ -71,14 +71,6 @@ class MakeListPattern extends AbstractMaker
                 'route' => $route,
             ]
         );
-
-        $generator->generateFile(
-            'templates/' . strtolower($entity) . '/admin/_frame_list.html.twig',
-            dirname(__DIR__) . '/Resources/skeleton/_frame_list.tpl.php',
-            [
-                'entity_name' => $entity,
-            ]
-        );
         
         $generator->writeChanges();
         $this->writeSuccessMessage($io);

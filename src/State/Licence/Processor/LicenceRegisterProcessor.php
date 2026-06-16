@@ -43,12 +43,12 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
         $result = $this->sendMail($licenceNumber, $member);
         if (false === $result?->success) {
             return new ProcessorResult(
-            success: false,
-            targetRoute: 'admin_registration_list',
-            routeParams: $this->filterDecoder->decode($filter),
-            messageKey: 'registration.flash.danger.received',
-            flashType: 'danger',
-        );
+                success: false,
+                targetRoute: 'admin_registration_list',
+                routeParams: $this->filterDecoder->decode($filter),
+                messageKey: 'registration.flash.danger.received',
+                flashType: 'danger',
+            );
         }
 
         return new ProcessorResult(

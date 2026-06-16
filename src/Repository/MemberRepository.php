@@ -1146,4 +1146,13 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             ->setParameter('stateYearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
         ;
     }
+
+    public function filterNotValidate(QueryBuilder &$qb): void
+    {
+        $qb->andWhere(
+                $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
+            )
+            ->setParameter('currentSeasonForm', false)
+        ;
+    }
 }

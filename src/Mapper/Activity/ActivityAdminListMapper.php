@@ -71,7 +71,7 @@ class ActivityAdminListMapper
         }
 
         return new ListView(
-            id: 'acitvities_contrainer',
+            id: 'activities_contrainer',
             title: 'Programme des activités',
             description: 'Administration des activités : création, modification.',
             items: $items,

@@ -7,13 +7,13 @@ namespace App\Repository;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use App\Entity\Member;
-use App\Entity\User;
 use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**

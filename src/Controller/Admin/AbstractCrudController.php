@@ -90,10 +90,13 @@ abstract class AbstractCrudController extends AbstractController
     }
 
     protected function handleExportAction(
-        AbstractFilter $filter,
+        Request $request,
+        string $filterClass,
         StreamExportableInterface $provider,
         string $filename,
     ): StreamedResponse {
+        $filter = $provider->getHydratedDto($request->query->all(), $filterClass);
+
         $response = new StreamedResponse(function() use ($provider, $filter) {
             $provider->streamExportContent($filter);
         });

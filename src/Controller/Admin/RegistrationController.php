@@ -6,7 +6,6 @@ namespace App\Controller\Admin;
 
 
 use App\Dto\Filter\RegistrationFilter;
-use App\Form\Filter\ListFilterType;
 use App\State\Registration\Provider\RegistrationListProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,9 +38,8 @@ class RegistrationController extends AbstractCrudController
         RegistrationListProvider $provider,
         Request $request
     ): StreamedResponse {
-        $filter = $provider->getHydratedDto($request->query->all(), RegistrationFilter::class);
 
-        return $this->handleExportAction($filter, $provider, 'export_inscriptions.csv');
+        return $this->handleExportAction($request, RegistrationFilter::class, $provider, 'export_assurances.csv');
     }
 
     #[Route('/emails/inscriptions', name: 's_email_to_clipboard', methods: ['GET'])]

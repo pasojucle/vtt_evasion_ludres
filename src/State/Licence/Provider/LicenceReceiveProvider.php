@@ -16,8 +16,7 @@ class LicenceReceiveProvider implements DialogProviderInterface
 {
     public function mapToView(object $entity): DialogModalView
     {
-        assert($entity instanceof Licence);
-
+        /** @var Licence $entity */
         $message = ($entity->getState()->isYearly())
             ? 'Confirmez-vous la bonne réception du dossier d\'inscription de %s signé avec le paiement?'
             : 'Confirmez-vous la bonne réception du dossier d\'inscription de %s signé';

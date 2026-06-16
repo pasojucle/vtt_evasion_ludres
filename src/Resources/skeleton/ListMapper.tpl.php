@@ -62,6 +62,9 @@ class <?= $entity_name ?>ListMapper
         }
 
         return new ListView(
+            id: 'list_contrainer',
+            title: 'Titre de la page',
+            description: 'description de la page.',
             items: $items,
             settings: $this->settings(),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
