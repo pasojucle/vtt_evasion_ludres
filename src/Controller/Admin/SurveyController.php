@@ -207,8 +207,7 @@ class SurveyController extends AbstractCrudController
         SurveyDisableProcessor $processor,
         SurveyDisableProvider $provider,
         Survey $survey
-    ): Response
-    {
+    ): Response {
         return $this->handleDialogAction(
             $request,
             $survey,

@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route(path: '/admin/skill', name: 'admin_skill_')]
+#[Route(path: '/admin/competences', name: 'admin_skill_')]
 class SkillController extends AbstractCrudController
 {
     public function __construct(

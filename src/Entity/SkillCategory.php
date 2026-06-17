@@ -24,6 +24,9 @@ class SkillCategory
     #[ORM\OneToMany(targetEntity: Skill::class, mappedBy: 'category')]
     private Collection $skills;
 
+    #[ORM\Column(length: 30)]
+    private string $icon = 'lucide:';
+
     public function __construct()
     {
         $this->skills = new ArrayCollection();
@@ -77,6 +80,18 @@ class SkillCategory
                 $skill->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(string $icon): static
+    {
+        $this->icon = $icon;
 
         return $this;
     }

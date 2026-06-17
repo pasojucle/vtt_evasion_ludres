@@ -65,7 +65,7 @@ class MenuAdminService
             [
                 'label' => 'Adhérents',
                 'route' => 'admin_user_list',
-                'pattern' => '/^admin_user/',
+                'pattern' => '/^admin_(user|skill|level)/',
                 'role' => 'USER_LIST',
             ],
             [

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\SkillCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -26,5 +27,26 @@ class SkillCategoryRepository extends ServiceEntityRepository
                ->getQuery()
                ->getResult()
            ;
+    }
+
+    public function getSkillCategoryQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('skc');
+    }
+
+    public function filterName(QueryBuilder $qb, string $term): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->like('LOWER(skc.name)', ':term')
+            )
+            ->setParameter('term', '%' . strtolower($term) . '%');
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('skc.name', $direction);
     }
 }

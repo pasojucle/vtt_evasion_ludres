@@ -11,9 +11,10 @@ class SkillFilter extends AbstractFilter
 {
     public function __construct(
         public ?SkillCategory $category = null,
+        public ?string $content = null,
         public ?Level $level = null,
         public ?int $itemsPerPage = null,
-        public ?string $sort = null,
+        public ?string $sort = 'ASC',
     ) {
     }
 }

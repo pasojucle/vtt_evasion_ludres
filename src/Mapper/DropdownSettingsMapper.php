@@ -34,8 +34,8 @@ class DropdownSettingsMapper
             trigger: 'lucide:settings',
             variant: DropdownVariant::BUTTON,
             rounded: $rounded,
-            menuItems: $sectionName 
-                ?  array_merge(
+            menuItems: $sectionName
+                ? array_merge(
                     $menuItems,
                     $this->getParameters($sectionName),
                     $this->getMessages($sectionName),

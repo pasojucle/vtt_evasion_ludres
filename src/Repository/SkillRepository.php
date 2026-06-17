@@ -75,6 +75,19 @@ class SkillRepository extends ServiceEntityRepository
         ->setParameter('category', $category);
     }
 
+    public function filterContent(QueryBuilder $qb, string $term): void
+    {
+        $orX = $qb->expr()->orX();
+        foreach (explode(' ', $term) as $key => $word) {
+            $orX->add(
+                $qb->expr()->like('sk.content', ':word_' . $key)
+            );
+            $qb->setParameter('word_' . $key, '%' . $word . '%');
+        }
+
+        $qb->andWhere($orX);
+    }
+
     public function filterLevel(QueryBuilder $qb, Level $level): void
     {
         $qb->andWhere(

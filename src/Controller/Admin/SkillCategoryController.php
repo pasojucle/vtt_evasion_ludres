@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\SkillCategoryDtoTransformer;
+use App\Dto\Filter\SkillCategoryFilter;
 use App\Entity\SkillCategory;
 use App\Form\Admin\SkillCategoryType;
-use App\Repository\SkillCategoryRepository;
 use App\State\SkillCategory\Processor\SkillCategoryDeleteProcessor;
 use App\State\SkillCategory\Provider\SkillCategoryDeleteProvider;
+use App\State\SkillCategory\Provider\SkillCategoryListProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,28 +18,25 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
 
-#[Route(path: '/admin/skill/category', name: 'admin_skill_category_')]
-class SkillCategoryController extends AbstractController
+#[Route(path: '/admin/competences/category', name: 'admin_skill_category_')]
+class SkillCategoryController extends AbstractCrudController
 {
     public function __construct(
-        private SkillCategoryRepository $skillCategoryRepository,
-        private readonly SkillCategoryDtoTransformer $transformer,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     #[Route(path: '/list', name: 'list', methods: ['GET'])]
-    public function list(): Response
-    {
-        return $this->render('skill_category/admin/list.html.twig', [
-            'settings' => [
-                'parameters' => [],
-                'routes' => [
-                    ['name' => 'admin_skill_category_list', 'label' => 'Catégories'],
-                ],
-            ],
-            'skillCategories' => $this->transformer->fromEntities($this->skillCategoryRepository->findAllOrdered()),
-        ]);
+    public function list(
+        Request $request,
+        SkillCategoryListProvider $provider
+    ): Response {
+        return $this->handleListAction(
+            'admin_skill_category_list',
+            SkillCategoryFilter::class,
+            $provider,
+            $request
+        );
     }
 
 

@@ -69,7 +69,7 @@ class <?= $entity_name ?>ListMapper
             settings: $this->settings(),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
-                url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => '<?= $route ?>'], $filter->toQueryParams())),
+                url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),

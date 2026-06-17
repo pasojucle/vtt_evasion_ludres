@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\Skill;
+namespace App\Mapper\SkillCategory;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
-use App\Dto\Filter\SkillFilter;
+use App\Dto\Filter\SkillCategoryFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownView;
@@ -15,19 +14,17 @@ use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
-use App\Entity\Skill;
-use App\Mapper\DropdownSettingsMapper;
+use App\Entity\SkillCategory;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SkillListMapper
+class SkillCategoryListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-        private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
     ) {
@@ -37,16 +34,16 @@ class SkillListMapper
         Paginator $entities,
         string $route,
         int $currentPage,
-        SkillFilter $filter,
+        SkillCategoryFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
         $items = [];
 
-        /** @var Skill $entity */
+        /** @var SkillCategory $entity */
         foreach ($entities as $entity) {
             $items[] = new ListItemView(
                 labels: [
-                    new LabelView($entity->getContent()),
+                    new LabelView($entity->getName()),
                 ],
                 indicators: $this->getIndicators($entity),
                 dropdown: $this->dropDown($entity),
@@ -55,11 +52,10 @@ class SkillListMapper
         }
 
         return new ListView(
-            id: 'skill_contrainer',
-            title: 'Compétences',
-            description: 'Administration de la liste des compétences.',
+            id: 'skill_categories_contrainer',
+            title: 'Catégories',
+            description: 'Administration des catégories de compétence.',
             items: $items,
-            settings: $this->settings(),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -71,38 +67,38 @@ class SkillListMapper
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             addItem: new ButtonView(
-                label: 'Ajouter une compétence',
-                url: $this->urlGenerator->generate('admin_skill_add'),
+                label: 'Ajouter une catégorie',
+                url: $this->urlGenerator->generate('admin_skill_category_add'),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
         );
     }
 
-    private function settings(): DropdownView
+    private function getIndicators(SkillCategory $entity): array
     {
-        return $this->dropdownSettingsMapper->mapToView(null, RoundedVariant::ROUNDED, [
-            new ButtonView(
-                label: 'Catégories',
-                url: $this->urlGenerator->generate('admin_skill_category_list'),
-                variant: ColorVariant::DROPDOWN,
-            ),
-        ]);
+        return [
+            new BadgeView(
+                value: $entity->getIcon(),
+                variant: ColorVariant::ACCENT,
+                size: Size::ICON
+            )
+        ];
     }
 
-    private function dropDown(Skill $entity): DropdownView
+    private function dropDown(SkillCategory $entity): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Modifier',
-                    url: $this->urlGenerator->generate('admin_skill_edit', ['skill' => $entity->getId()]),
+                    url: $this->urlGenerator->generate('admin_skill_category_edit', ['skillCategory' => $entity->getId()]),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
                  new ButtonView(
                      label: 'Supprimer',
-                     url: $this->urlGenerator->generate('admin_skill_delete', ['skill' => $entity->getId()]),
+                     url: $this->urlGenerator->generate('admin_skill_category_delete', ['skillCategory' => $entity->getId()]),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [
@@ -112,16 +108,5 @@ class SkillListMapper
                  )
             ]
         );
-    }
-
-    private function getIndicators(Skill $entity): array
-    {
-        return [
-            new BadgeView(
-                value: $entity->getCategory()->getIcon(),
-                variant: ColorVariant::ACCENT,
-                size: Size::ICON
-            )
-        ];
     }
 }

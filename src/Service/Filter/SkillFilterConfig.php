@@ -11,6 +11,7 @@ use App\Form\Admin\LevelSchoolAutocompleteField;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class SkillFilterConfig implements FilterConfigInterface
 {
@@ -33,9 +34,9 @@ class SkillFilterConfig implements FilterConfigInterface
     {
         return [
            new FilterFieldConfig(
-                name: 'category', 
-                type: EntityType::class, 
-                options: [
+               name: 'category',
+               type: EntityType::class,
+               options: [
                     'label' => false,
                     'class' => SkillCategory::class,
                     'placeholder' => 'Séléctionner une catégorie',
@@ -45,7 +46,7 @@ class SkillFilterConfig implements FilterConfigInterface
                         'data-action' => 'change->filter#submit'
                     ],
                 ]
-            )
+           )
         ];
     }
 
@@ -53,8 +54,18 @@ class SkillFilterConfig implements FilterConfigInterface
     {
         return [
             new FilterFieldConfig(
-                name: 'level', 
-                type: LevelSchoolAutocompleteField::class, 
+                name: 'content',
+                type: TextType::class,
+                options: [
+                    'label' => 'Contient',
+                    'required' => false,
+                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'attr' => ['class' => 'form-control'],
+                ],
+            ),
+            new FilterFieldConfig(
+                name: 'level',
+                type: LevelSchoolAutocompleteField::class,
                 options: [
                     'label' => 'Niveau',
                     'class' => Level::class,
