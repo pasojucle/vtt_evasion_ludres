@@ -1156,4 +1156,19 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             ->setParameter('currentSeasonForm', false)
         ;
     }
+
+    public function countByLevelAndSeason(Level $level, int $season): int
+    {
+        return $this->createQueryBuilder('m')
+        ->select((new Expr())->count('m'))
+        ->join('m.licences', 'li')
+        ->andWhere(
+            (new Expr())->eq('m.level', ':level'),
+            (new Expr())->eq('li.season', ':season')
+        )
+        ->setParameter('level', $level)
+        ->setParameter('season', $season)
+        ->getQuery()
+        ->getSingleScalarResult();
+    }
 }

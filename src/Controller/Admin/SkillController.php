@@ -5,30 +5,27 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\SkillDtoTransformer;
+use App\Dto\Filter\SkillFilter;
 use App\Entity\Skill;
-use App\Form\Admin\SkillFilterType;
 use App\Form\Admin\SkillType;
 use App\Repository\SkillRepository;
 use App\Service\ExportService;
 use App\State\Skill\Processor\SkillDeleteProcessor;
 use App\State\Skill\Provider\SkillDeleteProvider;
+use App\State\Skill\Provider\SkillListProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\UX\Turbo\TurboBundle;
 
 #[Route(path: '/admin/skill', name: 'admin_skill_')]
-class SkillController extends AbstractController
+class SkillController extends AbstractCrudController
 {
     public function __construct(
         private SkillRepository $skillRepository,
-        private SkillDtoTransformer $skillDtoTransformer,
         private EntityManagerInterface $entityManager,
     ) {
     }
@@ -37,25 +34,14 @@ class SkillController extends AbstractController
     #[IsGranted('SKILL_LIST')]
     public function list(
         Request $request,
+        SkillListProvider $provider
     ): Response {
-        $form = $this->createForm(SkillFilterType::class);
-        $form->handleRequest($request);
-
-        $skills = $this->skillRepository->findFiltered(
-            $form->get('skillCategory')->getData()?->getId(),
-            $form->get('level')->getData()?->getId(),
+        return $this->handleListAction(
+            'admin_skill_list',
+            SkillFilter::class,
+            $provider,
+            $request
         );
-
-        return $this->render('skill/admin/list.html.twig', [
-            'settings' => [
-                'parameters' => [],
-                'routes' => [
-                    ['name' => 'admin_skill_category_list', 'label' => 'Catégories'],
-                ],
-            ],
-            'skills' => $this->skillDtoTransformer->fromEntities($skills),
-            'form' => $form->createView(),
-        ]);
     }
 
     #[Route('/export', name: 'export', methods: ['GET'])]
@@ -165,33 +151,11 @@ class SkillController extends AbstractController
         SkillDeleteProvider $provider,
         Skill $skill
     ): Response {
-        $queryParams = $request->query->all();
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-
-                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                    return $this->render('cluster/admin/skill_deleted.stream.html.twig', [
-                        'skillId' => $processor->process($skill),
-                    ]);
-                }
-
-                return $this->redirectToRoute('admin_skill_list', $queryParams);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($skill),
-        ], $response);
+        return $this->handleDialogAction(
+            $request,
+            $skill,
+            $provider,
+            $processor
+        );
     }
 }

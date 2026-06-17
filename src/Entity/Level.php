@@ -212,7 +212,7 @@ class Level
         return $this;
     }
 
-    public function getIsProtected(): ?bool
+    public function isProtected(): ?bool
     {
         return $this->isProtected;
     }

@@ -4,7 +4,7 @@
         {% if label.type == 'number' %}
             <div class="text-right font-mono">{{ label.value }}</div>
         {% else %}
-            <div class="text-left">{{ label.value }}</div>
+            <div class="text-left">{{ label.value|raw }}</div>
         {% endif %}
     {% endfor %}
 </div>

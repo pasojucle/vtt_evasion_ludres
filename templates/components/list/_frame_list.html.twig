@@ -17,9 +17,11 @@
                     {% set gridTemplateRow = item.action is same as false ? "grid-cols-1" : "grid grid-cols-1 lg:grid-cols-[1fr_112px]" %}
                     <li class="group relative grid {{ gridTemplateRow }} items-center lg:gap-4 not-last:border-b not-last:border-border">
                         <div class="grid {{ item.gridTemplateContent }} group relative items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
-                            <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir l'élément" data-turbo-frame="_top">
-                                <span class="sr-only">Voir l'élément</span>
-                            </a>
+                            {% if item.url %}
+                                <a href="{{ item.url }}" class="absolute inset-0 z-10 mr-10" title="Voir l'élément" data-turbo-frame="_top">
+                                    <span class="sr-only">Voir l'élément</span>
+                                </a>
+                            {% endif %}
                             {% include 'components/list/_list_item.html.twig' with {
                                 item: item, 
                                 grid_template_labels: item.gridTemplateLabels, 

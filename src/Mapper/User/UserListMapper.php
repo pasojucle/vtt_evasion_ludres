@@ -116,6 +116,7 @@ class UserListMapper
             new BadgeView(
                 value: $entity->getLevel()->getType()->getIcon(),
                 variant: ColorVariant::ACCENT,
+                size: Size::ICON,
             ),
             new BadgeView(
                 value: (string) $entity->getLastLicence()->getSeason(),

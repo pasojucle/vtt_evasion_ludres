@@ -28,17 +28,18 @@ class DropdownSettingsMapper
      * @param ButtonView[] $menuItems
      * @return DropdownView
      */
-    public function mapToView(string $sectionName, RoundedVariant $rounded, array $menuItems = []): DropdownView
+    public function mapToView(?string $sectionName, RoundedVariant $rounded, array $menuItems = []): DropdownView
     {
         return  new DropdownView(
             trigger: 'lucide:settings',
             variant: DropdownVariant::BUTTON,
             rounded: $rounded,
-            menuItems: array_merge(
-                $menuItems,
-                $this->getParameters($sectionName),
-                $this->getMessages($sectionName),
-            ),
+            menuItems: $sectionName 
+                ?  array_merge(
+                    $menuItems,
+                    $this->getParameters($sectionName),
+                    $this->getMessages($sectionName),
+                ) : $menuItems,
         );
     }
     

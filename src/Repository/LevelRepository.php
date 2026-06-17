@@ -161,7 +161,11 @@ class LevelRepository extends ServiceEntityRepository
 
     public function getLevelQuery(): QueryBuilder
     {
-        return $this->createQueryBuilder('le');
+        return $this->createQueryBuilder('le')
+            ->andWhere(
+                (new Expr())->eq('le.isDeleted', ':isDeleted')
+            )
+            ->setParameter('isDeleted', false);
     }
 
     public function filterType(QueryBuilder $qb, LevelType $type): void

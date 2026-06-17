@@ -2,11 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Level;
 use App\Entity\Skill;
+use App\Entity\SkillCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -57,5 +60,33 @@ class SkillRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
        ;
+    }
+
+    public function getSkillQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('sk');
+    }
+
+    public function filterCategory(QueryBuilder $qb, SkillCategory $category): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sk.category', ':category')
+        )
+        ->setParameter('category', $category);
+    }
+
+    public function filterLevel(QueryBuilder $qb, Level $level): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sk.level', ':level')
+        )
+        ->setParameter('level', $level);
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('sk.content', $direction);
     }
 }

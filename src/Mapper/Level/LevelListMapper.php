@@ -18,7 +18,9 @@ use App\Dto\View\ListView;
 use App\Entity\Level;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Repository\MemberRepository;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\SeasonService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -28,6 +30,8 @@ class LevelListMapper
         private UrlGeneratorInterface $urlGenerator,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
+        private SeasonService $seasonService,
+        private MemberRepository $memberRepository,
     ) {
     }
 
@@ -38,6 +42,7 @@ class LevelListMapper
         LevelFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $currentSeason = $this->seasonService->getCurrentSeason();
         $items = [];
 
         /** @var Level $entity */
@@ -47,10 +52,8 @@ class LevelListMapper
                     new LabelView($entity->getTitle()),
                 ],
                 indicators: $this->getIndicators($entity),
-                counter: new BadgeView(
-                    value: (string) $entity->getUsers()->count(),
-                ),
-                url: $this->urlGenerator->generate("admin_level_edit", ['Level' => $entity->getId()]),
+                counter: $this->counter($entity, $currentSeason),
+                dropdown: $this->dropDown($entity),
                 gridTemplateBadges: 'grid-cols-[1fr_50px]'
             );
         }
@@ -93,5 +96,38 @@ class LevelListMapper
                 variant: ColorVariant::ACCENT,
             ),
         ];
+    }
+
+    private function counter(Level $entity, int $currentSeason): BadgeView
+    {
+        return new BadgeView(
+            value: (string) $this->memberRepository->countByLevelAndSeason($entity, $currentSeason),
+        );
+    }
+
+    private function dropDown(Level $entity): DropdownView
+    {
+        $menusItems = [];
+        $menusItems[] = new ButtonView(
+            label: 'Modifier',
+            url: $this->urlGenerator->generate('admin_level_edit', ['level' => $entity->getId()]),
+            icon: 'lucide:pencil',
+            variant: ColorVariant::DROPDOWN,
+        );
+        if (!$entity->isProtected()) {
+            $menusItems[] = new ButtonView(
+                label: 'Supprimer',
+                url: $this->urlGenerator->generate('admin_level_delete', ['level' => $entity->getId()]),
+                icon: 'lucide:delete',
+                variant: ColorVariant::DROPDOWN,
+                htmlAttributes: [
+                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close'),
+                ],
+            );
+        }
+        return  new DropdownView(
+            menuItems: $menusItems
+        );
     }
 }

@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\Filter\LevelFilter;
-use App\Entity\Enum\LevelType as LevelTypeEnum;
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
-use App\Service\PaginatorService;
 use App\State\Level\Processor\LevelDeleteProcessor;
 use App\State\Level\Provider\LevelDeleteProvider;
 use App\State\Level\Provider\LevelListProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
