@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Dto\Filter\BikeRideTypeFilter;
+use App\Dto\Filter\BoardRoleFilter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class BikeRideTypeFilterConfig implements FilterConfigInterface
+class BoardRoleFilterConfig implements FilterConfigInterface
 {
     public function getRouteName(): string
     {
-        return 'admin_bike_ride_type_list';
+        return 'admin_board_role_list';
     }
 
     public function supports(string $route): bool
@@ -66,6 +66,6 @@ class BikeRideTypeFilterConfig implements FilterConfigInterface
 
     public function getDataClass(): ?string
     {
-        return BikeRideTypeFilter::class;
+        return BoardRoleFilter::class;
     }
 }

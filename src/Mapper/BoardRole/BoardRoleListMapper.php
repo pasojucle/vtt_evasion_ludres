@@ -2,32 +2,27 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\BikeRideType;
+namespace App\Mapper\BoardRole;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\RoundedVariant;
-use App\Dto\Enum\Size;
-use App\Dto\Filter\BikeRideTypeFilter;
-use App\Dto\View\BadgeView;
+use App\Dto\Filter\BoardRoleFilter;
 use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
-use App\Entity\BikeRideType;
-use App\Mapper\DropdownSettingsMapper;
+use App\Entity\BoardRole;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class BikeRideTypeListMapper
+class BoardRoleListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-        private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
     ) {
@@ -37,12 +32,12 @@ class BikeRideTypeListMapper
         Paginator $entities,
         string $route,
         int $currentPage,
-        BikeRideTypeFilter $filter,
+        BoardRoleFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
         $items = [];
 
-        /** @var BikeRideType $entity */
+        /** @var BoardRole $entity */
         foreach ($entities as $entity) {
             $items[] = new ListItemView(
                 labels: [
@@ -53,11 +48,10 @@ class BikeRideTypeListMapper
         }
 
         return new ListView(
-            id: 'bike_ride_types_contrainer',
-            title: 'Type d\'activité',
-            description: 'Administration des types d\'activité.',
+            id: 'board_role_contrainer',
+            title: 'Rôles du bureau et comité',
+            description: 'Administration des rôles du bureau et comité.',
             items: $items,
-            settings: $this->settings(),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -69,36 +63,33 @@ class BikeRideTypeListMapper
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             addItem: new ButtonView(
-                label: 'Ajouter un type d\'activité',
-                url: $this->urlGenerator->generate('admin_bike_ride_type_add'),
+                label: 'Ajouter un rôle',
+                url: $this->urlGenerator->generate('admin_bike_ride_add'),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
         );
     }
-
-    private function settings(): DropdownView
-    {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', RoundedVariant::ROUNDED, [
-            new ButtonView(
-                label: 'Ajouter un message',
-                url: $this->urlGenerator->generate('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
-                icon: 'lucide:message-circle-plus',
-                variant: ColorVariant::DROPDOWN,
-            ),
-        ]);
-    }
-
-    private function dropDown(BikeRideType $entity): DropdownView
+    private function dropDown(BoardRole $entity): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Modifier',
-                    url: $this->urlGenerator->generate('admin_bike_ride_type_edit', ['bikeRideType' => $entity->getId()]),
+                    url: $this->urlGenerator->generate('admin_board_role_edit', ['boardRole' => $entity->getId()]),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
+                 new ButtonView(
+                     label: 'Supprimer',
+                     url: $this->urlGenerator->generate('admin_board_role_delete', ['boardRole' => $entity->getId()]),
+                     icon: 'lucide:delete',
+                     variant: ColorVariant::DROPDOWN,
+                     htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    ],
+                 )
             ]
         );
     }

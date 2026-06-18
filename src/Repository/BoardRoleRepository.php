@@ -73,4 +73,25 @@ class BoardRoleRepository extends ServiceEntityRepository
 
         return $nexOrder;
     }
+
+    public function getBoardRoleQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('br');
+    }
+
+    public function filterName(QueryBuilder $qb, string $term): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->like('LOWER(br.name)', ':term')
+            )
+            ->setParameter('term', '%' . strtolower($term) . '%');
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('br.name', $direction);
+    }
 }

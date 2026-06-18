@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\Filter\BoardRoleFilter;
 use App\Entity\BoardRole;
 use App\Form\Admin\BoardRoleType;
 use App\Repository\BoardRoleRepository;
@@ -11,8 +12,8 @@ use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\State\BoardRole\Processor\BoardRoleDeleteProcessor;
 use App\State\BoardRole\Provider\BoardRoleDeleteProvider;
+use App\State\BoardRole\Provider\BoardRoleListProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,26 +21,24 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/bureau/role', name: 'admin_board_role')]
-class BoardRoleController extends AbstractController
+class BoardRoleController extends AbstractCrudController
 {
     public function __construct(private BoardRoleRepository $boardRoleRepository, private EntityManagerInterface $entityManager, private OrderByService $orderByService)
     {
     }
 
-    #[Route('s', name: '_list', methods: ['GET'], defaults:['type' => 1])]
+    #[Route('s', name: '_list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleList(
-        PaginatorService $paginator,
-        PaginatorDtoTransformer $paginatorDtoTransformer,
+        BoardRoleListProvider $provider,
         Request $request
     ): Response {
-        $query = $this->boardRoleRepository->findBoardRoleQuery();
-        $boardRoles = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-
-        return $this->render('board_role/admin/list.html.twig', [
-            'boardRoles' => $boardRoles,
-            'paginator' => $paginatorDtoTransformer->fromEntities($boardRoles),
-        ]);
+        return $this->handleListAction(
+            'admin_board_role_list',
+            BoardRoleFilter::class,
+            $provider,
+            $request
+        );
     }
 
     #[Route('/{boardRole}', name: '_edit', methods: ['GET', 'POST'], defaults:['boardRole' => null])]
