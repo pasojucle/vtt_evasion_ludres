@@ -4,35 +4,41 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\Filter\BikeRideTypeFilter;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Form\Admin\BikeRideTypeType;
+use App\State\BikeRideType\Provider\BikeRideTypeListProvider;
 use App\UseCase\BikeRideType\GetBikeRideTypeList;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/param', name: 'admin_', methods: ['GET'])]
-class BikeRideTypeController extends AbstractController
+#[Route('/admin/param/types-rando/', name: 'admin_bike_ride_type_', methods: ['GET'])]
+class BikeRideTypeController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    #[Route('/types-rando', name: 'bike_ride_types', methods: ['GET'])]
+    #[Route('liste', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         Request $request,
-        GetBikeRideTypeList $bikeRideTypeList,
+        BikeRideTypeListProvider $provider,
     ): Response {
-        return $this->render('bike_ride_type/admin/list.html.twig', $bikeRideTypeList->execute($request));
+        return $this->handleListAction(
+            'admin_bike_ride_type_list',
+            BikeRideTypeFilter::class,
+            $provider,
+            $request
+        );
     }
 
-    #[Route('/type-rando', name: 'bike_ride_type_add', methods: ['GET', 'POST'])]
+    #[Route('', name: 'add', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminAdd(
         Request $request,
@@ -50,7 +56,7 @@ class BikeRideTypeController extends AbstractController
             $this->entityManager->persist($bikeRideType);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_bike_ride_types');
+            return $this->redirectToRoute('admin_bike_ride_type_list');
         }
 
         $showErrors = false;
@@ -67,7 +73,7 @@ class BikeRideTypeController extends AbstractController
         ]);
     }
 
-    #[Route('/type-rando/{bikeRideType}', name: 'bike_ride_type_edit', methods: ['GET', 'POST'], requirements: ['bikeRideType' => '\d+'])]
+    #[Route('/{bikeRideType}', name: 'edit', methods: ['GET', 'POST'], requirements: ['bikeRideType' => '\d+'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminEdit(
         Request $request,
@@ -84,7 +90,7 @@ class BikeRideTypeController extends AbstractController
 
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_bike_ride_types');
+            return $this->redirectToRoute('admin_bike_ride_type_list');
         }
 
         return $this->render('bike_ride_type/admin/edit.html.twig', [

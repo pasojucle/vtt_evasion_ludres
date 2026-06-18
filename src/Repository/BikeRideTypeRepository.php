@@ -56,4 +56,25 @@ class BikeRideTypeRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+    public function getBikeRideTypeQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('brt');
+    }
+
+    public function filterName(QueryBuilder $qb, string $term): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->like('LOWER(brt.name)', ':term')
+            )
+            ->setParameter('term', '%' . strtolower($term) . '%');
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('brt.name', $direction);
+    }
 }
