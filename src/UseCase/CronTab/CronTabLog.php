@@ -10,7 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class CronTabLog
 {
-    private const string FILENAME = 'crontab.log';
+    public const string FILENAME = 'crontab.log';
 
     public function __construct(
         private Filesystem $filesystem,

@@ -7,6 +7,7 @@ namespace App\UseCase\User;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use App\Repository\LicenceRepository;
+use App\Service\SeasonService;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class GetCurrentSeasonUsers
@@ -20,6 +21,7 @@ class GetCurrentSeasonUsers
     public function __construct(
         private LicenceRepository $licenceRepository,
         private RequestStack $request,
+        private SeasonService $seasonService,
     ) {
     }
 
@@ -30,7 +32,7 @@ class GetCurrentSeasonUsers
         $licencesBySeason = [];
         $licencesBySeason[$season] = [];
         /** @var Licence $licence */
-        foreach ($this->licenceRepository->findAllByLastSeason() as $licence) {
+        foreach ($this->licenceRepository->findAllByLastSeason($this->seasonService->getPreviousSeason()) as $licence) {
             $licencesBySeason[$licence->getSeason()][$licence->getUser()->getId()] = $licence;
         }
         $usersByType = [self::MEMBER => [], self::TESTING => [], self::REGISTRATION => [], self::RE_REGISTRATION => []];

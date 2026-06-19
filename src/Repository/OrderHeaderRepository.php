@@ -169,4 +169,24 @@ class OrderHeaderRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return array<int, array{count: int, status: OrderStatusEnum}>
+     */
+    public function countPendingOrdersByStatus(): array
+    {
+        return $this->createQueryBuilder('oh')
+            ->select(sprintf('%s as count', (new Expr())->count('oh.id')), 'oh.status')
+            ->andWhere(
+                (new Expr())->orX(
+                    (new Expr())->eq('oh.status', ':ordered'),
+                    (new Expr())->eq('oh.status', ':valided'),
+                )
+            )
+            ->setParameter('valided', OrderStatusEnum::VALIDED)
+            ->setParameter('ordered', OrderStatusEnum::ORDERED)
+            ->groupBy('oh.status')
+            ->getQuery()
+            ->getResult();
+    }
 }

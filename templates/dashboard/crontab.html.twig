@@ -1,9 +1,9 @@
 <turbo-frame id="crontab" class="w-100 flex-auto">
     <a href="{{ path('admin_crontab_logs')}}" data-turbo-frame="_top">
         <div class="dashboard-item-body">
-            <div>
-                <span class="{{ onError ? 'danger' : 'success' }}"></span>
-                <span> Dernière execution de la tâche planifiée : {{ executeAt }}</span>
+            <div class="flex gap-4 bg-slate-300 px-3 py-1">
+                {% include "components/_badge.html.twig" with {badge: cronTab.badge} %}
+                <div> Dernière execution de la tâche planifiée : {{ cronTab.label }}</div>
             </div>
         </div>
     </a>

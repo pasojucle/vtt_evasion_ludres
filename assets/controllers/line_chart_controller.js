@@ -40,9 +40,9 @@ export default class extends Controller {
         try {
             const response = await fetch(this.urlValue);
             const json = await response.json();
-            if (json.membersPrecences) {
-                json.membersPrecences.forEach((presences) => {
-                    this.lines.push(new Line(this, presences));
+            if (json.items) {
+                json.items.forEach((item) => {
+                    this.lines.push(new Line(this, item));
                 });
                 
                 this.setFormat();
@@ -53,9 +53,6 @@ export default class extends Controller {
         }
     }
 
-    addLine = (presences) => {
-        this.lines.push(new Line(this, presences));
-    }
     setFormat() {
         if (this.formatValue === 'card') {
             this.width = this.canvasTarget.parentElement.offsetWidth;
@@ -93,10 +90,10 @@ export default class extends Controller {
 
 class Line {
     offsetX = 0;
-    constructor(lineChart, presences) {
+    constructor(lineChart, item) {
         this.lineChart = lineChart;
-        this.data = presences.data;
-        this.color = presences.color;
+        this.data = item.data;
+        this.color = item.lineColor;
         this.markColor = 'rgba(0,0,0,0.7)'
     }
     draw ()  {
@@ -110,7 +107,7 @@ class Line {
         this.lineChart.ctx.strokeStyle = this.color;
         this.data.forEach((presence, index) => {
             
-            const value = parseInt(presence[1]) * this.lineChart.ratioY / this.lineChart.base;
+            const value = parseInt(presence.count) * this.lineChart.ratioY / this.lineChart.base;
             this.drawItem(value, index);
             this.writeDate(presence);
             this.offsetX += this.lineChart.gap;

@@ -4,26 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
-use App\Entity\Enum\OrderStatusEnum;
-use App\Entity\OrderHeader;
-use App\Entity\SecondHand;
-use App\Repository\BikeRideRepository;
-use App\Repository\OrderHeaderRepository;
-use App\Repository\SecondHandRepository;
-use App\Service\ParameterService;
-use App\UseCase\CronTab\CronTabLog;
-use App\UseCase\Dashboard\GetSchoolBikeRideClusters;
-use App\UseCase\User\GetCurrentSeasonUsers;
-use DateInterval;
-use DateTime;
+use App\State\Dashboard\Provider\DashboardBikeRideProvider;
+use App\State\Dashboard\Provider\DashboardCronTabProvider;
+use App\State\Dashboard\Provider\DashboardOrderProvider;
+use App\State\Dashboard\Provider\DashboardSeasonProvider;
+use App\State\Dashboard\Provider\DashboardSecondHandProvider;
+use App\State\Dashboard\Provider\DashboardWidgetsProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/admin/dashboard', name: 'admin_dashboard')]
 class DashboardController extends AbstractController
@@ -31,111 +22,61 @@ class DashboardController extends AbstractController
     #[Route('/', name:'', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function dashboard(
-        BikeRideRepository $bikeRideRepository,
-        BikeRideDtoTransformer $bikeRideDtoTransformer,
+        DashboardWidgetsProvider $provider,
     ): Response {
-        $nextBikeRides = [];
-        /** @var BikeRide $nextBikeRide */
-        foreach ($bikeRideRepository->findNextBikeRides() as $nextBikeRide) {
-            $nextBikeRides[] = $bikeRideDtoTransformer->getHeaderFromEntity($nextBikeRide);
-        }
         return $this->render('dashboard/index.html.twig', [
-            'next_bike_rides' => $nextBikeRides,
+            'widgets' => $provider->getWidgets(),
         ]);
     }
 
-    #[Route('/bikeRide/{bikeRide}', name: '_next_bike_rides', methods: ['GET'], options:['expose' => true])]
+    #[Route('/bikeRide/{bikeRide}', name: '_bike_ride', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function nextSchoolBikeRide(
-        GetSchoolBikeRideClusters $getSchoolBikeRideClusters,
+        DashboardBikeRideProvider $provider,
         BikeRide $bikeRide,
     ): Response {
-        return $this->render('dashboard/next_bike_rides.html.twig', [
-            'bikeRideId' => $bikeRide->getId(),
-            'clusters' => $getSchoolBikeRideClusters->execute($bikeRide),
+        return $this->render('dashboard/bike_rides.html.twig', [
+            'bikeRide' => $provider->getItem($bikeRide),
         ]);
     }
 
     #[Route('/season/detail', name: '_saison_detail', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('USER_SHARE')]
     public function seasonDetail(
-        GetCurrentSeasonUsers $getCurentSeasonUsers,
-        ParameterService $parameterService,
+        DashboardSeasonProvider $provider,
     ): Response {
-        $parameters = [
-            [
-                'label' => 'Inscription séances d\'essai (Ecole Vtt)',
-                'value' => $parameterService->getParameterByName('SCHOOL_TESTING_REGISTRATION')
-            ],
-            [
-                'label' => 'Ré-inscription',
-                'value' => $parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED')
-            ],
-        ];
-
-        return $this->render('dashboard/badge.html.twig', [
-            'data' => $getCurentSeasonUsers->execute(),
-            'parameters' => $parameters,
-            'frameId' => 'dashboard-season',
+        return $this->render('dashboard/list.html.twig', [
+            'view' => $provider->getCollection(),
         ]);
     }
 
     #[Route('/orders', name: '_orders', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('PRODUCT_LIST')]
-    public function orders(Request $request, OrderHeaderRepository $orderHeaderRepository, TranslatorInterface $translator): Response
-    {
-        $filters = ['status' => OrderStatusEnum::ORDERED];
-        $request->getSession()->set('admin_orders_filters', $filters);
-        $ordersByType = [
-            OrderStatusEnum::ORDERED->trans($translator) => [],
-            OrderStatusEnum::VALIDED->trans($translator) => [],
-        ];
-        /** @var OrderHeader $order */
-        foreach ($orderHeaderRepository->findOrdersQuery()->getQuery()->getResult() as $order) {
-            $type = $order->getStatus()->trans($translator);
-            if (in_array($type, array_keys($ordersByType))) {
-                $ordersByType[$type][] = $order;
-            }
-        }
-        ksort($ordersByType);
-
-        return $this->render('dashboard/badge.html.twig', [
-            'data' => $ordersByType,
-            'frameId' => 'dashboard-orders',
+    public function orders(
+        DashboardOrderProvider $provider
+    ): Response {
+        return $this->render('dashboard/list.html.twig', [
+            'view' => $provider->getCollection(),
         ]);
     }
 
     #[Route('/second/hands', name: '_second_hands', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('SECOND_HAND_LIST')]
-    public function secondHands(Request $request, SecondHandRepository $secondHandRepository): Response
-    {
-        $secondHandToValidate = 'Nouvelles annonces';
-        $secondHangValid = 'Annonces validées';
-        $secondHandsByType = [
-            $secondHandToValidate => [],
-            $secondHangValid => [],
-        ];
-        /** @var SecondHand $secondHand */
-        foreach ($secondHandRepository->findAllNotDeleted()as $secondHand) {
-            $type = (null !== $secondHand->getValidedAt()) ? $secondHandToValidate : $secondHangValid;
-            $secondHandsByType[$type][] = $secondHand;
-        }
-
-        return $this->render('dashboard/badge.html.twig', [
-            'data' => $secondHandsByType,
-            'frameId' => 'dashboard-second-hands',
+    public function secondHands(
+        DashboardSecondHandProvider $provider,
+    ): Response {
+        return $this->render('dashboard/list.html.twig', [
+            'view' => $provider->getCollection(),
         ]);
     }
 
-    #[Route('/crontab', name: '_crontab', methods: ['GET'], options:['expose' => true])]
+    #[Route('/crontab', name: '_crontab', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function crontab(CronTabLog $cronTabLog): Response
-    {
-        $executeAt = $cronTabLog->filemtime();
-
+    public function crontab(
+        DashboardCronTabProvider $provider
+    ): Response {
         return $this->render('dashboard/crontab.html.twig', [
-            'executeAt' => date("d/m/Y H:i:s.", $executeAt),
-            'onError' => $executeAt < (new DateTime())->setTime(12, 0, 0)->sub(new DateInterval('P1D'))->getTimestamp(),
+            'cronTab' => $provider->getItem(),
         ]);
     }
 }

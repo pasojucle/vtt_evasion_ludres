@@ -79,16 +79,20 @@ class LicenceRepository extends ServiceEntityRepository
             ;
     }
 
-    public function findAllByLastSeason(): array
+    public function findAllByLastSeason(int $currentSeason): array
     {
         return $this->createQueryBuilder('li')
-            ->andWhere(
-                (new Expr())->gte('li.season', ':lastSeason')
-            )
-            ->setParameter('lastSeason', $this->seasonService->getPreviousSeason())
+            ->select('li AS licence')
+            ->addSelect('CASE WHEN lip.id IS NOT NULL THEN 1 ELSE 0 END as hasPreviousLicence')
+            ->leftJoin(Licence::class, 'lip', 'WITH', (new Expr())->andX(
+                (new Expr())->eq('lip.user', 'li.user'),
+                (new Expr())->eq('lip.season', ':previousSeason'),
+            ))
+            ->andWhere('li.season = :currentSeason')
+            ->setParameter('currentSeason', $currentSeason)
+            ->setParameter('previousSeason', $currentSeason - 1)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     public function findAllRegistredFromSeason(int $season): array

@@ -1,0 +1,29 @@
+<turbo-frame id="{{ view.id }}" class="block !mt-0">
+    <div class="m-3">
+        <ul class="divide-y divide-border/50">
+            {% for item in view.items %}
+                <li class="flex items-center py-1">
+                    <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)] text-sm ">{{ item.label }}</div>
+                    <div class="ml-auto">
+                        {% include "components/_badge.html.twig" with {badge: item.badge} %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if view.parameters %}
+            <hr class="my-2 text-border"/>
+            <ul class="mt-6 divide-y divide-border/50">
+                {% for parameter in view.parameters %}
+                    <li class="flex items-center py-1.5">
+                        <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)] text-sm italic">{{ parameter.label }}</div>
+                        <div class="ml-auto">
+                            {% include "components/_badge.html.twig" with {badge: parameter.badge} %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+</turbo-frame>

@@ -285,3 +285,13 @@ notification:
     public: Afficher à tous le monde
   restriction:
     age: Limiter une tranche d'âge
+
+dashboard:
+  season:
+    member: Adhérents
+    testing: Inscriptions aux 3 séances d'essai
+    registration: Nouvelles inscriptions
+    re_registration: Renouvellements
+  second_hand:
+    to_validate: Nouvelles annonces
+    valid: Annonces validées

@@ -274,37 +274,30 @@ class SessionRepository extends ServiceEntityRepository
         }
     }
 
-    public function findMemberpresence(array $filters): array
+    /**
+     * @param bool $isSchool
+     * @param DateTimeImmutable $startAt
+     * @param DateTimeImmutable $endAt
+     * @return array<int, array{count: int, startAt: \DateTimeInterface}>
+     */
+    public function findParticipation(bool $isSchool, DateTimeImmutable $startAt, DateTimeImmutable $endAt): array
     {
-        $parameters = [new Parameter('isPresent', true)];
-        $andX = (new Expr())->andX();
-        $andX->add((new Expr())->eq('s.isPresent', ':isPresent'));
-
-        if (array_key_exists('isSchool', $filters)) {
-            $andX->add((new Expr())->eq('brt.needFramers', ':needFramers'));
-            $parameters[] = new Parameter('needFramers', $filters['isSchool']);
-        }
-
-        if (array_key_exists('period', $filters) && !empty($filters['period'])) {
-            if (is_array($filters['period'])) {
-                $parameters[] = new Parameter('startAt', $filters['period']['startAt']);
-                $parameters[] = new Parameter('endAt', $filters['period']['endAt']);
-            }
-            if (is_string($filters['period'])) {
-                list($startAt, $endAt) = explode('-', $filters['period']);
-                $parameters[] = new Parameter('startAt', DateTimeImmutable::createFromFormat('d/m/Y', trim($startAt)));
-                $parameters[] = new Parameter('endAt', DateTimeImmutable::createFromFormat('d/m/Y', trim($endAt)));
-            }
-            $andX->add((new Expr())->between('br.startAt', ':startAt', ':endAt'));
-        }
-
         return $this->createQueryBuilder('s')
-            ->select((new Expr())->count('s.isPresent'), 'br.startAt')
+            ->select(sprintf('%s as count', (new Expr())->count('s.isPresent')), 'br.startAt')
             ->join('s.cluster', 'c')
             ->join('c.bikeRide', 'br')
             ->join('br.bikeRideType', 'brt')
-            ->andWhere($andX)
-            ->setParameters(new ArrayCollection($parameters))
+            ->andWhere(
+                (new Expr())->eq('s.isPresent', ':isPresent'),
+                (new Expr())->eq('brt.needFramers', ':needFramers'),
+                (new Expr())->between('br.startAt', ':startAt', ':endAt')
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('isPresent', true),
+                new Parameter('needFramers', $isSchool),
+                new Parameter('startAt', $startAt),
+                new Parameter('endAt', $endAt)
+            ]))
             ->groupBy('c.bikeRide')
             ->orderBy('br.startAt')
             ->getQuery()

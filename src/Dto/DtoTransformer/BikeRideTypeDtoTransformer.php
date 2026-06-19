@@ -30,7 +30,6 @@ class BikeRideTypeDtoTransformer
         $bikeRideTypeDto->isNeedFramers = $bikeRideType->isNeedFramers();
         $bikeRideTypeDto->messages = $this->getMessages($bikeRideType);
         $bikeRideTypeDto->displayPractice = $bikeRideType->isDisplayBikeKind();
-        $bikeRideTypeDto->dropdown = $this->dropdownMapper->fromBikeRideType($bikeRideType);
 
         return $bikeRideTypeDto;
     }
@@ -69,7 +68,7 @@ class BikeRideTypeDtoTransformer
         /** @var Message $message */
         foreach ($messages->toArray() as $message) {
             $levelType = $message->getLevelType() ?? 'default';
-            $messagesByLevelType[$levelType] = $message->getContent();
+            $messagesByLevelType[$levelType->value] = $message->getContent();
         }
         return $messagesByLevelType;
     }

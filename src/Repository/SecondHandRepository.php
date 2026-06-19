@@ -170,4 +170,16 @@ class SecondHandRepository extends ServiceEntityRepository
             ->getSingleColumnResult()
        ;
     }
+
+    public function findPendingSencondHand(): array
+    {
+        return $this->createQueryBuilder('sh')
+            ->andWhere(
+                (new Expr())->eq('sh.disabled', ':falseValue'),
+                (new Expr())->eq('sh.deleted', ':falseValue'),
+            )
+            ->setParameter('falseValue', false)
+            ->getQuery()
+            ->getResult();
+    }
 }

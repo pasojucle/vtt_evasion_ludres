@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Repository\SessionRepository;
+use App\State\Participation\Provider\ParticipationMonthlyProvider;
 use App\UseCase\User\GetParticipations;
-use DateInterval;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,11 +17,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ParticipationController extends AbstractController
 {
     public function __construct(
-        private readonly SessionRepository $sessionRepository,
         private readonly GetParticipations $getParticipations,
     ) {
     }
-
 
     #[Route('s/{filtered}', name: '_list', defaults: ['filtered' => false], methods: ['GET', 'POST'])]
     #[IsGranted('PARTICIPATION_VIEW')]
@@ -39,18 +35,12 @@ class ParticipationController extends AbstractController
         return $this->getParticipations->export($request);
     }
 
-    #[Route('/mensuelle/{isSchool}', name: '_monthly', methods: ['GET'], options: ['expose' => true])]
+    #[Route('/mensuelle/{isSchool}', name: '_monthly', methods: ['GET'])]
     #[IsGranted('PARTICIPATION_VIEW')]
     public function monthly(
+        ParticipationMonthlyProvider $provider,
         bool $isSchool
     ): JsonResponse {
-        $today = new DateTimeImmutable();
-        $filters = ['period' => ['startAt' => $today->sub(new DateInterval('P6M')), 'endAt' => $today], 'isSchool' => (bool) $isSchool];
-        
-        return new JsonResponse([
-            'membersPrecences' => [
-                ['data' => $this->sessionRepository->findMemberpresence($filters), 'color' => "rgba(230,132,27,1)"],
-            ],
-        ]);
+        return new JsonResponse($provider->mapToView($isSchool));
     }
 }

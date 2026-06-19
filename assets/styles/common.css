@@ -12,10 +12,6 @@ label {
     margin: 0;
     padding: 0;
 }
-ul,
-ol {
-    padding-left: 0em;
-}
 p:first-child,
 ul:first-child,
 ol:first-child,
@@ -61,16 +57,6 @@ h6{
     -webkit-margin-after: 0;
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
-}
-li {
-    list-style-position: inside;
-    list-style: none;
-}
-li p,
-li ul,
-li ol {
-    margin-top: 0;
-    margin-bottom: 0;
 }
 aside, details, figcaption, figure, footer, header, hgroup, nav, section {
     display: block;

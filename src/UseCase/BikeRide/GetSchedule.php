@@ -120,7 +120,7 @@ class GetSchedule
     //     return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', [
     //         new ButtonView(
     //             label: 'Types de rando',
-    //             url: $this->urlGenerator->generate('admin_bike_ride_types'),
+    //             url: $this->urlGenerator->generate('admin_bike_ride_type_list'),
     //             variant: ColorVariant::DROPDOWN,
     //         ),
     //         new ButtonView(

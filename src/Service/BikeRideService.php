@@ -19,7 +19,14 @@ class BikeRideService
         private readonly AppExtension $appExtension
     ) {
     }
-
+    
+    public function getShorTilte(string $title): string
+    {
+        if (1 === preg_match('#^(.+)\s\((.+)\)$#', $title, $matches)) {
+            return $matches[1];
+        }
+        return $title;
+    }
 
     public function getPeriod(BikeRide $bikeRide): string
     {

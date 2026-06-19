@@ -1,0 +1,12 @@
+<turbo-frame id="dashboard-bike-ride-{{ bikeRide.id }}">
+    <ul class="p-3 divide-y divide-border/50">
+        {% for cluster in bikeRide.clusters %}
+            <li class="flex items-center py-1">
+                <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ cluster.label }}</div>
+                <div class="ml-auto">
+                    {% include "components/_badge.html.twig" with {badge: cluster.counter} %}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</turbo-frame
