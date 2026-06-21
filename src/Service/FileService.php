@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Symfony\Component\Filesystem\Filesystem;
+
 class FileService
 {
     private const UNITS = ['b', 'k', 'm', 'g', 't'];
@@ -28,5 +30,26 @@ class FileService
             return (int) $matches[1] * pow(1024, $exponent);
         }
         return null;
+    }
+
+    public function join(string ...$items): string
+    {
+        $isAbsolute = isset($items[0]) && str_starts_with($items[0], '/');
+
+        $cleaned = array_map(static function (string $item) {
+            return trim($item, '/\\');
+        }, $items);
+
+        $path = implode(DIRECTORY_SEPARATOR, array_filter($cleaned));
+
+        return $isAbsolute ? '/' . $path : $path;
+    }
+
+    public function mkdirIfNotExists(string $outputPathDir): void
+    {
+        $filesystem = new Filesystem();
+        if (!$filesystem->exists($outputPathDir)) {
+            $filesystem->mkdir($outputPathDir, 0775);
+        }
     }
 }

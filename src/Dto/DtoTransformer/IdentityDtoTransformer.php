@@ -57,7 +57,7 @@ class IdentityDtoTransformer
         $identityDto->emergencyPhoneAnchor = $this->getPhoneAnchor($identity->getEmergencyPhone());
         $identityDto->emergencyContact = $identity->getEmergencyContact();
         $identityDto->phonesAnchor = $this->getPhonesAnchor($identity);
-        $identityDto->picture = $this->identityService->getPicture($identity->getPicture());
+        $identityDto->picture = $this->identityService->getPicture($identity->getFilename());
 
         $identityDto->age = $this->getAge($bithDate);
 

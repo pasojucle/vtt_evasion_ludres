@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\ProjectDirService;
+use App\Model\TextEditorUpload;
+use App\Service\FileLocation\FileLocationResolver;
+use App\Service\FileLocation\TextEditorFileLocation;
+use App\Service\FileService;
 use App\Service\UploadService;
 use Error;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,27 +34,40 @@ class FileController extends AbstractController
 
     #[Route('/data/file/{directory}/{filename}', name: 'get_data_file', methods: ['GET', 'POST'])]
     public function getDataFile(
-        ProjectDirService $projectDir,
+        FileLocationResolver $resolver,
+        FileService $fileService,
         string $directory,
         string $filename
     ): Response {
-        $path = $projectDir->path($directory, base64_decode($filename));
+        $pathDir = $resolver->resolveDirectory($directory)->getDirectory();
+        if (!$pathDir) {
+            throw $this->createNotFoundException('Le répertoire demandé n’est pas valide.');
+        }
+        
+        $path = $fileService->join($pathDir, base64_decode($filename));
 
-        if (file_exists($path)) {
-            return new BinaryFileResponse($path);
+        if (!file_exists($path)) {
+            throw $this->createNotFoundException('Le fichier demandé n’est pas valide.');
         }
 
-        return new Response(null, 204);
+        return new BinaryFileResponse($path);
     }
 
-    #[Route('/upload/{directory}', name: 'upload_file', methods: ['GET', 'POST'])]
-    public function uploadFile(Request $request, UploadService $uploadService, ProjectDirService $projectDir, string $directory): JsonResponse
+    #[Route('/upload', name: 'upload_file', methods: ['GET', 'POST'])]
+    public function uploadFile(
+        Request $request, 
+        UploadService $uploadService,
+        TextEditorFileLocation $location,
+    ): JsonResponse
     {
         $file = $request->files->get('upload');
         if ($file) {
+            $upload = new TextEditorUpload($file->getClientOriginalName());
             $filename = null;
             try {
-                $filename = $uploadService->uploadFile($file, $directory);
+                $filename = $uploadService->uploadFile($file, $upload);
+                $directory = $location->getBaseDirectoryName();
+
                 return new JsonResponse(['url' => $this->generateUrl('get_data_file', ['directory' => $directory, 'filename' => base64_encode($filename)])]);
             } catch (Error $e) {
                 return new JsonResponse(['error' => ['message' => $e->getMessage()]]);

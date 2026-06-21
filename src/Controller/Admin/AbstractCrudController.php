@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\Filter\AbstractFilter;
 use App\Form\Filter\ListFilterType;
 use App\State\DialogProcessorInterface;
 use App\State\DialogProviderInterface;

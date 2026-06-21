@@ -52,7 +52,7 @@ class DropdownSettingsMapper
             icon: 'lucide:settings-2',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
                 new HtmlAttributView('data-action', 'click->dropdown#close')
             ],
         ), $this->parameterRepository->findByParameterGroupName($sectionName));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Controller\Admin\AbstractCrudController;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
@@ -17,6 +18,7 @@ use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
 use App\Service\ReplaceKeywordsService;
+use App\Service\SecondHandService;
 use App\State\SecondHand\Processor\SecondHandDeleteProcessor;
 use App\State\SecondHand\Provider\SecondHandDeleteProvider;
 use App\UseCase\SecondHand\EditSecondHand;
@@ -28,7 +30,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(name: 'second_hand_')]
-class SecondHandController extends AbstractController
+class SecondHandController extends AbstractCrudController
 {
     public function __construct(
         private SecondHandDtoTransformer $secondHandDtoTransformer,
@@ -143,34 +145,22 @@ class SecondHandController extends AbstractController
         SecondHandDeleteProvider $provider,
         SecondHand $secondHand
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($secondHand);
-
-                return $this->redirectToRoute('second_hand_user_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($secondHand),
-        ], $response);
+        return $this->handleDialogAction(
+            $request,
+            $secondHand,
+            $provider,
+            $processor,
+        );
     }
 
     #[Route('/occasion/enabled/{secondHand}', name: 'enabled', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function enabled(
+        SecondHandService $secondHandService,
         SecondHand $secondHand
     ): Response {
-        $secondHand->setDisabled(false);
+
+        $secondHandService->applyTransition($secondHand, 'disable');
         $this->secondHandRepository->save($secondHand, true);
 
         return $this->redirectToRoute('second_hand_user_list');

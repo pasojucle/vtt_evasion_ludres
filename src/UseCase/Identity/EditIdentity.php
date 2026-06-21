@@ -26,9 +26,9 @@ class EditIdentity
         dump($form->getData());
         if ($request->files->get('identitiy')) {
             $pictureFile = $request->files->get('identity')[0]['pictureFile'];
-            $newFilename = $this->uploadService->uploadFile($pictureFile);
+            $newFilename = $this->uploadService->uploadFile($pictureFile, $identity);
             if (null !== $newFilename) {
-                $identity->setPicture($newFilename);
+                $identity->setFilename($newFilename);
             }
         }
         if ($identity->getBirthCommune()) {

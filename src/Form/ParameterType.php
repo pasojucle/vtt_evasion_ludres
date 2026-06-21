@@ -39,6 +39,7 @@ class ParameterType extends AbstractType
                     case Parameter::TYPE_BOOL:
                         $classType = CheckboxType::class;
                         $fieldOptions = [
+                            'label' => $label,
                             'data' => (bool) $value,
                             'block_prefix' => 'switch',
                             'required' => false,
@@ -69,6 +70,7 @@ class ParameterType extends AbstractType
                     case Parameter::TYPE_MONTH_AND_DAY:
                         $classType = CollectionType::class;
                         $fieldOptions = [
+                            'label' =>false,
                             'block_prefix' => 'custom_month_and_hour',
                             'entry_options' => [
                                 'label' => false,
@@ -82,10 +84,6 @@ class ParameterType extends AbstractType
                     $classType = TextType::class;
                 }
 
-                $fieldOptions['label'] = $label;
-                $fieldOptions['row_attr'] = [
-                    'class' => 'form-group',
-                ];
                 $fieldOptions['required'] = false;
 
                 $form
@@ -93,11 +91,6 @@ class ParameterType extends AbstractType
                 ;
             }
         });
-
-        $builder->add('referer', HiddenType::class, [
-            'data' => $options['referer'],
-            'mapped' => false,
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

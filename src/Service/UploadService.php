@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Error;
+use App\Entity\Interface\UploadableInterface;
+use App\Service\FileLocation\FileLocationResolver;
 use GdImage;
+use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -19,23 +22,45 @@ class UploadService
     public const PORTRAIT = 1;
 
     public function __construct(
-        private ProjectDirService $projectDirService,
         private SluggerInterface $slugger,
         private FileService $fileService,
+        private FileLocationResolver $resolver,
     ) {
     }
 
-    public function uploadFile(?UploadedFile $pictureFile, ?string $dir = 'uploads_directory_path', ?string $extension = null): ?string
+    public function uploadFile(
+        ?UploadedFile $pictureFile, 
+        UploadableInterface $media, 
+        ?string $extension = null
+    ): ?string
     {
+        $mimeType = $pictureFile->getMimeType();
+        $detectedExtension = strtolower($extension ?? $this->getExtention($pictureFile));
+
+        $allowedMimeTypes = [
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+            'application/pdf',
+            'video/mp4', 'video/webm', 'video/quicktime', 'video/x-matroska',
+            'application/gpx+xml', 'application/xml', 'text/xml', 'application/octet-stream',
+        ];
+        $allowedExtensions = [
+            'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg',
+            'pdf',
+            'mp4', 'webm', 'mov', 'mkv',
+            'gpx',
+        ];
+
+        if (!in_array($mimeType, $allowedMimeTypes, true) || !in_array($detectedExtension, $allowedExtensions, true)) {
+            throw new RuntimeException('Le format de ce fichier n’est pas autorisé pour des raisons de sécurité.');
+        }
+
         if ($pictureFile) {
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slug($originalFilename);
             $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $extension ?? $this->getExtention($pictureFile));
-            $directory = $this->projectDirService->path($dir);
 
-            if (!is_dir($directory)) {
-                mkdir($directory);
-            }
+            $directory = $this->resolver->getDirectory($media);
+            $this->fileService->mkdirIfNotExists($directory);
 
             try {
                 $pictureFile->move(
@@ -43,7 +68,7 @@ class UploadService
                     $newFilename
                 );
             } catch (FileException $e) {
-                throw new Error($e->getMessage());
+                throw new RuntimeException($e->getMessage());
             }
 
             return $newFilename;
@@ -61,29 +86,37 @@ class UploadService
         }
     }
 
-    public function resize(string $inputdir, string $filename, string $size, string $outputDir): bool
+    public function resize(string $origin, string $size): bool
     {
-        $inputPath = $this->projectDirService->path($inputdir, $filename);
-        $outputPath = $this->projectDirService->path($outputDir, $filename);
-        $this->mkdirIfNotExists($outputDir);
-        list($originWidth, $originHeight, $type) = getimagesize($inputPath);
+        $pathParts = pathinfo($origin);
+        $filesystem = new Filesystem();
+        $baseDir = $pathParts['dirname'];
+        $baseName = $pathParts['basename'];
+        $tmp = $this->fileService->join($baseDir, 'tmp');
+        $copy = $this->fileService->join($tmp, $baseName);
+        $this->fileService->mkdirIfNotExists($tmp);
+        $filesystem->rename($origin, $copy);
+
+        list($originWidth, $originHeight, $type) = getimagesize($copy);
         $orientation = $this->getOrientation($originWidth, $originHeight);
 
         list($outputWidth, $outputHeight) = $this->getOutputSize($originWidth, $originHeight, $orientation, $size);
 
-        $imageSrc = (IMAGETYPE_JPEG === $type) ? imagecreatefromjpeg($inputPath) : imagecreatefrompng($inputPath);
+        $imageSrc = (IMAGETYPE_JPEG === $type) ? imagecreatefromjpeg($copy) : imagecreatefrompng($copy);
 
         $imageBlack = imagecreatetruecolor($outputWidth, $outputHeight);
 
         imagecopyresampled($imageBlack, $imageSrc, 0, 0, 0, 0, $outputWidth, $outputHeight, $originWidth, $originHeight);
 
-        if (!$imageBlack = $this->imageRotate($inputPath, $imageBlack)) {
+        if (!$imageBlack = $this->imageRotate($copy, $imageBlack)) {
             return false;
         }
 
-        if (!imagejpeg($imageBlack, $outputPath) || !imagepng($imageBlack, $outputPath)) {
+        if (!imagejpeg($imageBlack, $origin) || !imagepng($imageBlack, $origin)) {
             return false;
         }
+
+        $filesystem->remove($tmp);
 
         return true;
     }
@@ -143,16 +176,5 @@ class UploadService
         $minOption = array_search(min($sizeInBytes), $sizeInBytes);
 
         return ['value' => $values[$minOption], 'toBytes' => $sizeInBytes[$minOption]];
-    }
-
-    private function mkdirIfNotExists(string $outputDir): string
-    {
-        $outputPath = $this->projectDirService->path($outputDir);
-        $filesystem = new Filesystem();
-        if (!$filesystem->exists($outputPath)) {
-            $filesystem->mkdir($outputPath, 0775);
-        }
-
-        return $outputPath;
     }
 }

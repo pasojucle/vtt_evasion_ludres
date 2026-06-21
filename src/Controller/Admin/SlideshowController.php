@@ -11,7 +11,7 @@ use App\Form\UploadFileType;
 use App\Repository\ParameterRepository;
 use App\Repository\SlideshowDirectoryRepository;
 use App\Repository\SlideshowImageRepository;
-use App\Service\ProjectDirService;
+use App\Service\FileLocation\SlideshowFileLocation;
 use App\Service\SlideshowService;
 use App\Service\UploadService;
 use App\State\SlideshowDirectory\Processor\SlideshowDirectoryDeleteProcessor;
@@ -21,7 +21,6 @@ use App\State\SlideshowImage\Provider\SlideshowImageDeleteProvider;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,7 +36,6 @@ class SlideshowController extends AbstractController
         private SlideshowDirectoryRepository $slideshowDirectoryRepository,
         private SlideshowImageRepository $slideshowImageRepository,
         private EntityManagerInterface $entityManager,
-        private ProjectDirService $projectDir,
         private ParameterRepository $parameterRepository,
     ) {
     }
@@ -210,6 +208,7 @@ class SlideshowController extends AbstractController
     public function adminSlideshowImageUpload(
         Request $request,
         UploadService $uploadService,
+        SlideshowFileLocation $location,
         SlideshowService $slideshowService,
         ?SlideshowDirectory $directory
     ): JsonResponse {
@@ -222,17 +221,29 @@ class SlideshowController extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $uploadedCount = 0;
+
             /** @var UploadedFile $file */
             foreach ($request->files as $file) {
-                $filename = $uploadService->uploadFile($file, 'tmp');
-                $uploadService->resize('tmp', $filename, UploadService::HD, $this->projectDir->dir('slideshow', (string) $directory->getId()));
                 $slideShowImage = new SlideshowImage();
-                $slideShowImage->setFilename($filename)
-                    ->setDirectory($directory)
+                $slideShowImage->setDirectory($directory)
                     ->setCreatedAt(new DateTimeImmutable());
-                $this->entityManager->persist($slideShowImage);
-                $this->entityManager->flush();
-                return new JsonResponse(['errorCode' => 0]);
+                $filename = $uploadService->uploadFile($file, $slideShowImage);
+                if ($filename) {
+                    $slideShowImage->setFilename($filename);
+                    $absoluteFilePath = $location->getPath($slideShowImage);
+                    if ($absoluteFilePath) {
+                        $uploadService->resize($absoluteFilePath, UploadService::HD);
+                    }
+
+                    $this->entityManager->persist($slideShowImage);
+                    $uploadedCount++;
+                }
+                
+                if ($uploadedCount > 0) {
+                    $this->entityManager->flush();
+                    return new JsonResponse(['errorCode' => 0, 'message' => sprintf('%d image(s) traitée(s)', $uploadedCount)]);
+                }
             };
         }
 

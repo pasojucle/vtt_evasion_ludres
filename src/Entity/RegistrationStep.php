@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\RegistrationFormEnum;
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\RegistrationStepRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: RegistrationStepRepository::class)]
-class RegistrationStep
+class RegistrationStep implements UploadableInterface
 {
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]

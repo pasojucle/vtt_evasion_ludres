@@ -4,57 +4,42 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
+use App\Dto\Filter\SecondHandFilter;
 use App\Entity\SecondHand;
 use App\Form\SecondHandType;
-use App\Repository\ParameterRepository;
 use App\Repository\SecondHandRepository;
-use App\Service\MessageService;
-use App\Service\PaginatorService;
-use App\Service\UploadService;
+use App\State\SecondHand\Processor\SecondHandDeleteProcessor;
+use App\State\SecondHand\Provider\SecondHandDeleteProvider;
+use App\State\SecondHand\Provider\SecondHandListProvider;
 use App\UseCase\SecondHand\EditSecondHand;
 use DateTimeImmutable;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('admin/occasion', name: 'admin_second_hand_')]
-class SecondHandController extends AbstractController
+class SecondHandController extends AbstractCrudController
 {
     public function __construct(
         private SecondHandDtoTransformer $secondHandDtoTransformer,
         private SecondHandRepository $secondHandRepository,
-        private ParameterRepository $parameterRepository,
     ) {
     }
 
-    #[Route('/list/{valid}', name: 'list', defaults: ['valid' => SecondHandDtoTransformer::UN_VALIDED], methods: ['GET', 'POST'])]
+    #[Route('/list', name: 'list', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_LIST')]
     public function list(
-        PaginatorService $paginator,
-        PaginatorDtoTransformer $paginatorDtoTransformer,
-        MessageService $messageService,
+        SecondHandListProvider $provider,
         Request $request,
-        bool $valid,
     ): Response {
-        $query = $this->secondHandRepository->findSecondHandQuery($valid);
-        $secondHands = $paginator->paginateFromRequest($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        return $this->render('second_hand/admin/list.html.twig', [
-            'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
-            'paginator' => $paginatorDtoTransformer->fromEntities($secondHands, ['type' => (int)$valid]),
-            'valid' => $valid,
-            'settings' => [
-                'parameters' => $this->parameterRepository->findByParameterGroupName('SECOND_HAND'),
-                'routes' => [
-                    ['name' => 'admin_category_list', 'label' => 'Catégories d\'occasions'],
-                ],
-                'messages' => $messageService->getMessagesBySectionName('SECOND_HAND'),
-            ]
-        ]);
+        return $this->handleListAction(
+            'admin_second_hand_list',
+            SecondHandFilter::class,
+            $provider,
+            $request
+        );
     }
 
     #[Route('/detail/{secondHand}', name: 'show', methods: ['GET'])]
@@ -97,29 +82,18 @@ class SecondHandController extends AbstractController
 
     #[Route('/delete/{secondHand}', name: 'delete', methods: ['GET', 'POST'])]
     #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
-    public function delete(
+     public function delete(
         Request $request,
+        SecondHandDeleteProcessor $processor,
+        SecondHandDeleteProvider $provider,
         SecondHand $secondHand
     ): Response {
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_second_hand_delete', [
-                'secondHand' => $secondHand->getId(),
-            ]),
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->secondHandRepository->remove($secondHand, true);
-
-            return $this->redirectToRoute('admin_second_hand_list', [
-                'valid' => null !== $secondHand->getValidedAt(),
-            ]);
-        }
-
-        return $this->render('second_hand/delete.modal.html.twig', [
-            'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
-            'form' => $form->createView(),
-        ]);
+        return $this->handleDialogAction(
+            $request,
+            $secondHand,
+            $provider,
+            $processor,
+        );
     }
     
     #[Route('/valider/{secondHand}', name: 'validate', methods: ['GET'])]

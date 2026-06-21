@@ -40,7 +40,6 @@ class SecondHandDtoTransformer
             $secondHandDto->category = $secondHand->getCategory()->getName();
             $secondHandDto->createdAt = $secondHand->getCreatedAt()->format('d/m/y');
             $secondHandDto->valid = null !== $secondHand->getValidedAt();
-            $secondHandDto->disabled = $secondHand->isDisabled();
             $secondHandDto->status = $this->getStatus($secondHand);
             $secondHandDto->novelty = $novelty;
         }
@@ -75,9 +74,7 @@ class SecondHandDtoTransformer
 
     private function GetStatus(SecondHand $secondHand): string
     {
-        if ($secondHand->isDisabled()) {
-            return 'Désactivée';
-        }
+
         return (null !== $secondHand->getValidedAt()) ? 'Validée' : 'Non Validée';
     }
 

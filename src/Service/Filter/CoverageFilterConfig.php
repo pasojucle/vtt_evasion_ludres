@@ -30,7 +30,6 @@ class CoverageFilterConfig implements FilterConfigInterface
 
     public function getEventSubscriber(): ?EventSubscriberInterface
     {
-        // TODO: Ajoutez le subsciber si besoins
         return null;
     }
 

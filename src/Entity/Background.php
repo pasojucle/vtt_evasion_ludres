@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\BackgroundRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BackgroundRepository::class)]
-class Background
+class Background implements UploadableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

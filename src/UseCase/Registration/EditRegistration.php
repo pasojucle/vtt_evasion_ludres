@@ -134,9 +134,9 @@ class EditRegistration
         $requestFile = $request->files->get('user');
         if (null !== $requestFile && array_key_exists('identity', $requestFile) && !empty($requestFile['identity']) && null !== $requestFile['identity']['pictureFile']) {
             $pictureFile = $requestFile['identity']['pictureFile'];
-            $newFilename = $this->uploadService->uploadFile($pictureFile);
+            $newFilename = $this->uploadService->uploadFile($pictureFile, $member->getIdentity());
             if (null !== $newFilename) {
-                $member->getIdentity()->setPicture($newFilename);
+                $member->getIdentity()->setFilename($newFilename);
             }
         }
     }

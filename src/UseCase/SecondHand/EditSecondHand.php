@@ -42,8 +42,6 @@ class EditSecondHand
     {
         $secondHand->setMember($member)
             ->setCreatedAt(new DateTimeImmutable())
-            ->setDeleted(false)
-            ->setDisabled(false)
             ->setValidedAt(null)
         ;
     }
@@ -61,7 +59,7 @@ class EditSecondHand
         foreach ($files['images'] as $file) {
             if ($file['uploadFile']) {
                 $image = array_shift($imagesAdded);
-                $image->setFilename($this->uploadService->uploadFile($file['uploadFile'], 'second_hands_directory_path'));
+                $image->setFilename($this->uploadService->uploadFile($file['uploadFile'], $image));
             }
         };
     }

@@ -20,7 +20,7 @@ class DashboardSecondHandProvider
     public function getCollection(): DashboardListView
     {
         return $this->dashboardSecondHandMapper->mapToView(
-            $this->secondHandRepository->findPendingSencondHand()
+            $this->secondHandRepository->countPendingSencondHandByState()
         );
     }
 }

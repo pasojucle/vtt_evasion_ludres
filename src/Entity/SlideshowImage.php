@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\SlideshowImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SlideshowImageRepository::class)]
-class SlideshowImage
+class SlideshowImage implements UploadableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

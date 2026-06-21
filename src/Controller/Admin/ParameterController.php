@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\View\SheetView;
 use App\Entity\ParameterGroup;
 use App\Form\ParameterGroupType;
 use App\Form\ParameterType;
@@ -51,6 +52,7 @@ class ParameterController extends AbstractController
         ParameterRepository $parameterRepository,
         string $name
     ): Response {
+
         $referer = $request->headers->get('referer');
         $parameter = $parameterRepository->findOneByName($name);
         if ($parameter) {
@@ -70,8 +72,12 @@ class ParameterController extends AbstractController
                 $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            return $this->render('parameter/edit.modal.html.twig', [
-                'parameter' => $parameter,
+            return $this->render('components/_sheet.sheet.html.twig', [
+                'sheet' => new SheetView(
+                    title: 'Modifier un paramètre',
+                    description: $parameter->getLabel(),
+                    action: 'Modifier',
+                ),
                 'form' => $form->createView(),
             ], $response);
         }

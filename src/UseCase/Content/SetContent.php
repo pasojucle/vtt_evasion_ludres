@@ -56,7 +56,7 @@ class SetContent
         if ($request->files->get('content')) {
             $file = $request->files->get('content')['file'];
             if ($file) {
-                $content->setFileName($this->uploadService->uploadFile($file));
+                $content->setFileName($this->uploadService->uploadFile($file, $content));
             }
         }
     }

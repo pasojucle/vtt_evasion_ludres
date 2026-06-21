@@ -24,7 +24,7 @@ class EditRegistrationStep
         $step = $form->getData();
         if ($request->files->get('registration_step')) {
             $pdfFile = $request->files->get('registration_step')['pdfFile'];
-            $newFilename = $this->uploadService->uploadFile($pdfFile, 'files_directory_path');
+            $newFilename = $this->uploadService->uploadFile($pdfFile, $step);
             if (null !== $newFilename) {
                 $step->setFilename($newFilename);
             }

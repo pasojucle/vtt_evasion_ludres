@@ -25,7 +25,7 @@ class EditDocumentation
         $documentation = $form->getData();
         if ($request->files->get('documentation')) {
             $file = $request->files->get('documentation')['file'];
-            $documentation->setFileName($this->uploadService->uploadFile($file, 'documentation'));
+            $documentation->setFileName($this->uploadService->uploadFile($file, $documentation));
         }
         if (null === $documentation->getOrderBy()) {
             $order = $this->documentationRepository->findNexOrder();

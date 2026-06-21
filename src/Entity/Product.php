@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product
+class Product implements UploadableInterface
 {
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]

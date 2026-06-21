@@ -1,9 +1,11 @@
 {% block custom_month_and_hour_row %}
     <b>{{ form_label(form) }} </b>
-    <div class="row form-group"> 
+    <div class="flex gap-4"> 
         {% for item in form %}
-            <div class="col-md-1 align-right">{{ item.vars.name|trans }}</div>
-            <div class="col-md-1">{{ form_widget(item) }}</div>
+            <div class="grid grid-cols-2 items-center gap-4">
+                <div class="text-muted">{{ item.vars.name|trans }}</div>
+                <div class="bg-slate-100 border border-border">{{ form_widget(item) }}</div>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}

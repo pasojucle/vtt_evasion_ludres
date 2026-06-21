@@ -174,7 +174,7 @@ class ClusterDtoTransformer
                 'phone' => implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()])),
                 'emergencyPhone' => $identity->getEmergencyPhone(),
                 'emergencyContact' => $identity->getEmergencyContact(),
-                'picture' => $this->identityService->getPicture($identity->getPicture()),
+                'picture' => $this->identityService->getPicture($identity->getFilename()),
             ];
             if ($userEntity instanceof Member) {
                 $level = $userEntity->getLevel();

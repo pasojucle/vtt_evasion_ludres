@@ -74,3 +74,35 @@ framework:
         expire:
           from: [yearly_file_received, yearly_file_registred]
           to: expired
+    second_hand_ad:
+      type: 'state_machine'
+      marking_store:
+        service: 'App\Workflow\MarkingStore\EnumMarkingStore'
+      supports:
+        - App\Entity\SecondHand
+      initial_marking: draft
+      places:
+        - draft
+        - published
+        - expired
+        - disabled
+        - archived
+      transitions:
+        submit_validation:
+          from: draft
+          to: published
+        unpublish:
+          from: published
+          to: draft
+        expire:
+          from: published
+          to: expired
+        diasable:
+          from: published
+          to: disabled
+        republish:
+          from: [expired, disabled]
+          to: published
+        archive:
+          from: [draft, published, expired]
+          to: archive

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\IdentityRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,7 +14,7 @@ use LogicException;
 
 #[ORM\Entity(repositoryClass: IdentityRepository::class)]
 
-class Identity
+class Identity implements UploadableInterface
 {
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
@@ -44,7 +45,7 @@ class Identity
     private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private ?string $picture = null;
+    private ?string $filename = null;
 
     #[ORM\ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
     private $address;
@@ -183,14 +184,14 @@ class Identity
         return $this;
     }
 
-    public function getPicture(): ?string
+    public function getFilename(): ?string
     {
-        return $this->picture;
+        return $this->filename;
     }
 
-    public function setPicture(?string $picture): self
+    public function setFilename(?string $filename): self
     {
-        $this->picture = $picture;
+        $this->filename = $filename;
 
         return $this;
     }

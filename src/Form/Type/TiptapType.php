@@ -60,7 +60,7 @@ class TiptapType extends AbstractType
 
     private function getUploadUrl(): string
     {
-        return $this->urlGenerator->generate('upload_file', ['directory' => 'data_upload']);
+        return $this->urlGenerator->generate('upload_file');
     }
 
     private function getToolbar(string $name): array

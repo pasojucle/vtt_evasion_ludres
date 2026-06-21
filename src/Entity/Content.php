@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\ContentKindEnum;
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\ContentRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 
 #[ORM\Entity(repositoryClass: ContentRepository::class)]
-class Content
+class Content implements UploadableInterface
 {
     public const ROUTES = [
         'home' => 'content.route.home',

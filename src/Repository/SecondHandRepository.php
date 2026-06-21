@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\SecondHandStateEnum;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\SecondHand;
@@ -12,6 +13,7 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpParser\Node\Expr\Cast\Void_;
 
 /**
  * @extends ServiceEntityRepository<SecondHand>
@@ -171,15 +173,51 @@ class SecondHandRepository extends ServiceEntityRepository
        ;
     }
 
-    public function findPendingSencondHand(): array
+    /**
+     * @return array<int, array{count: int, state: SecondHandStateEnum}>
+     */
+    public function countPendingSencondHandByState(): array
     {
         return $this->createQueryBuilder('sh')
+            ->select(sprintf('%s as count', (new Expr())->count('sh.id')), 'sh.state')
             ->andWhere(
-                (new Expr())->eq('sh.disabled', ':falseValue'),
-                (new Expr())->eq('sh.deleted', ':falseValue'),
+                (new Expr())->orX(
+                    (new Expr())->eq('sh.state', ':draft'),
+                    (new Expr())->eq('sh.state', ':published'),
+                )
             )
-            ->setParameter('falseValue', false)
+            ->setParameter('draft', SecondHandStateEnum::DRAFT)
+            ->setParameter('published', SecondHandStateEnum::PUBLISHED)
+            ->groupBy('sh.state')
             ->getQuery()
             ->getResult();
+    }
+
+    public function getSecondHandQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('sh');
+    }
+
+    public function filterState(QueryBuilder $qb, SecondHandStateEnum $state): Void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sh.state', ':state')
+        )
+        ->setParameter('state', $state);
+    }
+
+    public function filterMember(QueryBuilder $qb, Member $member): Void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sh.member', ':member')
+        )
+        ->setParameter('member', $member);
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('sh.name', $direction);
     }
 }

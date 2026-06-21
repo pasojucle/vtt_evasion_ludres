@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\SecondHandStateEnum;
 use App\Repository\SecondHandRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -37,14 +38,8 @@ class SecondHand
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
-    #[ORM\Column]
-    private bool $deleted = false;
-
-    #[ORM\Column(type: 'boolean', options:['default' => false])]
-    private bool $disabled = false;
-
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $validedAt = null;
+    private ?DateTimeImmutable $validedAt = null;
 
     /**
      * @var Collection<int, SecondHandImage>
@@ -52,6 +47,9 @@ class SecondHand
     #[ORM\OneToMany(targetEntity: SecondHandImage::class, mappedBy: 'secondHand', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $images;
+
+    #[ORM\Column(length: 80, enumType: SecondHandStateEnum::class, options: ['default' => SecondHandStateEnum::DRAFT->value])]
+    private SecondHandStateEnum $state = SecondHandStateEnum::DRAFT;
 
     public function __construct()
     {
@@ -135,30 +133,6 @@ class SecondHand
         return $this;
     }
 
-    public function isDeleted(): bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): static
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    public function isDisabled(): bool
-    {
-        return $this->disabled;
-    }
-
-    public function setDisabled(bool $disabled): static
-    {
-        $this->disabled = $disabled;
-
-        return $this;
-    }
-
     public function getValidedAt(): ?\DateTimeImmutable
     {
         return $this->validedAt;
@@ -197,6 +171,18 @@ class SecondHand
                 $image->setSecondHand(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getState(): SecondHandStateEnum
+    {
+        return $this->state;
+    }
+
+    public function setState(SecondHandStateEnum $state): static
+    {
+        $this->state = $state;
 
         return $this;
     }

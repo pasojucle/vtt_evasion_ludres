@@ -1,13 +1,13 @@
 {% block switch_row %}
     <div 
-        class="form-group switch-group" 
+        class="flex items-center gap-4" 
         data-controller="switch"
         {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off'] is defined %}
             data-switch-on-value="{{form.vars.attr['data-switch-on']}}"
             data-switch-off-value="{{form.vars.attr['data-switch-off']}}"
         {% endif %}
     >
-        <label class="switch">
+        <label class="switch min-w-8">
             {{ form_widget(form, {'attr': {
                 'data-action': 'change->switch#change',
                 'data-switch-target': "input"

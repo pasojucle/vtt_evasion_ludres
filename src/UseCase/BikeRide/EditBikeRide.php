@@ -33,27 +33,27 @@ class EditBikeRide
         $files = $request->files->get('bike_ride');
         $file = $files['file'] ?? null;
         if ($file) {
-            $bikeRide->setFileName($this->uploadService->uploadFile($file));
+            $bikeRide->setFileName($this->uploadService->uploadFile($file, $bikeRide));
         }
 
         $rules = $files['rulesFile'] ?? null;
         if ($rules) {
-            $bikeRide->setRules($this->uploadService->uploadFile($rules));
+            $bikeRide->setRules($this->uploadService->uploadFile($rules, $bikeRide));
         }
 
         $securityGuidelines = $files['securityGuidelinesFile'] ?? null;
         if ($securityGuidelines) {
-            $bikeRide->setSecurityGuidelines($this->uploadService->uploadFile($securityGuidelines));
+            $bikeRide->setSecurityGuidelines($this->uploadService->uploadFile($securityGuidelines, $bikeRide));
         }
 
         $rulesThumbnail = $files['rulesFileThumbnail'] ?? null;
         if ($rulesThumbnail) {
-            $bikeRide->setRulesThumbnail($this->uploadService->uploadFile($rulesThumbnail));
+            $bikeRide->setRulesThumbnail($this->uploadService->uploadFile($rulesThumbnail, $bikeRide));
         }
 
         $securityGuidelinesThumbnail = $files['securityGuidelinesFileThumbnail'] ?? null;
         if ($securityGuidelinesThumbnail) {
-            $bikeRide->setSecurityGuidelinesThumbnail($this->uploadService->uploadFile($securityGuidelinesThumbnail));
+            $bikeRide->setSecurityGuidelinesThumbnail($this->uploadService->uploadFile($securityGuidelinesThumbnail, $bikeRide));
         }
 
         $bikeRideTracks = $bikeRide->getBikeRideTracks();
@@ -62,10 +62,10 @@ class EditBikeRide
                 if ($bikeRideTracks->containsKey($key)) {
                     $bikeRideTrack = $bikeRideTracks->get($key);
                     if ($bikeRideTrackFile['file']) {
-                        $bikeRideTrack->setFilename($this->uploadService->uploadFile($bikeRideTrackFile['file'], 'bike_ride_track', 'gpx'));
+                        $bikeRideTrack->setFilename($this->uploadService->uploadFile($bikeRideTrackFile['file'], $bikeRideTrack, 'gpx'));
                     }
                     if ($bikeRideTrackFile['thumbnailFile']) {
-                        $bikeRideTrack->setThumbnail($this->uploadService->uploadFile($bikeRideTrackFile['thumbnailFile'], 'bike_ride_track'));
+                        $bikeRideTrack->setThumbnail($this->uploadService->uploadFile($bikeRideTrackFile['thumbnailFile'], $bikeRideTrack));
                     }
                 }
             }

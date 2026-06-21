@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\UseCase\Background;
 
 use App\Entity\Background;
+use App\Service\FileLocation\FileLocationResolver;
+use App\Service\FileService;
 use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -16,6 +18,8 @@ class EditBackground
 {
     public function __construct(
         private UploadService $uploadService,
+        private FileService $fileService,
+        private FileLocationResolver $resolver,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag
     ) {
@@ -25,7 +29,7 @@ class EditBackground
     {
         if ($request->files->get('background') && $request->files->get('background')['backgroundFile']) {
             $file = $request->files->get('background')['backgroundFile'];
-            $background->setFileName($this->uploadService->uploadFile($file, 'backgrounds_directory_path'));
+            $background->setFileName($this->uploadService->uploadFile($file, $background));
             if ($currentFilename) {
                 $finder = new Finder();
                 $finder->files()->name($currentFilename)->in($this->parameterBag->get('backgrounds_directory_path'));
@@ -53,13 +57,27 @@ class EditBackground
         ];
 
         foreach ($sizes as $size) {
-            $this->resizeBackground($background->getFilename(), $size['positions'], $size['outputWidth'], $size['outputHeight'], $size['outputDir']);
+            $this->resizeBackground(
+                $background->getFilename(), 
+                $size['positions'], 
+                $size['outputWidth'], 
+                $size['outputHeight'], 
+                $this->resolver->getDirectory($background),
+                $size['outputDir']
+            );
         }
     }
 
-    public function resizeBackground(string $filename, array $positions, int $outputWidth, int $outputHeight, string $outputDir): bool
+    public function resizeBackground(
+        string $filename, 
+        array $positions, 
+        int $outputWidth, 
+        int $outputHeight, 
+        string $baseDir,
+        string $outputDir
+    ): bool
     {
-        $inputPath = $this->parameterBag->get('backgrounds_directory_path') . $filename;
+        $inputPath = $this->fileService->join($baseDir, $filename);
         list($originWidth, $originHeight, $type) = getimagesize($inputPath);
 
         $ratio = ($outputWidth / $outputHeight < $originWidth / $originHeight)
@@ -69,9 +87,10 @@ class EditBackground
         $imageSrc = (IMAGETYPE_JPEG == $type) ? imagecreatefromjpeg($inputPath) : imagecreatefrompng($inputPath);
         $imageBlack = imagecreatetruecolor($outputWidth, $outputHeight);
 
-        $this->mkdirIfNotExists($outputDir);
+        $outputPathDir = $this->fileService->join($baseDir, $outputDir);
+        $this->fileService->mkdirIfNotExists($outputPathDir);
 
-        $outputPath = $this->parameterBag->get('backgrounds_directory_path') . $outputDir . DIRECTORY_SEPARATOR . $filename;
+        $outputPath = $this->fileService->join($outputPathDir, $filename);
         imagecopyresampled($imageBlack, $imageSrc, 0, 0, (int) round($positions['positionX']), (int) round($positions['positionY']), (int) round($originWidth * $ratio), (int) round($originHeight * $ratio), $originWidth, $originHeight);
 
         if (!$imageBlack = $this->uploadService->imageRotate($inputPath, $imageBlack)) {
@@ -83,13 +102,5 @@ class EditBackground
         }
 
         return true;
-    }
-
-    private function mkdirIfNotExists(string $outputDir): void
-    {
-        $filesystem = new Filesystem();
-        if (!$filesystem->exists($this->parameterBag->get('backgrounds_directory_path') . $outputDir)) {
-            $filesystem->mkdir($this->parameterBag->get('backgrounds_directory_path') . $outputDir, 0775);
-        }
     }
 }

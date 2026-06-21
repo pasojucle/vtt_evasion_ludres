@@ -233,6 +233,12 @@ survey:
 second_hand:
   valided: Validées
   un_valided: Non Validées
+  state: 
+    draft: En attente de validation
+    published: Validé
+    expired: Expriré
+    disabled: Désactivé
+    archived: Supprimé
 
 permission: 
   bike_ride_cluster: Exporter un groupe 
