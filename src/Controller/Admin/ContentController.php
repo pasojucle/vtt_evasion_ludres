@@ -133,7 +133,7 @@ class ContentController extends AbstractController
             'content' => $contentDtoTransformer->fromEntity($content),
             'form' => $form->createView(),
             'settings' => [
-                'messages' => (!empty($content->getParameters())) ? $messageRepository->findByNames($content->getParameters()) : null,
+                'messages' => (!empty($content->getParameters())) ? $messageRepository->findByIds($content->getParameters()) : null,
             ],
         ]);
     }
@@ -159,7 +159,7 @@ class ContentController extends AbstractController
                 $this->entityManager->flush();
 
                 $contents = $this->contentRepository->findByRoute($route, $kind);
-                $this->orderByService->ResetOrders($contents);
+                $this->orderByService->resetOrders($contents);
 
                 return $this->redirectToRoute('admin_home_contents', [
                 'kind' => $kind->value,

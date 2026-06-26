@@ -31,7 +31,6 @@ class NotificationController extends AbstractCrudController
         NotificationAdminListProvider $provider,
     ): Response {
         return $this->handleListAction(
-            'admin_notification_list',
             NotificationFilter::class,
             $provider,
             $request
@@ -87,25 +86,11 @@ class NotificationController extends AbstractCrudController
         NotificationToggleProcessor $processor,
         Notification $notification
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($notification);
-
-                return $this->redirectToRoute('admin_notification_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'dialog' => $provider->mapToView($notification),
-            'form' => $form->createView(),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $notification,
+            $provider,
+            $processor
+        );
     }
 }

@@ -217,7 +217,7 @@ class RegistrationController extends AbstractController
         MessageService $messageService,
     ): Response {
         return $this->render('registration/unregistrable.html.twig', [
-            'warning' => $messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_DISABLED_MESSAGE'),
+            'warning' => $messageService->getMessageById('NEW_SEASON_RE_REGISTRATION_DISABLED_MESSAGE'),
          ]);
     }
 

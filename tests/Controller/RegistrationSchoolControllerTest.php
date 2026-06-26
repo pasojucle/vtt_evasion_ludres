@@ -157,7 +157,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
     private function validateAdminAddBikeRide(BikeRideType $bikeRideType, DateTimeImmutable $startAt, int $loop): void
     {
         $this->loginAdmin();
-        $url = $this->urlGenerator->generate('admin_bike_rides');
+        $url = $this->urlGenerator->generate('admin_bike_ride_list');
         $this->client->request('GET', $url);
         $this->assertSelectorTextContains('.wrapper h1', 'Programme des sorties');
         $this->client->clickLink('Ajouter une sortie');
@@ -181,7 +181,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
-        $url = $this->urlGenerator->generate('admin_bike_rides', ['period' => 'tous']);
+        $url = $this->urlGenerator->generate('admin_bike_ride_list', ['period' => 'tous']);
         $this->client->request('GET', $url);
         
         $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRideType, 'startAt' => $startAt]);

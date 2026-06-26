@@ -8,9 +8,9 @@ use App\Dto\Form\LicenceReject;
 use App\Dto\Service\MailerResult;
 use App\Dto\State\ProcessorResult;
 use App\Entity\Member;
-use App\Service\FilterDecoderService;
 use App\Service\LicenceService;
 use App\Service\MailerService;
+use App\Service\UrlContextService;
 use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -19,19 +19,18 @@ class LicenceRejectProcessor implements DialogProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LicenceService $licenceService,
-        private FilterDecoderService $filterDecoder,
         private MailerService $mailerService,
     ) {
     }
 
-    public function process(object $licenceReject, ?string $filter): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
-        assert($licenceReject instanceof LicenceReject);
+        /** @var LicenceReject $entity */
 
-        $licence = $licenceReject->licence;
+        $licence = $entity->licence;
         $member = $licence->getMember();
 
-        $result = $this->sendMail($licenceReject->content, $member);
+        $result = $this->sendMail($entity->content, $member);
 
         $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
 
@@ -41,8 +40,7 @@ class LicenceRejectProcessor implements DialogProcessorInterface
 
             return new ProcessorResult(
                 success: true,
-                targetRoute: 'admin_registration_list',
-                routeParams: $this->filterDecoder->decode($filter),
+                targetUrl: $targetUrl,
                 messageKey: 'registration.flash.success.reject',
                 flashType: 'success',
             );
@@ -50,8 +48,7 @@ class LicenceRejectProcessor implements DialogProcessorInterface
 
         return new ProcessorResult(
             success: false,
-            targetRoute: 'admin_registration_list',
-            routeParams: $this->filterDecoder->decode($filter),
+            targetUrl: $targetUrl,
             messageKey: 'registration.flash.error.reject',
             flashType: 'danger',
         );

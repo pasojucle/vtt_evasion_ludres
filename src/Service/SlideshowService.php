@@ -32,7 +32,7 @@ class SlideshowService
 
     public function getMaxSize(): string
     {
-        return $this->parameterService->getParameterByName('SLIDESHOW_MAX_DISK_SIZE');
+        return $this->parameterService->getParameterById('SLIDESHOW_MAX_DISK_SIZE');
     }
 
     public function isFull(): bool

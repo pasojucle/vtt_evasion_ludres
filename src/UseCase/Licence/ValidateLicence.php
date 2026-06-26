@@ -70,7 +70,7 @@ class ValidateLicence
                 $$mainIdentity->getEmail(),
                 $mainIdentity->getFullName(),
                 $subject,
-                $this->messageService->getMessageByName('EMAIL_LICENCE_VALIDATE')
+                $this->messageService->getMessageById('EMAIL_LICENCE_VALIDATE')
             );
         }
     }

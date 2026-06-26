@@ -2,19 +2,15 @@
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\Filter\BoardRoleFilter;
 use App\Entity\BoardRole;
 use App\Form\Admin\BoardRoleType;
 use App\Repository\BoardRoleRepository;
-use App\Repository\MemberRepository;
 use App\Service\OrderByService;
-use App\Service\PaginatorService;
 use App\State\BoardRole\Processor\BoardRoleDeleteProcessor;
 use App\State\BoardRole\Provider\BoardRoleDeleteProvider;
 use App\State\BoardRole\Provider\BoardRoleListProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,7 +30,6 @@ class BoardRoleController extends AbstractCrudController
         Request $request
     ): Response {
         return $this->handleListAction(
-            'admin_board_role_list',
             BoardRoleFilter::class,
             $provider,
             $request
@@ -77,26 +72,12 @@ class BoardRoleController extends AbstractCrudController
         BoardRoleDeleteProvider $provider,
         BoardRole $boardRole
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($boardRole);
-
-                return $this->redirectToRoute('admin_board_role_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($boardRole),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $boardRole,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/ordonner/{boardRole}', name: '_order', methods: ['POST'], options:['expose' => true])]

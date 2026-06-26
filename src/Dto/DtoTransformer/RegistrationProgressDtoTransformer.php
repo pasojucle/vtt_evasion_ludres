@@ -77,7 +77,7 @@ class RegistrationProgressDtoTransformer
 
     private function validate(RegistrationProgressDto $progress, Member $member): ?string
     {
-        if (!$this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && $this->isAlreadyBeenRegistered($member)) {
+        if (!$this->parameterService->getParameterById('NEW_SEASON_RE_REGISTRATION_ENABLED') && $this->isAlreadyBeenRegistered($member)) {
             return 'unregistrable_new_saison';
         }
         if ($progress->user->lastLicence->state['value']->isRegistered() && RegistrationFormEnum::REGISTRATION_FILE !== $progress->current->form) {

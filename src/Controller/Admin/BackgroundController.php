@@ -13,19 +13,15 @@ use App\Service\PaginatorService;
 use App\State\Background\Processor\BackgroundDeleteProcessor;
 use App\State\Background\Provider\BackgroundDeleteProvider;
 use App\UseCase\Background\EditBackground;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin')]
-class BackgroundController extends AbstractController
+class BackgroundController extends AbstractCrudController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private BackgroundRepository $backgroundRepository,
         private BackgroundDtoTransformer $backgroundDtoTransformer
     ) {
@@ -75,26 +71,11 @@ class BackgroundController extends AbstractController
         BackgroundDeleteProvider $provider,
         Background $background
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $this->entityManager->remove($background);
-                $this->entityManager->flush();
-
-                return $this->redirectToRoute('admin_background_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($background),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $background,
+            $provider,
+            $processor
+        );
     }
 }

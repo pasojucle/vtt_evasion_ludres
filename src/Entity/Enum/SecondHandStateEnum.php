@@ -21,7 +21,7 @@ enum SecondHandStateEnum: string implements TranslatableInterface
 
     public function icon(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DRAFT => 'lucide:pencil',
             self::PUBLISHED => 'lucide:bookmark-check',
             self::EXPIRED => 'lucide:clock-fading',
@@ -32,7 +32,7 @@ enum SecondHandStateEnum: string implements TranslatableInterface
 
     public function variant(): ColorVariant
     {
-        return match($this) {
+        return match ($this) {
             self::DRAFT, self::EXPIRED, self::DISABLED => ColorVariant::WARNING,
             self::PUBLISHED => ColorVariant::SUCCESS,
             self::ARCHIVED => ColorVariant::DESTRUCTIVE,

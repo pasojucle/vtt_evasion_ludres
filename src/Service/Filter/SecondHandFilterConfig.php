@@ -43,9 +43,9 @@ class SecondHandFilterConfig implements FilterConfigInterface
                     'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
-            ])
+            ]
+            )
         ];
-
     }
 
     public function getAdvancedFields(): array

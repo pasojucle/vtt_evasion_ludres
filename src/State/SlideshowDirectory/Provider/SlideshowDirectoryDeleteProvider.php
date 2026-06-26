@@ -7,14 +7,19 @@ namespace App\State\SlideshowDirectory\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\SlideshowDirectory;
 use App\Mapper\DestructiveModalMapper;
+use App\State\FormComponentProviderInterface;
 
-class SlideshowDirectoryDeleteProvider
+class SlideshowDirectoryDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(SlideshowDirectory  $entity): DialogModalView
+
+    /**
+     * @implements FormComponentProviderInterface<SlideshowDirectory>
+     */
+    public function mapToView(object $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             $$entity->getSlideshowImages()->isEmpty()

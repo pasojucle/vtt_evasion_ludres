@@ -18,6 +18,7 @@ use App\Entity\SkillCategory;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -27,6 +28,7 @@ class SkillCategoryListMapper
         private UrlGeneratorInterface $urlGenerator,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -37,6 +39,8 @@ class SkillCategoryListMapper
         SkillCategoryFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
 
         /** @var SkillCategory $entity */
@@ -46,13 +50,13 @@ class SkillCategoryListMapper
                     new LabelView($entity->getName()),
                 ],
                 indicators: $this->getIndicators($entity),
-                dropdown: $this->dropDown($entity),
+                dropdown: $this->dropDown($entity, $referer),
                 gridTemplateContent: 'grid-cols-[1fr_50px]',
             );
         }
 
         return new ListView(
-            id: 'skill_categories_contrainer',
+            name: 'skill_category',
             title: 'Catégories',
             description: 'Administration des catégories de compétence.',
             items: $items,
@@ -86,19 +90,19 @@ class SkillCategoryListMapper
         ];
     }
 
-    private function dropDown(SkillCategory $entity): DropdownView
+    private function dropDown(SkillCategory $entity, string $referer): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Modifier',
-                    url: $this->urlGenerator->generate('admin_skill_category_edit', ['skillCategory' => $entity->getId()]),
+                    url: $this->urlContextService->generateUrl('admin_skill_category_edit', ['skillCategory' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
                  new ButtonView(
                      label: 'Supprimer',
-                     url: $this->urlGenerator->generate('admin_skill_category_delete', ['skillCategory' => $entity->getId()]),
+                     url: $this->urlContextService->generateUrl('admin_skill_category_delete', ['skillCategory' => $entity->getId()], $referer),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [

@@ -15,7 +15,8 @@ class FileLocationResolver
     public function __construct(
         #[TaggedIterator('app.file_location')]
         private iterable $locations
-    ) {}
+    ) {
+    }
 
     public function resolveDirectory(string $directory): ?AbstractFileLocation
     {

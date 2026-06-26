@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\ParameterGroup;
+use App\Entity\Section;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
@@ -12,22 +12,22 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
- * @method ParameterGroup|null find($id, $lockMode = null, $lockVersion = null)
- * @method ParameterGroup|null findOneBy(array $criteria, array $orderBy = null)
- * @method ParameterGroup[]    findAll()
- * @method ParameterGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Section|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Section|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Section[]    findAll()
+ * @method Section[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ParameterGroupRepository extends ServiceEntityRepository
+class SectionRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
         private Security $security
     ) {
-        parent::__construct($registry, ParameterGroup::class);
+        parent::__construct($registry, Section::class);
     }
 
     /**
-     * @return ParameterGroup[] Returns an array of ParameterGroup objects
+     * @return Section[] Returns an array of Section objects
      */
     public function findParameterGroups(): array
     {
@@ -48,14 +48,14 @@ class ParameterGroupRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findOneByName(string $name): ?ParameterGroup
+    public function findOneById(string $id): ?Section
     {
         try {
-            return $this->createQueryBuilder('pG')
+            return $this->createQueryBuilder('s')
                 ->andWhere(
-                    (new Expr())->eq('pG.name', ':name')
+                    (new Expr())->eq('s.id', ':id')
                 )
-                ->setParameter('name', $name)
+                ->setParameter('id', $id)
                 ->getQuery()
                 ->getOneOrNullResult()
         ;

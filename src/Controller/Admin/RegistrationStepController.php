@@ -15,7 +15,6 @@ use App\State\RegistrationStep\Processor\RegistrationStepDeleteProcessor;
 use App\State\RegistrationStep\Provider\RegistrationStepDeleteProvider;
 use App\UseCase\Registration\GetRegistrationByTypes;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/inscription', name: 'admin_registration_step', methods: ['GET'])]
-class RegistrationStepController extends AbstractController
+class RegistrationStepController extends AbstractCrudController
 {
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
@@ -104,25 +103,11 @@ class RegistrationStepController extends AbstractController
         RegistrationStepDeleteProvider $provider,
         RegistrationStep $registrationStep
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($registrationStep);
-
-                return $this->redirectToRoute('admin_registration_step_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($registrationStep),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $registrationStep,
+            $provider,
+            $processor
+        );
     }
 }

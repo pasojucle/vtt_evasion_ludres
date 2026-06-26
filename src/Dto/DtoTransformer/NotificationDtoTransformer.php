@@ -78,7 +78,7 @@ class NotificationDtoTransformer
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($orderHeader);
         $notificationDto->title = $title;
-        $notificationDto->content = $this->messageService->getMessageByName($message);
+        $notificationDto->content = $this->messageService->getMessageById($message);
         $notificationDto->url = $url;
         $notificationDto->btnLabel = $btnLabel;
         $notificationDto->modalLink = $this->notificationService->getModalLinkFromEntity($orderHeader);
@@ -92,7 +92,7 @@ class NotificationDtoTransformer
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($licence);
         $notificationDto->title = 'Dossier d\'inscription en cours';
-        $notificationDto->content = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
+        $notificationDto->content = $this->messageService->getMessageById('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
         $notificationDto->url = $this->urlGenerator->generate('user_registration_form', ['step' => 1]);
         $notificationDto->btnLabel = 'Finaliser mon inscription';
         $notificationDto->modalLink = $this->notificationService->getModalLinkFromEntity($licence);

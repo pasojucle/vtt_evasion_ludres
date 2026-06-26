@@ -20,6 +20,7 @@ use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,11 +33,13 @@ class NotificationAdminListMapper
         private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
         private FilterChipsMapper $filterChipsMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, NotificationFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
         $items = [];
         /** @var Notification $entity */
         foreach ($entities as $entity) {
@@ -47,7 +50,7 @@ class NotificationAdminListMapper
                     new LabelView(sprintf('Du %s au %s', $entity->getStartAt()->format('d/m/y'), $entity->getEndAt()->format('d/m/y'))),
                 ],
                 status: new BadgeView($status->trans($this->translator), $status->variant()),
-                dropdown: $this->getDropdown($entity),
+                dropdown: $this->getDropdown($entity, $referer),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 gridTemplateContent:' grid-cols-1 lg:grid-cols-[3fr_1fr]',
                 gridTemplateLabels: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
@@ -55,7 +58,7 @@ class NotificationAdminListMapper
         }
 
         return new ListView(
-            id: 'notifications_container',
+            name: 'notifications',
             title: 'Notification Pop\'up',
             description: 'Administration des messages affichés dans les pop\'up.',
             items: $items,
@@ -65,7 +68,7 @@ class NotificationAdminListMapper
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED),
+            settings: $this->dropdownSettingsMapper->mapToView('ORDER', $referer, RoundedVariant::ROUNDED),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
@@ -79,13 +82,13 @@ class NotificationAdminListMapper
         );
     }
 
-    private function getDropdown(Notification $enity): DropdownView
+    private function getDropdown(Notification $enity, string $referer): DropdownView
     {
         $menuItems = [];
         if ($enity->isDisabled()) {
             $menuItems[] = new ButtonView(
                 label: 'Activer',
-                url: $this->urlGenerator->generate('admin_notification_toggle_disable', ['notification' => $enity->getId()]),
+                url: $this->urlContextService->generateUrl('admin_notification_toggle_disable', ['notification' => $enity->getId()], $referer),
                 icon: 'lucide:toggle-left',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
@@ -96,7 +99,7 @@ class NotificationAdminListMapper
         } else {
             $menuItems[] = new ButtonView(
                 label: 'Désactiver',
-                url: $this->urlGenerator->generate('admin_notification_toggle_disable', ['notification' => $enity->getId()]),
+                url: $this->urlContextService->generateUrl('admin_notification_toggle_disable', ['notification' => $enity->getId()], $referer),
                 icon: 'lucide:toggle-right',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [

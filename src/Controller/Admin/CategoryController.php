@@ -9,8 +9,6 @@ use App\Form\Admin\CategoryType;
 use App\Repository\CategoryRepository;
 use App\State\Category\Processor\CategoryDeleteProcessor;
 use App\State\Category\Provider\CategoryDeleteProvider;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/categorie', name: 'admin_category_')]
 #[IsGranted('ROLE_ADMIN')]
-class CategoryController extends AbstractController
+class CategoryController extends AbstractCrudController
 {
     public function __construct(
         private CategoryRepository $categoryRepository,
@@ -65,25 +63,11 @@ class CategoryController extends AbstractController
         CategoryDeleteProvider $provider,
         Category $category
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($category);
-                
-                return $this->redirectToRoute('admin_category_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($category),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $category,
+            $provider,
+            $processor
+        );
     }
 }

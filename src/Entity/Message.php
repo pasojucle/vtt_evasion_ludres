@@ -11,12 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Message
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[ORM\Column(length: 100)]
-    private string $name = '';
+    private string $id;
 
     #[ORM\Column(length: 150)]
     private string $label = '';
@@ -28,7 +24,7 @@ class Message
     private ?LevelType $levelType = null;
 
     #[ORM\ManyToOne]
-    private ?ParameterGroup $section = null;
+    private ?Section $section = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options:['default' => false])]
     private bool $protected = false;
@@ -38,19 +34,14 @@ class Message
         return $this->label;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function setId(string $id): static
     {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
+        $this->id = $id;
 
         return $this;
     }
@@ -91,12 +82,12 @@ class Message
         return $this;
     }
 
-    public function getSection(): ?ParameterGroup
+    public function getSection(): ?Section
     {
         return $this->section;
     }
 
-    public function setSection(?ParameterGroup $section): static
+    public function setSection(?Section $section): static
     {
         $this->section = $section;
 

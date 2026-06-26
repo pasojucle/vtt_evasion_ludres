@@ -20,7 +20,6 @@ use App\State\SlideshowImage\Processor\SlideshowImageDeleteProcessor;
 use App\State\SlideshowImage\Provider\SlideshowImageDeleteProvider;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/diaporama', name: 'admin_slideshow_')]
-class SlideshowController extends AbstractController
+class SlideshowController extends AbstractCrudController
 {
     public function __construct(
         private SlideshowDirectoryRepository $slideshowDirectoryRepository,
@@ -72,7 +71,7 @@ class SlideshowController extends AbstractController
             'images' => $images,
             'form' => $form->createView(),
             'settings' => [
-                'parameters' => $this->parameterRepository->findByParameterGroupName('SLIDESHOW'),
+                'parameters' => $this->parameterRepository->findBySectionId('SLIDESHOW'),
             ],
         ]);
     }
@@ -152,26 +151,12 @@ class SlideshowController extends AbstractController
         SlideshowDirectoryDeleteProvider $provider,
         SlideshowDirectory $directory,
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($directory);
-
-                return $this->redirectToRoute('admin_slideshow_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($directory),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $directory,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/image/delete/{image}', name: 'image_delete', methods: ['GET', 'POST'])]
@@ -182,25 +167,12 @@ class SlideshowController extends AbstractController
         SlideshowImageDeleteProvider $provider,
         SlideshowImage $image,
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                return $this->redirectToRoute('admin_slideshow_list', [
-                    'directory' => $processor->process($image),
-                ]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($image),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $image,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/image/upload/{directory}', name: 'image_upload', defaults:['directory' => null], methods: ['GET', 'POST'])]

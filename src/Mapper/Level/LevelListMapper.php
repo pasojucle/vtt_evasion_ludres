@@ -21,6 +21,7 @@ use App\Mapper\PaginatorMapper;
 use App\Repository\MemberRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\SeasonService;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -32,6 +33,7 @@ class LevelListMapper
         private PaginatorMapper $paginatorMapper,
         private SeasonService $seasonService,
         private MemberRepository $memberRepository,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -43,6 +45,8 @@ class LevelListMapper
         FilterConfigInterface $filterConfig,
     ): ListView {
         $currentSeason = $this->seasonService->getCurrentSeason();
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
 
         /** @var Level $entity */
@@ -53,13 +57,13 @@ class LevelListMapper
                 ],
                 indicators: $this->getIndicators($entity),
                 counter: $this->counter($entity, $currentSeason),
-                dropdown: $this->dropDown($entity),
+                dropdown: $this->dropDown($entity, $referer),
                 gridTemplateBadges: 'grid-cols-[1fr_50px]'
             );
         }
 
         return new ListView(
-            id: 'levels_contrainer',
+            name: 'level',
             title: 'Niveaux',
             description: 'Administration des niveaux des adhérents du club.',
             items: $items,
@@ -105,19 +109,19 @@ class LevelListMapper
         );
     }
 
-    private function dropDown(Level $entity): DropdownView
+    private function dropDown(Level $entity, ?string $referer): DropdownView
     {
         $menusItems = [];
         $menusItems[] = new ButtonView(
             label: 'Modifier',
-            url: $this->urlGenerator->generate('admin_level_edit', ['level' => $entity->getId()]),
+            url: $this->urlContextService->generateUrl('admin_level_edit', ['level' => $entity->getId()], $referer),
             icon: 'lucide:pencil',
             variant: ColorVariant::DROPDOWN,
         );
         if (!$entity->isProtected()) {
             $menusItems[] = new ButtonView(
                 label: 'Supprimer',
-                url: $this->urlGenerator->generate('admin_level_delete', ['level' => $entity->getId()]),
+                url: $this->urlContextService->generateUrl('admin_level_delete', ['level' => $entity->getId()], $referer),
                 icon: 'lucide:delete',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [

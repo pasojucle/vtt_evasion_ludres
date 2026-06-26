@@ -30,7 +30,7 @@ class DisabledOutOfPeriod
 
     public function execute(): array
     {
-        $duration = $this->parameterService->getParameterByName('SECOND_HAND_DURATION');
+        $duration = $this->parameterService->getParameterById('SECOND_HAND_DURATION');
         $deadline = (new DateTimeImmutable())->setTime(0, 0, 0)->sub(new DateInterval(sprintf('P%sD', $duration)));
         $secondHands = $this->secondHandRepository->findOutOfPeriod($deadline);
 
@@ -53,13 +53,13 @@ class DisabledOutOfPeriod
     {
         $mainIdentity = $secondHand->getMember()->getMainIdentity();
         $subject = sprintf('Votre annonce %s', $secondHand->getName());
-        $content = $this->messageService->getMessageByName('SECOND_HAND_DISABLED_MESSAGE');
+        $content = $this->messageService->getMessageById('SECOND_HAND_DISABLED_MESSAGE');
 
 
         $params = [
             '{{ nom_annonce }}' => $secondHand->getName(),
             '{{ url }}' => $this->urlGenerator->generate('second_hand_user_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            '{{ durree }}' => $this->parameterService->getParameterByName('SECOND_HAND_DURATION'),
+            '{{ durree }}' => $this->parameterService->getParameterById('SECOND_HAND_DURATION'),
         ];
         $content = $this->replaceKeywords->replaceFromParams($content, $params);
         

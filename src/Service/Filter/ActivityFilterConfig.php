@@ -19,7 +19,7 @@ class ActivityFilterConfig implements FilterConfigInterface
 {
     public function getRouteName(): string
     {
-        return 'admin_bike_rides';
+        return 'admin_bike_ride_list';
     }
 
     public function supports(string $route): bool

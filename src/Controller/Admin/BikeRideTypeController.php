@@ -31,7 +31,6 @@ class BikeRideTypeController extends AbstractCrudController
         BikeRideTypeListProvider $provider,
     ): Response {
         return $this->handleListAction(
-            'admin_bike_ride_type_list',
             BikeRideTypeFilter::class,
             $provider,
             $request

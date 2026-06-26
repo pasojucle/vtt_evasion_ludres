@@ -7,9 +7,9 @@ namespace App\State\Survey\Provider;
 use App\Dto\Enum\DialogType;
 use App\Dto\View\DialogModalView;
 use App\Entity\Survey;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 
-class SurveyDisableProvider implements DialogProviderInterface
+class SurveyDisableProvider implements FormComponentProviderInterface
 {
     public function mapToView(object $entity): DialogModalView
     {

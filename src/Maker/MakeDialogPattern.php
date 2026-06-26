@@ -32,7 +32,6 @@ class MakeDialogPattern extends AbstractMaker
             ->addArgument('action', InputArgument::REQUIRED, 'Le nom de l\'action (ex: Delete)')
             ->addArgument('message', InputArgument::REQUIRED, 'Le message de affiché sur la modale (ex: Etes vous certain de supprimer le role %s)')
             ->addArgument('getter', InputArgument::REQUIRED, 'La fonction de l\'entité cible pour personnaliser le message (ex: getName())')
-            ->addArgument('$route', InputArgument::REQUIRED, 'Le nom de la route pour retourner sur la liste (ex: admin_user_list)')
         ;
     }
 
@@ -42,7 +41,6 @@ class MakeDialogPattern extends AbstractMaker
         $action = ucfirst($input->getArgument('action'));
         $message = $input->getArgument('message');
         $getter = $input->getArgument('getter');
-        $route = $input->getArgument('route');
 
         $generator->generateClass(
             'App\\State\\' . $entity . '\\Provider\\' . $entity . $action . 'Provider',
@@ -61,7 +59,6 @@ class MakeDialogPattern extends AbstractMaker
             [
                 'entity_name' => $entity,
                 'action_name' => $action,
-                'route' => $route,
             ]
         );
         

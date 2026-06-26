@@ -29,11 +29,10 @@ class UploadService
     }
 
     public function uploadFile(
-        ?UploadedFile $pictureFile, 
-        UploadableInterface $media, 
+        ?UploadedFile $pictureFile,
+        UploadableInterface $media,
         ?string $extension = null
-    ): ?string
-    {
+    ): ?string {
         $mimeType = $pictureFile->getMimeType();
         $detectedExtension = strtolower($extension ?? $this->getExtention($pictureFile));
 

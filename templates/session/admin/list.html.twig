@@ -2,7 +2,7 @@
 {% set noneAvailability = enum('App\\Entity\\Enum\\AvailabilityEnum').NONE %}
 <li id="session-{{ session.id }}" class="col-list col-list-1btn">
     <div class="list-dropdown">
-        <a href="{{ path('admin_bike_rides_user', {'user': user.id})}}"
+        <a href="{{ path('admin_bike_ride_list_user', {'user': user.id})}}"
             data-turbo-frame="_top"
             {% if not bikeRide.isEditable %} 
                 class="disabled"

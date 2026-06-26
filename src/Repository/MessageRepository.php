@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Message;
-use App\Entity\ParameterGroup;
+use App\Entity\Section;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -27,7 +27,7 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
-    public function findMessageQuery(?ParameterGroup $section): QueryBuilder
+    public function findMessageQuery(?Section $section): QueryBuilder
     {
         if (!$section) {
             return $this->createQueryBuilder('m');
@@ -40,18 +40,18 @@ class MessageRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findBySectionNameAndQuery(string $sectionName, ?string $query = null): array
+    public function findBySectionNameAndQuery(string $sectionId, ?string $query = null): array
     {
         $andX = (new Expr())->andX();
-        $andX->add((new Expr())->eq('pg.name', ':sectionName'));
-        $parameters = [new Parameter('sectionName', $sectionName)];
+        $andX->add((new Expr())->eq('s.id', ':sectionId'));
+        $parameters = [new Parameter('sectionId', $sectionId)];
 
         if ($query) {
-            $andX->add((new Expr())->LIKE('m.name', ':query'));
+            $andX->add((new Expr())->LIKE('m.id', ':query'));
             $parameters[] = new Parameter('query', sprintf('%%%s%%', $query));
         }
         return $this->createQueryBuilder('m')
-            ->join('m.section', 'pg')
+            ->join('m.section', 's')
             ->andWhere($andX)
             ->setParameters(new ArrayCollection($parameters))
             ->getQuery()
@@ -59,26 +59,26 @@ class MessageRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByNames(array $names): array
+    public function findByIds(array $ids): array
     {
         return $this->createQueryBuilder('m')
             ->andWhere(
-                (new Expr())->in('m.name', ':names')
+                (new Expr())->in('m.id', ':ids')
             )
-            ->setParameter('names', $names)
+            ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult()
         ;
     }
 
-    public function findOneByName(string $name): ?Message
+    public function findOneByid(string $id): ?Message
     {
         try {
             return $this->createQueryBuilder('m')
                 ->andWhere(
-                    (new Expr())->eq('m.name', ':name')
+                    (new Expr())->eq('m.id', ':id')
                 )
-                ->setParameter('name', $name)
+                ->setParameter('id', $id)
                 ->getQuery()
                 ->getOneOrNullResult()
         ;

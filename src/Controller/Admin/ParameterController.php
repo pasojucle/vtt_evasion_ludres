@@ -5,29 +5,31 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\View\SheetView;
-use App\Entity\ParameterGroup;
+use App\Entity\Parameter;
+use App\Entity\Section;
 use App\Form\ParameterGroupType;
 use App\Form\ParameterType;
-use App\Repository\ParameterGroupRepository;
 use App\Repository\ParameterRepository;
+use App\Repository\SectionRepository;
+use App\State\Parameter\Processor\ParameterUpdateProcessor;
+use App\State\Parameter\Provider\ParameterUpdateProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ParameterController extends AbstractController
+class ParameterController extends AbstractCrudController
 {
     #[Route('/admin/maintenace', name: 'admin_service', methods: ['GET', 'POST'], defaults:['parameterGroup' => null])]
     #[IsGranted('ROLE_ADMIN')]
     public function list(
-        ParameterGroupRepository $parameterGroupRepository,
+        SectionRepository $parameterGroupRepository,
         Request $request,
         EntityManagerInterface $entityManager,
-        ?ParameterGroup $parameterGroup
+        ?Section $parameterGroup
     ): Response {
-        $parameterGroup = $parameterGroupRepository->findoneByName('MAINTENANCE');
+        $parameterGroup = $parameterGroupRepository->findoneById('MAINTENANCE');
 
         $form = $this->createForm(ParameterGroupType::class, $parameterGroup);
         $form->handleRequest($request);
@@ -44,44 +46,20 @@ class ParameterController extends AbstractController
     }
 
 
-    #[Route('/admin/parameter/{name}', name: 'admin_parameter_edit', methods: ['GET', 'POST'])]
+    #[Route('/admin/parameter/{parameter}', name: 'admin_parameter_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
-        EntityManagerInterface $entityManager,
-        ParameterRepository $parameterRepository,
-        string $name
+        ParameterUpdateProvider $provider,
+        ParameterUpdateProcessor $processor,
+        Parameter $parameter
     ): Response {
-
-        $referer = $request->headers->get('referer');
-        $parameter = $parameterRepository->findOneByName($name);
-        if ($parameter) {
-            $response = new Response("OK", Response::HTTP_OK);
-            $form = $this->createForm(ParameterType::class, $parameter, [
-                'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
-                'referer' => $referer,
-            ]);
-            $form->handleRequest($request);
-            if ($request->isMethod('POST') && $form->isSubmitted()) {
-                if ($form->isValid()) {
-                    $entityManager->flush();
-                    $request->getSession()->set($parameter->getName(), $parameter->getValue());
-
-                    return $this->redirect($request->request->all('parameter')['referer']);
-                }
-                $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
-            return $this->render('components/_sheet.sheet.html.twig', [
-                'sheet' => new SheetView(
-                    title: 'Modifier un paramètre',
-                    description: $parameter->getLabel(),
-                    action: 'Modifier',
-                ),
-                'form' => $form->createView(),
-            ], $response);
-        }
-
-        return new Response(null, Response::HTTP_BAD_REQUEST);
+        return $this->handleFormComponentAction(
+            $request,
+            $parameter,
+            $provider,
+            $processor,
+            ParameterType::class
+        );
     }
 }

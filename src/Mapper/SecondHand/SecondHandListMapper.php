@@ -19,6 +19,7 @@ use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,6 +32,7 @@ class SecondHandListMapper
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
         private TranslatorInterface $translator,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -41,6 +43,8 @@ class SecondHandListMapper
         SecondHandFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
 
         /** @var SecondHand $entity */
@@ -55,18 +59,18 @@ class SecondHandListMapper
                     $state->trans($this->translator),
                     $state->variant(),
                 ),
-                dropdown: $this->dropDown($entity),
+                dropdown: $this->dropDown($entity, $referer),
                 url: $this->urlGenerator->generate("admin_second_hand_show", ['secondHand' => $entity->getId()]),
                 gridTemplateBadges: 'grid-cols-2',
             );
         }
 
         return new ListView(
-            id: 'list_contrainer',
-            title: 'Titre de la page',
-            description: 'description de la page.',
+            name: 'second_hand',
+            title: 'Annonces d\'occasion',
+            description: 'Administration des annonces d\'occasion.',
             items: $items,
-            settings: $this->settings(),
+            settings: $this->settings($referer),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -80,9 +84,9 @@ class SecondHandListMapper
         );
     }
 
-    private function settings(): DropdownView
+    private function settings(string $referer): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('SECOND_HAND', RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('SECOND_HAND', $referer, RoundedVariant::ROUNDED, [
             new ButtonView(
                 label: 'Catégories',
                 url: $this->urlGenerator->generate('admin_category_list'),
@@ -101,19 +105,19 @@ class SecondHandListMapper
         ];
     }
 
-    private function dropDown(SecondHand $entity): DropdownView
+    private function dropDown(SecondHand $entity, string $referer): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Modifier',
-                    url: $this->urlGenerator->generate('admin_second_hand_edit', ['secondHand' => $entity->getId()]),
+                    url: $this->urlContextService->generateUrl('admin_second_hand_edit', ['secondHand' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
                  new ButtonView(
                      label: 'Supprimer',
-                     url: $this->urlGenerator->generate('admin_second_hand_delete', ['secondHand' => $entity->getId()]),
+                     url: $this->urlContextService->generateUrl('admin_second_hand_delete', ['secondHand' => $entity->getId()], $referer),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [
@@ -124,5 +128,4 @@ class SecondHandListMapper
             ]
         );
     }
-
 }

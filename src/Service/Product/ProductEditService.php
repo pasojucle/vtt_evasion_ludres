@@ -39,7 +39,7 @@ class ProductEditService
     {
         if ($request->files->get('product')) {
             $pictureFile = $request->files->get('product')['pictureFile'];
-            $newFilename = $this->uploadService->uploadFile($pictureFile,$product);
+            $newFilename = $this->uploadService->uploadFile($pictureFile, $product);
             if (null !== $newFilename) {
                 $product->setFilename($newFilename);
             }

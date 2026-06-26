@@ -17,6 +17,7 @@ use App\Entity\Survey;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,6 +26,7 @@ class SurveyAdminListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private UrlContextService $urlContextService,
         private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
         private SurveyAdminDropdownMapper $surveyAdminDropdownMapper,
@@ -34,6 +36,8 @@ class SurveyAdminListMapper
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, SurveyFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
         foreach ($entities as $entity) {
             $status = $entity->getStatus();
@@ -49,7 +53,7 @@ class SurveyAdminListMapper
                 counter: new BadgeView(
                     (string) $entity->getRespondents()->count(),
                 ),
-                dropdown: $this->surveyAdminDropdownMapper->mapToView($entity),
+                dropdown: $this->surveyAdminDropdownMapper->mapToView($entity, $referer),
                 url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey_response_list', [
                     'survey' => $entity->getId()
                 ]),
@@ -58,7 +62,7 @@ class SurveyAdminListMapper
         }
       
         return new ListView(
-            id: 'surveys_container',
+            name: 'survey',
             title: 'Sondages',
             description: 'Administration des sondages : création des questionnaires et suivi des réponses.',
             items: $items,

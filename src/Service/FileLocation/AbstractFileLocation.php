@@ -14,7 +14,8 @@ abstract class AbstractFileLocation implements FileLocationInterface
         #[Autowire('%kernel.project_dir%')]
         protected string $projectDir,
         protected FileService $fileService
-    ) {}
+    ) {
+    }
 
     abstract public function getBaseDirectoryName(): string;
     abstract public function supports(string $className): bool;

@@ -60,7 +60,7 @@ class UnregistrableSessionMessage
 
         if (!$this->checkSeasonLicence($userDto, $currentSeason)) {
             return [
-                'message' => $this->replaceKeywordsService->replace($this->messageService->getMessageByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'), $userDto),
+                'message' => $this->replaceKeywordsService->replace($this->messageService->getMessageById('REQUIREMENT_SEASON_LICENCE_MESSAGE'), $userDto),
                 'action' => $registration,
             ];
         }
@@ -83,8 +83,8 @@ class UnregistrableSessionMessage
 
     private function checkSeasonLicence(UserDto $member, int $currentSeason): bool
     {
-        $requirementSeasonLicenceAtParam = $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_AT');
-        $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
+        $requirementSeasonLicenceAtParam = $this->parameterService->getParameterById('REQUIREMENT_SEASON_LICENCE_AT');
+        $seasonStartAt = $this->parameterService->getParameterById('SEASON_START_AT');
 
         $requirementSeasonLicenceAtParam['year'] = ($seasonStartAt['month'] <= $requirementSeasonLicenceAtParam['month']
             && $seasonStartAt['day'] <= $requirementSeasonLicenceAtParam['day'])

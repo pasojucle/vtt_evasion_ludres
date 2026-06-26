@@ -6,7 +6,6 @@ namespace App\State\Licence\Processor;
 
 use App\Dto\State\ProcessorResult;
 use App\Entity\Licence;
-use App\Service\FilterDecoderService;
 use App\Service\LicenceService;
 use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,21 +15,18 @@ class LicenceReceiveProcessor implements DialogProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LicenceService $licenceService,
-        private FilterDecoderService $filterDecoder,
     ) {
     }
 
-    public function process(object $entity, ?string $filter): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
-        assert($entity instanceof Licence);
-        
+        /** @var Licence $entity */
         $tansition = ($entity->getState()->isYearly()) ? 'receive_yearly_file' : 'receive_trial_file';
         if ($this->licenceService->applyTransition($entity, $tansition)) {
             $this->entityManager->flush();
             return new ProcessorResult(
                 success: true,
-                targetRoute: 'admin_registration_list',
-                routeParams: $this->filterDecoder->decode($filter),
+                targetUrl: $targetUrl,
                 messageKey: 'registration.flash.success.received',
                 flashType: 'success',
             );
@@ -38,8 +34,7 @@ class LicenceReceiveProcessor implements DialogProcessorInterface
 
         return new ProcessorResult(
             success: false,
-            targetRoute: 'admin_registration_list',
-            routeParams: $this->filterDecoder->decode($filter),
+            targetUrl: $targetUrl,
             messageKey: 'registration.flash.error.received',
             flashType: 'danger',
         );

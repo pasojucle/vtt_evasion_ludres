@@ -7,15 +7,17 @@ namespace App\State\Message\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Message;
 use App\Mapper\DestructiveModalMapper;
+use App\State\FormComponentProviderInterface;
 
-class MessageDeleteProvider
+class MessageDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(Message  $entity): DialogModalView
+    public function mapToView(object $entity): DialogModalView
     {
+        /** @var Message $entity */
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer le message  <b>%s</b> ?',
             $entity->getLabel()

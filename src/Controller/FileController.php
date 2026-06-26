@@ -55,11 +55,10 @@ class FileController extends AbstractController
 
     #[Route('/upload', name: 'upload_file', methods: ['GET', 'POST'])]
     public function uploadFile(
-        Request $request, 
+        Request $request,
         UploadService $uploadService,
         TextEditorFileLocation $location,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $file = $request->files->get('upload');
         if ($file) {
             $upload = new TextEditorUpload($file->getClientOriginalName());

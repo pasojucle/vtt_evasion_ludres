@@ -9,9 +9,9 @@ use App\Dto\View\DialogModalView;
 use App\Entity\Coverage;
 use App\Entity\Licence;
 use App\Mapper\DestructiveModalMapper;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 
-class CoverageValidateProvider implements DialogProviderInterface
+class CoverageValidateProvider implements FormComponentProviderInterface
 {
     public function mapToView(object $entity): DialogModalView
     {

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Form\Filter\ListFilterType;
+use App\Service\UrlContextService;
 use App\State\DialogProcessorInterface;
-use App\State\DialogProviderInterface;
 use App\State\FilterInitializerInterface;
+use App\State\FormComponentProviderInterface;
 use App\State\ListProviderInterface;
 use App\State\StreamExportableInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,15 +16,25 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class AbstractCrudController extends AbstractController
 {
+    protected UrlContextService $urlContextService;
+
+    #[Required()]
+    public function setUrlContextService(UrlContextService $urlContextService): void
+    {
+        $this->urlContextService = $urlContextService;
+    }
+
     protected function handleListAction(
-        string $route,
         string $filterClass,
         ListProviderInterface $provider,
         Request $request,
     ): Response {
+        $route = $request->attributes->get('_route');
+
         $filter = $provider->getHydratedDto($request->query->all(), $filterClass);
         if ($provider instanceof FilterInitializerInterface) {
             $provider->initializeFilters($filter);
@@ -54,37 +65,38 @@ abstract class AbstractCrudController extends AbstractController
         ]);
     }
 
-    protected function handleDialogAction(
+    protected function handleFormComponentAction(
         Request $request,
         object $object,
-        DialogProviderInterface $provider,
+        FormComponentProviderInterface $provider,
         DialogProcessorInterface $processor,
         string $formClass = FormType::class,
         array $formOptions = []
     ): Response {
+        $view = $provider->mapToView($object);
+
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm($formClass, $object, array_merge([
             'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
+            'attr' => $view->getFormAttr(),
         ], $formOptions));
         
         $form->handleRequest($request);
         
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $result = $processor->process($object, $request->query->get('filter'));
+                $result = $processor->process($object, $this->urlContextService->getRedirectUrl($request));
                 $this->addFlash($result->flashType, $result->messageKey);
-                
-                if ($result->targetRoute) {
-                    return $this->redirectToRoute($result->targetRoute, $result->routeParams);
+                if ($result->targetUrl) {
+                    return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('components/_dialog.modal.html.twig', [
+        return $this->render($view->getTemplate(), [
             'form' => $form->createView(),
-            'dialog' => $provider->mapToView($object)
+            'view' => $view
         ], $response);
     }
 

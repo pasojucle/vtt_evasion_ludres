@@ -42,7 +42,7 @@ class OrderByService
         }
     }
 
-    public function ResetOrders(?array $entities)
+    public function resetOrders(?array $entities)
     {
         if (null !== $entities) {
             $order = 0;

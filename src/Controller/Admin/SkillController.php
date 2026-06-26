@@ -37,7 +37,6 @@ class SkillController extends AbstractCrudController
         SkillListProvider $provider
     ): Response {
         return $this->handleListAction(
-            'admin_skill_list',
             SkillFilter::class,
             $provider,
             $request
@@ -151,7 +150,7 @@ class SkillController extends AbstractCrudController
         SkillDeleteProvider $provider,
         Skill $skill
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             $request,
             $skill,
             $provider,

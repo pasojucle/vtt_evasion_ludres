@@ -9,13 +9,13 @@ use App\Dto\Form\LicenceRegister;
 use App\Dto\Form\LicenceReject;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 use App\State\Message\Provider\MessageProvider;
 
 /**
- * @implements DialogProviderInterface<Licence>
+ * @implements FormComponentProviderInterface<Licence>
  */
-class LicenceRejectProvider implements DialogProviderInterface
+class LicenceRejectProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private MessageProvider $messageProvider,
@@ -40,7 +40,7 @@ class LicenceRejectProvider implements DialogProviderInterface
     {
         return new LicenceReject(
             $licence,
-            $this->messageProvider->getMessageByName('REGISTRATION_REJECT_MESSAGE', $licence->getMember())
+            $this->messageProvider->getMessageById('REGISTRATION_REJECT_MESSAGE', $licence->getMember())
         );
     }
 }

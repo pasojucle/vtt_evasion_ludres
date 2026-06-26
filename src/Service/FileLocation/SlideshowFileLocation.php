@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service\FileLocation;
 
-
 use App\Entity\Interface\UploadableInterface;
 use App\Entity\SlideshowImage;
 
 class SlideshowFileLocation extends AbstractFileLocation
 {
-
     public function supports(string $className): bool
     {
         return $className === SlideshowImage::class;
@@ -34,11 +32,11 @@ class SlideshowFileLocation extends AbstractFileLocation
         }
 
         return $this->fileService->join(
-            $this->projectDir, 
-            'data', 
-            $this->getBaseDirectoryName(), 
+            $this->projectDir,
+            'data',
+            $this->getBaseDirectoryName(),
             (string) $media->getDirectory()->getId(),
-            $media->getFilename() 
+            $media->getFilename()
         );
     }
 
@@ -46,9 +44,10 @@ class SlideshowFileLocation extends AbstractFileLocation
     {
         /** @var ?SlideshowImage $media */
         return $this->fileService->join(
-            $this->projectDir, 
-            'data', 
-            $this->getBaseDirectoryName(), 
-            (string) ($media?->getDirectory()->getId() ?? 'tmp'));
+            $this->projectDir,
+            'data',
+            $this->getBaseDirectoryName(),
+            (string) ($media?->getDirectory()->getId() ?? 'tmp')
+        );
     }
 }

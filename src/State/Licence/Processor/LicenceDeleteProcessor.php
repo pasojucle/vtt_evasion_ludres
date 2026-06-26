@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
+use App\Dto\State\ProcessorResult;
 use App\Entity\Licence;
+use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class LicenceDeleteProcessor
+class LicenceDeleteProcessor implements DialogProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {
     }
 
-    public function process(Licence $entity): string
+    /**
+     * @implements DialogProcessorInterface<Licence>
+     */
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
-        $fullName = $entity->getMember()->getIdentity()->getFullName();
         foreach ($entity->getLicenceAgreements() as $licenceAgreement) {
             $this->entityManager->remove($licenceAgreement);
         }
@@ -24,9 +28,11 @@ class LicenceDeleteProcessor
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 
-        return sprintf(
-            'La licence de l\'utilisateur %s a bien été supprimée',
-            $fullName
+        return new ProcessorResult(
+            success: true,
+            messageKey: 'licence.flash.success.delete',
+            targetUrl: $targetUrl,
+            flashType: 'success'
         );
     }
 }

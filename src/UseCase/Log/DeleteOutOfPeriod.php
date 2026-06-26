@@ -21,7 +21,7 @@ class DeleteOutOfPeriod
 
     public function execute(): array
     {
-        $duration = $this->parameterService->getParameterByName('LOG_DURATION');
+        $duration = $this->parameterService->getParameterById('LOG_DURATION');
         $deadline = (new DateTimeImmutable())->setTime(0, 0, 0)->sub(new DateInterval(sprintf('P%sD', $duration)));
         $logs = $this->logRepository->findOutOfPeriod($deadline);
 

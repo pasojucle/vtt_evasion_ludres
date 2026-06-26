@@ -36,7 +36,7 @@ class UpdateCommand extends Command
     {
         $this->ssio = new SymfonyStyle($input, $output);
 
-        $maintenance = $this->parameterRepository->findOneByName('MAINTENANCE_MODE');
+        $maintenance = $this->parameterRepository->findOneById('MAINTENANCE_MODE');
         $this->isMaintenance = (bool) $maintenance->getValue();
 
         $this->setMaintenance('1');

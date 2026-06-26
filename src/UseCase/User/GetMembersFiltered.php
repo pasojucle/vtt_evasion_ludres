@@ -7,7 +7,6 @@ namespace App\UseCase\User;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\RouteDto;
 use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
@@ -53,7 +52,7 @@ class GetMembersFiltered extends GetUsersFiltered
 
     public function settings(): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('USER', RoundedVariant::ROUNDED_NONE, [
+        return $this->dropdownSettingsMapper->mapToView('USER', '$referer', RoundedVariant::ROUNDED_NONE, [
             new ButtonView(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_level_list'),

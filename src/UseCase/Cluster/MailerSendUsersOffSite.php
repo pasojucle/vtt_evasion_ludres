@@ -26,7 +26,7 @@ class MailerSendUsersOffSite
     public function execute(array $usersOffSite, BikeRide $bikeRide): void
     {
         if (!empty($usersOffSite)) {
-            $content = $this->messageService->getMessageByName('BIKE_RIDE_ABSENCE_EMAIL');
+            $content = $this->messageService->getMessageById('BIKE_RIDE_ABSENCE_EMAIL');
             $bikeRideTitle = $bikeRide->getTitle();
             foreach ($usersOffSite['users'] as $member) {
                 $this->replaceKeywords->replaceFromParams($content, $this->additionalParams($bikeRideTitle));

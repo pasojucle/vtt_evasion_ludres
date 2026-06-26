@@ -42,7 +42,7 @@ class FilterController extends AbstractController
         }
 
         return $this->render('filter/admin/advanced_filter.sheet.html.twig', [
-            'sheet' => $provider->createSheet(),
+            'view' => $provider->createSheet(),
             'form' => $form->createView(),
         ]);
     }

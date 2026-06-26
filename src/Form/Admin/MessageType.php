@@ -6,7 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Level;
 use App\Entity\Message;
-use App\Entity\ParameterGroup;
+use App\Entity\Section;
 use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -43,7 +43,7 @@ class MessageType extends AbstractType
             $message = $event->getData();
             if ($options['full_mode']) {
                 $form
-                    ->add('name', TextType::class, [
+                    ->add('id', TextType::class, [
                         'label' => 'Nom (Tout en capital, sans espace)',
                         'disabled' => $message->isProtected(),
                         'row_attr' => [
@@ -66,7 +66,7 @@ class MessageType extends AbstractType
                     ])
                     ->add('section', EntityType::class, [
                         'label' => 'Section',
-                        'class' => ParameterGroup::class,
+                        'class' => Section::class,
                         'choice_label' => 'label',
                         'row_attr' => [
                             'class' => 'form-group-inline',

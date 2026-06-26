@@ -30,7 +30,7 @@ class SessionService
         private TranslatorInterface $translator,
         private UserService $userService,
     ) {
-        $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
+        $this->seasonStartAt = $this->parameterService->getParameterById('SEASON_START_AT');
     }
 
     public function getSessionsBytype(BikeRide $bikeRide, ?Member $member = null): array
@@ -122,7 +122,7 @@ class SessionService
         $identity = $member->getMainIdentity();
         if ($isEndTesting) {
             $subject = 'Fin de la période d\'essai';
-            $this->mailerService->sendMailToMember($identity->getEmail(), $identity->getFullName(), $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
+            $this->mailerService->sendMailToMember($identity->getEmail(), $identity->getFullName(), $subject, $this->messageService->getMessageById('EMAIL_END_TESTING'));
         }
     }
 

@@ -7,9 +7,9 @@ namespace App\State\Survey\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Survey;
 use App\Mapper\DestructiveModalMapper;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 
-class SurveyDeleteProvider implements DialogProviderInterface
+class SurveyDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,

@@ -171,8 +171,8 @@ class LicenceDtoTransformer
 
     public function getCurrentSeasonForm(Licence $licence, int $currentSeason): bool
     {
-        $coverageFormStartAt = $this->parameterService->getParameterByName('COVERAGE_FORM_AVAILABLE_AT');
-        $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
+        $coverageFormStartAt = $this->parameterService->getParameterById('COVERAGE_FORM_AVAILABLE_AT');
+        $seasonStartAt = $this->parameterService->getParameterById('SEASON_START_AT');
         $coverageFormStartAt['year'] = ($seasonStartAt['month'] <= $coverageFormStartAt['month']
             && $seasonStartAt['day'] <= $coverageFormStartAt['day'])
             ? $currentSeason - 1

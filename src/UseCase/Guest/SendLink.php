@@ -53,7 +53,7 @@ class SendLink
                 'slug' => $slugger->slug($bikeRide->getTitle()),
                 'token' => $token
             ], UrlGeneratorInterface::ABSOLUTE_URL);
-        $content = $this->replaceKeywords->replaceFromParams($this->messageService->getMessageByName('GUEST_LINK_AUTHENTIFICATION'), [
+        $content = $this->replaceKeywords->replaceFromParams($this->messageService->getMessageById('GUEST_LINK_AUTHENTIFICATION'), [
             '{{ lien_inscription }}' => sprintf('<a href="%s">%s</a>', $link, $link),
         ]);
         $attachments = $bikeRide->getRules()

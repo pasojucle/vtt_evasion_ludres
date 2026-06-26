@@ -6,7 +6,7 @@ namespace App\Dto;
 
 class MessageDto
 {
-    public int $id;
+    public string $id;
 
     public string $label = '';
 

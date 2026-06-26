@@ -7,15 +7,17 @@ namespace App\State\Background\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Background;
 use App\Mapper\DestructiveModalMapper;
+use App\State\FormComponentProviderInterface;
 
-class BackgroundDeleteProvider
+class BackgroundDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(Background $entity): DialogModalView
+    public function mapToView(object $entity): DialogModalView
     {
+        /** @var Background $entity */
         return $this->destructiveModalMapper->mapToView(
             sprintf('Etes vous certain de supprimer l\'image de fond %s', $entity->getFilename()),
         );

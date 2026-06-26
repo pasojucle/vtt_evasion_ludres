@@ -105,7 +105,7 @@ class UserController extends AbstractController
                 $identity->getEmail(),
                 $identity->getFullName(),
                 $subject,
-                $messageService->getMessageByName('EMAIL_CHANGE_USER_INFOS')
+                $messageService->getMessageById('EMAIL_CHANGE_USER_INFOS')
             )->success) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 

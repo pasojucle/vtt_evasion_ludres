@@ -45,7 +45,6 @@ class UserController extends AbstractCrudController
         Request $request,
     ): Response {
         return $this->handleListAction(
-            'admin_user_list',
             UserFilter::class,
             $provider,
             $request
@@ -186,7 +185,7 @@ class UserController extends AbstractCrudController
             $identity->getEmail(),
             $identity->getFullName(),
             $subject,
-            $messageService->getMessageByName('EMAIL_LICENCE_VALIDATE')
+            $messageService->getMessageById('EMAIL_LICENCE_VALIDATE')
         );
 
         $this->addFlash('success', 'Le messsage à été envoyé avec succès');

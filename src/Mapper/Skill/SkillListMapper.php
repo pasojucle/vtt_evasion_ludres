@@ -20,6 +20,7 @@ use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -30,6 +31,7 @@ class SkillListMapper
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -40,6 +42,8 @@ class SkillListMapper
         SkillFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
 
         /** @var Skill $entity */
@@ -49,17 +53,17 @@ class SkillListMapper
                     new LabelView($entity->getContent()),
                 ],
                 indicators: $this->getIndicators($entity),
-                dropdown: $this->dropDown($entity),
+                dropdown: $this->dropDown($entity, $referer),
                 gridTemplateContent: 'grid-cols-[1fr_50px]',
             );
         }
 
         return new ListView(
-            id: 'skill_contrainer',
+            name: 'skill',
             title: 'Compétences',
             description: 'Administration de la liste des compétences.',
             items: $items,
-            settings: $this->settings(),
+            settings: $this->settings($referer),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -79,9 +83,9 @@ class SkillListMapper
         );
     }
 
-    private function settings(): DropdownView
+    private function settings(string $referer): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView(null, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView(null, $referer, RoundedVariant::ROUNDED, [
             new ButtonView(
                 label: 'Catégories',
                 url: $this->urlGenerator->generate('admin_skill_category_list'),
@@ -90,19 +94,19 @@ class SkillListMapper
         ]);
     }
 
-    private function dropDown(Skill $entity): DropdownView
+    private function dropDown(Skill $entity, string $referer): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Modifier',
-                    url: $this->urlGenerator->generate('admin_skill_edit', ['skill' => $entity->getId()]),
+                    url: $this->urlContextService->generateUrl('admin_skill_edit', ['skill' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
                  new ButtonView(
                      label: 'Supprimer',
-                     url: $this->urlGenerator->generate('admin_skill_delete', ['skill' => $entity->getId()]),
+                     url: $this->urlContextService->generateUrl('admin_skill_delete', ['skill' => $entity->getId()], $referer),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [

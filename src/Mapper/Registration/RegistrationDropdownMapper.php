@@ -19,10 +19,10 @@ class RegistrationDropdownMapper
         private UserDropdownMapper $userDropdownMapper,
     ) {
     }
-    public function mapToView(User $user): DropdownView
+    public function mapToView(User $user, string $referer): DropdownView
     {
         $licence = $user->getLastLicence();
-        $menuItems = $this->userDropdownMapper->getMenuItemsfromUser($user);
+        $menuItems = $this->userDropdownMapper->getMenuItemsfromUser($user, $referer);
         if ($licence->getState()->toValidate()) {
             $menuItems[] = new ButtonView(
                 label: 'Inscription incompète',

@@ -9,7 +9,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class SecondHandService
 {
-        public function __construct(
+    public function __construct(
         private WorkflowInterface $secondHandStateMachine,
     ) {
     }

@@ -23,6 +23,7 @@ use App\Mapper\PaginatorMapper;
 use App\Mapper\User\UserDropdownMapper;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\SeasonService;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -34,6 +35,7 @@ class CoverageListMapper
         private PaginatorMapper $paginatorMapper,
         private UserDropdownMapper $userDropdownMapper,
         private SeasonService $seasonService,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -44,6 +46,8 @@ class CoverageListMapper
         CoverageFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
 
         /** @var Member $entity */
@@ -56,15 +60,15 @@ class CoverageListMapper
                     new LabelView($identity->getFullName()),
                 ],
                 indicators: $this->getIndicators($entity->getLevel()),
-                dropdown: $this->userDropdownMapper->mapToView($entity),
+                dropdown: $this->userDropdownMapper->mapToView($entity, $referer),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
-                action: $this->getAction($licence, $currentPage, $filter),
+                action: $this->getAction($licence, $referer),
             );
         }
         $currentSeason = $this->seasonService->getCurrentSeason();
 
         return new ListView(
-            id: 'coverage_contrainer',
+            name: 'coverage',
             title: sprintf('Assurances %s', $currentSeason),
             description: sprintf('Administration des assurances ffvélo, pour les adhérents ayant soucrit avant la publication des bulletins d\'assurance %s .', $currentSeason),
             items: $items,
@@ -128,18 +132,11 @@ class CoverageListMapper
         );
     }
 
-    private function getAction(Licence $licence, ?int $currentPage, CoverageFilter $filter): ButtonView
+    private function getAction(Licence $licence, ?string $referer): ButtonView
     {
-        $params = [
-            'licence' => $licence->getId(),
-        ];
-        if ($filterHash = $filter->toEncodedString($currentPage)) {
-            $params['filter'] = $filterHash;
-        }
-
         return new ButtonView(
             label: 'Valider',
-            url: $this->urlGenerator->generate('admin_coverage_validate', $params),
+            url: $this->urlContextService->generateUrl('admin_coverage_validate', ['licence' => $licence->getId(), ], $referer),
             icon: 'lucide:square-check-big',
             variant: ColorVariant::SUCCESS,
             title: 'Valider l\'asssurance',

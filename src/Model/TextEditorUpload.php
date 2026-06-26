@@ -10,7 +10,8 @@ class TextEditorUpload implements UploadableInterface
 {
     public function __construct(
         private ?string $filename = null
-    ) {}
+    ) {
+    }
 
     public function getFilename(): ?string
     {

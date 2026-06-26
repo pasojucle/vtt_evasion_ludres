@@ -52,7 +52,7 @@ class MailerService
             ])
         ;
 
-        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED') || array_key_exists('error', $data)) {
+        if ($this->parameterService->getParameterById('DEDUPLICATION_MAILER_ENABLED') || array_key_exists('error', $data)) {
             $email->addBcc($webmasterEmail);
         }
 
@@ -74,7 +74,7 @@ class MailerService
     ): MailerResult {
         [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
 
-        if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
+        if (true === $this->parameterService->getParameterById('TEST_MODE')) {
             $userEmail = $clubEmail->getAddress();
         }
 
@@ -101,7 +101,7 @@ class MailerService
             }
         }
 
-        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
+        if ($this->parameterService->getParameterById('DEDUPLICATION_MAILER_ENABLED')) {
             $email->addBcc($webmasterEmail);
         }
 
@@ -118,7 +118,7 @@ class MailerService
     {
         $particpantEmail = $participant->getContactEmail();
         [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
-        if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
+        if (true === $this->parameterService->getParameterById('TEST_MODE')) {
             $particpantEmail = $clubEmail->getAddress();
         }
 
@@ -143,7 +143,7 @@ class MailerService
                 $email->addPart(new DataPart(new File($attachement)));
             }
         }
-        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
+        if ($this->parameterService->getParameterById('DEDUPLICATION_MAILER_ENABLED')) {
             $email->addBcc($webmasterEmail);
         }
 

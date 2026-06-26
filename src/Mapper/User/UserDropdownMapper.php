@@ -9,25 +9,25 @@ use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownView;
 use App\Entity\Enum\LevelType;
 use App\Entity\User;
+use App\Service\UrlContextService;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserDropdownMapper
 {
     public function __construct(
         private Security $security,
-        private UrlGeneratorInterface $urlGenerator,
+        private UrlContextService $urlContextService,
     ) {
     }
-    public function mapToView(User $user): DropdownView
+    public function mapToView(User $user, ?string $referer): DropdownView
     {
         return new DropdownView(
             title: $user->getIdentity()->getFullName(),
-            menuItems: $this->getMenuItemsfromUser($user),
+            menuItems: $this->getMenuItemsfromUser($user, $referer),
         );
     }
 
-    public function getMenuItemsfromUser(User $user): array
+    public function getMenuItemsfromUser(User $user, string $referer): array
     {
         $menuItems = [];
         $level = $user->getLevel();
@@ -35,7 +35,7 @@ class UserDropdownMapper
             $menuItems[] = new ButtonView(
                 label: 'Compétences',
                 variant: ColorVariant::DROPDOWN,
-                url: $this->urlGenerator->generate('admin_member_skill_edit', ['member' => $user->getId()]),
+                url: $this->urlContextService->generateUrl('admin_member_skill_edit', ['member' => $user->getId()], $referer),
                 icon: 'lucide:graduation-cap',
             );
         }
@@ -43,20 +43,20 @@ class UserDropdownMapper
             $menuItems[] = new ButtonView(
                 label: 'Participation',
                 variant: ColorVariant::DROPDOWN,
-                url: $this->urlGenerator->generate('admin_user_participation', ['user' => $user->getId()]),
+                url: $this->urlContextService->generateUrl('admin_user_participation', ['user' => $user->getId()], $referer),
                 icon: 'lucide:chart-line',
             );
             $menuItems[] = new ButtonView(
                 label: 'Attestation d\'inscription CE',
                 variant: ColorVariant::DROPDOWN,
-                url: $this->urlGenerator->generate('admin_user_certificate', ['member' => $user->getId()]),
+                url: $this->urlContextService->generateUrl('admin_user_certificate', ['member' => $user->getId()], $referer),
                 icon: 'lucide:file-user',
             );
             if ($level?->isAccompanyingCertificat()) {
                 $menuItems[] = new ButtonView(
                     label: 'Attestation adulte accompagnateur',
                     variant: ColorVariant::DROPDOWN,
-                    url: $this->urlGenerator->generate('admin_user_accompanying_certificate', ['member' => $user->getId()]),
+                    url: $this->urlContextService->generateUrl('admin_user_accompanying_certificate', ['member' => $user->getId()], $referer),
                     icon: 'lucide:file-terminal',
                 );
             }
@@ -64,7 +64,7 @@ class UserDropdownMapper
                 $menuItems[] = new ButtonView(
                     label: 'Se connecter en tant que',
                     variant: ColorVariant::DROPDOWN,
-                    url: $this->urlGenerator->generate('home', ['_switch_user' => $user->getLicenceNumber()]),
+                    url: $this->urlContextService->generateUrl('home', ['_switch_user' => $user->getLicenceNumber()], $referer),
                     icon: 'lucide:arrow-left-right',
                 );
             }

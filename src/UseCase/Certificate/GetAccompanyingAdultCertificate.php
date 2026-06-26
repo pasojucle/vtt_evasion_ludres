@@ -47,7 +47,7 @@ class GetAccompanyingAdultCertificate
 
     private function getContent(UserDto $member)
     {
-        $content = $this->messageService->getMessageByName('ACCOMPANYING_ADULT_CERTIFICATE');
+        $content = $this->messageService->getMessageById('ACCOMPANYING_ADULT_CERTIFICATE');
 
         return $this->replaceKeywordsService->replace($content, $member, DisplayModeEnum::FILE);
     }

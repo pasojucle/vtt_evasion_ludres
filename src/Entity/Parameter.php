@@ -7,7 +7,6 @@ namespace App\Entity;
 use App\Repository\ParameterRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
@@ -27,12 +26,9 @@ class Parameter
 
     public const TYPE_TEXT = 6;
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
-    private int $id;
-
     #[Column(type: 'string', length: 100)]
-    private string $name;
+    #[Id]
+    private string $id;
 
     #[Column(type: 'string', length: 150)]
     private string $label;
@@ -43,23 +39,18 @@ class Parameter
     #[Column(type: 'text')]
     private string $value;
 
-    #[ManyToOne(targetEntity: ParameterGroup::class, inversedBy: 'parameters')]
+    #[ManyToOne(targetEntity: Section::class, inversedBy: 'parameters')]
     #[JoinColumn(nullable: false)]
-    private ParameterGroup $parameterGroup;
+    private Section $section;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function setId(string $id): self
     {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
+        $this->id = $id;
 
         return $this;
     }
@@ -108,14 +99,14 @@ class Parameter
         return $this;
     }
 
-    public function getParameterGroup(): ?ParameterGroup
+    public function getSection(): ?Section
     {
-        return $this->parameterGroup;
+        return $this->section;
     }
 
-    public function setParameterGroup(?ParameterGroup $parameterGroup): self
+    public function setSection(?Section $section): self
     {
-        $this->parameterGroup = $parameterGroup;
+        $this->section = $section;
 
         return $this;
     }

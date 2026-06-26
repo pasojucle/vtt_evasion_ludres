@@ -19,6 +19,7 @@ use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\WikiMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -31,11 +32,13 @@ class ProductAdminListMapper
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
         private WikiMapper $wikiMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, ProductFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
         $items = [];
         /** @var Product $entity */
         foreach ($entities as $entity) {
@@ -47,14 +50,14 @@ class ProductAdminListMapper
                 ],
                 indicators: $entity->getSizes()->map(fn ($size) => new BadgeView($size->getName()))->toArray(),
                 status: new BadgeView($state->trans($this->translator), $state->variant()),
-                dropdown: $this->getDropdown($entity),
+                dropdown: $this->getDropdown($entity, $referer),
                 url: $this->urlGenerator->generate("admin_product", ['product' => $entity->getId()]),
                 gridTemplateBadges: 'grid-cols-[1fr_70px]',
             );
         }
 
         return new ListView(
-            id: 'product_container',
+            name: 'product',
             title: 'Boutique',
             description: 'Administration des produits aux couleurs du club vendus en lignes.',
             items: $items,
@@ -78,13 +81,13 @@ class ProductAdminListMapper
         );
     }
 
-    private function getDropdown(Product $product): DropdownView
+    private function getDropdown(Product $product, string $referer): DropdownView
     {
         $menuItems = [];
         if ($product->isDisabled()) {
             $menuItems[] = new ButtonView(
                 label: 'Activer',
-                url: $this->urlGenerator->generate('admin_product_disable', ['product' => $product->getId()]),
+                url: $this->urlContextService->generateUrl('admin_product_toggle', ['product' => $product->getId()], $referer),
                 icon: 'lucide:toggle-left',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
@@ -95,7 +98,7 @@ class ProductAdminListMapper
         } else {
             $menuItems[] = new ButtonView(
                 label: 'Désactiver',
-                url: $this->urlGenerator->generate('admin_product_disable', ['product' => $product->getId()]),
+                url: $this->urlContextService->generateUrl('admin_product_toggle', ['product' => $product->getId()], $referer),
                 icon: 'lucide:toggle-right',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
@@ -107,7 +110,7 @@ class ProductAdminListMapper
 
         $menuItems[] = new ButtonView(
             label: 'Supprimer',
-            url: $this->urlGenerator->generate('admin_product_delete', ['product' => $product->getId()]),
+            url: $this->urlContextService->generateUrl('admin_product_delete', ['product' => $product->getId()], $referer),
             icon: 'lucide:delete',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [

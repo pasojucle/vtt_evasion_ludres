@@ -4,20 +4,30 @@ declare(strict_types=1);
 
 namespace App\State\Background\Processor;
 
+use App\Dto\State\ProcessorResult;
 use App\Entity\Background;
+use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class BackgroundDeleteProcessor
+class BackgroundDeleteProcessor implements DialogProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function process(Background $entity): void
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
+        /** @var Background $entity */
         $this->entityManager->remove($entity);
 
         $this->entityManager->flush();
+
+        return new ProcessorResult(
+            success: true,
+            messageKey: 'background.flash.success.delete',
+            targetUrl: $targetUrl,
+            flashType: 'success'
+        );
     }
 }

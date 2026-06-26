@@ -10,7 +10,6 @@ class SecondHandFileLocation extends AbstractFileLocation
 {
     public function supports(string $className): bool
     {
-
         return $className === SecondHandImage::class;
     }
 

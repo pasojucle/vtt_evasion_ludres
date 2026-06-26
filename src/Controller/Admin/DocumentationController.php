@@ -15,7 +15,6 @@ use App\Service\PaginatorService;
 use App\State\Documentation\Processor\DocumentationDeleteProcessor;
 use App\State\Documentation\Provider\DocumentationDeleteProvider;
 use App\UseCase\Documentation\EditDocumentation;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/documentation', name: 'admin_documentation_')]
-class DocumentationController extends AbstractController
+class DocumentationController extends AbstractCrudController
 {
     public function __construct(
         private DocumentationRepository $documentationRepository,
@@ -47,7 +46,7 @@ class DocumentationController extends AbstractController
             'documentations' => $documentations,
             'paginator' => $paginatorDtoTransformer->fromEntities($documentations),
             'settings' => [
-                'messages' => $messageService->getMessagesBySectionName('DOCUMENTATION'),
+                'messages' => $messageService->getMessagesBySection('DOCUMENTATION'),
             ],
         ]);
     }
@@ -104,27 +103,12 @@ class DocumentationController extends AbstractController
         DocumentationDeleteProvider $provider,
         Documentation $documentation
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($documentation);
-
-                return $this->redirectToRoute('admin_documentation_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($documentation),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $documentation,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/ordonner/{documentation}', name: 'order', methods: ['POST'], options:['expose' => true])]

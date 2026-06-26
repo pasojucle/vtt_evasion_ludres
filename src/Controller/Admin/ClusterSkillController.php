@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\ClusterSkillDto;
 use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Entity\Cluster;
 use App\Entity\MemberSkill;
@@ -16,15 +17,13 @@ use App\State\Cluster\Provider\ClusterSkillDeleteProvider;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Turbo\TurboBundle;
 
-class ClusterSkillController extends AbstractController
+class ClusterSkillController extends AbstractCrudController
 {
     public function __construct(
         private SkillDtoTransformer $skillDtoTransformer,
@@ -94,34 +93,12 @@ class ClusterSkillController extends AbstractController
         Cluster $cluster,
         Skill $skill,
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($cluster, $skill);
-                
-                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-
-                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                    return $this->render('cluster/admin/skill_deleted.stream.html.twig', [
-                        'skillId' => $skill->getId(),
-                    ]);
-                }
-
-                return $this->redirectToRoute('admin_cluster_skills', ['cluster' => $cluster->getId()]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($skill),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            new ClusterSkillDto($cluster, $skill),
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/admin/groupe/evaluation/assess/{cluster}/{skill}', name: 'admin_cluster_skill_assess', methods: ['GET', 'POST'])]

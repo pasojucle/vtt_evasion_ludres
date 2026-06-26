@@ -9,7 +9,7 @@
                 <h1 class="font-bold text-3xl">Gestion des types de randos</h1>
             </div>
             <div class="ml-auto flex gap-2 items-center">
-                <a href="{{ path('admin_bike_rides') }}" class="text-foreground lg:text-muted lg:hover:text-foreground" title="Retour à la liste des randos">{{ ux_icon('lucide:chevron-left', { class: 'w-6 h-6' }) }}</a>
+                <a href="{{ path('admin_bike_ride_list') }}" class="text-foreground lg:text-muted lg:hover:text-foreground" title="Retour à la liste des randos">{{ ux_icon('lucide:chevron-left', { class: 'w-6 h-6' }) }}</a>
                 {% include 'components/_dropdown.html.twig' with {'dropdown': settings} %}
             </div>
         </div>

@@ -177,7 +177,7 @@ class ContentController extends AbstractController
                     $data['email'],
                     sprintf('%s %s', $data['name'], $data['firstName']),
                     $data['subject'],
-                    $messageService->getMessageByName('EMAIL_FORM_CONTACT')
+                    $messageService->getMessageById('EMAIL_FORM_CONTACT')
                 )->success) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 

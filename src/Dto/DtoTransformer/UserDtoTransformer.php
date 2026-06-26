@@ -263,7 +263,7 @@ class UserDtoTransformer
 
     private function canRenewRegistration(LicenceDto $lastLicence): bool
     {
-        return $this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED')
+        return $this->parameterService->getParameterById('NEW_SEASON_RE_REGISTRATION_ENABLED')
             && in_array($lastLicence->state['value'], [LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED])
             && $lastLicence->season === $this->seasonService->getSeasonForRenew();
     }

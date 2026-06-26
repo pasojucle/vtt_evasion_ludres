@@ -8,7 +8,6 @@ use App\Dto\State\ProcessorResult;
 use App\Entity\Survey;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
-use App\Service\FilterDecoderService;
 use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -18,11 +17,10 @@ class SurveyDeleteProcessor implements DialogProcessorInterface
         private EntityManagerInterface $entityManager,
         private SurveyResponseRepository $surveyResponseRepository,
         private RespondentRepository $respondentRepository,
-        private FilterDecoderService $filterDecoder,
     ) {
     }
 
-    public function process(object $entity, ?string $filter): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
         assert($entity instanceof Survey);
         $this->surveyResponseRepository->deleteBySurvey($entity);
@@ -36,8 +34,7 @@ class SurveyDeleteProcessor implements DialogProcessorInterface
 
         return new ProcessorResult(
             success: true,
-            targetRoute: 'admin_survey_list',
-            routeParams: $this->filterDecoder->decode($filter),
+            targetUrl: $targetUrl,
             messageKey: 'registration.flash.success.received',
         );
     }

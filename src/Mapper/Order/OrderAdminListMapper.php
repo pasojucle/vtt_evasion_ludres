@@ -23,6 +23,7 @@ use App\Mapper\PaginatorMapper;
 use App\Mapper\WikiMapper;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\OrderService;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -37,11 +38,13 @@ class OrderAdminListMapper
         private PaginatorMapper $paginatorMapper,
         private FilterChipsMapper $filterChipsMapper,
         private WikiMapper $wikiMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
         $items = [];
         /** @var OrderHeader $entity */
         foreach ($entities as $entity) {
@@ -53,7 +56,7 @@ class OrderAdminListMapper
                     new LabelView($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), LabelView::TYPE_NUMBER),
                 ],
                 status: new BadgeView($status->trans($this->translator), $status->variant()),
-                dropdown: $this->getDropdown($entity),
+                dropdown: $this->getDropdown($entity, $referer),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 action: $this->getAction($entity, $currentPage, $filter),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
@@ -63,11 +66,11 @@ class OrderAdminListMapper
         }
 
         return new ListView(
-            id: 'orders_container',
+            name: 'orders',
             title: 'Commandes',
             description: 'Administration des commandes de la boutique: état des stocks, validation.',
             items: $items,
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER', RoundedVariant::ROUNDED_END),
+            settings: $this->dropdownSettingsMapper->mapToView('ORDER', $referer, RoundedVariant::ROUNDED_END),
             tools: $this->getTools($filter->toArray()),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -119,13 +122,13 @@ class OrderAdminListMapper
         return null;
     }
 
-    private function getDropdown(OrderHeader $order): DropdownView
+    private function getDropdown(OrderHeader $order, string $referer): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Supprimer',
-                    url: $this->urlGenerator->generate('order_delete', ['orderHeader' => $order->getId()]),
+                    url: $this->urlContextService->generateUrl('order_delete', ['orderHeader' => $order->getId()], $referer),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

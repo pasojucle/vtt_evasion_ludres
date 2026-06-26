@@ -6,7 +6,6 @@ namespace App\State\Coverage\Processor;
 
 use App\Dto\State\ProcessorResult;
 use App\Entity\Licence;
-use App\Service\FilterDecoderService;
 use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -14,11 +13,10 @@ class CoverageValidateProcessor implements DialogProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private FilterDecoderService $filterDecoder,
     ) {
     }
 
-    public function process(object $entity, ?string $filter): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
         /** @var Licence $entity */
         $entity->setCurrentSeasonForm(true);
@@ -26,8 +24,7 @@ class CoverageValidateProcessor implements DialogProcessorInterface
 
         return new ProcessorResult(
             success: false,
-            targetRoute: 'admin_coverage_list',
-            routeParams: $this->filterDecoder->decode($filter),
+            targetUrl: $targetUrl,
             messageKey: 'coverage.flash.success.valided',
             flashType: 'succes',
         );

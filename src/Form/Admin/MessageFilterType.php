@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\ParameterGroup;
+use App\Entity\Section;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,7 +18,7 @@ class MessageFilterType extends AbstractType
             ->add('section', EntityType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
-                'class' => ParameterGroup::class,
+                'class' => Section::class,
                 'choice_label' => 'label',
                 'row_attr' => [
                     'class' => 'form-group-inline',

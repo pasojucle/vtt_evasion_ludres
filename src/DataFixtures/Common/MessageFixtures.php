@@ -7,6 +7,7 @@ namespace App\DataFixtures\Common;
 use App\Entity\Enum\LevelType;
 use App\Entity\Message;
 use App\Entity\ParameterGroup;
+use App\Entity\Section;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -111,9 +112,9 @@ class MessageFixtures extends AbstractFixture implements FixtureGroupInterface, 
         ];
 
         foreach ($messages as $ref => [$section, $name, $label, $content, $levelType, $protected]) {
-            $parameterGroupRef = ($section) ? $this->getReference($section, ParameterGroup::class) : null;
+            $parameterGroupRef = ($section) ? $this->getReference($section, Section::class) : null;
             $message = new Message();
-            $message->setName($name)
+            $message->setId($name)
                 ->setLabel($label)
                 ->setLevelType(LevelType::tryFrom($levelType))
                 ->setContent($content)

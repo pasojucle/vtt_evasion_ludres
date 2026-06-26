@@ -22,7 +22,7 @@ class SeasonService
 
     private function getSeasonStartAt(): array
     {
-        if (!$seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT')) {
+        if (!$seasonStartAt = $this->parameterService->getParameterById('SEASON_START_AT')) {
             throw new \LogicException('Parameter SEASON_START_AT is missing or invalid.');
         }
 
@@ -60,7 +60,7 @@ class SeasonService
     {
         $today = new DateTime();
 
-        $requirementSeasonLicenceAtParam = $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_AT');
+        $requirementSeasonLicenceAtParam = $this->parameterService->getParameterById('REQUIREMENT_SEASON_LICENCE_AT');
 
         return ($requirementSeasonLicenceAtParam['month'] <= (int) $today->format('m') && $requirementSeasonLicenceAtParam['day'] <= (int) $today->format('d'))
             ? (int) $today->format('Y')

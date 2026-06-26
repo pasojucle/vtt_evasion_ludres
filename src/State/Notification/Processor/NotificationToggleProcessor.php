@@ -4,20 +4,30 @@ declare(strict_types=1);
 
 namespace App\State\Notification\Processor;
 
+use App\Dto\State\ProcessorResult;
 use App\Entity\Notification;
+use App\State\DialogProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class NotificationToggleProcessor
+class NotificationToggleProcessor implements DialogProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {
     }
 
-    public function process(Notification $entity): void
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
+        /** @var Notification $entity */
         $entity->setIsDisabled(!$entity->isDisabled());
         
         $this->entityManager->flush();
+
+        return new ProcessorResult(
+            success: true,
+            messageKey: 'notification.flash.success.toggle',
+            targetUrl: $targetUrl,
+            flashType: 'success'
+        );
     }
 }

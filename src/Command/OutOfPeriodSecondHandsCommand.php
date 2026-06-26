@@ -45,7 +45,7 @@ class OutOfPeriodSecondHandsCommand extends Command
         $this->output = $output;
         $this->ssio = new SymfonyStyle($input, $this->output);
 
-        $duration = $this->parameterService->getParameterByName('SECOND_HAND_DURATION');
+        $duration = $this->parameterService->getParameterById('SECOND_HAND_DURATION');
         $deadline = (new DateTimeImmutable())->setTime(0, 0, 0)->sub(new DateInterval(sprintf('P%sD', $duration)));
         $secondHands = $this->secondHandRepository->findOutOfPeriod($deadline);
         $this->progressBar = new ProgressBar($this->output, count($secondHands));
@@ -67,11 +67,11 @@ class OutOfPeriodSecondHandsCommand extends Command
     {
         $identity = $secondHand->getMember()->getMainIdentity();
         $subject = sprintf('Votre annonce %s', $secondHand->getName());
-        $content = $this->messageService->getMessageByName('SECOND_HAND_DISABLED_MESSAGE');
+        $content = $this->messageService->getMessageById('SECOND_HAND_DISABLED_MESSAGE');
         $params = [
             '{{ url }}' => $this->urlGenerator->generate('second_hand_user_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
             '{{ nom_annonce }}' => $secondHand->getName(),
-            '{{ durree }}' => $this->parameterService->getParameterByName('SECOND_HAND_DURATION'),
+            '{{ durree }}' => $this->parameterService->getParameterById('SECOND_HAND_DURATION'),
         ];
         $content = $this->replaceKeywords->replaceFromParams($content, $params);
         

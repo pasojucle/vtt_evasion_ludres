@@ -10,6 +10,7 @@ use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\BikeRide;
+use App\Service\UrlContextService;
 use DateTimeImmutable;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,11 +19,12 @@ class ActivityAdminDropdownMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private UrlContextService $urlContextService,
         private Security $security,
     ) {
     }
 
-    public function mapToView(BikeRide $bikeRide): DropdownView
+    public function mapToView(BikeRide $bikeRide, string $referer): DropdownView
     {
         $menuItems = [];
         if ($this->security->isGranted('ROLE_ADMIN')) {
@@ -35,7 +37,7 @@ class ActivityAdminDropdownMapper
             if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
                 $menuItems[] = new ButtonView(
                     label: 'Annuler',
-                    url: $this->urlGenerator->generate('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()]),
+                    url: $this->urlContextService->generateUrl('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()], $referer),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

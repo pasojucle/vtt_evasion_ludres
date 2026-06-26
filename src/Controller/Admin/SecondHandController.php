@@ -35,7 +35,6 @@ class SecondHandController extends AbstractCrudController
         Request $request,
     ): Response {
         return $this->handleListAction(
-            'admin_second_hand_list',
             SecondHandFilter::class,
             $provider,
             $request
@@ -83,18 +82,18 @@ class SecondHandController extends AbstractCrudController
     #[Route('/delete/{secondHand}', name: 'delete', methods: ['GET', 'POST'])]
     #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
      public function delete(
-        Request $request,
-        SecondHandDeleteProcessor $processor,
-        SecondHandDeleteProvider $provider,
-        SecondHand $secondHand
-    ): Response {
-        return $this->handleDialogAction(
-            $request,
-            $secondHand,
-            $provider,
-            $processor,
-        );
-    }
+         Request $request,
+         SecondHandDeleteProcessor $processor,
+         SecondHandDeleteProvider $provider,
+         SecondHand $secondHand
+     ): Response {
+         return $this->handleFormComponentAction(
+             $request,
+             $secondHand,
+             $provider,
+             $processor,
+         );
+     }
     
     #[Route('/valider/{secondHand}', name: 'validate', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]

@@ -25,6 +25,7 @@ use App\Mapper\PaginatorMapper;
 use App\Mapper\Registration\RegistrationDropdownMapper;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\SeasonService;
+use App\Service\UrlContextService;
 use App\Service\UserService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -41,6 +42,7 @@ class RegistrationListMapper
         private UserService $userService,
         private TranslatorInterface $translator,
         private SeasonService $seasonService,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -51,6 +53,8 @@ class RegistrationListMapper
         RegistrationFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams());
+
         $items = [];
         /** @var Member $entity */
         foreach ($entities as $entity) {
@@ -66,7 +70,7 @@ class RegistrationListMapper
                     value:$state->shortTrans($this->translator),
                     variant: $state->variant(),
                 ),
-                dropdown: $this->registrationDropdownMapper->mapToView($entity),
+                dropdown: $this->registrationDropdownMapper->mapToView($entity, $referer),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
                 action: $this->getAction($licence, $currentPage, $filter),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_2fr]',
@@ -75,11 +79,11 @@ class RegistrationListMapper
         }
 
         return new ListView(
-            id: 'Registrations_container',
+            name: 'registration',
             title: 'Inscriptions',
             description: sprintf('Administration des inscriptions pour la saison %s.', $this->seasonService->getCurrentSeason()),
             items: $items,
-            settings: $this->settings(),
+            settings: $this->settings($referer),
             tools: $this->tools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
@@ -94,9 +98,9 @@ class RegistrationListMapper
         );
     }
 
-    public function settings(): DropdownView
+    public function settings(string $referer): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('REGISTRATION', RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('REGISTRATION', $referer, RoundedVariant::ROUNDED, [
             new ButtonView(
                 label: 'Étapes des inscriptions',
                 url: $this->urlGenerator->generate('admin_registration_step_list'),

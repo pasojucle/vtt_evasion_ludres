@@ -8,10 +8,10 @@ use App\Dto\View\DialogModalView;
 use App\Dto\Enum\DialogType;
 use App\Entity\<?= $entity_name ?>;
 use App\Mapper\DestructiveModalMapper;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 
 
-class <?= $entity_name ?><?= $action_name ?>Provider implements DialogProviderInterface
+class <?= $entity_name ?><?= $action_name ?>Provider implements FormComponentProviderInterface
 {
      public function __construct(
         // private DestructiveModalMapper $destructiveModalMapper,
@@ -20,6 +20,9 @@ class <?= $entity_name ?><?= $action_name ?>Provider implements DialogProviderIn
 
     }
 
+    /**
+    * @implements FormComponentProviderInterface<<?= $entity_name ?>>
+    */
     public function mapToView(object  $entity): DialogModalView
     {
 

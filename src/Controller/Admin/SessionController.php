@@ -107,10 +107,10 @@ class SessionController extends AbstractController
 
         $message = '';
         if ($userDto->mustProvideRegistration) {
-            $message = $messageService->getMessageByName('BIKE_RIDE_MUST_PROVIDE_REGISTRATION', $member);
+            $message = $messageService->getMessageById('BIKE_RIDE_MUST_PROVIDE_REGISTRATION', $member);
         }
         if ($userDto->isEndTesting) {
-            $message = $messageService->getMessageByName('BIKE_RIDE_END_TESTING', $member);
+            $message = $messageService->getMessageById('BIKE_RIDE_END_TESTING', $member);
         }
 
         return $this->render('session/admin/message.html.twig', [

@@ -8,13 +8,12 @@ use App\Dto\DtoTransformer\ProductDtoTransformer;
 use App\Dto\Filter\ProductFilter;
 use App\Entity\Product;
 use App\Form\Admin\ProductType;
-use App\Form\Filter\ListFilterType;
 use App\Service\Product\ProductEditService;
 use App\State\Product\Processor\ProductDeleteProcessor;
+use App\State\Product\Processor\ProductToggleProcessor;
 use App\State\Product\Provider\ProductAdminListProvider;
 use App\State\Product\Provider\ProductDeleteProvider;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\State\Product\Provider\ProductToggleProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,7 +22,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ProductController extends AbstractCrudController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private ProductDtoTransformer $productDtoTransformer
     ) {
     }
@@ -35,7 +33,6 @@ class ProductController extends AbstractCrudController
         Request $request
     ): Response {
         return $this->handleListAction(
-            'admin_product_list',
             ProductFilter::class,
             $provider,
             $request
@@ -96,54 +93,27 @@ class ProductController extends AbstractCrudController
         ProductDeleteProvider $provider,
         Product $product
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($product);
-
-                return $this->redirectToRoute('admin_products');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($product),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $product,
+            $provider,
+            $processor
+        );
     }
 
-    #[Route('/admin/desactiver/produit/{product}', name: 'admin_product_disable', methods: ['GET', 'POST'])]
+    #[Route('/admin/toggle/produit/{product}', name: 'admin_product_toggle', methods: ['GET', 'POST'])]
     #[IsGranted('PRODUCT_EDIT', 'product')]
     public function adminProduitDisbaled(
         Request $request,
+        ProductToggleProvider $provider,
+        ProductToggleProcessor $processor,
         Product $product
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $product->setDisabled(!$product->isDisabled());
-                $this->entityManager->flush();
-
-                return $this->redirectToRoute('admin_products');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('notification/admin/disabled.modal.html.twig', [
-            'product' => $this->productDtoTransformer->fromEntity($product),
-            'form' => $form->createView(),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $product,
+            $provider,
+            $processor
+        );
     }
 }

@@ -6,7 +6,7 @@ namespace App\Dto\View;
 
 use App\Dto\Enum\DialogType;
 
-readonly class DialogModalView
+readonly class DialogModalView implements ComponentViewInterface
 {
     public function __construct(
         public DialogType $type,
@@ -15,5 +15,19 @@ readonly class DialogModalView
         public string $message,
         public string $icon
     ) {
+    }
+
+    public function getTemplate(): string
+    {
+        return 'components/_dialog.modal.html.twig';
+    }
+
+
+    public function getFormAttr(): array
+    {
+        return [
+            'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            'data-turbo-frame' => '_top'
+        ];
     }
 }

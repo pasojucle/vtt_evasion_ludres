@@ -20,6 +20,6 @@ class DefaultController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('admin_dashboard');
         }
-        return $this->redirectToRoute('admin_bike_rides');
+        return $this->redirectToRoute('admin_bike_ride_list');
     }
 }

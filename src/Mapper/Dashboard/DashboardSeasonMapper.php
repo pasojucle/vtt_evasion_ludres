@@ -95,7 +95,7 @@ class DashboardSeasonMapper
 
     private function getBadgeStateParameter(string $name): BadgeView
     {
-        $value = $this->parameterService->getParameterByName($name);
+        $value = $this->parameterService->getParameterById($name);
         if (true === $value) {
             return new BadgeView(
                 value: 'lucide:toggle-right',

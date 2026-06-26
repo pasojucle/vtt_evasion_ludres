@@ -121,7 +121,7 @@ class SessionController extends AbstractController
         if (!$bikeRide->registrationEnabled()) {
             return $this->render('session/can_unsubscribe.html.twig', [
                 'session' => $session,
-                'can_unsubcribe_message' => $messageService->getMessageByName('BIKE_RIDE_CAN_UNSUBSCRIBE_MESSAGE')
+                'can_unsubcribe_message' => $messageService->getMessageById('BIKE_RIDE_CAN_UNSUBSCRIBE_MESSAGE')
             ]);
         }
         $form = $formFactory->create();
@@ -150,7 +150,7 @@ class SessionController extends AbstractController
     ) {
         return $this->render('session/registration_closed.modal.html.twig', [
             'bike_ride' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
-            'message' => $bikeRide->getRegistrationClosedMessage() ?? $messageService->getMessageByName('REGISTRATION_CLOSED_DEFAULT_MESSAGE')
+            'message' => $bikeRide->getRegistrationClosedMessage() ?? $messageService->getMessageById('REGISTRATION_CLOSED_DEFAULT_MESSAGE')
         ]);
     }
 

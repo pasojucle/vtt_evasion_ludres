@@ -36,14 +36,13 @@ class BikeRideController extends AbstractCrudController
     ) {
     }
 
-    #[Route('/calendrier', name: 'admin_bike_rides', methods: ['GET'])]
+    #[Route('/calendrier', name: 'admin_bike_ride_list', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminList(
         Request $request,
         ActivityAdminListProvider $provider,
     ): Response {
         return $this->handleListAction(
-            'admin_bike_rides',
             ActivityFilter::class,
             $provider,
             $request
@@ -57,7 +56,7 @@ class BikeRideController extends AbstractCrudController
         EditBikeRide $editBikeRide
     ): Response {
         $bikeRide = null;
-        $filters = $request->getSession()->get('admin_bike_rides_filters');
+        $filters = $request->getSession()->get('admin_bike_ride_list_filters');
         $form = $this->createForm(BikeRideType::class, $bikeRide);
 
         $form->handleRequest($request);
@@ -69,7 +68,7 @@ class BikeRideController extends AbstractCrudController
 
             $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
 
-            return $this->redirectToRoute('admin_bike_rides', $filters);
+            return $this->redirectToRoute('admin_bike_ride_list', $filters);
         }
 
         return $this->render('bike_ride/admin/edit.html.twig', [
@@ -86,7 +85,7 @@ class BikeRideController extends AbstractCrudController
         EditBikeRide $editBikeRide,
         ?BikeRide $bikeRide
     ): Response {
-        $filters = $request->getSession()->get('admin_bike_rides_filters');
+        $filters = $request->getSession()->get('admin_bike_ride_list_filters');
         $form = $this->createForm(BikeRideType::class, $bikeRide);
 
         $form->handleRequest($request);
@@ -98,7 +97,7 @@ class BikeRideController extends AbstractCrudController
 
             $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
 
-            return $this->redirectToRoute('admin_bike_rides', $filters);
+            return $this->redirectToRoute('admin_bike_ride_list', $filters);
         }
 
         return $this->render('bike_ride/admin/edit.html.twig', [
@@ -114,7 +113,7 @@ class BikeRideController extends AbstractCrudController
         Request $request,
         BikeRide $bikeRide,
     ): Response {
-        $filters = $request->getSession()->get('admin_bike_rides_filters');
+        $filters = $request->getSession()->get('admin_bike_ride_list_filters');
         $request->getSession()->set("last_list_url", $request->getUri());
 
         return $this->render('bike_ride/admin/show.html.twig', [
@@ -181,7 +180,7 @@ class BikeRideController extends AbstractCrudController
         ActivityDeleteProcessor $processor,
         BikeRide $bikeRide
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             $request,
             $bikeRide,
             $provider,

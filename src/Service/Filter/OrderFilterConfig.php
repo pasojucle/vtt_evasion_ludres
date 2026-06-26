@@ -43,7 +43,8 @@ class OrderFilterConfig implements FilterConfigInterface
                     'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
-            ])
+            ]
+            )
         ];
     }
 

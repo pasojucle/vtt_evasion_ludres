@@ -24,6 +24,7 @@ use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\WikiMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -36,6 +37,7 @@ class UserListMapper
         private UserDropdownMapper $userDropdownMapper,
         private PaginatorMapper $paginatorMapper,
         private WikiMapper $wikiMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -46,6 +48,8 @@ class UserListMapper
         UserFilter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
         /** @var Member $entity */
         foreach ($entities as $entity) {
@@ -60,7 +64,7 @@ class UserListMapper
                     value:$level->getTitle(),
                     color: $level->getColor(),
                 ),
-                dropdown: $this->userDropdownMapper->mapToView($entity),
+                dropdown: $this->userDropdownMapper->mapToView($entity, $referer),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateBadges: 'grid-cols-[auto_160px]',
@@ -68,11 +72,11 @@ class UserListMapper
         }
 
         return new ListView(
-            id: 'users_container',
+            name: 'user',
             title: 'Adhérents ',
             description: 'Administration des adhérents du club',
             items: $items,
-            settings: $this->settings(),
+            settings: $this->settings($referer),
             tools: $this->getTools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
@@ -89,9 +93,9 @@ class UserListMapper
     }
 
 
-    private function settings(): DropdownView
+    private function settings(string $referer): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('USER', RoundedVariant::ROUNDED_END, [
+        return $this->dropdownSettingsMapper->mapToView('USER', $referer, RoundedVariant::ROUNDED_END, [
             new ButtonView(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_level_list'),

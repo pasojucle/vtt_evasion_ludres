@@ -7,6 +7,7 @@ namespace App\Mapper\BikeRideType;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
+use App\Dto\Filter\ActivityFilter;
 use App\Dto\Filter\BikeRideTypeFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
@@ -20,6 +21,7 @@ use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -27,6 +29,7 @@ class BikeRideTypeListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private UrlContextService $urlContextService,
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
@@ -40,6 +43,8 @@ class BikeRideTypeListMapper
         BikeRideTypeFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
 
         /** @var BikeRideType $entity */
@@ -48,16 +53,16 @@ class BikeRideTypeListMapper
                 labels: [
                     new LabelView($entity->getName()),
                 ],
-                dropdown: $this->dropDown($entity),
+                dropdown: $this->dropDown($entity, $referer),
             );
         }
 
         return new ListView(
-            id: 'bike_ride_types_contrainer',
+            name: 'bike_ride_type',
             title: 'Type d\'activité',
             description: 'Administration des types d\'activité.',
             items: $items,
-            settings: $this->settings(),
+            settings: $this->settings($referer),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -77,25 +82,29 @@ class BikeRideTypeListMapper
         );
     }
 
-    private function settings(): DropdownView
+    private function settings(string $referer): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', $referer, RoundedVariant::ROUNDED, [
             new ButtonView(
                 label: 'Ajouter un message',
-                url: $this->urlGenerator->generate('admin_message_add', ['sectionName' => 'BIKE_RIDE_TYPE']),
+                url: $this->urlContextService->generateUrl('admin_message_add', [
+                    'sectionName' => 'BIKE_RIDE_TYPE'
+                ], $referer),
                 icon: 'lucide:message-circle-plus',
                 variant: ColorVariant::DROPDOWN,
             ),
         ]);
     }
 
-    private function dropDown(BikeRideType $entity): DropdownView
+    private function dropDown(BikeRideType $entity, string $referer): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Modifier',
-                    url: $this->urlGenerator->generate('admin_bike_ride_type_edit', ['bikeRideType' => $entity->getId()]),
+                    url: $this->urlContextService->generateUrl('admin_bike_ride_type_edit', [
+                        'bikeRideType' => $entity->getId()
+                        ], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),

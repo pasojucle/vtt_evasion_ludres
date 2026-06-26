@@ -7,11 +7,13 @@ namespace App\State\Notification\Provider;
 use App\Dto\Enum\DialogType;
 use App\Dto\View\DialogModalView;
 use App\Entity\Notification;
+use App\State\FormComponentProviderInterface;
 
-class NotificationToggleProvider
+class NotificationToggleProvider implements FormComponentProviderInterface
 {
-    public function mapToView(Notification $entity): DialogModalView
+    public function mapToView(object $entity): DialogModalView
     {
+        /** @var Notification $entity */
         if ($entity->isDisabled()) {
             return new DialogModalView(
                 type: DialogType::SUCCESS,

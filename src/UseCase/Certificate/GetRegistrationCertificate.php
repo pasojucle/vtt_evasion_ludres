@@ -49,8 +49,8 @@ class GetRegistrationCertificate
     private function getContent(UserDto $member)
     {
         $content = (LicenceCategoryEnum::ADULT === $member->lastLicence->category)
-            ? $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_ADULT')
-            : $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_SCHOOL');
+            ? $this->messageService->getMessageById('REGISTRATION_CERTIFICATE_ADULT')
+            : $this->messageService->getMessageById('REGISTRATION_CERTIFICATE_SCHOOL');
 
         return $this->replaceKeywordsService->replace($content, $member, DisplayModeEnum::FILE);
     }

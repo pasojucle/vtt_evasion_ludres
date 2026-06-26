@@ -58,10 +58,10 @@ class EditBackground
 
         foreach ($sizes as $size) {
             $this->resizeBackground(
-                $background->getFilename(), 
-                $size['positions'], 
-                $size['outputWidth'], 
-                $size['outputHeight'], 
+                $background->getFilename(),
+                $size['positions'],
+                $size['outputWidth'],
+                $size['outputHeight'],
                 $this->resolver->getDirectory($background),
                 $size['outputDir']
             );
@@ -69,14 +69,13 @@ class EditBackground
     }
 
     public function resizeBackground(
-        string $filename, 
-        array $positions, 
-        int $outputWidth, 
-        int $outputHeight, 
+        string $filename,
+        array $positions,
+        int $outputWidth,
+        int $outputHeight,
         string $baseDir,
         string $outputDir
-    ): bool
-    {
+    ): bool {
         $inputPath = $this->fileService->join($baseDir, $filename);
         list($originWidth, $originHeight, $type) = getimagesize($inputPath);
 

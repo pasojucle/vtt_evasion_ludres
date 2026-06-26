@@ -22,11 +22,11 @@ class DisabledNewSeasonReRegistration
 
     public function execute(): ?array
     {
-        $newSeasonReRegistration = $this->parameterRepository->findOneByName('NEW_SEASON_RE_REGISTRATION_ENABLED');
+        $newSeasonReRegistration = $this->parameterRepository->findOneById('NEW_SEASON_RE_REGISTRATION_ENABLED');
         if (!$newSeasonReRegistration->getValue()) {
             return  ['codeError' => 0,  'message' => 'New season re-registration is always desabled'];
         }
-        $seasonStart = $this->parameterService->getParameterByName('SEASON_START_AT');
+        $seasonStart = $this->parameterService->getParameterById('SEASON_START_AT');
         $today = new DateTimeImmutable();
         $season = $this->seasonService->getCurrentSeason();
 

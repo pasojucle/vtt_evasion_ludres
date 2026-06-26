@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures\Common;
 
 use App\Entity\Parameter;
-use App\Entity\ParameterGroup;
+use App\Entity\Section;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -56,15 +56,15 @@ class ParameterFixtures extends AbstractFixture implements FixtureGroupInterface
             self::PARAMETER_LOG_DURATION => ['LOG_DURATION', 'Durrée de conservation des logs (en jours)', '2', '90', ParameterGroupFixtures::PARAMETER_GROUP_MAINTENANCE]
         ];
 
-        foreach ($parameters as $ref => [$name, $label, $type, $value, $parameterGroup]) {
-            $parameterGroupRef = $this->getReference($parameterGroup, ParameterGroup::class);
+        foreach ($parameters as $ref => [$id, $label, $type, $value, $section]) {
+            $parameterGroupRef = $this->getReference($section, Section::class);
             $parameter = new Parameter();
-            $parameter->setName($name)
+            $parameter->setId($id)
                 ->setLabel($label)
                 ->setType((int) $type)
                 ->setValue($value)
                 ->setType((int) $type)
-                ->setParameterGroup($parameterGroupRef)
+                ->setSection($parameterGroupRef)
                 ;
 
             $manager->persist($parameter);

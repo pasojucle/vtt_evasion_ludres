@@ -12,7 +12,6 @@ use App\State\Summary\Processor\SummaryDeleteProcessor;
 use App\State\Summary\Provider\SummaryDeleteProvider;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/actualite/', name: 'admin_summary_')]
-class SummaryController extends AbstractController
+class SummaryController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -92,24 +91,11 @@ class SummaryController extends AbstractController
         SummaryDeleteProvider $provider,
         Summary $summary
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                return $this->redirectToRoute('admin_summary_list', [
-                    'bikeRide' => $processor->process($summary),
-                ]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($summary),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $summary,
+            $provider,
+            $processor
+        );
     }
 }

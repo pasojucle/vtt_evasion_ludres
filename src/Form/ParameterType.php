@@ -70,7 +70,7 @@ class ParameterType extends AbstractType
                     case Parameter::TYPE_MONTH_AND_DAY:
                         $classType = CollectionType::class;
                         $fieldOptions = [
-                            'label' =>false,
+                            'label' => false,
                             'block_prefix' => 'custom_month_and_hour',
                             'entry_options' => [
                                 'label' => false,

@@ -32,7 +32,6 @@ class SkillCategoryController extends AbstractCrudController
         SkillCategoryListProvider $provider
     ): Response {
         return $this->handleListAction(
-            'admin_skill_category_list',
             SkillCategoryFilter::class,
             $provider,
             $request
@@ -108,32 +107,11 @@ class SkillCategoryController extends AbstractCrudController
         SkillCategoryDeleteProcessor $processor,
         SkillCategoryDeleteProvider $provider,
     ): Response {
-        $queryParams = $request->query->all();
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-
-                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                    return $this->render('cluster/admin/skill_deleted.stream.html.twig', [
-                        'skillCategoryId' => $processor->process($skillCategory),
-                    ]);
-                }
-
-                return $this->redirectToRoute('admin_skillcategory_list', $queryParams);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($skillCategory),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $skillCategory,
+            $provider,
+            $processor
+        );
     }
 }

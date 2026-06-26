@@ -18,16 +18,16 @@ class ParameterService
     ) {
     }
 
-    public function getParameterByName(string $name): string|bool|array|int|null
+    public function getParameterById(string $id): string|bool|array|int|null
     {
         $request = $this->requestStack->getCurrentRequest();
         $session = ($request && $request->hasSession()) ? $request->getSession() : null;
 
-        if ($session && $session->has($name)) {
-            return $session->get($name);
+        if ($session && $session->has($id)) {
+            return $session->get($id);
         }
 
-        $parameter = $this->parameterRepository->findOneByName($name);
+        $parameter = $this->parameterRepository->findOneById($id);
         if (!$parameter) {
             return null;
         }
@@ -35,7 +35,7 @@ class ParameterService
         $value = $parameter->getValue();
 
         if ($session) {
-            $session->set($name, $value);
+            $session->set($id, $value);
         }
 
         return $value;
@@ -46,9 +46,9 @@ class ParameterService
         $parameters = [];
         
         /** @var Parameter $parameter */
-        foreach ($this->parameterRepository->findByParameterGroupName($name) as $parameter) {
+        foreach ($this->parameterRepository->findBySectionId($name) as $parameter) {
             $parameters[] = [
-                'name' => $parameter->getName(),
+                'id' => $parameter->getId(),
                 'label' => $this->replaceKeywordsService->replaceCurrentSaison($parameter->getLabel()),
             ];
         };
@@ -57,8 +57,8 @@ class ParameterService
 
     public function getSchoolTestingRegistration(): array
     {
-        $value = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION');
-        $message = $this->messageService->getMessageByName('SCHOOL_TESTING_REGISTRATION_MESSAGE');
+        $value = $this->getParameterById('SCHOOL_TESTING_REGISTRATION');
+        $message = $this->messageService->getMessageById('SCHOOL_TESTING_REGISTRATION_MESSAGE');
         $message = $this->replaceKeywordsService->replace($message);
 
         return [

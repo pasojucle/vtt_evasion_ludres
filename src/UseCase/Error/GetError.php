@@ -74,13 +74,13 @@ class GetError
 
     private function setPersist(LogError &$logError): void
     {
-        $robots = $this->parameterService->getParameterByName('ERROR_USER_AGENT_IGNORE');
+        $robots = $this->parameterService->getParameterById('ERROR_USER_AGENT_IGNORE');
         $pattern = '#%s#i';
         if ($logError->getUserAgent() && 1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
             $logError->setPersist(false);
         }
 
-        $url = $this->parameterService->getParameterByName('ERROR_URL_IGNORE');
+        $url = $this->parameterService->getParameterById('ERROR_URL_IGNORE');
         $pattern = '#%s#i';
         if (1 === preg_match(sprintf($pattern, implode('|', $url)), $logError->getUrl())) {
             $logError->setPersist(false);

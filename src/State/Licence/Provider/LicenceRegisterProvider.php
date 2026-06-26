@@ -8,12 +8,12 @@ use App\Dto\Enum\DialogType;
 use App\Dto\Form\LicenceRegister;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 
 /**
- * @implements DialogProviderInterface<Licence>
+ * @implements FormComponentProviderInterface<Licence>
  */
-class LicenceRegisterProvider implements DialogProviderInterface
+class LicenceRegisterProvider implements FormComponentProviderInterface
 {
     public function mapToView(object $licenceRegister): DialogModalView
     {

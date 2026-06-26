@@ -14,5 +14,5 @@ interface DialogProcessorInterface
     /**
      * @param T $entity
      */
-    public function process(object $entity, ?string $filter): ProcessorResult;
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult;
 }

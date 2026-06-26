@@ -36,7 +36,7 @@
                     <li>
                         <a 
                             class="dropdown-item" 
-                            href="{{ path('admin_parameter_edit', {'name': parameter.name })}}" 
+                            href="{{ path('admin_parameter_edit', {'parameter': parameter.id })}}" 
                             title="{{ parameter.label }}" 
                             data-turbo-frame="modal_content"
                         >

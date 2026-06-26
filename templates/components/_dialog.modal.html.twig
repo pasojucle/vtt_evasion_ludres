@@ -1,11 +1,11 @@
 {% extends 'base_modal_stimulus.html.twig' %}
 
-{% set type = dialog.type %}
+{% set type = view.type %}
 
 {% import "components/_macros.html.twig" as utils %}
-{% block modal_title %}{{ dialog.title|capitalize }}{% endblock %}
+{% block modal_title %}{{ view.title|capitalize }}{% endblock %}
 {% block body %}
-    <p>{{ dialog.message|raw }}</p>
+    <p>{{ view.message|raw }}</p>
     {% for child in form.children %}
         {{ form_row(child) }}
     {% endfor %}
@@ -13,10 +13,10 @@
 {% block action %}
     <button 
         type="submit"
-        class="flex justify-center rounded-md {{ utils.color_class(dialog.type.value) ??  utils.color_class('default')}}"
+        class="flex justify-center rounded-md {{ utils.color_class(view.type.value) ??  utils.color_class('default')}}"
     >
     <div class="flex gap-3 items-center ">
-        {{ ux_icon(dialog.icon, {class: 'size-5'}) }} {{ dialog.action|capitalize }}
+        {{ ux_icon(view.icon, {class: 'size-5'}) }} {{ view.action|capitalize }}
     </div>
     </button>
 {% endblock %}

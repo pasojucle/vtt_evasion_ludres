@@ -10,16 +10,18 @@ use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\Survey;
+use App\Service\UrlContextService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SurveyAdminDropdownMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    public function mapToView(Survey $survey): DropdownView
+    public function mapToView(Survey $survey, string $referer): DropdownView
     {
         $menuItems = [
             new ButtonView(
@@ -44,7 +46,7 @@ class SurveyAdminDropdownMapper
             );
             $menuItems[] = new ButtonView(
                 label: 'Cloturer',
-                url: $this->urlGenerator->generate('admin_survey_disable', ['survey' => $survey->getId()]),
+                url: $this->urlContextService->generateUrl('admin_survey_disable', ['survey' => $survey->getId()], $referer),
                 icon: 'lucide:toggle-left',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
@@ -55,7 +57,7 @@ class SurveyAdminDropdownMapper
         }
         $menuItems[] = new ButtonView(
             label: 'Supprimer',
-            url: $this->urlGenerator->generate('admin_survey_delete', ['survey' => $survey->getId()]),
+            url: $this->urlContextService->generateUrl('admin_survey_delete', ['survey' => $survey->getId()], $referer),
             icon: 'lucide:delete',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [

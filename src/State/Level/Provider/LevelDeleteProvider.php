@@ -7,9 +7,9 @@ namespace App\State\Level\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Level;
 use App\Mapper\DestructiveModalMapper;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 
-class LevelDeleteProvider implements DialogProviderInterface
+class LevelDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,

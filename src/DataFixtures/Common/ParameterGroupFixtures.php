@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use App\Entity\ParameterGroup;
+use App\Entity\Section;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
@@ -47,7 +47,7 @@ class ParameterGroupFixtures extends AbstractFixture implements FixtureGroupInte
         ];
 
         foreach ($parameterGroups as $ref => [$name, $label, $role]) {
-            $parameterGroup = new ParameterGroup();
+            $parameterGroup = new Section();
             $parameterGroup->setName($name)
                 ->setLabel($label)
                 ->setRole($role);

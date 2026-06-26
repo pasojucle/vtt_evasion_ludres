@@ -19,7 +19,6 @@ use App\State\Member\Processor\MemberDeleteProcessor;
 use App\State\Member\Provider\MemberDeleteProvider;
 use App\UseCase\CronTab\CronTabLog;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
@@ -30,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ToolController extends AbstractController
+class ToolController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager
@@ -62,29 +61,12 @@ class ToolController extends AbstractController
         MemberDeleteProvider $provider,
         ?Member $member,
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, $member, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $this->addFlash('success', sprintf(
-                    'Les données de l\'utilisateur %s ont bien été supprimées',
-                    $processor->process($member)
-                ));
-
-                return $this->redirectToRoute('admin_tool_delete_user');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($member),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $member,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/admin/registration/error', name: 'admin_registration_error', methods: ['GET', 'POST'])]
@@ -107,7 +89,7 @@ class ToolController extends AbstractController
             $submit = $form->get('submit');
             $content = ($submit->isClicked())
                 ? mb_convert_encoding($data['content'], 'UTF-8', mb_list_encodings())
-                : $messageService->getMessageByName('EMAIL_REGISTRATION_ERROR');
+                : $messageService->getMessageById('EMAIL_REGISTRATION_ERROR');
             $form = $this->createForm(ToolType::class, [
                 'user' => $data['user'],
                 'content' => $content,
@@ -131,7 +113,7 @@ class ToolController extends AbstractController
         return $this->render('tool/registration_error.html.twig', [
             'form' => $form->createView(),
             'settings' => [
-                'parameters' => $parameterRepository->findByNames(['EMAIL_REGISTRATION_ERROR']),
+                'parameters' => $parameterRepository->findByIds(['EMAIL_REGISTRATION_ERROR']),
             ],
         ]);
     }

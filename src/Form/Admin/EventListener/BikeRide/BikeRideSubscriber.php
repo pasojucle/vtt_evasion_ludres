@@ -58,7 +58,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
         if (null === $bikeRide) {
             $bikeRide = new BikeRide();
             $bikeRide->setBikeRideType($this->bikeRideTypeRepository->findDefault());
-            $bikeRide->setRegistrationClosedMessage($this->messageService->getMessageByName('REGISTRATION_CLOSED_DEFAULT_MESSAGE'));
+            $bikeRide->setRegistrationClosedMessage($this->messageService->getMessageById('REGISTRATION_CLOSED_DEFAULT_MESSAGE'));
         }
         $this->setRestriction($bikeRide);
 

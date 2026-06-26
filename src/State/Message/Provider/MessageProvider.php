@@ -25,7 +25,6 @@ class MessageProvider
         foreach ($this->messageRepository->findBySectionNameAndQuery($name) as $message) {
             $messages[] = [
                 'id' => $message->getId(),
-                'name' => $message->getName(),
                 'label' => $this->replaceKeywords->replaceCurrentSaison($message->getLabel()),
             ];
         };
@@ -33,9 +32,9 @@ class MessageProvider
         return $messages;
     }
 
-    public function getMessageByName(string $name, ?Member $user = null): ?string
+    public function getMessageById(string $id, ?Member $user = null): ?string
     {
-        $message = $this->messageRepository->findOneByName($name);
+        $message = $this->messageRepository->findOneByid($id);
 
         if ($message) {
             $content = $message->getContent();

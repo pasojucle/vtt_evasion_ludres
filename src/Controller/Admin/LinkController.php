@@ -24,7 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/param/lien', name: 'admin_link')]
-class LinkController extends AbstractController
+class LinkController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -111,26 +111,12 @@ class LinkController extends AbstractController
         LinkDeleteProvider $provider,
         Link $link
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                return $this->redirectToRoute('admin_links', [
-                    'position' => $processor->process($link),
-                ]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($link),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $link,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/ordonner/{link}', name: '_order', methods: ['POST'], options:['expose' => true])]

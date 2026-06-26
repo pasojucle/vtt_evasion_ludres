@@ -100,10 +100,7 @@ export default class extends Controller {
     handleFormSubmit(event) {
         console.log("handleFormSubmit");
         if (event.detail.success) {
-            event.preventDefault();
             this.close();
-            // Turbo.visit(window.location.href, { action: "replace" });
-            Turbo.cache.clear();
         } else {
             this.frameTarget.scrollTop = 0;
         }

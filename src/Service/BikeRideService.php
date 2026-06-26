@@ -6,8 +6,6 @@ namespace App\Service;
 
 use App\Entity\BikeRide;
 use App\Entity\Enum\LevelType;
-use App\Entity\Level;
-use App\Entity\Member;
 use App\Entity\User;
 use App\Twig\AppExtension;
 use DateInterval;

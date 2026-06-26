@@ -35,7 +35,6 @@ class LevelController extends AbstractCrudController
         LevelListProvider $provider,
     ): Response {
         return $this->handleListAction(
-            'admin_level_list',
             LevelFilter::class,
             $provider,
             $request
@@ -80,7 +79,7 @@ class LevelController extends AbstractCrudController
         LevelDeleteProvider $provider,
         Level $level
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             $request,
             $level,
             $provider,

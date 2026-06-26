@@ -26,7 +26,7 @@ class FramerParticipation
     {
         $sessions = $this->sessionRepository->findFramerAvailability();
         if (!empty($sessions)) {
-            $message = $this->messageService->getMessageByName('CONFIRM_FRAMER_PARTICIPATION_EMAIL');
+            $message = $this->messageService->getMessageById('CONFIRM_FRAMER_PARTICIPATION_EMAIL');
             $subject = sprintf('Confirmation à votre participation à la sortie de l\'école VTT');
 
             /** @var Session $session */

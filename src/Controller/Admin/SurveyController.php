@@ -48,7 +48,6 @@ class SurveyController extends AbstractCrudController
         SurveyAdminListProvider $provider,
     ): Response {
         return $this->handleListAction(
-            'admin_survey_list',
             SurveyFilter::class,
             $provider,
             $request
@@ -208,7 +207,7 @@ class SurveyController extends AbstractCrudController
         SurveyDisableProvider $provider,
         Survey $survey
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             $request,
             $survey,
             $provider,
@@ -241,7 +240,7 @@ class SurveyController extends AbstractCrudController
         SurveyDeleteProvider $provider,
         Survey $survey
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             $request,
             $survey,
             $provider,

@@ -57,7 +57,7 @@ class GetSchedule
             //     $data['date'] = $today->format('Y-m-d');
             // }
             $filters = $this->getFiltersByData($data);
-            $request->getSession()->set('admin_bike_rides_filters', $filters);
+            $request->getSession()->set('admin_bike_ride_list_filters', $filters);
 
             return [
                 'redirect' => $route,
@@ -96,7 +96,7 @@ class GetSchedule
         }
         
         if (null === $period) {
-            $period = ('admin_bike_rides' === $route) ? BikeRide::PERIOD_NEXT : BikeRide::PERIOD_MONTH;
+            $period = ('admin_bike_ride_list' === $route) ? BikeRide::PERIOD_NEXT : BikeRide::PERIOD_MONTH;
         }
 
         return $this->getFilters->execute($period, $date);

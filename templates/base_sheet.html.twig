@@ -5,8 +5,8 @@
     <div class="flex-none items-center justify-between p-4 border-b border-border bg-slate-200">
         <div class="flex gap-2">
             <div>
-                <h3 class="!mt-0 !mb-0 text-xl font-semibold text-slate-800">{{ sheet.title }}</h3>
-                <div class="text-muted">{{ sheet.description }}</div>
+                <h3 class="!mt-0 !mb-0 text-xl font-semibold text-slate-800">{{ view.title }}</h3>
+                <div class="text-muted">{{ view.description }}</div>
             </div>
             <div class="ml-auto">
                 <button 
@@ -33,7 +33,7 @@
         >
             <div class="flex items-center gap-2">
                 <div>{{ ux_icon('lucide:check')}}</div>
-                <div>{{ sheet.action }}</div>
+                <div>{{ view.action }}</div>
             </div>
         </button>        
     </div>

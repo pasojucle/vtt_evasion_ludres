@@ -4,21 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ParameterGroupRepository;
+use App\Repository\SectionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ParameterGroupRepository::class)]
-class ParameterGroup
+#[ORM\Entity(repositoryClass: SectionRepository::class)]
+class Section
 {
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'string', length: 100)]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $id;
-
-    #[ORM\Column(type: 'string', length: 50)]
-    private string $name;
+    private string $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $label;
@@ -26,7 +22,7 @@ class ParameterGroup
     #[ORM\Column(type: 'string', length: 25)]
     private string $role;
 
-    #[ORM\OneToMany(targetEntity: Parameter::class, mappedBy: 'parameterGroup')]
+    #[ORM\OneToMany(targetEntity: Parameter::class, mappedBy: 'section')]
     private $parameters;
 
     public function __construct()
@@ -39,19 +35,15 @@ class ParameterGroup
         return $this->label;
     }
 
-    public function getId(): ?int
+
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function setName(string $id): self
     {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
+        $this->id = $id;
 
         return $this;
     }
@@ -92,7 +84,7 @@ class ParameterGroup
     {
         if (!$this->parameters->contains($parameter)) {
             $this->parameters[] = $parameter;
-            $parameter->setParameterGroup($this);
+            $parameter->setSection($this);
         }
 
         return $this;
@@ -102,8 +94,8 @@ class ParameterGroup
     {
         if ($this->parameters->removeElement($parameter)) {
             // set the owning side to null (unless already changed)
-            if ($parameter->getParameterGroup() === $this) {
-                $parameter->setParameterGroup(null);
+            if ($parameter->getSection() === $this) {
+                $parameter->setSection(null);
             }
         }
 

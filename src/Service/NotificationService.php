@@ -79,7 +79,7 @@ class NotificationService
         return [
             'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
             'title' => sprintf('Inscription à la saison %s', $season),
-            'content' => $this->messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
+            'content' => $this->messageService->getMessageById('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
             'url' => $this->urlGenerator->generate('user_registration_form', ['step' => 1]),
             'btnLabel' => 'S\'incrire',
             'modalLink' => $this->urlGenerator->generate('notification_show', ['entityName' => 'NEW_SEASON_RE_REGISTRATION_ENABLED']),
@@ -111,7 +111,7 @@ class NotificationService
         return [
             'index' => sprintf('SURVEY_CHANGED_%s', $survey->getId()),
             'title' => sprintf('Modification du sondage %s', $survey->getTitle()),
-            'content' => str_replace('{{ sondage }}', $survey->getTitle(), $this->messageService->getMessageByName('SURVEY_CHANGED_MESSAGE')),
+            'content' => str_replace('{{ sondage }}', $survey->getTitle(), $this->messageService->getMessageById('SURVEY_CHANGED_MESSAGE')),
             'url' => $this->urlGenerator->generate('survey', ['survey' => $survey->getId()]),
             'btnLabel' => 'Consulter',
             'modalLink' => $this->urlGenerator->generate('notification_show', [
@@ -126,7 +126,7 @@ class NotificationService
         return [
             'index' => sprintf('CLUSTER_EXPORT_%s', $cluster->getId()),
             'title' => sprintf('Export la liste %s', $cluster->getTitle()),
-            'content' => str_replace('{{ groupe }}', $cluster->getTitle(), $this->messageService->getMessageByName('CLUSTER_EXPORT_MESSAGE')),
+            'content' => str_replace('{{ groupe }}', $cluster->getTitle(), $this->messageService->getMessageById('CLUSTER_EXPORT_MESSAGE')),
             'btnLabel' => 'Télécharger',
             'modalLink' => $this->getModalLinkFromEntity($cluster),
             'action' => [
@@ -142,7 +142,7 @@ class NotificationService
             $session = $this->entityManager->getRepository(Session::class)->find($session);
         }
         $messageName = (AvailabilityEnum::NONE !== $session->getAvailability()) ? 'NEW_SESSION_FRAMER' : 'NEW_SESSION_MEMBER';
-        $content = $this->messageService->getMessageByName($messageName);
+        $content = $this->messageService->getMessageById($messageName);
         $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
         $additionalParams = [
             '{{ rando }}' => sprintf('%s du %s', $bikeRideDto->title, $bikeRideDto->period),
@@ -182,7 +182,7 @@ class NotificationService
         return [
             'index' => sprintf('documentation-%s', $documentation->getId()),
             'title' => $documentation->getName(),
-            'content' => $this->messageService->getMessageByName('DOCUMENTATION_LINK_WARNING_MESSAGE'),
+            'content' => $this->messageService->getMessageById('DOCUMENTATION_LINK_WARNING_MESSAGE'),
             'btnLabel' => 'Consulter',
             'modalLink' => $this->getModalLinkFromEntity($documentation),
             'form' => $this->logService->getForm([

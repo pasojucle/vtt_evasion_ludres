@@ -9,6 +9,7 @@ use App\Dto\Filter\FilterChip;
 readonly class ListView
 {
     /**
+     * @param string $name,
      * @param string $title,
      * @param string $description,
      * @param ListItemView[] $items
@@ -21,7 +22,7 @@ readonly class ListView
      * @param ?ButtonView $wiki
      */
     public function __construct(
-        public string $id,
+        public string $name,
         public string $title,
         public string $description,
         public array $items,

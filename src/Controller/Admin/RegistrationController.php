@@ -23,7 +23,6 @@ class RegistrationController extends AbstractCrudController
         Request $request,
     ): Response {
         return $this->handleListAction(
-            'admin_registration_list',
             RegistrationFilter::class,
             $provider,
             $request

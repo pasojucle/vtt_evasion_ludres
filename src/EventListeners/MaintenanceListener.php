@@ -23,7 +23,7 @@ class MaintenanceListener
         private BackgroundService $backgroundService,
         private RequestStack $request,
     ) {
-        $this->maintenanceMode = $this->parameterService->getParameterByName('MAINTENANCE_MODE');
+        $this->maintenanceMode = $this->parameterService->getParameterById('MAINTENANCE_MODE');
         $this->ipAuthorized = $maintenance['ipAuthorized'];
     }
 

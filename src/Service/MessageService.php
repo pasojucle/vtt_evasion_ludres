@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\UserDto;
 use App\Entity\Member;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
@@ -18,15 +17,14 @@ class MessageService
     ) {
     }
 
-    public function getMessagesBySectionName(string $name): array
+    public function getMessagesBySection(string $section): array
     {
         $messages = [];
         
         /** @var Message $message */
-        foreach ($this->messageRepository->findBySectionNameAndQuery($name) as $message) {
+        foreach ($this->messageRepository->findBySectionNameAndQuery($section) as $message) {
             $messages[] = [
                 'id' => $message->getId(),
-                'name' => $message->getName(),
                 'label' => $this->replaceKeywords->replaceCurrentSaison($message->getLabel()),
             ];
         };
@@ -34,9 +32,9 @@ class MessageService
         return $messages;
     }
 
-    public function getMessageByName(string $name, ?Member $user = null): string|bool|array|int|null
+    public function getMessageById(string $id, ?Member $user = null): string|bool|array|int|null
     {
-        $message = $this->messageRepository->findOneByName($name);
+        $message = $this->messageRepository->findOneById($id);
 
         if ($message) {
             $content = $message->getContent();

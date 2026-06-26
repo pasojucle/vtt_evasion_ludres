@@ -7,9 +7,9 @@ namespace App\State\Skill\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Skill;
 use App\Mapper\DestructiveModalMapper;
-use App\State\DialogProviderInterface;
+use App\State\FormComponentProviderInterface;
 
-class SkillDeleteProvider implements DialogProviderInterface
+class SkillDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,

@@ -20,6 +20,7 @@ use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -30,6 +31,7 @@ class <?= $entity_name ?>ListMapper
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -40,6 +42,8 @@ class <?= $entity_name ?>ListMapper
         <?= $entity_name ?>Filter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
         /** @var <?= $entity_name ?> $entity */
         foreach ($entities as $entity) {
@@ -62,7 +66,7 @@ class <?= $entity_name ?>ListMapper
         }
 
         return new ListView(
-            id: 'list_contrainer',
+            name: '<?= $entity_name ?>',
             title: 'Titre de la page',
             description: 'description de la page.',
             items: $items,
@@ -101,9 +105,9 @@ class <?= $entity_name ?>ListMapper
     }
 
 
-    private function settings(): DropdownView
+    private function settings(string £referer): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('MA_SECTION', RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('MA_SECTION', $referer, RoundedVariant::ROUNDED, [
             //TODO Ajouter d'autre boutons si besoins
             // Exemple
             // new ButtonView(

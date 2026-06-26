@@ -23,14 +23,14 @@ class ParameterRepository extends ServiceEntityRepository
         parent::__construct($registry, Parameter::class);
     }
 
-    public function findOneByName(string $name): ?Parameter
+    public function findOneById(string $id): ?Parameter
     {
         try {
             return $this->createQueryBuilder('p')
                 ->andWhere(
-                    (new Expr())->eq('p.name', ':name')
+                    (new Expr())->eq('p.id', ':id')
                 )
-                ->setParameter('name', $name)
+                ->setParameter('id', $id)
                 ->getQuery()
                 ->getOneOrNullResult()
         ;
@@ -39,26 +39,26 @@ class ParameterRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByNames(array $names): array
+    public function findByIds(array $ids): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere(
-                (new Expr())->in('p.name', ':names')
+                (new Expr())->in('p.id', ':ids')
             )
-            ->setParameter('names', $names)
+            ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult()
         ;
     }
 
-    public function findByParameterGroupName(string $name): array
+    public function findBySectionId(string $id): array
     {
         return $this->createQueryBuilder('p')
-            ->join('p.parameterGroup', 'pg')
+            ->join('p.section', 's')
             ->andWhere(
-                (new Expr())->eq('pg.name', ':name')
+                (new Expr())->eq('s.id', ':id')
             )
-            ->setParameter('name', $name)
+            ->setParameter('id', $id)
             ->getQuery()
             ->getResult();
     }

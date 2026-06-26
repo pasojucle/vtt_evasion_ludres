@@ -25,7 +25,6 @@ class CoverageController extends AbstractCrudController
         Request $request,
     ): Response {
         return $this->handleListAction(
-            'admin_coverage_list',
             CoverageFilter::class,
             $provider,
             $request
@@ -40,7 +39,7 @@ class CoverageController extends AbstractCrudController
         CoverageValidateProcessor $processor,
         Licence $licence
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             $request,
             $licence,
             $provider,

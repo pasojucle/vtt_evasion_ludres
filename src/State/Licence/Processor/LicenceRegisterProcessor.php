@@ -8,7 +8,6 @@ use App\Dto\Form\LicenceRegister;
 use App\Dto\Service\MailerResult;
 use App\Dto\State\ProcessorResult;
 use App\Entity\Member;
-use App\Service\FilterDecoderService;
 use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\State\DialogProcessorInterface;
@@ -20,23 +19,22 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LicenceService $licenceService,
-        private FilterDecoderService $filterDecoder,
         private MailerService $mailerService,
         private MessageProvider $messageProvider,
     ) {
     }
 
-    public function process(object $licenceRegister, ?string $filter): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
     {
-        assert($licenceRegister instanceof LicenceRegister);
-        $licence = $licenceRegister->licence;
+        /** @var LicenceRegister $entity*/
+        $licence = $entity->licence;
         
         $member = $licence->getMember();
         $licenceNumber = $member->getLicenceNumber();
         $this->licenceService->applyTransition($licence, 'register_to_federation');
         $this->entityManager->persist($licence);
-        $this->setLicenceNumber($licenceRegister, $member);
-        $this->setMedicalCertificateDate($licenceRegister, $member);
+        $this->setLicenceNumber($entity, $member);
+        $this->setMedicalCertificateDate($entity, $member);
 
         $this->entityManager->flush();
 
@@ -44,8 +42,7 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
         if (false === $result?->success) {
             return new ProcessorResult(
                 success: false,
-                targetRoute: 'admin_registration_list',
-                routeParams: $this->filterDecoder->decode($filter),
+                targetUrl: $targetUrl,
                 messageKey: 'registration.flash.danger.received',
                 flashType: 'danger',
             );
@@ -53,8 +50,7 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
 
         return new ProcessorResult(
             success: true,
-            targetRoute: 'admin_registration_list',
-            routeParams: $this->filterDecoder->decode($filter),
+            targetUrl: $targetUrl,
             messageKey: 'registration.flash.success.received',
             flashType: 'success',
         );
@@ -83,7 +79,7 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
                 $mainIdentity->getEmail(),
                 $mainIdentity->getFullName(),
                 'Votre numero de licence',
-                $this->messageProvider->getMessageByName('EMAIL_LICENCE_VALIDATE', $member)
+                $this->messageProvider->getMessageById('EMAIL_LICENCE_VALIDATE', $member)
             );
         }
 

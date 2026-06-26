@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Controller\Admin\AbstractCrudController;
 use App\Dto\DtoTransformer\OrderDtoTransformer;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\Member;
@@ -17,9 +18,7 @@ use App\Service\PdfService;
 use App\State\Order\Processor\OrderDeleteProcessor;
 use App\State\Order\Provider\OrderDeleteProvider;
 use App\UseCase\Order\OrderEdit;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -27,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class OrderController extends AbstractController
+class OrderController extends AbstractCrudController
 {
     public function __construct(
         private OrderDtoTransformer $orderDtoTransformer,
@@ -74,9 +73,9 @@ class OrderController extends AbstractController
         return $this->render('order/show.html.twig', [
             'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
             'message' => match ($orderHeader->getStatus()) {
-                OrderStatusEnum::ORDERED => $this->messageService->getMessageByName('ORDER_WAITING_VALIDATE_MESSAGE'),
-                OrderStatusEnum::CANCELED => $this->messageService->getMessageByName('ORDER_CANCELED_MESSAGE'),
-                default => $this->messageService->getMessageByName('ORDER_ACKNOWLEDGEMENT_MESSAGE')
+                OrderStatusEnum::ORDERED => $this->messageService->getMessageById('ORDER_WAITING_VALIDATE_MESSAGE'),
+                OrderStatusEnum::CANCELED => $this->messageService->getMessageById('ORDER_CANCELED_MESSAGE'),
+                default => $this->messageService->getMessageById('ORDER_ACKNOWLEDGEMENT_MESSAGE')
             },
         ]);
     }
@@ -90,7 +89,7 @@ class OrderController extends AbstractController
     ): Response {
         $orderAcknowledgement = $this->renderView('order/acknowledgement.html.twig', [
             'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
-            'message' => $this->messageService->getMessageByName('ORDER_ACKNOWLEDGEMENT_MESSAGE'),
+            'message' => $this->messageService->getMessageById('ORDER_ACKNOWLEDGEMENT_MESSAGE'),
         ]);
         $pdfFilepath = $pdfService->makePdf($orderAcknowledgement, 'order_acknowledgement_temp', $parameterBag->get('tmp_directory_path'));
 
@@ -116,26 +115,12 @@ class OrderController extends AbstractController
         OrderDeleteProvider $provider,
         OrderHeader $orderHeader
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $processor->process($orderHeader);
-
-                return $this->redirect($this->requestStack->getSession()->get('order_return'));
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        
-        return $this->render('components/_dialog.modal.html.twig', [
-            'dialog' => $provider->mapToView($orderHeader),
-            'form' => $form->createView(),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $orderHeader,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/mon-compte/commandes', name: 'user_orders', methods: ['GET'])]

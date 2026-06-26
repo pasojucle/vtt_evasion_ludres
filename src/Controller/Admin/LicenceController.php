@@ -35,29 +35,12 @@ class LicenceController extends AbstractCrudController
         LicenceDeleteProvider $provider,
         Licence $licence
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $this->addFlash('success', $processor->process($licence));
-
-                return $this->redirectToRoute('admin_registration_list', [
-                    'filtered' => true,
-                    'p' => $request->query->get('p'),
-                ]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('components/_dialog.modal.html.twig', [
-            'form' => $form->createView(),
-            'dialog' => $provider->mapToView($licence),
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $licence,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/admin/inscription/receive/{licence}', name: 'admin_registration_receive', methods: ['GET', 'POST'])]
@@ -68,7 +51,7 @@ class LicenceController extends AbstractCrudController
         LicenceReceiveProcessor $processor,
         Licence $licence
     ): Response {
-        return $this->handleDialogAction($request, $licence, $provider, $processor);
+        return $this->handleFormComponentAction($request, $licence, $provider, $processor);
     }
 
     #[Route('/admin/inscription/reject/{licence}', name: 'admin_registration_reject', methods: ['GET', 'POST'])]
@@ -79,7 +62,7 @@ class LicenceController extends AbstractCrudController
         LicenceRejectProvider $provider,
         Licence $licence
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             request: $request,
             object: $provider->createContextObject($licence),
             provider: $provider,
@@ -96,7 +79,7 @@ class LicenceController extends AbstractCrudController
         LicenceRegisterProcessor $processor,
         Licence $licence
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             request: $request,
             object: $provider->createContextObject($licence),
             provider: $provider,

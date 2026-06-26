@@ -49,7 +49,7 @@ abstract class AbstractFilter
         $params = $this->toArray();
 
         if ($page && $page > 1) {
-            $params['p'] = $page;
+            $params['page'] = $page;
         }
 
         return $params;

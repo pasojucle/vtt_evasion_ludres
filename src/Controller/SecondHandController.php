@@ -22,7 +22,6 @@ use App\Service\SecondHandService;
 use App\State\SecondHand\Processor\SecondHandDeleteProcessor;
 use App\State\SecondHand\Provider\SecondHandDeleteProvider;
 use App\UseCase\SecondHand\EditSecondHand;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -145,7 +144,7 @@ class SecondHandController extends AbstractCrudController
         SecondHandDeleteProvider $provider,
         SecondHand $secondHand
     ): Response {
-        return $this->handleDialogAction(
+        return $this->handleFormComponentAction(
             $request,
             $secondHand,
             $provider,
@@ -159,7 +158,6 @@ class SecondHandController extends AbstractCrudController
         SecondHandService $secondHandService,
         SecondHand $secondHand
     ): Response {
-
         $secondHandService->applyTransition($secondHand, 'disable');
         $this->secondHandRepository->save($secondHand, true);
 
@@ -187,7 +185,7 @@ class SecondHandController extends AbstractCrudController
             /** @var ?Member $buyer */
             $buyer = $this->getUser();
             $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);
-            $content = $messageService->getMessageByName('SECOND_HAND_CONTACT');
+            $content = $messageService->getMessageById('SECOND_HAND_CONTACT');
             $params = [
                 '{{ nom_annonce }}' => $secondHand->getName(),
                 '{{ telephone }}' => $buyerDto->member->phone,
@@ -209,7 +207,7 @@ class SecondHandController extends AbstractCrudController
         }
 
         return $this->render('second_hand/contact.modal.html.twig', [
-            'message' => $messageService->getMessageByName('SECOND_HAND_CONTACT_CONFIRM'),
+            'message' => $messageService->getMessageById('SECOND_HAND_CONTACT_CONFIRM'),
             'form' => $form->createView(),
         ]);
     }

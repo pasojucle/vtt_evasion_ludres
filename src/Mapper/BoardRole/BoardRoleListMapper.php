@@ -16,6 +16,7 @@ use App\Entity\BoardRole;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\Filter\FilterConfigInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -25,6 +26,7 @@ class BoardRoleListMapper
         private UrlGeneratorInterface $urlGenerator,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
+        private UrlContextService $urlContextService,
     ) {
     }
 
@@ -35,6 +37,8 @@ class BoardRoleListMapper
         BoardRoleFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+
         $items = [];
 
         /** @var BoardRole $entity */
@@ -43,12 +47,12 @@ class BoardRoleListMapper
                 labels: [
                     new LabelView($entity->getName()),
                 ],
-                dropdown: $this->dropDown($entity),
+                dropdown: $this->dropDown($entity, $referer),
             );
         }
 
         return new ListView(
-            id: 'board_role_contrainer',
+            name: 'board_role',
             title: 'Rôles du bureau et comité',
             description: 'Administration des rôles du bureau et comité.',
             items: $items,
@@ -70,19 +74,19 @@ class BoardRoleListMapper
             ),
         );
     }
-    private function dropDown(BoardRole $entity): DropdownView
+    private function dropDown(BoardRole $entity, string $referer): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
                     label: 'Modifier',
-                    url: $this->urlGenerator->generate('admin_board_role_edit', ['boardRole' => $entity->getId()]),
+                    url: $this->urlContextService->generateUrl('admin_board_role_edit', ['boardRole' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
                  new ButtonView(
                      label: 'Supprimer',
-                     url: $this->urlGenerator->generate('admin_board_role_delete', ['boardRole' => $entity->getId()]),
+                     url: $this->urlContextService->generateUrl('admin_board_role_delete', ['boardRole' => $entity->getId()], $referer),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [

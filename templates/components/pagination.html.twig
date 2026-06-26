@@ -6,7 +6,7 @@
 
             {% if paginator.first is not null %}
                 <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
-                    <a class="{{ base_link }}" href="{{ paginator.first.url }}">
+                    <a class="{{ base_link }}" href="{{ paginator.first.url }}" data-turbo-frame="_top">
                         {{ ux_icon('lucide:chevron-first', {class: 'size-4'}) }}
                     </a>
                 </li>
@@ -14,7 +14,7 @@
 
             {% if paginator.previous is not null %}
                 <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
-                    <a class="{{ base_link }}" href="{{ paginator.previous.url }}">
+                    <a class="{{ base_link }}" href="{{ paginator.previous.url }}" data-turbo-frame="_top">
                         {{ ux_icon('lucide:chevron-left', {class: 'size-4'}) }}
                     </a>
                 </li>
@@ -22,13 +22,13 @@
 
             {% for item in paginator.pages %}
                 <li class="{{ base_li }} {% if item.page == paginator.currentPage %}bg-slate-950 text-primary z-10{% else %}bg-slate-100 text-foreground/60 hover:text-foreground{% endif %}">
-                    <a class="{{ base_link }} min-w-[2rem]" href="{{ item.url }}">{{ item.page }}</a>
+                    <a class="{{ base_link }} min-w-[2rem]" href="{{ item.url }}" data-turbo-frame="_top">{{ item.page }}</a>
                 </li>
             {% endfor %}
 
             {% if paginator.next is not null %}
                 <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
-                    <a class="{{ base_link }}" href="{{ paginator.next.url }}">
+                    <a class="{{ base_link }}" href="{{ paginator.next.url }}" data-turbo-frame="_top">
                         {{ ux_icon('lucide:chevron-right', {class: 'size-4'}) }}
                     </a>
                 </li>
@@ -36,7 +36,7 @@
 
             {% if paginator.last is not null %}
                 <li class="{{ base_li }} bg-slate-100 text-foreground/60 hover:text-foreground">
-                    <a class="{{ base_link }}" href="{{ paginator.last.url }}">
+                    <a class="{{ base_link }}" href="{{ paginator.last.url }}" data-turbo-frame="_top">
                         {{ ux_icon('lucide:chevron-last', {class: 'size-4'}) }}
                     </a>
                 </li>

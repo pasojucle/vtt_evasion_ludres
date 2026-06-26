@@ -74,7 +74,6 @@ class SecondHandDtoTransformer
 
     private function GetStatus(SecondHand $secondHand): string
     {
-
         return (null !== $secondHand->getValidedAt()) ? 'Validée' : 'Non Validée';
     }
 

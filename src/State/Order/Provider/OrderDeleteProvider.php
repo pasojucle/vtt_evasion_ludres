@@ -7,15 +7,17 @@ namespace App\State\Order\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\OrderHeader;
 use App\Mapper\DestructiveModalMapper;
+use App\State\FormComponentProviderInterface;
 
-class OrderDeleteProvider
+class OrderDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(OrderHeader $entity): DialogModalView
+    public function mapToView(object $entity): DialogModalView
     {
+        /** @var OrderHeader $entity */
         return $this->destructiveModalMapper->mapToView(
             sprintf('Etes vous certain de supprimer la commande  %s ?', $entity->getId())
         );
