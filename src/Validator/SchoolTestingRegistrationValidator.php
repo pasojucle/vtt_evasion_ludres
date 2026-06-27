@@ -7,7 +7,7 @@ namespace App\Validator;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
 use App\Service\LicenceService;
-use App\Service\ParameterService;
+use App\State\Registration\Provider\SchoolRegistrationProvider;
 use App\Validator\SchoolTestingRegistration;
 use DateTime;
 use Symfony\Component\Validator\Constraint;
@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class SchoolTestingRegistrationValidator extends ConstraintValidator
 {
     public function __construct(
-        private ParameterService $parameterService,
+        private SchoolRegistrationProvider $schoolRegistrationProvider,
         private LicenceService $licenceService
     ) {
     }
@@ -63,7 +63,7 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
             return;
         }
 
-        $schoolTestingRegistration = $this->parameterService->getSchoolTestingRegistration();
+        $schoolTestingRegistration = $this->schoolRegistrationProvider->getSettings();
         if (!$schoolTestingRegistration['value'] && !$licenceNumber) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ message }}', strip_tags(html_entity_decode($schoolTestingRegistration['message'])))

@@ -61,6 +61,10 @@ class SecondHandListProvider implements ListProviderInterface, FilterInitializer
             $this->secondHandRepository->filterState($qb, $filter->state);
         }
 
+        if ($filter->category) {
+            $this->secondHandRepository->filterCategory($qb, $filter->category);
+        }
+
         if ($filter->member) {
             $this->secondHandRepository->filterMember($qb, $filter->member);
         }

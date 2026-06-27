@@ -7,10 +7,11 @@ namespace App\Form;
 use App\Entity\Parameter;
 use App\Form\Type\TiptapType;
 use App\Service\ReplaceKeywordsService;
+use App\Service\SeasonService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,9 +21,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ParameterType extends AbstractType
 {
-    public function __construct(private ReplaceKeywordsService $replaceKeywords)
-    {
-    }
+    public function __construct(
+        private ReplaceKeywordsService $replaceKeywords,
+        private SeasonService $seasonService,
+    )
+    {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -31,29 +34,26 @@ class ParameterType extends AbstractType
             if (null !== $parameter) {
                 $type = $parameter->getType();
                 $value = $parameter->getValue();
-                $label = $this->replaceKeywords->replaceCurrentSaison($parameter->getLabel());
+                $label = $this->replaceKeywords->replaceCurrentSaison($parameter->getLabel(), $this->seasonService->getCurrentSeason());
                 $form = $event->getForm();
-                $fieldOptions = [];
 
-                switch ($type) {
-                    case Parameter::TYPE_BOOL:
-                        $classType = CheckboxType::class;
-                        $fieldOptions = [
+                [$classType, $fieldOptions] = match($type) {
+                    Parameter::TYPE_BOOL => [
+                        CheckboxType::class, 
+                        [
                             'label' => $label,
                             'data' => (bool) $value,
                             'block_prefix' => 'switch',
                             'required' => false,
-                        ];
-                        break;
-                    case Parameter::TYPE_HTML:
-                        $classType = TiptapType::class;
-                        $fieldOptions = [
-                            'config_name' => 'base',
-                        ];
-                        break;
-                    case Parameter::TYPE_ARRAY:
-                        $classType = CollectionType::class;
-                        $fieldOptions = [
+                        ]
+                    ],
+                    Parameter::TYPE_HTML => [
+                        TiptapType::class,
+                        ['config_name' => 'base',]
+                    ],
+                    Parameter::TYPE_ARRAY => [
+                        CollectionType::class,
+                        [
                             'entry_options' => [
                                 'label' => false,
                                 'row_attr' => [
@@ -65,25 +65,32 @@ class ParameterType extends AbstractType
                             ],
                             'allow_add' => true,
                             'allow_delete' => true,
-                        ];
-                        break;
-                    case Parameter::TYPE_MONTH_AND_DAY:
-                        $classType = CollectionType::class;
-                        $fieldOptions = [
+                        ]
+                    ],
+                    Parameter::TYPE_MONTH_AND_DAY => [
+                        CollectionType::class,
+                        [
                             'label' => false,
                             'block_prefix' => 'custom_month_and_hour',
                             'entry_options' => [
                                 'label' => false,
                             ],
-                        ];
-                        break;
-                    case Parameter::TYPE_TEXT:
-                        $classType = TextareaType::class;
-                        break;
-                    default:
-                    $classType = TextType::class;
-                }
-
+                        ]
+                    ],
+                    Parameter::TYPE_INTEGER => [
+                        IntegerType::class,
+                        [
+                            'label' => false,
+                            'attr' => [
+                                'class' => 'border border-border',
+                            ],
+                        ]
+                    ],
+                    Parameter::TYPE_TEXT => [TextareaType::class, []],
+                    
+                    default => [TextType::class, []]
+                };
+                
                 $fieldOptions['required'] = false;
 
                 $form

@@ -8,12 +8,14 @@ use App\Entity\Member;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
 use App\Service\ReplaceKeywordsService;
+use App\Service\SeasonService;
 
 class MessageProvider
 {
     public function __construct(
         private readonly MessageRepository $messageRepository,
-        private readonly ReplaceKeywordsService $replaceKeywords
+        private readonly ReplaceKeywordsService $replaceKeywords,
+        private SeasonService $seasonService,
     ) {
     }
 
@@ -25,7 +27,7 @@ class MessageProvider
         foreach ($this->messageRepository->findBySectionNameAndQuery($name) as $message) {
             $messages[] = [
                 'id' => $message->getId(),
-                'label' => $this->replaceKeywords->replaceCurrentSaison($message->getLabel()),
+                'label' => $this->replaceKeywords->replaceCurrentSaison($message->getLabel(), $this->seasonService->getCurrentSeason()),
             ];
         };
 
@@ -42,7 +44,7 @@ class MessageProvider
                 $content = $this->replaceKeywords->replaceUserData($content, $user);
             }
 
-            return $this->replaceKeywords->replaceCurrentSaison($content);
+            return $this->replaceKeywords->replaceCurrentSaison($content, $this->seasonService->getCurrentSeason());
         }
 
         return null;

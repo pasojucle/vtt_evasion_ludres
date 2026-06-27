@@ -34,6 +34,7 @@ class SecondHandController extends AbstractCrudController
         SecondHandListProvider $provider,
         Request $request,
     ): Response {
+        dump($provider->getFilterConfig('admin_second_hand_list')->getDataClass());
         return $this->handleListAction(
             SecondHandFilter::class,
             $provider,

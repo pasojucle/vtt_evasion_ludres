@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use App\Entity\Category;
+use App\Entity\SecondHandCategory;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
@@ -30,7 +30,7 @@ class CategoryFixtures extends AbstractFixture implements FixtureGroupInterface
     public function load(ObjectManager $manager): void
     {
         foreach (self::CATEGORIES as $ref => [$name]) {
-            $category = new Category();
+            $category = new SecondHandCategory();
   
             $category->setName($name);
                             

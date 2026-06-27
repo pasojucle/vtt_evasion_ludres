@@ -25,7 +25,7 @@ class SkillCategory
     private Collection $skills;
 
     #[ORM\Column(length: 30)]
-    private string $icon = 'lucide:';
+    private string $icon = 'lucide:layers';
 
     public function __construct()
     {

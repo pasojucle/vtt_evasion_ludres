@@ -167,11 +167,10 @@ class ReplaceKeywordsService
         return (DisplayModeEnum::FILE === $render) ? sprintf('<b>%s</b>', $authorizations['rightToTheImage']?->toString) : 'autorise';
     }
 
-    public function replaceCurrentSaison(?string $content): ?string
+    public function replaceCurrentSaison(?string $content, int $currentSaison): ?string
     {
         if (is_string($content)) {
-            $session = $this->requestStack->getSession();
-            return str_replace('{{ saison_actuelle }}', (string) $session->get('currentSeason'), $content);
+            return str_replace('{{ saison_actuelle }}', (string) $currentSaison, $content);
         }
 
         return $content;

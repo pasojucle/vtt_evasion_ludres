@@ -67,6 +67,7 @@ class UpdateCommand extends Command
                 ['cmd' => 'geo:load:data', 'onlyOne' => true],
                 ['cmd' => 'geo:convert:birthplace', 'onlyOne' => true],
                 ['cmd' => 'geo:convert:town', 'onlyOne' => true],
+                ['cmd' => 'app:media:migrate-second-hand', 'onlyOne' => true],
             ];
 
             foreach ($commands as $command) {

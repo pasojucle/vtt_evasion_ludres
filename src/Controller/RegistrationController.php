@@ -16,6 +16,8 @@ use App\Security\SelfAuthentication;
 use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
+use App\Service\ReplaceKeywordsService;
+use App\State\Registration\Provider\SchoolRegistrationProvider;
 use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
 use App\UseCase\Registration\GetRegistrationFile;
@@ -75,6 +77,7 @@ class RegistrationController extends AbstractController
         ParameterService $parameterService,
         EditRegistration $editRegistration,
         SelfAuthentication $selfAuthentication,
+        SchoolRegistrationProvider $schoolRegistrationProvider,
         int $step
     ): Response {
         if ('user_registration_form' === $request->attributes->get('_route') || 1 < $step) {
@@ -102,8 +105,7 @@ class RegistrationController extends AbstractController
 
         $form = $progress->current->formObject;
 
-        $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration();
-
+        $schoolTestingRegistration = $schoolRegistrationProvider->getSettings();
         if ($step === 1 && !$schoolTestingRegistration['value'] && RegistrationFormEnum::MEMBER === $progress->current->form && !$progress->user->licenceNumber) {
             $message = str_replace(['<p>', '</p>'], '', html_entity_decode($schoolTestingRegistration['message']));
             $this->addFlash('success', $message);
@@ -224,6 +226,7 @@ class RegistrationController extends AbstractController
     #[Route('/inscription/school/testing/disabled', name: 'registration_scholl_testing_disabled', methods: ['GET', 'POST'], options:['expose' => true])]
     public function schollTestingDisabled(
         ParameterService $parameterService,
+        ReplaceKeywordsService $replaceKeywordsService,
         Request $request,
     ): Response {
         $form = $this->createForm(FormType::class, null, [
@@ -234,11 +237,12 @@ class RegistrationController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             return $this->redirectToRoute('contact', [], Response::HTTP_SEE_OTHER);
         }
+        $message = $parameterService->getParameterById('SCHOOL_TESTING_REGISTRATION_MESSAGE');
     
         return $this->render('components/alert.modal.html.twig', [
             'form' => $form->createView(),
             'title' => 'Inscription école vtt',
-            'message' => $parameterService->getSchoolTestingRegistration()['message'],
+            'message' => $replaceKeywordsService->replace($message),
             'btn_label' => 'Nous contacter',
             'icon' => 'lucide:mail',
         ]);

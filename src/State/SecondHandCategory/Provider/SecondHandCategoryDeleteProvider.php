@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\State\Category\Provider;
+namespace App\State\SecondHandCategory\Provider;
 
 use App\Dto\View\DialogModalView;
-use App\Entity\Category;
+use App\Entity\SecondHandCategory;
 use App\Mapper\DestructiveModalMapper;
 use App\State\FormComponentProviderInterface;
 
-class CategoryDeleteProvider implements FormComponentProviderInterface
+class SecondHandCategoryDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
@@ -17,7 +17,7 @@ class CategoryDeleteProvider implements FormComponentProviderInterface
     }
     public function mapToView(object $entity): DialogModalView
     {
-        /** @var Category $entity */
+        /** @var SecondHandCategory $entity */
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la catégorie %s', $entity->getName()));
     }
 }

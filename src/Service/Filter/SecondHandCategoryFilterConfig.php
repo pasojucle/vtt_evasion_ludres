@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Filter;
+
+use App\Dto\Filter\SecondHandCategoryFilter;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
+class SecondHandCategoryFilterConfig implements FilterConfigInterface
+{
+    public function getRouteName(): string
+    {
+        return 'admin_second_hand_category_list';
+    }
+
+    public function supports(string $route): bool
+    {
+        return $route === $this->getRouteName();
+    }
+
+    public function getEventSubscriber(): ?EventSubscriberInterface
+    {
+        return null;
+    }
+
+    public function getFields(): array
+    {
+        return [
+            new FilterFieldConfig(
+                name: 'name',
+                type: TextType::class,
+                options: [
+                    'label' => false,
+                    'required' => false,
+                    'attr' => [
+                        'placeholder' => 'Nom',
+                        'data-action' => 'change->filter#submit'
+                    ],
+                ],
+            )
+        ];
+    }
+
+    public function getAdvancedFields(): array
+    {
+        return [
+            new FilterFieldConfig(
+                name: 'sort',
+                type: ChoiceType::class,
+                options: [
+                    'label' => 'Tri',
+                    'choices' => [
+                        'Nom (de A à Z)' => 'ASC',
+                        'Nom (de Z à A)' => 'DESC',
+                    ],
+                    'required' => false,
+                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'attr' => ['class' => 'form-control'],
+                ],
+            ),
+        ];
+    }
+
+    public function getDataClass(): ?string
+    {
+        return SecondHandCategoryFilter::class;
+    }
+}

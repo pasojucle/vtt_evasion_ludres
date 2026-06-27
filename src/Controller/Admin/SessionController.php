@@ -16,6 +16,7 @@ use App\Repository\SessionRepository;
 use App\Service\CacheService;
 use App\Service\LicenceService;
 use App\Service\MessageService;
+use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
 use App\Service\SessionService;
 use App\Service\SurveyService;
@@ -95,6 +96,7 @@ class SessionController extends AbstractController
         Session $session,
         UserDtoTransformer $userDtoTransformer,
         MessageService $messageService,
+        ReplaceKeywordsService $replaceKeywordsService,
     ): Response {
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl('admin_session_present'),
@@ -107,11 +109,13 @@ class SessionController extends AbstractController
 
         $message = '';
         if ($userDto->mustProvideRegistration) {
-            $message = $messageService->getMessageById('BIKE_RIDE_MUST_PROVIDE_REGISTRATION', $member);
+            $message = $messageService->getMessageById('BIKE_RIDE_MUST_PROVIDE_REGISTRATION');
         }
         if ($userDto->isEndTesting) {
-            $message = $messageService->getMessageById('BIKE_RIDE_END_TESTING', $member);
+            $message = $messageService->getMessageById('BIKE_RIDE_END_TESTING');
         }
+
+        $message = $replaceKeywordsService->replaceUserData($message, $member);
 
         return $this->render('session/admin/message.html.twig', [
             'session' => $session,

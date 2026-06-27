@@ -2,10 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\Category;
+use App\Entity\SecondHandCategory;
 use App\Entity\SecondHand;
 use App\Form\SecondHandImageType;
-use App\Repository\CategoryRepository;
+use App\Repository\SecondHandCategoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SecondHandType extends AbstractType
 {
     public function __construct(
-        private readonly CategoryRepository $categoryRepository,
+        private readonly SecondHandCategoryRepository $categoryRepository,
     ) {
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -60,7 +60,7 @@ class SecondHandType extends AbstractType
             ])
             ->add('category', EntityType::class, [
                 'label' => 'Categorie',
-                'class' => Category::class,
+                'class' => SecondHandCategory::class,
                 'choices' => $this->categoryRepository->findAllAsc(),
                 'choice_label' => 'name',
                 'row_attr' => [

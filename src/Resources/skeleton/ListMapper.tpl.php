@@ -105,7 +105,7 @@ class <?= $entity_name ?>ListMapper
     }
 
 
-    private function settings(string £referer): DropdownView
+    private function settings(string $referer): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('MA_SECTION', $referer, RoundedVariant::ROUNDED, [
             //TODO Ajouter d'autre boutons si besoins

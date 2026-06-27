@@ -36,7 +36,7 @@ class SecondHand
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Category $category = null;
+    private ?SecondHandCategory $category = null;
 
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $validedAt = null;
@@ -121,12 +121,12 @@ class SecondHand
         return $this;
     }
 
-    public function getCategory(): ?Category
+    public function getCategory(): ?SecondHandCategory
     {
         return $this->category;
     }
 
-    public function setCategory(?Category $category): static
+    public function setCategory(?SecondHandCategory $category): static
     {
         $this->category = $category;
 

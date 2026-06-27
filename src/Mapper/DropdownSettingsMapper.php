@@ -12,6 +12,8 @@ use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Repository\ParameterRepository;
 use App\Service\MessageService;
+use App\Service\ReplaceKeywordsService;
+use App\Service\SeasonService;
 use App\Service\UrlContextService;
 
 class DropdownSettingsMapper
@@ -20,6 +22,8 @@ class DropdownSettingsMapper
         private ParameterRepository $parameterRepository,
         private MessageService $messageService,
         private UrlContextService $urlContextService,
+        private ReplaceKeywordsService $replaceKeywords,
+        private SeasonService $seasonService,
     ) {
     }
 
@@ -60,9 +64,9 @@ class DropdownSettingsMapper
 
     /** @return ButtonView[] */
     private function getMessages(string $section, string $referer): array
-    {
+    {              
         return array_map(fn ($message) => new ButtonView(
-            label: $message['label'],
+            label: $this->replaceKeywords->replaceCurrentSaison($message['label'], $this->seasonService->getCurrentSeason()),
             url: $this->urlContextService->generateUrl('admin_message_edit_content', ['message' => $message['id']], $referer),
             icon: 'lucide:message-circle',
             variant: ColorVariant::DROPDOWN,

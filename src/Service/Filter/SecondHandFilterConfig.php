@@ -7,7 +7,9 @@ namespace App\Service\Filter;
 use App\Dto\Filter\SecondHandFilter;
 use App\Entity\Enum\SecondHandStateEnum;
 use App\Entity\Member;
+use App\Entity\SecondHandCategory;
 use App\Form\Admin\UserAutocompleteField;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -43,14 +45,24 @@ class SecondHandFilterConfig implements FilterConfigInterface
                     'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
-            ]
-            )
+            ])
         ];
     }
 
     public function getAdvancedFields(): array
     {
         return [
+            new FilterFieldConfig(
+                name: 'category',
+                type: EntityType::class,
+                options: [
+                    'label' => 'Category',
+                    'class' => SecondHandCategory::class,
+                    'autocomplete' => true,
+                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'required' => false,
+                ],
+            ),
             new FilterFieldConfig(
                 name: 'member',
                 type: UserAutocompleteField::class,

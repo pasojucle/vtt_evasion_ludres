@@ -6,6 +6,7 @@ use App\Entity\Enum\SecondHandStateEnum;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\SecondHand;
+use App\Entity\SecondHandCategory;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -204,6 +205,14 @@ class SecondHandRepository extends ServiceEntityRepository
             $qb->expr()->eq('sh.state', ':state')
         )
         ->setParameter('state', $state);
+    }
+
+    public function filterCategory(QueryBuilder $qb, SecondHandCategory $category): Void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sh.category', ':category')
+        )
+        ->setParameter('category', $category);
     }
 
     public function filterMember(QueryBuilder $qb, Member $member): Void

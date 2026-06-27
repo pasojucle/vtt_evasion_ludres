@@ -7,12 +7,14 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\MessageDto;
 use App\Entity\Message;
 use App\Service\ReplaceKeywordsService;
+use App\Service\SeasonService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class MessageDtoTransformer
 {
     public function __construct(
-        private readonly ReplaceKeywordsService $replaceKeywordsService
+        private readonly ReplaceKeywordsService $replaceKeywordsService,
+        private SeasonService $seasonService,
     ) {
     }
 
@@ -20,7 +22,7 @@ class MessageDtoTransformer
     {
         $messageDto = new MessageDto();
         $messageDto->id = $message->getId();
-        $messageDto->label = $this->replaceKeywordsService->replaceCurrentSaison($message->getLabel());
+        $messageDto->label = $this->replaceKeywordsService->replaceCurrentSaison($message->getLabel(), $this->seasonService->getCurrentSeason());
         $messageDto->isProtected = $message->isProtected();
         ;
         return $messageDto;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Entity\Member;
-use App\Repository\CategoryRepository;
+use App\Repository\SecondHandCategoryRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecondHandControllerTest extends AbstractTestController
@@ -37,7 +37,7 @@ class SecondHandControllerTest extends AbstractTestController
     private function validateAddSecondHand(Member $member, string $name): void
     {
         $this->assertSelectorTextContains('.wrapper h1', 'Ajouter une annonce');
-        $categoryRepository = static::getContainer()->get(CategoryRepository::class);
+        $categoryRepository = static::getContainer()->get(SecondHandCategoryRepository::class);
         $categories = $categoryRepository->findAll();
         $form = $this->client->getCrawler()->selectButton('Enregistrer')->form();
 

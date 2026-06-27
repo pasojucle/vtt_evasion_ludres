@@ -27,7 +27,7 @@ final class Version20260624173203 extends AbstractMigration
 
         $this->addSql('ALTER TABLE bike_ride_type_message CHANGE message_id message_id VARCHAR(100) NOT NULL');
         $this->addSql('ALTER TABLE message CHANGE id id VARCHAR(100) NOT NULL, CHANGE section_id section_id VARCHAR(100) DEFAULT NULL');
-        $this->addSql('ALTER TABLE parameter CHANGE id id VARCHAR(150) NOT NULL, ADD section_id VARCHAR(100) DEFAULT NULL'); 
+        $this->addSql('ALTER TABLE parameter CHANGE id id VARCHAR(100) NOT NULL, ADD section_id VARCHAR(100) DEFAULT NULL'); 
         
         $this->addSql('DROP INDEX IDX_2A979110132604DB ON parameter');
     }
@@ -51,8 +51,7 @@ final class Version20260624173203 extends AbstractMigration
         $this->connection->executeQuery('ALTER TABLE parameter CHANGE section_id section_id VARCHAR(100) NOT NULL');
         $this->connection->executeQuery('ALTER TABLE parameter ADD CONSTRAINT FK_2A979110D823E37A FOREIGN KEY (section_id) REFERENCES section (id)');
         $this->connection->executeQuery('CREATE INDEX IDX_2A979110D823E37A ON parameter (section_id)');
-
-        $this->connection->executeQuery('ALTER TABLE bike_ride_type_message ADD CONSTRAINT FK_68B5B8DE537A1329 FOREIGN KEY (message_id) REFERENCES message (id)');
+        $this->connection->executeQuery('ALTER TABLE bike_ride_type_message ADD CONSTRAINT FK_68B5B8DE537A1329 FOREIGN KEY (message_id) REFERENCES message (id) ON DELETE CASCADE');
     }
 
 

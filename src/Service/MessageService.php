@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Member;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
-use App\Service\ReplaceKeywordsService;
 
 class MessageService
 {
     public function __construct(
         private readonly MessageRepository $messageRepository,
-        private readonly ReplaceKeywordsService $replaceKeywords
     ) {
     }
 
@@ -25,24 +22,19 @@ class MessageService
         foreach ($this->messageRepository->findBySectionNameAndQuery($section) as $message) {
             $messages[] = [
                 'id' => $message->getId(),
-                'label' => $this->replaceKeywords->replaceCurrentSaison($message->getLabel()),
+                'label' => $message->getLabel(),
             ];
         };
 
         return $messages;
     }
 
-    public function getMessageById(string $id, ?Member $user = null): string|bool|array|int|null
+    public function getMessageById(string $id): string|null
     {
         $message = $this->messageRepository->findOneById($id);
 
         if ($message) {
-            $content = $message->getContent();
-            if ($user) {
-                $content = $this->replaceKeywords->replaceUserData($content, $user);
-            }
-
-            return $this->replaceKeywords->replaceCurrentSaison($content);
+            return $message->getContent();
         }
 
         return null;
