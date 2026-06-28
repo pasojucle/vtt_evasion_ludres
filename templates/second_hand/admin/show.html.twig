@@ -1,54 +1,87 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}{{ second_hand.name }}{% endblock %}
+{% block title %}Annonces d'occasion - {{ second_hand.name }}{% endblock %}
 
 {% block body %}
-    <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Annonces d'occasion</h1>
-            <span class="tools">
-                <a href="{{ path('admin_second_hand_list', {'valid': second_hand.valid|parseInt}) }}" class="btn btn-ico" title="Retour à la liste des annonces">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-            </span>
-        </div>
-        <div class="wrapper-body">
-            <div class="row row-align-top">
-                <div class="col-md-5 col-xs-12">
-                    {% for image in second_hand.images %}
-                        <img class="second-hand mb-20" src="{{ image.path }}" alt="{{ image.filename }}">
-                    {% endfor %}
+    <div class="p-4 lg:p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mt-4 pb-4">
+            <div class="w-full">
+                <h1 class="font-bold text-3xl">{{ second_hand.name }}</h1>
+                <div class="flex gap-4 justify-between lg:justify-self-start">
+                    <div class="text-muted mt-1">Créée le {{ second_hand.createdAt }}</div>
+                    {% include "components/_badge.html.twig" with {badge: second_hand.state} %}
                 </div>
-                <div class="col-md-1 "></div>
-                <div class="col-md-6 col-xs-12">
-                    <h2>{{ second_hand.name }}</h2>
-                    <br>
-                    <div class="detail">
-                        <p>{{ second_hand.createdAt }}</p>
-                    </div>
-                    <div class="detail">
-                        <h3>Descriptif</h3>
-                        <p>{{ second_hand.content|raw}}<p>
-                        <p class="price">{{ second_hand.price }}</p>
-                    </div>
-                    <div class="detail">
-                        <h3>Categorie</h3>
-                        <p>{{ second_hand.category }}<p>
-                        
-                    </div>
-                    <div class="detail">
-                        <h3>Contact</h3>
-                        <p>{{ second_hand.user.member.fullName }}</p>
-                        <p>{{ second_hand.user.member.email }}</p>
-                        <p>{{ second_hand.user.member.phone }}</p>
-                    </div>
-                </div>         
             </div>
-        </div> 
-        <div class="wrapper-footer">
-            {% if not second_hand.valid %}
-                <a class="btn btn-success" href="{{ path('admin_second_hand_validate', {'secondHand': second_hand.id})}}" title="Valider"><i class="fas fa-check"></i> Valider</a>
-            {% endif %}
+            <div class="flex items-center gap-2 self-start lg:self-center shrink-0">
+                {% if second_hand.buttonEdit %}
+                    {% include "components/_button.html.twig" with {button: second_hand.buttonEdit} %}
+                {% endif %}
+                {% if second_hand.buttonDelete %}
+                    {% include "components/_button.html.twig" with {button: second_hand.buttonDelete} %}
+                {% endif %}
+            </div>
         </div>
+        <div class="mt-4 flex flex-col gap-4">
+            <div class="border border-border rounded-md flex flex-col" data-controller="lightbox">
+                <div class="p-4 flex flex-col lg:flex-row items-center justify-center gap-4">
+                    <div class="h-80">                            
+                        <img 
+                            class="second-hand mb-20 h-full object-contain rounded-md" 
+                            src="{{ second_hand.mainImagePath }}"
+                            alt="{{ second_hand.name }}"
+                            data-lightbox-target="mainImage"
+                        >
+                    </div>
+                    {% if second_hand.images|length > 1 %}
+                    <div class="flex gap-2 h-14">
+                        {% for image in second_hand.images %}
+                            <img 
+                                class="second-hand mb-20 h-14 w-14 object-cover rounded border border-border opacity-60 hover:opacity-100 transition-opacity cursor-pointer" 
+                                src="{{ image.path }}" 
+                                alt="{{ image.filename }}"
+                                data-lightbox-src="{{ image.path }}"
+                                data-action="click->lightbox#switch"
+                            >
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="second_hand_container" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="border border-border rounded-md flex flex-col">
+                    <div class="bg-slate-300 uppercase pl-4 pr-2 py-2 text-white text-sm flex gap-4 items-center">
+                        <div class="flex items-center">Détail</div>
+                    </div>
+                    <div class="p-4">
+                        <div>
+                            <p class="whitespace-pre-line">{{ second_hand.content|raw}}<p>
+                        </div>
+                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
+                            <div class="flex gap-2 items-center">
+                                {% include "components/_badge.html.twig" with {badge: second_hand.categoryBadge} %}
+                                <div class="text-muted">{{ second_hand.categoryName }}</div>
+                            </div>
+                            <p class="text-2xl text-accent font-bold">{{ second_hand.price }}</p>
+                        </div>
+                        {% if second_hand.buttonValidate %}
+                            <div class="mt-4">
+                                {% include "components/_button.html.twig" with {button: second_hand.buttonValidate} %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="border border-border rounded-md flex flex-col">
+                    <div class="bg-slate-300 uppercase pl-4 pr-2 py-2 text-white text-sm flex gap-4 items-center">
+                        <div class="flex items-center">Contact</div>
+                    </div>
+                    <div class="p-4">
+                        <p class="font-bold">{{ second_hand.sellerName}}</p>
+                        <p>{{ second_hand.sellerEmail }}</p>
+                        <p>{{ second_hand.sellerPhone }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 {% endblock %}

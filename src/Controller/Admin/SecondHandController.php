@@ -11,6 +11,7 @@ use App\Form\SecondHandType;
 use App\Repository\SecondHandRepository;
 use App\State\SecondHand\Processor\SecondHandDeleteProcessor;
 use App\State\SecondHand\Provider\SecondHandDeleteProvider;
+use App\State\SecondHand\Provider\SecondHandDetailProvider;
 use App\State\SecondHand\Provider\SecondHandListProvider;
 use App\UseCase\SecondHand\EditSecondHand;
 use DateTimeImmutable;
@@ -34,7 +35,6 @@ class SecondHandController extends AbstractCrudController
         SecondHandListProvider $provider,
         Request $request,
     ): Response {
-        dump($provider->getFilterConfig('admin_second_hand_list')->getDataClass());
         return $this->handleListAction(
             SecondHandFilter::class,
             $provider,
@@ -44,14 +44,21 @@ class SecondHandController extends AbstractCrudController
 
     #[Route('/detail/{secondHand}', name: 'show', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_VIEW', 'secondHand')]
-    public function show(SecondHand $secondHand): Response
+    public function show(
+        Request $request,
+        SecondHandDetailProvider $provider,
+        SecondHand $secondHand
+    ): Response
     {
+
         return $this->render('second_hand/admin/show.html.twig', [
-            'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
+            'second_hand' => $provider->getDetailView(
+                $secondHand, 
+                $request->attributes->get('_route'),
+                $request->query->get('_redirect_to')
+            ),
         ]);
     }
-
-
 
     #[Route('/edit/{secondHand}', name: 'edit', defaults: ['secondHand' => null], methods: ['GET', 'POST'])]
     #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]

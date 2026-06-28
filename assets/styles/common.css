@@ -1352,9 +1352,9 @@ nav.nav-tab::before {
 .block.background-ligth, .block.background-clear , .block.background-color {
     padding: 25px;
 }
-.block:not(:first-child) {
+/* .block:not(:first-child) {
     margin-top: var(--gap);
-}
+} */
 h3 + ul.block.background-ligth {
     margin-top: 5px;
 }

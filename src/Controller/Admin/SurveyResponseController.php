@@ -27,7 +27,7 @@ class SurveyResponseController extends AbstractController
     }
 
     #[Route('/show/{surveyResponse}', name: 'show', methods: ['GET'])]
-    #[IsGranted('SURVEY_EDIT', 'survey')]
+    #[IsGranted('SURVEY_EDIT', subject: 'surveyResponse')]
     public function show(
         SurveyResponse $surveyResponse
     ): Response {

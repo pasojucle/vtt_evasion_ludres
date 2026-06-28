@@ -44,7 +44,7 @@ class FileController extends AbstractController
             throw $this->createNotFoundException('Le répertoire demandé n’est pas valide.');
         }
         
-        $path = $fileService->join($pathDir, base64_decode($filename));
+        $path = $fileService->join($pathDir, $filename);
 
         if (!file_exists($path)) {
             throw $this->createNotFoundException('Le fichier demandé n’est pas valide.');

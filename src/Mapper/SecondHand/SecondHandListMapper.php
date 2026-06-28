@@ -61,7 +61,7 @@ class SecondHandListMapper
                     $state->variant(),
                 ),
                 dropdown: $this->dropDown($entity, $referer),
-                url: $this->urlGenerator->generate("admin_second_hand_show", ['secondHand' => $entity->getId()]),
+                url: $this->urlContextService->generateUrl("admin_second_hand_show", ['secondHand' => $entity->getId()], $referer),
                 gridTemplateBadges: 'grid-cols-2',
             );
         }

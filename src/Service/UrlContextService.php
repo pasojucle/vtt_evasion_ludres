@@ -23,7 +23,7 @@ class UrlContextService
     }
 
 
-    public function generateTargetUrl(string $currentRoute, array $filter): string
+    public function generateTargetUrl(string $currentRoute, array $filter = []): string
     {
         return rawurlencode($this->urlGenerator->generate($currentRoute, $filter));
     }

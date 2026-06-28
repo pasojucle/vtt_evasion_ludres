@@ -35,7 +35,7 @@ class SecondHandDeleteProcessor implements DialogProcessorInterface
         return new ProcessorResult(
             success: true,
             targetUrl: $targetUrl,
-            messageKey: 'second_hand.flash.success.received',
+            messageKey: 'second_hand.flash.success.delete',
         );
     }
 }

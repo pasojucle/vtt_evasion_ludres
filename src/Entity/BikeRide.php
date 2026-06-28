@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\BikeRideRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,7 +13,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideRepository::class)]
-class BikeRide
+class BikeRide implements UploadableInterface
 {
     public const DEFAULT_TITLE = '';
     public const DEFAULT_DISPLAY_DURATION = 8;

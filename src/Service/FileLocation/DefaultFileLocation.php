@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service\FileLocation;
 
-use App\Entity\RegistrationStep;
 
-class RegistrationStepFileLocation extends AbstractFileLocation
+class DefaultFileLocation extends AbstractFileLocation
 {
     public function supports(string $className): bool
     {
-        return $className === RegistrationStep::class;
+        return false;
     }
 
     public function getBaseDirectoryName(): string
     {
-        return 'registration_step';
+        return 'default';
     }
 }

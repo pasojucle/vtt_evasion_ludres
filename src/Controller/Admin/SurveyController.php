@@ -23,7 +23,6 @@ use App\UseCase\Survey\GetSurvey;
 use App\UseCase\Survey\GetSurveyResults;
 use App\UseCase\Survey\SetSurvey;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -123,7 +122,7 @@ class SurveyController extends AbstractCrudController
     }
 
     #[Route('/{survey}', name: 'admin_survey', methods: ['GET', 'POST'], requirements: ['survey' => '\d+'])]
-    #[IsGranted('SURVEY_EDIT', 'survey')]
+    #[IsGranted('SURVEY_EDIT', subject: 'survey')]
     public function show(
         GetSurveyResults $getSurveyResults,
         Request $request,
@@ -151,7 +150,6 @@ class SurveyController extends AbstractCrudController
             'form' => $form->createView(),
         ]);
     }
-
 
     #[Route('/emails', name: 'admin_survey_email_to_clipboard', methods: ['GET'])]
     #[IsGranted('SURVEY_LIST')]
