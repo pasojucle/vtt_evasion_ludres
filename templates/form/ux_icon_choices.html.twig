@@ -1,0 +1,54 @@
+{% block ux_icon_row %}
+<div 
+    class="{{ form.vars.row_attr.class}}"
+    {{ stimulus_controller('icon-choices', {
+        choices: form.vars.attr["data-choices"],
+        value: form.vars.value,
+        route: path("admin_form_icon_choices")
+    }) }}
+>
+    {{ form_label(form) }}
+    <input 
+        id="{{ form.vars.id }}" 
+        name="{{ form.vars.full_name }}" 
+        class="hidden" type="text" 
+        data-icon-choices-target="input"
+        value={{ form.vars.value }}
+    />
+    <div class="flex flex-col gap-0">
+        <div class="grid grid-cols-3 items-center w-full gap-0">
+            <button 
+                type="button"
+                data-action="click->icon-choices#up"
+                class="p-1 bg-slate-200 text-sm text-slate-800 text-center hover:cursor-pointer hover:bg-slate-300 border border-border rounded-tl-sm"
+            >
+                <div class="flex gap-2 items-center justify-center">
+                    <div>{{ ux_icon('lucide:arrow-up-circle') }}</div>
+                    <div>Précédentes</div>
+                </div>
+            </button>
+            <div class="p-1 bg-slate-200 text-sm text-slate-800 text-center border border-border">
+                <span data-icon-choices-target="gauge">1</span> / {{ form.vars.attr["data-choices"]|length }}</div>
+            <button 
+                type="button"
+                data-action="click->icon-choices#down"
+                class="p-1 bg-slate-200 text-sm text-slate-800 text-center hover:cursor-pointer hover:bg-slate-300 border border-border rounded-tr-sm"
+            >
+                <div class="flex gap-2 items-center justify-center">
+                    <div>Suivantes</div>
+                    <div>{{ ux_icon('lucide:arrow-down-circle') }}</div>
+                </div>
+            </button>
+        </div>
+    </div>
+    
+    <div class="border border-border border-b-0 p-2 ">
+        <turbo-frame 
+            id="ux_icon_list" 
+            class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"
+        > 
+                {{ ux_icon(form.vars.value) }}
+        </turbo-frame>
+    </div>
+</div>
+{% endblock %}

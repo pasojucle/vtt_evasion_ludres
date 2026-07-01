@@ -97,6 +97,10 @@ class SecondHandCategoryListMapper
                     url: $this->urlContextService->generateUrl('admin_second_hand_category_edit', ['category' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
+                     htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    ],
                 ),
                  new ButtonView(
                      label: 'Supprimer',

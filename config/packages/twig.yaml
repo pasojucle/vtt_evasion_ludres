@@ -18,6 +18,7 @@ twig:
         - 'form/check_group_row.html.twig'
         - 'form/label_only.html.twig'
         - 'form/month_filter.html.twig'
+        - 'form/ux_icon_choices.html.twig'
 
     globals:
         menu_service: '@App\Service\MenuService'

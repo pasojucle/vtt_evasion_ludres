@@ -9,8 +9,10 @@ use App\Entity\SecondHandCategory;
 use App\Form\Admin\CategoryType;
 use App\Repository\SecondHandCategoryRepository;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryDeleteProcessor;
+use App\State\SecondHandCategory\Processor\SecondHandCategoryUpdateProcessor;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryDeleteProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryListProvider;
+use App\State\SecondHandCategory\Provider\SecondHandCategoryUpdateProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -64,25 +66,17 @@ class SecondHandCategoryController extends AbstractCrudController
     #[Route('/{category}', name: 'edit', methods: ['GET', 'POST'], defaults:['category' => null])]
     public function edit(
         Request $request,
-        ?SecondHandCategory $category
+        SecondHandCategoryUpdateProvider $provider,
+        SecondHandCategoryUpdateProcessor $processor,
+        SecondHandCategory $category
     ): Response {
-        $form = $this->createForm(CategoryType::class, $category, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), )
-        ]);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
-
-            $this->categoryRepository->save($category, true);
-
-            return $this->redirectToRoute('admin_category_list');
-        }
-
-        return $this->render('category/admin/edit.html.twig', [
-            'category' => $category,
-            'form' => $form->createView(),
-        ]);
+        return $this->handleFormComponentAction(
+            $request,
+            $category,
+            $provider,
+            $processor,
+            CategoryType::class
+        );
     }
 
     #[Route('supprimer/{category}', name: 'delete', methods: ['GET', 'POST'])]

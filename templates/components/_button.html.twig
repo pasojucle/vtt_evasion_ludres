@@ -7,7 +7,7 @@
 
 <a href="{{ button.url }}" 
    title="{{ button.title }}"
-   class="{{ base_classes }}  {{ utils.rounded_class(button.rounded.value) }} {{ utils.color_class(button.variant.value) }}"
+   class="{{ base_classes }}  {{ utils.rounded_class(button.rounded.value) }} {{ utils.color_class(button.variant.value) }} hover:cursor-pointer"
     {% for attribut in button.htmlAttributes %}
         {{ attribut.name }}="{{ attribut.value }}"
     {% endfor %}

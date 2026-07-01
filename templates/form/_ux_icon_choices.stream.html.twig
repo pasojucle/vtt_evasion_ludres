@@ -1,0 +1,17 @@
+<turbo-stream 
+    action="{{ action }}" 
+    target="ux_icon_list" 
+    class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"
+>
+    <template>
+        {% for choice in choices %}
+            <div 
+                class="p-1 {% if choice == value %}bg-slate-300{% endif %}" 
+                data-action="click->icon-choices#select"
+                data-icon-item="{{ choice}}"
+            >
+                {{ ux_icon(choice, {class: 'w-5 h-5'} )}}
+            </div>
+        {% endfor %}
+    </template>
+</turbo-stream>

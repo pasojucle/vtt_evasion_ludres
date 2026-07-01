@@ -82,7 +82,6 @@ abstract class AbstractCrudController extends AbstractController
         ], $formOptions));
         
         $form->handleRequest($request);
-        dump($this->urlContextService->getRedirectUrl($request));
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
                 $result = $processor->process($object, $this->urlContextService->getRedirectUrl($request));
