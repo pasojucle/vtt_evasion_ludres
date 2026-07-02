@@ -9,21 +9,22 @@ use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
 use App\Dto\View\HtmlAttributView;
+use App\Dto\View\SecondHand\SecondHandDetailView;
 use App\Entity\Enum\SecondHandStateEnum;
 use App\Entity\SecondHand;
 use App\Model\Currency;
-use App\Dto\View\SecondHand\SecondHandDetailView;
 use App\Service\UrlContextService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SecondHandDetailMapper
 {
-    public function  __construct(
+    public function __construct(
         private TranslatorInterface $translator,
         private UrlContextService $urlContextService,
         private UrlGeneratorInterface $urlGenerator,
-    ){}
+    ) {
+    }
 
     public function mapToView(SecondHand $secondHand, array $images, string $defaultImage, string $currentRoute, ?string $listRoute): SecondHandDetailView
     {
@@ -69,7 +70,7 @@ class SecondHandDetailMapper
                 variant: ColorVariant::DESTRUCTIVE,
                 label: 'Supprimer',
                 icon: 'lucide:delete',
-                    htmlAttributes: [
+                htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],

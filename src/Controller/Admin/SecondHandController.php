@@ -48,12 +48,10 @@ class SecondHandController extends AbstractCrudController
         Request $request,
         SecondHandDetailProvider $provider,
         SecondHand $secondHand
-    ): Response
-    {
-
+    ): Response {
         return $this->render('second_hand/admin/show.html.twig', [
             'second_hand' => $provider->getDetailView(
-                $secondHand, 
+                $secondHand,
                 $request->attributes->get('_route'),
                 $request->query->get('_redirect_to')
             ),

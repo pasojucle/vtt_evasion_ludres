@@ -30,5 +30,6 @@ class SecondHandDetailView
         public ButtonView $buttonEdit,
         public ButtonView $buttonDelete,
         public ?ButtonView $buttonValidate = null,
-    ) {}
+    ) {
+    }
 }

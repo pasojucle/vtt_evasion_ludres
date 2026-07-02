@@ -24,8 +24,8 @@ class ParameterType extends AbstractType
     public function __construct(
         private ReplaceKeywordsService $replaceKeywords,
         private SeasonService $seasonService,
-    )
-    {}
+    ) {
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -37,9 +37,9 @@ class ParameterType extends AbstractType
                 $label = $this->replaceKeywords->replaceCurrentSaison($parameter->getLabel(), $this->seasonService->getCurrentSeason());
                 $form = $event->getForm();
 
-                [$classType, $fieldOptions] = match($type) {
+                [$classType, $fieldOptions] = match ($type) {
                     Parameter::TYPE_BOOL => [
-                        CheckboxType::class, 
+                        CheckboxType::class,
                         [
                             'label' => $label,
                             'data' => (bool) $value,
@@ -49,7 +49,7 @@ class ParameterType extends AbstractType
                     ],
                     Parameter::TYPE_HTML => [
                         TiptapType::class,
-                        ['config_name' => 'base',]
+                        ['config_name' => 'base', ]
                     ],
                     Parameter::TYPE_ARRAY => [
                         CollectionType::class,

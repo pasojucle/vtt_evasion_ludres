@@ -13,11 +13,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CategoryType extends AbstractType
+class SecondHandCategoryType extends AbstractType
 {
     public function __construct(
         private LucideIconProvider $lucideIconProvider,
-    ){}
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $iconChoices = $this->lucideIconProvider->getIconChoices();

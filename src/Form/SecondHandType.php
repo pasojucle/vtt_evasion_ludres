@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\SecondHandCategory;
 use App\Entity\SecondHand;
+use App\Entity\SecondHandCategory;
 use App\Form\SecondHandImageType;
 use App\Repository\SecondHandCategoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

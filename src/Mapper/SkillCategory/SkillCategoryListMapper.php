@@ -99,17 +99,21 @@ class SkillCategoryListMapper
                     url: $this->urlContextService->generateUrl('admin_skill_category_edit', ['skillCategory' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    ],
                 ),
-                 new ButtonView(
-                     label: 'Supprimer',
-                     url: $this->urlContextService->generateUrl('admin_skill_category_delete', ['skillCategory' => $entity->getId()], $referer),
-                     icon: 'lucide:delete',
-                     variant: ColorVariant::DROPDOWN,
-                     htmlAttributes: [
+                new ButtonView(
+                    label: 'Supprimer',
+                    url: $this->urlContextService->generateUrl('admin_skill_category_delete', ['skillCategory' => $entity->getId()], $referer),
+                    icon: 'lucide:delete',
+                    variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
                         new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
                         new HtmlAttributView('data-action', 'click->dropdown#close'),
                     ],
-                 )
+                )
             ]
         );
     }

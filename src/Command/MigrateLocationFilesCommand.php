@@ -54,7 +54,7 @@ class MigrateLocationFilesCommand extends Command
             ['name' => 'identité', 'oldDir' => ['uploads', 'images'], 'newDir' => 'identity', 'entityClass' => Identity::class],
             ['name' => 'étape d\'inscription', 'oldDir' => ['uploads', 'images'], 'newDir' => 'registration_step', 'entityClass' => RegistrationStep::class],
         ];
-        foreach($migrations as $migration) {
+        foreach ($migrations as $migration) {
             if (!$this->migrate($migration, $io)) {
                 return Command::FAILURE;
             }
@@ -111,7 +111,7 @@ class MigrateLocationFilesCommand extends Command
                 } catch (IOExceptionInterface $exception) {
                     $io->error(sprintf('Échec du déplacement pour le fichier : %s. Erreur : %s', $filename, $exception->getMessage()));
                 }
-            }else {
+            } else {
                 $io->warning(sprintf('Fichier introuvable sur le disque : %s', $sourcePath));
             }
             $io->progressAdvance();

@@ -1,18 +1,19 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Mapper\SecondHandCategory;
 
-use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SecondHandCategoryFilter;
+use App\Dto\View\BadgeView;
+use App\Dto\View\ButtonView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
-use App\Dto\View\ListView;
 use App\Dto\View\ListItemView;
+use App\Dto\View\ListView;
 use App\Entity\SecondHandCategory;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
@@ -46,7 +47,7 @@ class SecondHandCategoryListMapper
             $items[] = new ListItemView(
                 labels: [
                     new LabelView($entity->getName()),
-                ],                
+                ],
                 indicators: $this->getIndicators($entity),
                 dropdown: $this->dropDown($entity, $referer),
                 gridTemplateContent: 'grid-cols-[1fr_50px]',
@@ -97,7 +98,7 @@ class SecondHandCategoryListMapper
                     url: $this->urlContextService->generateUrl('admin_second_hand_category_edit', ['category' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
-                     htmlAttributes: [
+                    htmlAttributes: [
                         new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
                         new HtmlAttributView('data-action', 'click->dropdown#close'),
                     ],

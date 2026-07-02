@@ -6,7 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Dto\Filter\SecondHandCategoryFilter;
 use App\Entity\SecondHandCategory;
-use App\Form\Admin\CategoryType;
+use App\Form\Admin\SecondHandCategoryType;
 use App\Repository\SecondHandCategoryRepository;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryDeleteProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryUpdateProcessor;
@@ -31,8 +31,7 @@ class SecondHandCategoryController extends AbstractCrudController
     public function list(
         SecondHandCategoryListProvider $provider,
         Request $request
-    ): Response
-    {
+    ): Response {
         return $this->handleListAction(
             SecondHandCategoryFilter::class,
             $provider,
@@ -44,7 +43,7 @@ class SecondHandCategoryController extends AbstractCrudController
     public function add(
         Request $request,
     ): Response {
-        $form = $this->createForm(CategoryType::class, null, [
+        $form = $this->createForm(SecondHandCategoryType::class, null, [
             'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), )
         ]);
         $form->handleRequest($request);
@@ -75,7 +74,7 @@ class SecondHandCategoryController extends AbstractCrudController
             $category,
             $provider,
             $processor,
-            CategoryType::class
+            SecondHandCategoryType::class
         );
     }
 

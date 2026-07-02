@@ -15,7 +15,8 @@ class ParameterUpdateProvider implements FormComponentProviderInterface
     public function __construct(
         private ReplaceKeywordsService $replaceKeywords,
         private SeasonService $seasonService,
-    ){}
+    ) {
+    }
 
     public function mapToView(object $entity): SheetView
     {

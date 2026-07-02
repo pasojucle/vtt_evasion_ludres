@@ -64,7 +64,7 @@ class DropdownSettingsMapper
 
     /** @return ButtonView[] */
     private function getMessages(string $section, string $referer): array
-    {              
+    {
         return array_map(fn ($message) => new ButtonView(
             label: $this->replaceKeywords->replaceCurrentSaison($message['label'], $this->seasonService->getCurrentSeason()),
             url: $this->urlContextService->generateUrl('admin_message_edit_content', ['message' => $message['id']], $referer),

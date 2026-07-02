@@ -45,7 +45,8 @@ class SecondHandFilterConfig implements FilterConfigInterface
                     'data-action' => 'change->filter#submit'
                 ],
                 'required' => false,
-            ])
+            ]
+            )
         ];
     }
 

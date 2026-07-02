@@ -1,12 +1,12 @@
 <turbo-stream 
-    action="{{ action }}" 
+    action="{{ list.action.value }}" 
     target="ux_icon_list" 
     class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"
 >
     <template>
-        {% for choice in choices %}
+        {% for choice in list.choices %}
             <div 
-                class="p-1 {% if choice == value %}bg-slate-300{% endif %}" 
+                class="p-1 {% if choice == list.value %}bg-slate-300{% endif %}" 
                 data-action="click->icon-choices#select"
                 data-icon-item="{{ choice}}"
             >

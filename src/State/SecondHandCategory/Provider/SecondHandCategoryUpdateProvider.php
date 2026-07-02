@@ -15,7 +15,6 @@ class SecondHandCategoryUpdateProvider implements FormComponentProviderInterface
      */
     public function mapToView(object $entity): SheetView
     {
-
         return new SheetView(
             title: 'Catégorie',
             description: 'Catégorie d\'annonce d\'occasion.',

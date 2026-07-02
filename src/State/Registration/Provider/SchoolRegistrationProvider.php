@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Registration\Provider;
 
-use App\Service\ParameterService;
 use App\Service\MessageService;
+use App\Service\ParameterService;
 use App\Service\ReplaceKeywordsService;
 
 class SchoolRegistrationProvider
@@ -14,7 +14,8 @@ class SchoolRegistrationProvider
         private ParameterService $parameterService,
         private MessageService $messageService,
         private ReplaceKeywordsService $replaceKeywordsService,
-    ) {}
+    ) {
+    }
 
     public function getSettings(): array
     {

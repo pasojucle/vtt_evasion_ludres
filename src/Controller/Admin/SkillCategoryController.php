@@ -8,8 +8,10 @@ use App\Dto\Filter\SkillCategoryFilter;
 use App\Entity\SkillCategory;
 use App\Form\Admin\SkillCategoryType;
 use App\State\SkillCategory\Processor\SkillCategoryDeleteProcessor;
+use App\State\SkillCategory\Processor\SkillCategoryUpdateProcessor;
 use App\State\SkillCategory\Provider\SkillCategoryDeleteProvider;
 use App\State\SkillCategory\Provider\SkillCategoryListProvider;
+use App\State\SkillCategory\Provider\SkillCategoryUpdateProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,30 +75,17 @@ class SkillCategoryController extends AbstractCrudController
     #[IsGranted('SKILL_EDIT', 'skillCategory')]
     public function edit(
         Request $request,
+        SkillCategoryUpdateProvider $provider,
+        SkillCategoryUpdateProcessor $processor,
         SkillCategory $skillCategory
     ): Response {
-        $queryParams = $request->query->all();
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(SkillCategoryType::class, $skillCategory, [
-            'action' => $request->getUri(),
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $skillCategory = $form->getData();
-                $this->entityManager->flush();
-
-                return $this->redirectToRoute('admin_skill_category_list', $queryParams);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('skill_category/admin/skill_category_edit.modal.html.twig', [
-            'form' => $form->createView(),
-            'title' => 'Modifier une catégorie',
-            'btn' => ['label' => 'Modifier', 'icon' => 'lucide:pen'],
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            $skillCategory,
+            $provider,
+            $processor,
+            SkillCategoryType::class
+        );
     }
 
     #[Route(path: '/delete/{skillCategory}', name: 'delete', methods: ['GET', 'POST'], options: ['expose' => true])]
