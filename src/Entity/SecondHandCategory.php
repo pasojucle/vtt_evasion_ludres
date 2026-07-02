@@ -21,7 +21,7 @@ class SecondHandCategory
     private bool $deleted = false;
 
     #[ORM\Column(length: 30)]
-    private string $icon = 'lucide:layers';
+    private string $icon = 'lucide:a-arrow-down';
 
     public function __toString(): string
     {

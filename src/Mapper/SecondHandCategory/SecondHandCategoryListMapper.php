@@ -71,9 +71,13 @@ class SecondHandCategoryListMapper
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             addItem: new ButtonView(
                 label: 'Ajouter une catégorie',
-                url: $this->urlGenerator->generate('admin_second_hand_category_add'),
+                url: $this->urlContextService->generateUrl('admin_second_hand_category_add', [], $referer),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close'),
+                ],
             ),
         );
     }

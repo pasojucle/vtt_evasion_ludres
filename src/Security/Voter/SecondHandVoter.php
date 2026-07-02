@@ -6,6 +6,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Member;
 use App\Entity\SecondHand;
+use App\Entity\SecondHandCategory;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -31,7 +32,7 @@ class SecondHandVoter extends Voter
         if (in_array($attribute, [self::LIST, self::ADD]) && !$subject) {
             return true;
         }
-        return in_array($attribute, [self::EDIT, self::VIEW]) && $subject instanceof SecondHand;
+        return in_array($attribute, [self::EDIT, self::VIEW]) && ($subject instanceof SecondHand || $subject instanceof SecondHandCategory);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -55,7 +56,7 @@ class SecondHandVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, Member $member, ?SecondHand $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, Member $member, SecondHand|SecondHandCategory|null $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
             return true;
@@ -64,7 +65,7 @@ class SecondHandVoter extends Voter
         return $this->isOwner($subject, $member) && $isActiveUser;
     }
 
-    private function canView(TokenInterface $token, Member $member, ?SecondHand $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canView(TokenInterface $token, Member $member, SecondHand|SecondHandCategory|null $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->canEdit($token, $member, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
@@ -86,9 +87,9 @@ class SecondHandVoter extends Voter
         return $isActiveUser;
     }
 
-    private function isOwner(?SecondHand $subject, Member $member): bool
+    private function isOwner(SecondHand|SecondHandCategory|null $subject, Member $member): bool
     {
-        if (!$subject) {
+        if (!$subject || $subject instanceof SecondHandCategory) {
             return false;
         }
 

@@ -7,9 +7,10 @@ namespace App\Controller\Admin;
 use App\Dto\Filter\SecondHandCategoryFilter;
 use App\Entity\SecondHandCategory;
 use App\Form\Admin\SecondHandCategoryType;
-use App\Repository\SecondHandCategoryRepository;
+use App\State\SecondHandCategory\Processor\SecondHandCategoryCreateProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryDeleteProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryUpdateProcessor;
+use App\State\SecondHandCategory\Provider\SecondHandCategoryCreateProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryDeleteProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryListProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryUpdateProvider;
@@ -19,15 +20,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/occasion-categorie', name: 'admin_second_hand_category_')]
-#[IsGranted('ROLE_ADMIN')]
 class SecondHandCategoryController extends AbstractCrudController
 {
-    public function __construct(
-        private SecondHandCategoryRepository $categoryRepository,
-    ) {
-    }
-
     #[Route('s', name: 'list', methods: ['GET'])]
+    #[IsGranted('SECOND_HAND_LIST')]
     public function list(
         SecondHandCategoryListProvider $provider,
         Request $request
@@ -40,29 +36,23 @@ class SecondHandCategoryController extends AbstractCrudController
     }
 
     #[Route('', name: 'add', methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_ADD')]
     public function add(
         Request $request,
+        SecondHandCategoryCreateProvider $provider,
+        SecondHandCategoryCreateProcessor $processor,
     ): Response {
-        $form = $this->createForm(SecondHandCategoryType::class, null, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), )
-        ]);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
-
-            $this->categoryRepository->save($category, true);
-
-            return $this->redirectToRoute('admin_category_list');
-        }
-
-        return $this->render('category/admin/edit.html.twig', [
-            'category' => null,
-            'form' => $form->createView(),
-        ]);
+        return $this->handleFormComponentAction(
+            $request,
+            new SecondHandCategory(),
+            $provider,
+            $processor,
+            SecondHandCategoryType::class
+        );
     }
 
     #[Route('/{category}', name: 'edit', methods: ['GET', 'POST'], defaults:['category' => null])]
+    #[IsGranted('SECOND_HAND_EDIT', 'category')]
     public function edit(
         Request $request,
         SecondHandCategoryUpdateProvider $provider,
@@ -79,6 +69,7 @@ class SecondHandCategoryController extends AbstractCrudController
     }
 
     #[Route('supprimer/{category}', name: 'delete', methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_EDIT', 'category')]
     #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
