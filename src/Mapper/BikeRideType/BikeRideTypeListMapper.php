@@ -6,8 +6,6 @@ namespace App\Mapper\BikeRideType;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\Enum\Size;
-use App\Dto\Filter\ActivityFilter;
 use App\Dto\Filter\BikeRideTypeFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
@@ -53,7 +51,9 @@ class BikeRideTypeListMapper
                 labels: [
                     new LabelView($entity->getName()),
                 ],
+                status: $this->getStatus($entity),
                 dropdown: $this->dropDown($entity, $referer),
+                isDeleted: $entity->isDeleted(),
             );
         }
 
@@ -98,6 +98,21 @@ class BikeRideTypeListMapper
 
     private function dropDown(BikeRideType $entity, string $referer): DropdownView
     {
+        if ($entity->isDeleted()) {
+            return new DropdownView(
+                menuItems: [
+                    new ButtonView(
+                        label: 'Restaurer',
+                        url: $this->urlContextService->generateUrl('admin_bike_ride_type_restore', [
+                            'bikeRideType' => $entity->getId()
+                            ], $referer),
+                        icon: 'lucide:archive-restore',
+                        variant: ColorVariant::DROPDOWN,
+                    ),
+                ]
+            );
+        }
+
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
@@ -108,7 +123,28 @@ class BikeRideTypeListMapper
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
+                new ButtonView(
+                    label: 'Supprimer',
+                    url: $this->urlContextService->generateUrl('admin_bike_ride_type_delete', [
+                        'bikeRideType' => $entity->getId()
+                        ], $referer),
+                    icon: 'lucide:delete',
+                    variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    ],
+                ),
             ]
         );
+    }
+
+    private function getStatus(BikeRideType $entity): ?BadgeView
+    {
+        if ($entity->isDeleted()) {
+            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
+        }
+
+        return null;
     }
 }

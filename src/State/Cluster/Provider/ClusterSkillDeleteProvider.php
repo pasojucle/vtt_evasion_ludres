@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Cluster\Provider;
 
-use App\Dto\ClusterSkillDto;
+use App\Dto\Payload\ClusterSkillDto;
 use App\Dto\View\DialogModalView;
 use App\Mapper\DestructiveModalMapper;
 use App\State\FormComponentProviderInterface;

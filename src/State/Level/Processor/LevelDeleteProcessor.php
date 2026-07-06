@@ -4,34 +4,34 @@ declare(strict_types=1);
 
 namespace App\State\Level\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Level;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
-use App\State\DialogProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\SoftDeleteService;
+use App\State\HtmlProcessorInterface;
 
-class LevelDeleteProcessor implements DialogProcessorInterface
+class LevelDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private LevelRepository $levelRepository,
         private OrderByService $orderByService,
+        private SoftDeleteService $softDeleteService,
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    /**
+     * @param Level $entity
+     */
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
-        /** @var Level $entity */
         $type = $entity->getType();
-
-        $entity->setIsDeleted(true);
-        $this->entityManager->flush();
-
         $levels = $this->levelRepository->findByType($type);
-        $this->orderByService->resetOrders($levels);
 
-        return new ProcessorResult(
+        $this->softDeleteService->softDelete($entity);
+        $this->orderByService->setNewOrders($entity, $levels, count($levels));
+
+        return new HtmlProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'level.flash.success.delete',

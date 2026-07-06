@@ -9,6 +9,7 @@ use App\Dto\Filter\FilterChip;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\Filter\FilterFieldConfig;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -63,7 +64,9 @@ class FilterChipsMapper
         };
 
         if ($field->chipCcomputed) {
-            $label = sprintf('%s: %s', $field->options['label'] ?? $name, $label);
+            $label = (CheckboxType::class === $field->type)
+                ? sprintf('%s', $field->options['label'] ?? $name)
+                : sprintf('%s: %s', $field->options['label'] ?? $name, $label);
         }
 
         $filterSchips[] = new FilterChip(

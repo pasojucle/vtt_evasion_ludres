@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\Filter\LevelFilter;
+use App\Dto\Payload\LevelOrderDto;
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
 use App\Repository\LevelRepository;
-use App\Service\OrderByService;
 use App\State\Level\Processor\LevelDeleteProcessor;
+use App\State\Level\Processor\LevelOrderProcessor;
+use App\State\Level\Processor\LevelRestoreProcessor;
 use App\State\Level\Provider\LevelDeleteProvider;
 use App\State\Level\Provider\LevelListProvider;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +26,6 @@ class LevelController extends AbstractCrudController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LevelRepository $levelRepository,
-        private OrderByService $orderByService
     ) {
     }
 
@@ -87,18 +88,31 @@ class LevelController extends AbstractCrudController
         );
     }
 
+    #[Route('/restaure/{level}', name: 'restore', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminLevelRestore(
+        Request $request,
+        LevelRestoreProcessor $processor,
+        Level $level
+    ): Response {
+        return $this->handleProcessAction(
+            $request,
+            $level,
+            $processor
+        );
+    }
+
     #[Route('/ordonner/{level}', name: 'order', methods: ['POST'], options:['expose' => true])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelOrder(
         Request $request,
+        LevelOrderProcessor $processor,
         Level $level
     ): Response {
-        $type = $level->getType();
-        $newOrder = (int) $request->request->get('newOrder');
-        $levels = $this->levelRepository->findByType($type);
-
-        $this->orderByService->setNewOrders($level, $levels, $newOrder);
-
-        return new Response();
+        return $this->handleJsonProcessAction(
+            $request,
+            new LevelOrderDto($level, (int) $request->request->get('newOrder', 0)),
+            $processor
+        );
     }
 }

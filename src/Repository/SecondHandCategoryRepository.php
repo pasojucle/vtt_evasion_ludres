@@ -76,4 +76,11 @@ class SecondHandCategoryRepository extends ServiceEntityRepository
         $qb
             ->orderBy('shc.name', $direction);
     }
+
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('shc.deletedAt')
+        );
+    }
 }

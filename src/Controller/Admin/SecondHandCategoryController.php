@@ -9,6 +9,7 @@ use App\Entity\SecondHandCategory;
 use App\Form\Admin\SecondHandCategoryType;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryCreateProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryDeleteProcessor;
+use App\State\SecondHandCategory\Processor\SecondHandCategoryRestoreProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryUpdateProcessor;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryCreateProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryDeleteProvider;
@@ -81,6 +82,20 @@ class SecondHandCategoryController extends AbstractCrudController
             $request,
             $category,
             $provider,
+            $processor
+        );
+    }
+
+    #[Route('/restaure/{category}', name: 'restore', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminLevelRestore(
+        Request $request,
+        SecondHandCategoryRestoreProcessor $processor,
+        SecondHandCategory $category,
+    ): Response {
+        return $this->handleProcessAction(
+            $request,
+            $category,
             $processor
         );
     }

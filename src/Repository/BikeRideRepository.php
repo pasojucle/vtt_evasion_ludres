@@ -53,8 +53,7 @@ class BikeRideRepository extends ServiceEntityRepository
             $qb->setParameter('endAt', $filters['endAt']);
         }
 
-        $andX->add((new Expr())->eq('br.deleted', ':deleted'), );
-        $qb->setParameter('deleted', 0);
+        $andX->add((new Expr())->isNull('br.deletedAt'), );
         $qb->andWhere($andX);
 
         return $qb
@@ -72,10 +71,9 @@ class BikeRideRepository extends ServiceEntityRepository
     {
         $qb->andWhere(
             $qb->expr()->gte('a.startAt', ':today'),
-            $qb->expr()->eq('a.deleted', ':deleted'),
+            $qb->expr()->isNull('a.deletedAt'),
         )
-        ->setParameter('today', $today)
-        ->setParameter('deleted', false);
+        ->setParameter('today', $today);
     }
 
     public function filterByMonth(QueryBuilder $qb, DateTimeInterface $startAt, DateTimeInterface $endAt): void
@@ -83,11 +81,10 @@ class BikeRideRepository extends ServiceEntityRepository
         $qb->andWhere(
             $qb->expr()->gte('a.startAt', ':startAt'),
             $qb->expr()->lte('a.startAt', ':endAt'),
-            $qb->expr()->eq('a.deleted', ':deleted'),
+            $qb->expr()->isNull('a.deletedAt'),
         )
         ->setParameter('startAt', $startAt)
-        ->setParameter('endAt', $endAt)
-        ->setParameter('deleted', false);
+        ->setParameter('endAt', $endAt);
     }
 
     public function filterSort(QueryBuilder $qb, string $sort): void
@@ -133,6 +130,13 @@ class BikeRideRepository extends ServiceEntityRepository
             );
     }
 
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('a.deletedAt')
+        );
+    }
+
     /**
      * @return QueryBuilder
      */
@@ -149,8 +153,7 @@ class BikeRideRepository extends ServiceEntityRepository
             $qb->setParameter('endAt', $endAt);
         }
 
-        $andX->add((new Expr())->eq('br.deleted', ':deleted'), );
-        $qb->setParameter('deleted', false);
+        $andX->add((new Expr())->isNull('br.deletedAt'), );
 
         return $qb
             ->andWhere($andX)
@@ -180,12 +183,9 @@ class BikeRideRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('br')
             ->andWhere(
                 (new Expr())->gte('br.startAt', ':today'),
-                (new Expr())->eq('br.deleted', ':deleted'),
+                (new Expr())->isNull('br.deletedAt',),
             )
-            ->setParameters(new ArrayCollection([
-                new Parameter('today', $today),
-                new Parameter('deleted', 0)
-            ]))
+            ->setParameter('today', $today)
             ->orderBy('br.startAt', 'ASC')
             ->andHaving("DATE_SUB(br.startAt, br.displayDuration, 'DAY') <= :today")
             ->getQuery()
@@ -210,11 +210,11 @@ class BikeRideRepository extends ServiceEntityRepository
             $orX->add((new Expr())->eq('br.startAt', ':query'));
             $params[] = new Parameter('query', $startAt->setTime(0, 0, 0));
         }
-        $params['deleted'] = new Parameter('deleted', false);
+
         return $this->createQueryBuilder('br')
             ->andWhere(
                 $orX,
-                (new Expr())->eq('br.deleted', ':deleted'),
+                (new Expr())->isNull('br.deletedAt'),
                 (new Expr())->notIn('br', $this->getBikeRideWithSurvey()),
             )
             ->setParameters(new ArrayCollection($params))
@@ -231,10 +231,9 @@ class BikeRideRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('br')
             ->andWhere(
-                (new Expr())->eq('br.deleted', ':deleted'),
+                (new Expr())->isNull('br.deletedAt'),
                 (new Expr())->notIn('br', $this->getBikeRideWithSurvey()),
             )
-            ->setParameter('deleted', 0)
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
             ->getResult()
@@ -260,13 +259,12 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->gte('br.startAt', ':start'),
                 (new Expr())->lte('br.startAt', ':end'),
                 (new Expr())->neq('brt.registration', ':registration'),
-                (new Expr())->eq('br.deleted', ':deleted'),
+                (new Expr())->isNull('br.deletedAt'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('start', (new DateTimeImmutable())->setTime(0, 0, 0)),
                 new Parameter('end', (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59)),
                 new Parameter('registration', RegistrationEnum::NONE),
-                new Parameter('deleted', false),
             ]))
             ->orderBy('br.startAt')
             ->getQuery()

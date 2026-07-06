@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\BikeRideType\Provider;
 
+
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\BikeRideTypeFilter;
 use App\Dto\View\ListView;
@@ -26,9 +27,11 @@ class BikeRideTypeListProvider implements ListProviderInterface
     ) {
     }
 
+    /**
+     * @param BikeRideTypeFilter $filter
+     */
     public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
-        /** @var BikeRideTypeFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
@@ -52,6 +55,10 @@ class BikeRideTypeListProvider implements ListProviderInterface
 
         if ($filter->name) {
             $this->bikeRideTypeRepository->filterName($qb, $filter->name);
+        }
+
+        if (!$filter->showDeleted) {
+            $this->bikeRideTypeRepository->filterActive($qb);
         }
 
         if ($filter->sort) {

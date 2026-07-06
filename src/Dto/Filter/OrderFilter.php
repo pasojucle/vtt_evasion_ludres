@@ -14,6 +14,7 @@ class OrderFilter extends AbstractFilter
         public ?Member $member = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = null,
+        public ?int $page = null,
     ) {
     }
 }

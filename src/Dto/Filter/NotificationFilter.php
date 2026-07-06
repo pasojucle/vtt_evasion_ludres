@@ -16,6 +16,7 @@ class NotificationFilter extends AbstractFilter
         public ?NotificationVisibility $visibility = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = null,
+        public ?int $page = null,
     ) {
     }
 }

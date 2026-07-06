@@ -10,6 +10,7 @@ use App\Entity\Product;
 use App\Form\Admin\ProductType;
 use App\Service\Product\ProductEditService;
 use App\State\Product\Processor\ProductDeleteProcessor;
+use App\State\Product\Processor\ProductRestoreProcessor;
 use App\State\Product\Processor\ProductToggleProcessor;
 use App\State\Product\Provider\ProductAdminListProvider;
 use App\State\Product\Provider\ProductDeleteProvider;
@@ -97,6 +98,20 @@ class ProductController extends AbstractCrudController
             $request,
             $product,
             $provider,
+            $processor
+        );
+    }
+
+    #[Route('/supprimer/{product}', name: 'restore', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminLevelRestore(
+        Request $request,
+        ProductRestoreProcessor $processor,
+        Product $product
+    ): Response {
+        return $this->handleProcessAction(
+            $request,
+            $product,
             $processor
         );
     }

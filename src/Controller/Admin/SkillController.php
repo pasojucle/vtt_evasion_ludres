@@ -11,6 +11,7 @@ use App\Form\Admin\SkillType;
 use App\Repository\SkillRepository;
 use App\Service\ExportService;
 use App\State\Skill\Processor\SkillDeleteProcessor;
+use App\State\Skill\Processor\SkillRestoreProcessor;
 use App\State\Skill\Provider\SkillDeleteProvider;
 use App\State\Skill\Provider\SkillListProvider;
 use Doctrine\ORM\EntityManagerInterface;
@@ -142,7 +143,7 @@ class SkillController extends AbstractCrudController
         ], $response);
     }
 
-    #[Route(path: '/delete/{skill}', name: 'delete', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[Route(path: '/delete/{skill}', name: 'delete', methods: ['GET', 'POST'])]
     #[IsGranted('SKILL_EDIT', 'skill')]
     public function delete(
         Request $request,
@@ -154,6 +155,20 @@ class SkillController extends AbstractCrudController
             $request,
             $skill,
             $provider,
+            $processor
+        );
+    }
+
+    #[Route('/restaure/{skill}', name: 'restore', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminLevelRestore(
+        Request $request,
+        SkillRestoreProcessor $processor,
+        Skill $skill
+    ): Response {
+        return $this->handleProcessAction(
+            $request,
+            $skill,
             $processor
         );
     }

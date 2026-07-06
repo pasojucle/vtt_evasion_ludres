@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\SkillCategory\Provider;
 
+
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SkillCategoryFilter;
 use App\Dto\View\ListView;
@@ -52,6 +53,10 @@ class SkillCategoryListProvider implements ListProviderInterface
 
         if ($filter->name) {
             $this->skillCategoryRepository->filterName($qb, $filter->name);
+        }
+
+        if (!$filter->showDeleted) {
+            $this->skillCategoryRepository->filterActive($qb);
         }
 
         if ($filter->sort) {

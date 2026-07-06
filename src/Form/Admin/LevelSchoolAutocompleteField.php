@@ -5,6 +5,7 @@ namespace App\Form\Admin;
 use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\AsEntityAutocompleteField;
@@ -22,9 +23,8 @@ class LevelSchoolAutocompleteField extends AbstractType
             'query_builder' => function (EntityRepository $er) {
                 return $er->createQueryBuilder('le')
                     ->andWhere('le.type = :school')
-                    ->andWhere('le.isDeleted = :deleted')
+                    ->andWhere((new Expr())->isNull('le.deletedAt'))
                     ->setParameter('school', LevelType::SCHOOL)
-                    ->setParameter('deleted', false)
                     ->orderBy('le.title', 'ASC');
             },
         ]);

@@ -4,25 +4,29 @@ declare(strict_types=1);
 
 namespace App\State\Product\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Product;
-use App\State\DialogProcessorInterface;
+use App\Service\SoftDeleteService;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ProductDeleteProcessor implements DialogProcessorInterface
+class ProductDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private SoftDeleteService $softDeleteService,
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    /**
+     * @param Product $entity
+     */
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
-        /** @var Product $entity */
-        $entity->setDeleted(true);
+        $this->softDeleteService->softDelete($entity);
         $this->entityManager->flush();
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             messageKey: 'documentation.flash.success.delete',
             targetUrl: $targetUrl,

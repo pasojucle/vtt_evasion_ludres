@@ -14,6 +14,7 @@ class SurveyFilter extends AbstractFilter
         public ?SurveyRestriction $restriction = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = 'DESC',
+        public ?int $page = null,
     ) {
     }
 }

@@ -16,6 +16,7 @@ class SurveyResponseFilter extends AbstractFilter
         public ?SurveyResponseType $responseType = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = null,
+        public ?int $page = null,
     ) {
     }
 }

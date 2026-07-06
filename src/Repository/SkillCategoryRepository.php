@@ -49,4 +49,11 @@ class SkillCategoryRepository extends ServiceEntityRepository
         $qb
             ->orderBy('skc.name', $direction);
     }
+
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('skc.deletedAt')
+        );
+    }
 }

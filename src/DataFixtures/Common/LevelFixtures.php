@@ -6,6 +6,7 @@ namespace App\DataFixtures\Common;
 
 use App\Entity\Enum\LevelType;
 use App\Entity\Level;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
@@ -69,7 +70,7 @@ class LevelFixtures extends AbstractFixture implements FixtureGroupInterface
                 ->setOrderBy((int) $orderBy)
                 ->setType(LevelType::tryFrom($type))
                 ->setIsProtected((bool) $isProtected)
-                ->setIsDeleted((bool) $isDeleted)
+                ->setDeletedAt(1 === (int) $isDeleted ? new DateTimeImmutable() : null)
                 ->setAccompanyingCertificat((bool) $accompanyingCertificat);
 
             $manager->persist($level);

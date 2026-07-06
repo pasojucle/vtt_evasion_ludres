@@ -57,6 +57,10 @@ class BoardRoleListProvider implements ListProviderInterface
         if ($filter->sort) {
             $this->boardRoleRepository->filterSort($qb, $filter->sort);
         }
+    
+        if (!$filter->showDeleted) {
+            $this->boardRoleRepository->filterActive($qb);
+        }
 
         return $qb;
     }

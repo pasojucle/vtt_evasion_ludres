@@ -8,7 +8,9 @@ class SkillCategoryFilter extends AbstractFilter
 {
     public function __construct(
         public ?string $name = null,
+        public ?bool $showDeleted = null,
         public string $sort = 'ASC',
+        public ?int $page = null,
     ) {
     }
 }

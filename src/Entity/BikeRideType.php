@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Enum\RegistrationEnum;
+use App\Entity\Interface\SoftDeletableInterface;
+use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\BikeRideTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,8 +12,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideTypeRepository::class)]
-class BikeRideType
+class BikeRideType implements SoftDeletableInterface
 {
+    use SoftDeletableTrait;
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

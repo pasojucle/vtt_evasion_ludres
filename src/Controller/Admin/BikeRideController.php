@@ -11,6 +11,7 @@ use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
 use App\State\Activity\Processor\ActivityDeleteProcessor;
+use App\State\Activity\Processor\ActivityRestoreProcessor;
 use App\State\Activity\Provider\ActivityAdminListProvider;
 use App\State\Activity\Provider\ActivityDeleteProvider;
 use App\UseCase\BikeRide\EditBikeRide;
@@ -174,7 +175,7 @@ class BikeRideController extends AbstractCrudController
 
     #[Route('/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
-    public function adminLevelDelete(
+    public function adminDelete(
         Request $request,
         ActivityDeleteProvider $provider,
         ActivityDeleteProcessor $processor,
@@ -184,6 +185,20 @@ class BikeRideController extends AbstractCrudController
             $request,
             $bikeRide,
             $provider,
+            $processor,
+        );
+    }
+
+    #[Route('/restaure/sortie/{bikeRide}', name: 'admin_bike_ride_restore', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
+    public function adminRestaure(
+        Request $request,
+        ActivityRestoreProcessor $processor,
+        BikeRide $bikeRide
+    ): Response {
+        return $this->handleProcessAction(
+            $request,
+            $bikeRide,
             $processor,
         );
     }

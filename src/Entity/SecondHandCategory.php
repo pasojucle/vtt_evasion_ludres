@@ -2,13 +2,17 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\SoftDeletableInterface;
+use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\SecondHandCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Boolean;
+
 
 #[ORM\Entity(repositoryClass: SecondHandCategoryRepository::class)]
-class SecondHandCategory
+class SecondHandCategory implements SoftDeletableInterface
 {
+    use SoftDeletableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -16,9 +20,6 @@ class SecondHandCategory
 
     #[ORM\Column(length: 50)]
     private ?string $name = null;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $deleted = false;
 
     #[ORM\Column(length: 30)]
     private string $icon = 'lucide:a-arrow-down';
@@ -41,18 +42,6 @@ class SecondHandCategory
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function isDeleted(): bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): static
-    {
-        $this->deleted = $deleted;
 
         return $this;
     }

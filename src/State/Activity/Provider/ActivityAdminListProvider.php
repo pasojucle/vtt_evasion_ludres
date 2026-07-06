@@ -7,6 +7,7 @@ namespace App\State\Activity\Provider;
 use App\Dto\Enum\ActivityPeriod;
 use App\Dto\Enum\ActivityRestriction;
 use App\Dto\Enum\ActivityVisibility;
+
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\ActivityFilter;
 use App\Dto\View\ListView;
@@ -19,6 +20,7 @@ use App\State\FilterHydratorTrait;
 use App\State\ListProviderInterface;
 use DateTime;
 use DateTimeImmutable;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ActivityAdminListProvider implements ListProviderInterface
@@ -33,9 +35,31 @@ class ActivityAdminListProvider implements ListProviderInterface
     ) {
     }
 
+    /**
+     * @param ActivityFilter $filter
+     */
     public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
     {
-        /** @var ActivityFilter $filter */
+        $qb = $this->getQueryBuilder($filter);
+
+        $entities = $this->paginator->paginate(
+            $qb,
+            $currentPage,
+            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
+        );
+
+        return $this->mapper->mapToView(
+            $entities,
+            $this->getParticipantTotalByActivity($entities),
+            $route,
+            $currentPage,
+            $filter,
+            $filterConfig
+        );
+    }
+
+        private function getQueryBuilder(ActivityFilter $filter): QueryBuilder
+    {
         $qb = $this->bikeRideRepository->findActivityQuery();
         match ($filter->period) {
             ActivityPeriod::UPCOMING => $this->bikeRideRepository->filterUpcoming($qb, new DateTime()),
@@ -62,21 +86,13 @@ class ActivityAdminListProvider implements ListProviderInterface
             $this->bikeRideRepository->filterIsPrivate($qb, ActivityVisibility::PRIVATE === $filter->visibility);
         }
 
-        $entities = $this->paginator->paginate(
-            $qb,
-            $currentPage,
-            $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
-        );
+        if (!$filter->showDeleted) {
+            $this->bikeRideRepository->filterActive($qb);
+        }
 
-        return $this->mapper->mapToView(
-            $entities,
-            $this->getParticipantTotalByActivity($entities),
-            $route,
-            $currentPage,
-            $filter,
-            $filterConfig
-        );
+        return $qb;
     }
+
     private function getInterval(?string $month): array
     {
         if (!$month) {

@@ -23,6 +23,7 @@ class RegistrationFilter extends AbstractFilter
         public ?array $levels = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = null,
+        public ?int $page = null,
     ) {
     }
 }

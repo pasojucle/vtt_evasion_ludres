@@ -6,13 +6,15 @@ namespace App\Controller\Admin;
 
 use App\Form\Filter\ListFilterType;
 use App\Service\UrlContextService;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use App\State\FilterInitializerInterface;
 use App\State\FormComponentProviderInterface;
+use App\State\JsonProcessorInterface;
 use App\State\ListProviderInterface;
 use App\State\StreamExportableInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -69,7 +71,7 @@ abstract class AbstractCrudController extends AbstractController
         Request $request,
         object $object,
         FormComponentProviderInterface $provider,
-        DialogProcessorInterface $processor,
+        HtmlProcessorInterface $processor,
         string $formClass = FormType::class,
         array $formOptions = []
     ): Response {
@@ -86,9 +88,8 @@ abstract class AbstractCrudController extends AbstractController
             if ($form->isValid()) {
                 $result = $processor->process($object, $this->urlContextService->getRedirectUrl($request));
                 $this->addFlash($result->flashType, $result->messageKey);
-                if ($result->targetUrl) {
-                    return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
-                }
+                
+                return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -97,6 +98,31 @@ abstract class AbstractCrudController extends AbstractController
             'form' => $form->createView(),
             'view' => $view
         ], $response);
+    }
+
+    protected function handleProcessAction(
+        Request $request,
+        object $object,
+        HtmlProcessorInterface $processor,
+    ): Response {
+        $result = $processor->process($object, $this->urlContextService->getRedirectUrl($request));
+        
+        $this->addFlash($result->flashType, $result->messageKey);
+    
+        return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
+    }
+
+    protected function handleJsonProcessAction(
+        Request $request,
+        object $object,
+        JsonProcessorInterface $processor,
+    ): JsonResponse {
+        $result = $processor->process($object);
+
+        return new JsonResponse([
+            'success' => $result->success,
+            'data' => $result->data
+        ], $result->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
     }
 
     protected function handleExportAction(

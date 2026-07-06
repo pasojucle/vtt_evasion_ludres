@@ -301,3 +301,7 @@ dashboard:
   second_hand:
     to_validate: Nouvelles annonces
     valid: Annonces validées
+
+softDeleteStatus:
+  active: Masquer les éléments Supprimés
+  deleted: Uniquement les éléments supprimés

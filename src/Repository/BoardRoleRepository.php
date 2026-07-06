@@ -94,4 +94,11 @@ class BoardRoleRepository extends ServiceEntityRepository
         $qb
             ->orderBy('br.name', $direction);
     }
+
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('br.deletedAt')
+        );
+    }
 }

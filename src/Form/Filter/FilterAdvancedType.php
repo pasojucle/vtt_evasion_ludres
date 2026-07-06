@@ -7,6 +7,7 @@ namespace App\Form\Filter;
 use App\Dto\Filter\AbstractFilter;
 use App\Service\Filter\FilterFieldConfig;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -45,6 +46,7 @@ class FilterAdvancedType extends AbstractType
                 $fieldConfig->hiddenOptions
             );
         }
+        $builder->add('page', HiddenType::class);
     }
 
     private function generateAutocompleteUrl(array $options, array $filters): array

@@ -77,4 +77,11 @@ class BikeRideTypeRepository extends ServiceEntityRepository
         $qb
             ->orderBy('brt.name', $direction);
     }
+
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('brt.deletedAt')
+        );
+    }
 }

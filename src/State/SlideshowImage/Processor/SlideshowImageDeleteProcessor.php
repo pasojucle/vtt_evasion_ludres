@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\SlideshowImage\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SlideshowImage;
 use App\Service\ProjectDirService;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class SlideshowImageDeleteProcessor implements DialogProcessorInterface
+class SlideshowImageDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -20,9 +20,9 @@ class SlideshowImageDeleteProcessor implements DialogProcessorInterface
     }
 
     /**
-     * @implements DialogProcessorInterface<SlideshowImage>
+     * @implements HtmlProcessorInterface<SlideshowImage>
      */
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         $directoryId = $entity->getDirectory()->getId();
         $filename = $entity->getFilename();
@@ -32,7 +32,7 @@ class SlideshowImageDeleteProcessor implements DialogProcessorInterface
         $filesystem = new Filesystem();
         $filesystem->remove($this->projectDir->path('slideshow', (string) $directoryId, $filename));
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             messageKey: 'slideshow.image.flash.success.delete',
             targetUrl: $targetUrl,

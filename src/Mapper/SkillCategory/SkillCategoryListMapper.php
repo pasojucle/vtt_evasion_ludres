@@ -51,7 +51,10 @@ class SkillCategoryListMapper
                 ],
                 indicators: $this->getIndicators($entity),
                 dropdown: $this->dropDown($entity, $referer),
-                gridTemplateContent: 'grid-cols-[1fr_50px]',
+                status: $this->getStatus($entity),
+                isDeleted: $entity->isDeleted(),
+                gridTemplateContent: 'grid-cols-[1fr_80px] lg:grid-cols-[1fr_150px]',
+                gridTemplateBadges: 'grid-cols-1 lg:grid-cols-[1fr_2fr] gap-2 justify-items-center',
             );
         }
 
@@ -75,6 +78,10 @@ class SkillCategoryListMapper
                 url: $this->urlGenerator->generate('admin_skill_category_add'),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-action', 'click->dropdown#close'),
+                ],
             ),
         );
     }
@@ -92,6 +99,21 @@ class SkillCategoryListMapper
 
     private function dropDown(SkillCategory $entity, string $referer): DropdownView
     {
+        if ($entity->isDeleted()) {
+            return new DropdownView(
+                menuItems: [
+                    new ButtonView(
+                        label: 'Restaurer',
+                        url: $this->urlContextService->generateUrl('admin_skill_category_restore', [
+                            'skillCategory' => $entity->getId()
+                            ], $referer),
+                        icon: 'lucide:archive-restore',
+                        variant: ColorVariant::DROPDOWN,
+                    ),
+                ]
+            );
+        }
+
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
@@ -116,5 +138,14 @@ class SkillCategoryListMapper
                 )
             ]
         );
+    }
+
+    private function getStatus(SkillCategory $entity): ?BadgeView
+    {
+        if ($entity->isDeleted()) {
+            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
+        }
+
+        return null;
     }
 }

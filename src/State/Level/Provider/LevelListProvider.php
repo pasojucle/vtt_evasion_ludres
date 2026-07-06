@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Level\Provider;
 
+
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\LevelFilter;
 use App\Dto\View\ListView;
@@ -56,6 +57,10 @@ class LevelListProvider implements ListProviderInterface
             $this->levelRepository->filterSortByTitle($qb, $filter->sort);
         } else {
             $this->levelRepository->filterSortByPosition($qb);
+        }
+    
+        if (!$filter->showDeleted) {
+            $this->levelRepository->filterActive($qb);
         }
 
         return $qb;

@@ -17,8 +17,10 @@ class ActivityFilter extends AbstractFilter
         public ?BikeRideType $type = null,
         public ?ActivityVisibility $visibility = null,
         public ?ActivityRestriction $restriction = null,
+        public ?bool $showDeleted = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = null,
+        public ?int $page = null,
     ) {
     }
 }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Licence;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class LicenceDeleteProcessor implements DialogProcessorInterface
+class LicenceDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager
@@ -17,9 +17,9 @@ class LicenceDeleteProcessor implements DialogProcessorInterface
     }
 
     /**
-     * @implements DialogProcessorInterface<Licence>
+     * @implements HtmlProcessorInterface<Licence>
      */
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         foreach ($entity->getLicenceAgreements() as $licenceAgreement) {
             $this->entityManager->remove($licenceAgreement);
@@ -28,7 +28,7 @@ class LicenceDeleteProcessor implements DialogProcessorInterface
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             messageKey: 'licence.flash.success.delete',
             targetUrl: $targetUrl,

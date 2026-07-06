@@ -22,6 +22,7 @@ class <?= $entity_name ?><?= $action_name ?>Provider implements FormComponentPro
 
     /**
     * @implements FormComponentProviderInterface<<?= $entity_name ?>>
+    * @param <?= $entity_name ?> $entity
     */
     public function mapToView(object  $entity): DialogModalView
     {

@@ -8,7 +8,9 @@ class BikeRideTypeFilter extends AbstractFilter
 {
     public function __construct(
         public ?string $name = null,
+        public ?bool $showDeleted = null,        
         public ?string $sort = null,
+        public ?int $page = null,
     ) {
     }
 }

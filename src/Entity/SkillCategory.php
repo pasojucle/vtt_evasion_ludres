@@ -2,14 +2,18 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\SoftDeletableInterface;
+use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\SkillCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SkillCategoryRepository::class)]
-class SkillCategory
+class SkillCategory implements SoftDeletableInterface
 {
+    use SoftDeletableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -25,7 +29,7 @@ class SkillCategory
     private Collection $skills;
 
     #[ORM\Column(length: 30)]
-    private string $icon = 'lucide:layers';
+    private string $icon = 'lucide:a-arrow-down';
 
     public function __construct()
     {

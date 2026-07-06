@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\Link\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Link;
 use App\Repository\LinkRepository;
 use App\Service\OrderByService;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class LinkDeleteProcessor implements DialogProcessorInterface
+class LinkDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -20,7 +20,7 @@ class LinkDeleteProcessor implements DialogProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         /** @var Link $entity */
         $position = $entity->getPosition();
@@ -32,7 +32,7 @@ class LinkDeleteProcessor implements DialogProcessorInterface
         $this->orderByService->resetOrders($links);
 
     
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             messageKey: 'link.flash.success.delete',
             targetUrl: $targetUrl,

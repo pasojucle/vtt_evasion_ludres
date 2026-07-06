@@ -28,6 +28,7 @@ class UserFilter extends AbstractFilter
         public ?array $permissions = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = 'ASC',
+        public ?int $page = null,
     ) {
     }
 

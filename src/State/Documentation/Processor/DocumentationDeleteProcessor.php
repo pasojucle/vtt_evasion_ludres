@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\Documentation\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Documentation;
 use App\Repository\DocumentationRepository;
 use App\Service\OrderByService;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class DocumentationDeleteProcessor implements DialogProcessorInterface
+class DocumentationDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -20,7 +20,7 @@ class DocumentationDeleteProcessor implements DialogProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         /** @var Documentation $entity*/
         $this->entityManager->remove($entity);
@@ -29,7 +29,7 @@ class DocumentationDeleteProcessor implements DialogProcessorInterface
         $documentations = $this->documentationRepository->findAll();
         $this->orderByService->resetOrders($documentations);
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             messageKey: 'documentation.flash.success.delete',
             targetUrl: $targetUrl,

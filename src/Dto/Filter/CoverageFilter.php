@@ -19,6 +19,7 @@ class CoverageFilter extends AbstractFilter
         public ?array $levels = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = 'ASC',
+        public ?int $page = null,
     ) {
     }
 }

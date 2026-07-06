@@ -2,14 +2,18 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\SoftDeletableInterface;
+use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\BoardRoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BoardRoleRepository::class)]
-class BoardRole
+class BoardRole implements SoftDeletableInterface
 {
+    use SoftDeletableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

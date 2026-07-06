@@ -26,6 +26,20 @@ class ActivityAdminDropdownMapper
 
     public function mapToView(BikeRide $bikeRide, string $referer): DropdownView
     {
+        if ($bikeRide->isDeleted()) {
+            return new DropdownView(
+            title: $bikeRide->__toString(),
+            menuItems: [
+                new ButtonView(
+                    label: 'Restaurer',
+                    url: $this->urlContextService->generateUrl('admin_bike_ride_restore', ['bikeRide' => $bikeRide->getId()], $referer),
+                    icon: 'lucide:archive-restore',
+                    variant: ColorVariant::DROPDOWN,
+                )
+            ],
+        );
+        }
+
         $menuItems = [];
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $menuItems[] = new ButtonView(

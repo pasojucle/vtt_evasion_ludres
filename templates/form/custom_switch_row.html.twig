@@ -1,6 +1,6 @@
 {% block switch_row %}
     <div 
-        class="flex items-center gap-4" 
+        class="flex items-center gap-4 {% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}" 
         data-controller="switch"
         {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off'] is defined %}
             data-switch-on-value="{{form.vars.attr['data-switch-on']}}"
@@ -14,14 +14,12 @@
             }}) }}
             <span class="slider round{% if form.vars.disabled %} disabled{% endif %}"></span>
         </label>
-        <b>
-            {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off'] is defined %}
-                <label for="{{ form.vars.id }}" {% if form.vars.disabled %}class="disabled"{% endif %} data-switch-target="label">
-                {% if form.vars.checked %} {{form.vars.attr['data-switch-on'] }} {% else %} {{form.vars.attr['data-switch-off'] }} {% endif %}
-                </label>
-            {% else %}
-                {{ form_label(form) }}
-            {% endif %}
-        </b>
+        {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off'] is defined %}
+            <label for="{{ form.vars.id }}" {% if form.vars.disabled %}class="disabled"{% endif %} data-switch-target="label">
+            {% if form.vars.checked %} {{form.vars.attr['data-switch-on'] }} {% else %} {{form.vars.attr['data-switch-off'] }} {% endif %}
+            </label>
+        {% else %}
+            {{ form_label(form) }}
+        {% endif %}
     </div>
 {% endblock %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\SecondHandCategory\Provider;
 
+
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SecondHandCategoryFilter;
 use App\Dto\View\ListView;
@@ -52,6 +53,10 @@ class SecondHandCategoryListProvider implements ListProviderInterface
 
         if ($filter->name) {
             $this->secondHandCategoryRepository->filterName($qb, $filter->name);
+        }
+
+        if (!$filter->showDeleted) {
+            $this->secondHandCategoryRepository->filterActive($qb);
         }
 
         if ($filter->sort) {

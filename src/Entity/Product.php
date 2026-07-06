@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Interface\SoftDeletableInterface;
 use App\Entity\Interface\UploadableInterface;
+use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product implements UploadableInterface
+class Product implements UploadableInterface, SoftDeletableInterface
 {
+    use SoftDeletableTrait;
+
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
@@ -53,8 +57,6 @@ class Product implements UploadableInterface
     #[ORM\Column(type: 'string', enumType:LicenceCategoryEnum::class, options:['default' => LicenceCategoryEnum::UNDEFINED->value])]
     private LicenceCategoryEnum $category = LicenceCategoryEnum::UNDEFINED;
 
-    #[ORM\Column(type: 'boolean', options:['default' => false])]
-    private bool $deleted = false;
 
     public function __construct()
     {
@@ -225,18 +227,6 @@ class Product implements UploadableInterface
     public function setCategory(LicenceCategoryEnum $category): self
     {
         $this->category = $category;
-
-        return $this;
-    }
-
-    public function isDeleted(): bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): static
-    {
-        $this->deleted = $deleted;
 
         return $this;
     }

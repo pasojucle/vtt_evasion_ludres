@@ -24,6 +24,7 @@ readonly class ListItemView
         public ?DropdownView $dropdown = null,
         public ?string $background = null,
         public ?string $url = null,
+        public ?bool $isDeleted = false,
         public false | ButtonView | null $action = false,
         public string $gridTemplateContent = 'grid-cols-1 lg:grid-cols-2',
         public string $gridTemplateLabels = 'grid-cols-1',

@@ -8,8 +8,10 @@ use App\Dto\Filter\BikeRideTypeFilter;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Form\Admin\BikeRideTypeType;
+use App\State\BikeRideType\Processor\BikeRideTypeDeleteProcessor;
+use App\State\BikeRideType\Processor\BikeRideTypeRestoreProcessor;
+use App\State\BikeRideType\Provider\BikeRideTypeDeleteProvider;
 use App\State\BikeRideType\Provider\BikeRideTypeListProvider;
-use App\UseCase\BikeRideType\GetBikeRideTypeList;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -96,5 +98,35 @@ class BikeRideTypeController extends AbstractCrudController
             'bike_ride_type' => $bikeRideType,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route(path: '/delete/{bikeRideType}', name: 'delete', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function delete(
+        Request $request,
+        BikeRideType $bikeRideType,
+        BikeRideTypeDeleteProcessor $processor,
+        BikeRideTypeDeleteProvider $provider,
+    ): Response {
+        return $this->handleFormComponentAction(
+            $request,
+            $bikeRideType,
+            $provider,
+            $processor
+        );
+    }
+
+    #[Route('/restaure/sortie/{bikeRideType}', name: 'restore', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminRestaure(
+        Request $request,
+        BikeRideTypeRestoreProcessor $processor,
+        BikeRideType $bikeRideType
+    ): Response {
+        return $this->handleProcessAction(
+            $request,
+            $bikeRideType,
+            $processor,
+        );
     }
 }

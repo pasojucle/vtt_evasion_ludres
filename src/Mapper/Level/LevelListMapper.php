@@ -56,9 +56,11 @@ class LevelListMapper
                     new LabelView($entity->getTitle()),
                 ],
                 indicators: $this->getIndicators($entity),
+                status: $this->getStatus($entity),
                 counter: $this->counter($entity, $currentSeason),
+                isDeleted: $entity->isDeleted(),
                 dropdown: $this->dropDown($entity, $referer),
-                gridTemplateBadges: 'grid-cols-[1fr_50px]'
+                gridTemplateBadges: 'grid-cols-[1fr_70px]'
             );
         }
 
@@ -102,8 +104,12 @@ class LevelListMapper
         ];
     }
 
-    private function counter(Level $entity, int $currentSeason): BadgeView
+    private function counter(Level $entity, int $currentSeason): ?BadgeView
     {
+        if ($entity->isDeleted()) {
+            return null;
+        }
+        
         return new BadgeView(
             value: (string) $this->memberRepository->countByLevelAndSeason($entity, $currentSeason),
         );
@@ -111,6 +117,21 @@ class LevelListMapper
 
     private function dropDown(Level $entity, ?string $referer): DropdownView
     {
+        if ($entity->isDeleted()) {
+            return new DropdownView(
+                menuItems: [
+                    new ButtonView(
+                        label: 'Restaurer',
+                        url: $this->urlContextService->generateUrl('admin_level_restore', [
+                            'level' => $entity->getId()
+                            ], $referer),
+                        icon: 'lucide:archive-restore',
+                        variant: ColorVariant::DROPDOWN,
+                    ),
+                ]
+            );
+        }
+
         $menusItems = [];
         $menusItems[] = new ButtonView(
             label: 'Modifier',
@@ -133,5 +154,14 @@ class LevelListMapper
         return  new DropdownView(
             menuItems: $menusItems
         );
+    }
+
+    private function getStatus(Level $entity): ?BadgeView
+    {
+        if ($entity->isDeleted()) {
+            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
+        }
+
+        return null;
     }
 }

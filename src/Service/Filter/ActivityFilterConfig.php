@@ -12,6 +12,7 @@ use App\Entity\BikeRideType;
 use App\Form\Filter\EventListener\ActivityFilterSubscriber;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
@@ -78,6 +79,20 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
                     'attr' => ['class' => 'form-control']
                 ],
+            ),
+            new FilterFieldConfig(
+                name: 'showDeleted',
+                type: CheckboxType::class,
+                options: [
+                    'label' => 'Afficher les éléments supprimés',
+                    'required' => false,
+                    'block_prefix' => 'switch',
+                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4 flex gap-2 flex-row'],
+                    'attr' => [
+                        'class' => 'form-control',
+                    ],
+                ],
+                chipCcomputed: true,
             ),
             new FilterFieldConfig(
                 name: 'visibility',

@@ -30,10 +30,9 @@ class LevelRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('l')
             ->andWhere(
                 (new Expr())->eq('l.type', ':type'),
-                (new Expr())->eq('l.isDeleted', ':isDeleted'),
+                (new Expr())->isNull('l.deletedAt'),
             )
             ->setParameter('type', $type)
-            ->setParameter('isDeleted', false)
             ->orderBy('l.orderBy', 'ASC')
             ->addOrderBy('l.title', 'ASC')
         ;
@@ -101,9 +100,8 @@ class LevelRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('l')
             ->andWhere(
-                (new Expr())->eq('l.isDeleted', ':isDeleted'),
+                (new Expr())->isNull('l.deletedAt'),
             )
-            ->setParameter('isDeleted', false)
             ->addOrderBy('l.type', 'ASC')
             ->addOrderBy('l.orderBy', 'ASC')
             ->getQuery()
@@ -161,11 +159,7 @@ class LevelRepository extends ServiceEntityRepository
 
     public function getLevelQuery(): QueryBuilder
     {
-        return $this->createQueryBuilder('le')
-            ->andWhere(
-                (new Expr())->eq('le.isDeleted', ':isDeleted')
-            )
-            ->setParameter('isDeleted', false);
+        return $this->createQueryBuilder('le');
     }
 
     public function filterType(QueryBuilder $qb, LevelType $type): void
@@ -188,5 +182,12 @@ class LevelRepository extends ServiceEntityRepository
     {
         $qb
             ->orderBy('le.orderBy', 'ASC');
+    }
+
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('le.deletedAt')
+        );
     }
 }

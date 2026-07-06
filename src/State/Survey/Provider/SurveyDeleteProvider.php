@@ -20,7 +20,8 @@ class SurveyDeleteProvider implements FormComponentProviderInterface
         assert($entity instanceof Survey);
         
         return $this->destructiveModalMapper->mapToView(
-            sprintf('<p>Toutes les données relative à ce vote seront supprimées.</p><p>Etes-vous certain de supprimer le vote %s ?</p>', $entity->getTitle()),
+            sprintf('<p>Toutes les données relative à ce vote seront supprimées.</p><p>Etes-vous certain de supprimer le sondage %s ?</p><p>Toutes les données relatives au sondages seront supprimées.</p><p>Cette opération est irréversible.</p>'
+            , $entity->getTitle()),
         );
     }
 }

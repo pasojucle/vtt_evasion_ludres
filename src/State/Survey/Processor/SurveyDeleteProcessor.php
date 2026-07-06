@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Survey;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SurveyDeleteProcessor implements DialogProcessorInterface
+class SurveyDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -20,7 +20,7 @@ class SurveyDeleteProcessor implements DialogProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         assert($entity instanceof Survey);
         $this->surveyResponseRepository->deleteBySurvey($entity);
@@ -32,7 +32,7 @@ class SurveyDeleteProcessor implements DialogProcessorInterface
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'registration.flash.success.received',

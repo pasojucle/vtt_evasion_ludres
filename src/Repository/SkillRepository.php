@@ -102,4 +102,11 @@ class SkillRepository extends ServiceEntityRepository
         $qb
             ->orderBy('sk.content', $direction);
     }
+
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('sk.deletedAt')
+        );
+    }
 }

@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\LevelType;
+use App\Entity\Interface\SoftDeletableInterface;
+use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\LevelRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LevelRepository::class)]
-class Level
+class Level implements SoftDeletableInterface
 {
+    use SoftDeletableTrait;
     public const TYPE_SCHOOL_MEMBER = 1;
 
     public const TYPE_FRAME = 2;
@@ -58,9 +61,6 @@ class Level
 
     #[ORM\Column(type: 'boolean')]
     private bool $isProtected = false;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $isDeleted = false;
 
     #[ORM\OneToMany(mappedBy: 'level', targetEntity: Indemnity::class)]
     private $indemnities;
@@ -220,18 +220,6 @@ class Level
     public function setIsProtected(bool $isProtected): self
     {
         $this->isProtected = $isProtected;
-
-        return $this;
-    }
-
-    public function isDeleted(): ?bool
-    {
-        return $this->isDeleted;
-    }
-
-    public function setIsDeleted(bool $isDeleted): self
-    {
-        $this->isDeleted = $isDeleted;
 
         return $this;
     }

@@ -13,8 +13,10 @@ class SkillFilter extends AbstractFilter
         public ?SkillCategory $category = null,
         public ?string $content = null,
         public ?Level $level = null,
+        public ?bool $showDeleted = null,
         public ?int $itemsPerPage = null,
         public ?string $sort = 'ASC',
+        public ?int $page = null,
     ) {
     }
 }

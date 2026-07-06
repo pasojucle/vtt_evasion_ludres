@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\State\Member\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Licence;
 use App\Entity\Member;
 use App\Entity\OrderHeader;
 use App\Repository\OrderLineRepository;
 use App\Repository\SurveyResponseRepository;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class MemberDeleteProcessor implements DialogProcessorInterface
+class MemberDeleteProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -23,15 +23,15 @@ class MemberDeleteProcessor implements DialogProcessorInterface
     }
 
     /**
-     * @implements DialogProcessorInterface<Member>
+     * @implements HtmlProcessorInterface<Member>
      */
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         $this->removeRelations($entity);
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             messageKey: 'member.flash.success.delete',
             targetUrl: $targetUrl,

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interface\SoftDeletableInterface;
 use App\Entity\Interface\UploadableInterface;
+use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\BikeRideRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,8 +15,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideRepository::class)]
-class BikeRide implements UploadableInterface
+class BikeRide implements UploadableInterface, SoftDeletableInterface
 {
+    use SoftDeletableTrait;
+
     public const DEFAULT_TITLE = '';
     public const DEFAULT_DISPLAY_DURATION = 8;
     public const DEFAULT_CLOSING_DURATION = 2;
@@ -83,9 +87,6 @@ class BikeRide implements UploadableInterface
 
     #[ORM\OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class)]
     private ?Survey $survey = null;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $deleted = false;
 
     #[ORM\ManyToMany(targetEntity: Member::class, inversedBy: 'bikeRides')]
     private Collection $members;
@@ -306,18 +307,6 @@ class BikeRide implements UploadableInterface
     public function setSurvey(?Survey $survey): static
     {
         $this->survey = $survey;
-
-        return $this;
-    }
-
-    public function isDeleted(): ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): static
-    {
-        $this->deleted = $deleted;
 
         return $this;
     }

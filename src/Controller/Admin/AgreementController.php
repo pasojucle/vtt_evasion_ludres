@@ -88,7 +88,7 @@ class AgreementController extends AbstractController
         $newOrder = (int) $request->request->get('newOrder');
         $agreements = $this->agreementRepository->findAll();
 
-        $this->orderByService->setNewOrders($agreement, $$agreements, $newOrder);
+        $this->orderByService->setNewOrders($agreement, $agreements, $newOrder);
 
         return new Response();
     }

@@ -6,15 +6,15 @@ namespace App\State\Licence\Processor;
 
 use App\Dto\Form\LicenceRegister;
 use App\Dto\Service\MailerResult;
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Member;
 use App\Service\LicenceService;
 use App\Service\MailerService;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use App\State\Message\Provider\MessageProvider;
 use Doctrine\ORM\EntityManagerInterface;
 
-class LicenceRegisterProcessor implements DialogProcessorInterface
+class LicenceRegisterProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -24,7 +24,7 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         /** @var LicenceRegister $entity*/
         $licence = $entity->licence;
@@ -40,7 +40,7 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
 
         $result = $this->sendMail($licenceNumber, $member);
         if (false === $result?->success) {
-            return new ProcessorResult(
+            return new HtmlProcessorResult(
                 success: false,
                 targetUrl: $targetUrl,
                 messageKey: 'registration.flash.danger.received',
@@ -48,7 +48,7 @@ class LicenceRegisterProcessor implements DialogProcessorInterface
             );
         }
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'registration.flash.success.received',

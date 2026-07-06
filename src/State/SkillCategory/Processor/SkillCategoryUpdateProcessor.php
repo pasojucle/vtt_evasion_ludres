@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\SkillCategory\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SkillCategory;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SkillCategoryUpdateProcessor implements DialogProcessorInterface
+class SkillCategoryUpdateProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -17,16 +17,16 @@ class SkillCategoryUpdateProcessor implements DialogProcessorInterface
     }
 
     /**
-     * @implements DialogProcessorInterface<SkillCategory>
+     * @implements HtmlProcessorInterface<SkillCategory>
      */
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         $this->entityManager->flush();
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             targetUrl: $targetUrl,
-            messageKey: 'SkillCategory.flash.success.Update',
+            messageKey: 'skillCategory.flash.success.update',
             flashType: 'success',
         );
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\ClusterSkillDto;
+use App\Dto\Payload\ClusterSkillDto;
 use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Entity\Cluster;
 use App\Entity\MemberSkill;

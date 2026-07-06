@@ -67,6 +67,7 @@ class ActivityAdminListMapper
                     $isComplete ? ColorVariant::SUCCESS : ColorVariant::DEFAULT,
                 ),
                 dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $referer),
+                isDeleted: $entity->isDeleted(),
                 url: $this->urlGenerator->generate("admin_bike_ride_cluster_show", ['bikeRide' => $entity->getId()]),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateLabels: 'grid-cols-[80px_auto]',

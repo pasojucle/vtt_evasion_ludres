@@ -8,6 +8,7 @@ use App\Form\Admin\BoardRoleType;
 use App\Repository\BoardRoleRepository;
 use App\Service\OrderByService;
 use App\State\BoardRole\Processor\BoardRoleDeleteProcessor;
+use App\State\BoardRole\Processor\BoardRoleRestoreProcessor;
 use App\State\BoardRole\Provider\BoardRoleDeleteProvider;
 use App\State\BoardRole\Provider\BoardRoleListProvider;
 use Doctrine\ORM\EntityManagerInterface;
@@ -92,5 +93,19 @@ class BoardRoleController extends AbstractCrudController
         $this->orderByService->setNewOrders($boardRole, $boardRoles, $newOrder);
 
         return new Response();
+    }
+
+    #[Route('/restaure/{boardRole}', name: '_restore', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminLevelRestore(
+        Request $request,
+        BoardRoleRestoreProcessor $processor,
+        BoardRole $boardRole
+    ): Response {
+        return $this->handleProcessAction(
+            $request,
+            $boardRole,
+            $processor
+        );
     }
 }

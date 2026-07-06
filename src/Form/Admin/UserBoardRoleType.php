@@ -41,9 +41,8 @@ class UserBoardRoleType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('l')
                         ->andWhere(
-                            (new Expr())->eq('l.isDeleted', ':isDeleted'),
+                            (new Expr())->isNull('l.deletedAt'),
                         )
-                        ->setParameter('isDeleted', false)
                         ->addOrderBy('l.type', 'ASC')
                         ->addOrderBy('l.orderBy', 'ASC')
                     ;

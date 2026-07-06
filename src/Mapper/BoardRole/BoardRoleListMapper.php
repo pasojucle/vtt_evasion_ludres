@@ -6,6 +6,7 @@ namespace App\Mapper\BoardRole;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Filter\BoardRoleFilter;
+use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -47,7 +48,10 @@ class BoardRoleListMapper
                 labels: [
                     new LabelView($entity->getName()),
                 ],
+                status: $this->getStatus($entity),
+                isDeleted: $entity->isDeleted(),
                 dropdown: $this->dropDown($entity, $referer),
+                gridTemplateContent: 'grid-cols-[1fr_80px]'
             );
         }
 
@@ -76,6 +80,20 @@ class BoardRoleListMapper
     }
     private function dropDown(BoardRole $entity, string $referer): DropdownView
     {
+        if ($entity->isDeleted()) {
+            return new DropdownView(
+                menuItems: [
+                    new ButtonView(
+                        label: 'Restaurer',
+                        url: $this->urlContextService->generateUrl('admin_board_role_restore', [
+                            'boardRole' => $entity->getId()
+                            ], $referer),
+                        icon: 'lucide:archive-restore',
+                        variant: ColorVariant::DROPDOWN,
+                    ),
+                ]
+            );
+        }
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
@@ -96,5 +114,14 @@ class BoardRoleListMapper
                  )
             ]
         );
+    }
+
+    private function getStatus(BoardRole $entity): ?BadgeView
+    {
+        if ($entity->isDeleted()) {
+            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
+        }
+
+        return null;
     }
 }

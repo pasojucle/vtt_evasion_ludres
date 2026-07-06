@@ -26,13 +26,7 @@ class ProductRepository extends ServiceEntityRepository
 
     public function findProductQuery(): QueryBuilder
     {
-        return $this->createQueryBuilder('p')
-            ->where(
-                (new Expr())->eq('p.deleted', ':isDeleted'),
-            )
-            ->setParameter('isDeleted', false)
-            ->orderBy('p.name', 'ASC')
-        ;
+        return $this->createQueryBuilder('p');
     }
 
     public function filterState(QueryBuilder $qb, PublishStatus $state): void
@@ -60,13 +54,19 @@ class ProductRepository extends ServiceEntityRepository
             ->orderBy('p.name', $direction);
     }
 
+    public function filterActive(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->isNull('p.deletedAt')
+        );
+    }
+
     public function findAllQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('p')
             ->where(
-                (new Expr())->eq('p.deleted', ':isDeleted')
+                (new Expr())->isNull('p.deletedAt')
             )
-            ->setParameter('isDeleted', false)
             ->orderBy('p.name', 'ASC')
         ;
     }

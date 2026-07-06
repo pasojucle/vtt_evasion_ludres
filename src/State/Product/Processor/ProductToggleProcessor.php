@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\Product\Processor;
 
-use App\Dto\State\ProcessorResult;
+use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Product;
-use App\State\DialogProcessorInterface;
+use App\State\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ProductToggleProcessor implements DialogProcessorInterface
+class ProductToggleProcessor implements HtmlProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -17,14 +17,14 @@ class ProductToggleProcessor implements DialogProcessorInterface
     }
     
     /**
-    * @implements DialogProcessorInterface<Product>
+    * @implements HtmlProcessorInterface<Product>
     */
-    public function process(object $entity, ?string $targetUrl = null): ProcessorResult
+    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
     {
         $entity->setDisabled(!$entity->isDisabled());
         $this->entityManager->flush();
 
-        return new ProcessorResult(
+        return new HtmlProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'product.flash.success.disable',

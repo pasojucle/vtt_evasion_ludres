@@ -53,8 +53,11 @@ class SkillListMapper
                     new LabelView($entity->getContent()),
                 ],
                 indicators: $this->getIndicators($entity),
+                status: $this->getStatus($entity),
+                isDeleted: $entity->isDeleted(),
                 dropdown: $this->dropDown($entity, $referer),
-                gridTemplateContent: 'grid-cols-[1fr_50px]',
+                gridTemplateContent: 'grid-cols-[1fr_80px] lg:grid-cols-[1fr_150px]',
+                gridTemplateBadges: 'grid-cols-1 lg:grid-cols-[1fr_2fr] gap-2 justify-items-center',
             );
         }
 
@@ -96,6 +99,20 @@ class SkillListMapper
 
     private function dropDown(Skill $entity, string $referer): DropdownView
     {
+        if ($entity->isDeleted()) {
+            return new DropdownView(
+                menuItems: [
+                    new ButtonView(
+                        label: 'Restaurer',
+                        url: $this->urlContextService->generateUrl('admin_skill_restore', [
+                            'skill' => $entity->getId()
+                            ], $referer),
+                        icon: 'lucide:archive-restore',
+                        variant: ColorVariant::DROPDOWN,
+                    ),
+                ]
+            );
+        } 
         return  new DropdownView(
             menuItems: [
                 new ButtonView(
@@ -127,5 +144,14 @@ class SkillListMapper
                 size: Size::ICON
             )
         ];
+    }
+
+    private function getStatus(Skill $entity): ?BadgeView
+    {
+        if ($entity->isDeleted()) {
+            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
+        }
+
+        return null;
     }
 }

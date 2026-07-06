@@ -42,15 +42,14 @@ class ProductAdminListMapper
         $items = [];
         /** @var Product $entity */
         foreach ($entities as $entity) {
-            $state = $entity->isDisabled() ? PublishStatus::DISABLED : PublishStatus::ENABLED;
-
-            $items[] = new ListItemView(
+                $items[] = new ListItemView(
                 labels: [
                     new LabelView($entity->getName()),
                 ],
                 indicators: $entity->getSizes()->map(fn ($size) => new BadgeView($size->getName()))->toArray(),
-                status: new BadgeView($state->trans($this->translator), $state->variant()),
+                status: $this->getStatus($entity),
                 dropdown: $this->getDropdown($entity, $referer),
+                isDeleted: $entity->isDeleted(),
                 url: $this->urlGenerator->generate("admin_product", ['product' => $entity->getId()]),
                 gridTemplateBadges: 'grid-cols-[1fr_70px]',
             );
@@ -83,6 +82,20 @@ class ProductAdminListMapper
 
     private function getDropdown(Product $product, string $referer): DropdownView
     {
+        if ($product->isDeleted()) {
+            return new DropdownView(
+                menuItems: [
+                    new ButtonView(
+                        label: 'Restaurer',
+                        url: $this->urlContextService->generateUrl('admin_product_restore', [
+                            'product' => $product->getId()
+                        ], $referer),
+                        icon: 'lucide:archive-restore',
+                        variant: ColorVariant::DROPDOWN,
+                    ),
+                ]
+            );
+        }
         $menuItems = [];
         if ($product->isDisabled()) {
             $menuItems[] = new ButtonView(
@@ -122,5 +135,15 @@ class ProductAdminListMapper
         return new DropdownView(
             menuItems: $menuItems,
         );
+    }
+
+    private function getStatus(Product $entity): BadgeView
+    {
+        if ($entity->isDeleted()) {
+            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
+        }
+
+        $state = $entity->isDisabled() ? PublishStatus::DISABLED : PublishStatus::ENABLED;
+        return new BadgeView($state->trans($this->translator), $state->variant());
     }
 }
