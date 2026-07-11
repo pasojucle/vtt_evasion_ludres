@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Dto\View;
 
 use App\Dto\Enum\DialogType;
+use App\Dto\View\Interface\ComponentFormViewInterface;
 
-readonly class DialogModalView implements ComponentViewInterface
+readonly class DialogModalView implements ComponentFormViewInterface
 {
     public function __construct(
         public DialogType $type,

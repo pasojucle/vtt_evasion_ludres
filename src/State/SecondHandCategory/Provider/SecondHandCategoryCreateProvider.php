@@ -6,7 +6,7 @@ namespace App\State\SecondHandCategory\Provider;
 
 use App\Dto\View\SheetView;
 use App\Entity\SecondHandCategory;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SecondHandCategoryCreateProvider implements FormComponentProviderInterface
 {

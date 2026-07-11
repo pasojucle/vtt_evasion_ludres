@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Dto\Enum\PublishStatus;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -29,13 +28,20 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p');
     }
 
-    public function filterState(QueryBuilder $qb, PublishStatus $state): void
+    public function filterDisabled(QueryBuilder $qb): void
     {
         $qb
         ->andWhere(
-            $qb->expr()->eq('p.isDisabled', ':state')
-        )
-        ->setParameter('state', PublishStatus::DISABLED === $state);
+            $qb->expr()->isNotNull('p.disabledAt')
+        );
+    }
+
+    public function filterEnabled(QueryBuilder $qb): void
+    {
+        $qb
+        ->andWhere(
+            $qb->expr()->isNull('p.disabledAt')
+        );
     }
 
     public function filterPartNumber(QueryBuilder $qb, string $partNumber): void

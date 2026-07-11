@@ -9,7 +9,7 @@ use App\Entity\BoardRole;
 use App\Repository\BoardRoleRepository;
 use App\Service\OrderByService;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BoardRoleDeleteProcessor implements HtmlProcessorInterface

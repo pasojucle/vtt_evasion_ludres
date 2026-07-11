@@ -23,49 +23,6 @@ class SurveyAdminDropdownMapper
 
     public function mapToView(Survey $survey, string $referer): DropdownView
     {
-        $menuItems = [
-            new ButtonView(
-                label: 'Exporter',
-                url: $this->urlGenerator->generate('admin_survey_export', ['survey' => $survey->getId()]),
-                icon: 'lucide:file-down',
-                variant: ColorVariant::DROPDOWN,
-            ),
-            new ButtonView(
-                label: 'Dupliquer',
-                url: $this->urlGenerator->generate('admin_survey_copy', ['survey' => $survey->getId()]),
-                icon: 'lucide:copy-plus',
-                variant: ColorVariant::DROPDOWN,
-            ),
-        ];
-        if (!$survey->isDisabled()) {
-            $menuItems[] = new ButtonView(
-                label: 'Modifier',
-                url: $this->urlGenerator->generate('admin_survey_edit', ['survey' => $survey->getId()]),
-                icon: 'lucide:pencil',
-                variant: ColorVariant::DROPDOWN,
-            );
-            $menuItems[] = new ButtonView(
-                label: 'Cloturer',
-                url: $this->urlContextService->generateUrl('admin_survey_disable', ['survey' => $survey->getId()], $referer),
-                icon: 'lucide:toggle-left',
-                variant: ColorVariant::DROPDOWN,
-                htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
-                ],
-            );
-        }
-        $menuItems[] = new ButtonView(
-            label: 'Supprimer',
-            url: $this->urlContextService->generateUrl('admin_survey_delete', ['survey' => $survey->getId()], $referer),
-            icon: 'lucide:delete',
-            variant: ColorVariant::DROPDOWN,
-            htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
-                new HtmlAttributView('data-action', 'click->dropdown#close')
-            ],
-        );
-
         return new DropdownView(
             title: $survey->getTitle(),
             actionItems: [
@@ -79,7 +36,30 @@ class SurveyAdminDropdownMapper
                     ]
                 )
             ],
-            menuItems: $menuItems,
+            menuItems: [
+                new ButtonView(
+                    label: 'Exporter',
+                    url: $this->urlGenerator->generate('admin_survey_export', ['survey' => $survey->getId()]),
+                    icon: 'lucide:file-down',
+                    variant: ColorVariant::DROPDOWN,
+                ),
+                new ButtonView(
+                    label: 'Dupliquer',
+                    url: $this->urlGenerator->generate('admin_survey_copy', ['survey' => $survey->getId()]),
+                    icon: 'lucide:copy-plus',
+                    variant: ColorVariant::DROPDOWN,
+                ),
+                new ButtonView(
+                    label: 'Supprimer',
+                    url: $this->urlContextService->generateUrl('admin_survey_delete', ['survey' => $survey->getId()], $referer),
+                    icon: 'lucide:delete',
+                    variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close')
+                    ],
+                )
+            ],
         );
     }
 }

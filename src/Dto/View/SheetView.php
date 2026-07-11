@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-readonly class SheetView implements ComponentViewInterface
+use App\Dto\View\Interface\ComponentFormViewInterface;
+
+readonly class SheetView implements ComponentFormViewInterface
 {
     public function __construct(
         public string $title,

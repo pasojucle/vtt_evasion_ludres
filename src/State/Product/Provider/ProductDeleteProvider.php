@@ -7,7 +7,7 @@ namespace App\State\Product\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Product;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class ProductDeleteProvider implements FormComponentProviderInterface
 {

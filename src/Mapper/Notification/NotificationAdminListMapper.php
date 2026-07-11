@@ -5,35 +5,36 @@ declare(strict_types=1);
 namespace App\Mapper\Notification;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\PublishStatus;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Filter\NotificationFilter;
-use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
-use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
+use App\Dto\View\Interface\ListActionViewInterface;
 use App\Dto\View\LabelView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
+use App\Dto\View\ToggleStatusView;
 use App\Entity\Notification;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Mapper\Notification\NotificationStatusMapper;
+use App\Service\CsrfTokenService;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationAdminListMapper
 {
     public function __construct(
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private UrlGeneratorInterface $urlGenerator,
-        private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
+        private NotificationStatusMapper $notificationStatusMapper,
         private FilterChipsMapper $filterChipsMapper,
         private UrlContextService $urlContextService,
+        private CsrfTokenService $csrfTokenService,
     ) {
     }
 
@@ -43,16 +44,19 @@ class NotificationAdminListMapper
         $items = [];
         /** @var Notification $entity */
         foreach ($entities as $entity) {
-            $status = $entity->isDisabled() ? PublishStatus::DISABLED : PublishStatus::ENABLED;
+            $tokenId = $this->csrfTokenService->getTokenId($entity);
+
             $items[] = new ListItemView(
                 labels: [
                     new LabelView($entity->getTitle()),
                     new LabelView(sprintf('Du %s au %s', $entity->getStartAt()->format('d/m/y'), $entity->getEndAt()->format('d/m/y'))),
                 ],
-                status: new BadgeView($status->trans($this->translator), $status->variant()),
-                dropdown: $this->getDropdown($entity, $referer),
+                status: $this->notificationStatusMapper->mapToView($entity, $tokenId),
+                action: $this->getAction($entity, $tokenId),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
-                gridTemplateContent:' grid-cols-1 lg:grid-cols-[3fr_1fr]',
+                gridTemplateRow: 'grid-cols-[1fr_50px]',
+                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[3fr_1fr]',
+                gridTemplateBadges: 'grid-cols-[fr_70px]',
                 gridTemplateLabels: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
             );
         }
@@ -82,35 +86,12 @@ class NotificationAdminListMapper
         );
     }
 
-    private function getDropdown(Notification $enity, string $referer): DropdownView
+    private function getAction(Notification $entity, string $toggleStatusId): ListActionViewInterface
     {
-        $menuItems = [];
-        if ($enity->isDisabled()) {
-            $menuItems[] = new ButtonView(
-                label: 'Activer',
-                url: $this->urlContextService->generateUrl('admin_notification_toggle_disable', ['notification' => $enity->getId()], $referer),
-                icon: 'lucide:toggle-left',
-                variant: ColorVariant::DROPDOWN,
-                htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close'),
-                ],
-            );
-        } else {
-            $menuItems[] = new ButtonView(
-                label: 'Désactiver',
-                url: $this->urlContextService->generateUrl('admin_notification_toggle_disable', ['notification' => $enity->getId()], $referer),
-                icon: 'lucide:toggle-right',
-                variant: ColorVariant::DROPDOWN,
-                htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close'),
-                ],
-            );
-        }
-
-        return new DropdownView(
-            menuItems: $menuItems,
+        return new ToggleStatusView(
+            url: $this->urlGenerator->generate('admin_notification_toggle', ['notification' => $entity->getId()]),
+            tokenId: $toggleStatusId,
+            isActive: !$entity->isDisabled(),
         );
     }
 }

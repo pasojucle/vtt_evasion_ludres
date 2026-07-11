@@ -6,7 +6,7 @@ namespace App\State\Licence\Processor;
 
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Licence;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LicenceDeleteProcessor implements HtmlProcessorInterface

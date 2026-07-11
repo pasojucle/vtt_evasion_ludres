@@ -7,7 +7,7 @@ namespace App\State\SlideshowDirectory\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SlideshowDirectory;
 use App\Service\ProjectDirService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

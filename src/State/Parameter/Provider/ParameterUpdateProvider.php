@@ -8,7 +8,7 @@ use App\Dto\View\SheetView;
 use App\Entity\Parameter;
 use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class ParameterUpdateProvider implements FormComponentProviderInterface
 {

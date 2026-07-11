@@ -7,7 +7,7 @@ namespace App\State\Background\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Background;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class BackgroundDeleteProvider implements FormComponentProviderInterface
 {

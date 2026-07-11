@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Interface\DisableableInterface;
 use App\Entity\Interface\SoftDeletableInterface;
 use App\Entity\Interface\UploadableInterface;
+use App\Entity\Trait\DisableableTrait;
 use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,9 +16,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product implements UploadableInterface, SoftDeletableInterface
+class Product implements UploadableInterface, SoftDeletableInterface, DisableableInterface
 {
     use SoftDeletableTrait;
+    use DisableableTrait;
 
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
@@ -36,9 +39,6 @@ class Product implements UploadableInterface, SoftDeletableInterface
 
     #[ORM\OneToMany(targetEntity: OrderLine::class, mappedBy: 'product')]
     private Collection $orderLines;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $isDisabled = false;
 
     #[ORM\ManyToMany(targetEntity: Size::class, inversedBy: 'products')]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false)]
@@ -143,18 +143,6 @@ class Product implements UploadableInterface, SoftDeletableInterface
                 $orderLine->setProduct(null);
             }
         }
-
-        return $this;
-    }
-
-    public function isDisabled(): ?bool
-    {
-        return $this->isDisabled;
-    }
-
-    public function setDisabled(bool $isDisabled): self
-    {
-        $this->isDisabled = $isDisabled;
 
         return $this;
     }

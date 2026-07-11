@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\Notification\Provider;
 
 use App\Dto\Enum\NotificationVisibility;
+use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\NotificationFilter;
 use App\Dto\View\ListView;
@@ -13,7 +14,7 @@ use App\Repository\NotificationRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
-use App\State\ListProviderInterface;
+use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class NotificationAdminListProvider implements ListProviderInterface
@@ -48,14 +49,15 @@ class NotificationAdminListProvider implements ListProviderInterface
     {
         $qb = $this->notificationRepository->findNotificationQuery();
 
-        if ($filter->status) {
-            $this->notificationRepository->filterDisabled($qb, $filter->status);
-        }
+        match($filter->status) {
+            PublishStatus::ENABLED => $this->notificationRepository->filterEnabled($qb),
+            PublishStatus::DISABLED => $this->notificationRepository->filterDisabled($qb),
+            default => null,
+        };
 
         if ($filter->restriction) {
             $this->notificationRepository->filterHasAge($qb);
         }
-
         if ($filter->visibility) {
             $this->notificationRepository->filterIsPublic($qb, $filter->visibility === NotificationVisibility::PUBLIC);
         }

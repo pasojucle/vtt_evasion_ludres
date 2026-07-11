@@ -7,7 +7,7 @@ namespace App\State\SlideshowDirectory\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\SlideshowDirectory;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SlideshowDirectoryDeleteProvider implements FormComponentProviderInterface
 {

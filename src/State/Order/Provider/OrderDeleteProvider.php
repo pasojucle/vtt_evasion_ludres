@@ -7,7 +7,7 @@ namespace App\State\Order\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\OrderHeader;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class OrderDeleteProvider implements FormComponentProviderInterface
 {

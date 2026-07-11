@@ -8,7 +8,7 @@ use App\Dto\State\JsonProcessorResult;
 use App\Dto\Payload\LevelOrderDto;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
-use App\State\JsonProcessorInterface;
+use App\State\Interface\JsonProcessorInterface;
 
 class LevelOrderProcessor implements JsonProcessorInterface
 {

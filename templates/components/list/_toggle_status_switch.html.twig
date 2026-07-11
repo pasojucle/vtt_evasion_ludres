@@ -1,0 +1,15 @@
+<div class="flex items-center">
+    <label class="relative inline-block w-[30px] h-3.5 cursor-pointer select-none">
+        <input 
+            type="checkbox" 
+            class="sr-only peer"
+            data-toggle-status-target="input"
+            data-action="change->toggle-status#toggle"
+            {% if toggle.isActive %}checked{% endif %}
+        >
+        <span class="absolute inset-0 rounded-full bg-slate-300 peer-checked:bg-slate-500 transition-all duration-300
+            after:content-[''] after:absolute after:bg-white after:rounded-full after:transition-all after:duration-300
+            after:h-2.5 after:w-2.5 after:left-[2px] after:top-[2px] peer-checked:after:translate-x-4">
+        </span>
+    </label>
+</div>

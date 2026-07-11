@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
+use App\Dto\View\Interface\ListActionViewInterface;
+
 readonly class ListItemView
 {
     /**
@@ -14,7 +16,7 @@ readonly class ListItemView
      * @param ?DropdownView $dropdown
      * @param ?string  $background
      * @param ?string $url
-     * @param ?ButtonView $action
+     * @param ?ListActionViewInterface $action
      */
     public function __construct(
         public array $labels = [],
@@ -25,7 +27,8 @@ readonly class ListItemView
         public ?string $background = null,
         public ?string $url = null,
         public ?bool $isDeleted = false,
-        public false | ButtonView | null $action = false,
+        public ?ListActionViewInterface $action = null,
+        public string $gridTemplateRow = 'grid-cols-1',
         public string $gridTemplateContent = 'grid-cols-1 lg:grid-cols-2',
         public string $gridTemplateLabels = 'grid-cols-1',
         public string $gridTemplateBadges = 'grid-cols-1',

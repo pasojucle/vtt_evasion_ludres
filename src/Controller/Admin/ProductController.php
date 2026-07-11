@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\ProductDtoTransformer;
 use App\Dto\Filter\ProductFilter;
+use App\Dto\Payload\ProductToggleDto;
 use App\Entity\Product;
 use App\Form\Admin\ProductType;
 use App\Service\Product\ProductEditService;
@@ -14,7 +15,6 @@ use App\State\Product\Processor\ProductRestoreProcessor;
 use App\State\Product\Processor\ProductToggleProcessor;
 use App\State\Product\Provider\ProductAdminListProvider;
 use App\State\Product\Provider\ProductDeleteProvider;
-use App\State\Product\Provider\ProductToggleProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -102,7 +102,7 @@ class ProductController extends AbstractCrudController
         );
     }
 
-    #[Route('/supprimer/{product}', name: 'restore', methods: ['GET', 'POST'])]
+    #[Route('/restaure/{product}', name: 'admin_product_restore', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelRestore(
         Request $request,
@@ -120,14 +120,12 @@ class ProductController extends AbstractCrudController
     #[IsGranted('PRODUCT_EDIT', 'product')]
     public function adminProduitDisbaled(
         Request $request,
-        ProductToggleProvider $provider,
         ProductToggleProcessor $processor,
         Product $product
     ): Response {
-        return $this->handleFormComponentAction(
-            $request,
-            $product,
-            $provider,
+        
+        return $this->handleComponentProcessAction(
+            new ProductToggleDto($product, $request->request->get('token')),
             $processor
         );
     }

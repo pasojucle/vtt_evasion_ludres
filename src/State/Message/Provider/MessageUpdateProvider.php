@@ -6,7 +6,7 @@ namespace App\State\Message\Provider;
 
 use App\Dto\View\SheetView;
 use App\Entity\Message;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class MessageUpdateProvider implements FormComponentProviderInterface
 {

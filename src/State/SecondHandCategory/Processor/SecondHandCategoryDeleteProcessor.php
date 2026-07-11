@@ -7,8 +7,7 @@ namespace App\State\SecondHandCategory\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SecondHandCategory;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
-use DateTimeImmutable;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SecondHandCategoryDeleteProcessor implements HtmlProcessorInterface
@@ -26,6 +25,7 @@ class SecondHandCategoryDeleteProcessor implements HtmlProcessorInterface
     {
         $this->softDeleteService->softDelete($entity);
         $this->entityManager->flush();
+        dump($entity);
 
         return new HtmlProcessorResult(
             success: true,

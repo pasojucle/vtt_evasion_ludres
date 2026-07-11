@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\State\Parameter\Processor;
 
 use App\Dto\State\HtmlProcessorResult;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ParameterUpdateProcessor implements HtmlProcessorInterface

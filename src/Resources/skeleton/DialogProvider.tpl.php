@@ -8,7 +8,7 @@ use App\Dto\View\DialogModalView;
 use App\Dto\Enum\DialogType;
 use App\Entity\<?= $entity_name ?>;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 
 class <?= $entity_name ?><?= $action_name ?>Provider implements FormComponentProviderInterface

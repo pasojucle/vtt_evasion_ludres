@@ -6,7 +6,7 @@ namespace App\State\Summary\Processor;
 
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Summary;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SummaryDeleteProcessor implements HtmlProcessorInterface

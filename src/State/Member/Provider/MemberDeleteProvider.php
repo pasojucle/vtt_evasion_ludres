@@ -8,7 +8,7 @@ use App\Dto\View\DialogModalView;
 use App\Entity\Member;
 use App\Mapper\DestructiveModalMapper;
 use App\Service\UserService;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class MemberDeleteProvider implements FormComponentProviderInterface
 {

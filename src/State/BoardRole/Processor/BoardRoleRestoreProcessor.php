@@ -7,7 +7,7 @@ namespace App\State\BoardRole\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\BoardRole;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BoardRoleRestoreProcessor implements HtmlProcessorInterface

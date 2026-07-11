@@ -9,7 +9,7 @@ use App\Entity\Level;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 
 class LevelDeleteProcessor implements HtmlProcessorInterface
 {

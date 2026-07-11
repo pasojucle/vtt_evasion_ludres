@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Product\Provider;
 
+use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\ProductFilter;
 use App\Dto\View\ListView;
@@ -12,7 +13,7 @@ use App\Repository\ProductRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
-use App\State\ListProviderInterface;
+use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 
@@ -46,9 +47,11 @@ class ProductAdminListProvider implements ListProviderInterface
     {
         $qb = $this->productRepository->findProductQuery();
 
-        if ($filter->state) {
-            $this->productRepository->filterState($qb, $filter->state);
-        }
+        match($filter->state) {
+            PublishStatus::ENABLED => $this->productRepository->filterEnabled($qb),
+            PublishStatus::DISABLED => $this->productRepository->filterDisabled($qb),
+            default => null,
+        };
 
         if ($filter->partNumber) {
             $this->productRepository->filterPartNumber($qb, $filter->partNumber);

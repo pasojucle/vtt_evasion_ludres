@@ -7,7 +7,7 @@ namespace App\State\SecondHand\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SecondHand;
 use App\Service\FileLocation\SecondHandFileLocation;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

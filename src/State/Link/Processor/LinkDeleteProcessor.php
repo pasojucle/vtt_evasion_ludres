@@ -8,7 +8,7 @@ use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Link;
 use App\Repository\LinkRepository;
 use App\Service\OrderByService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LinkDeleteProcessor implements HtmlProcessorInterface

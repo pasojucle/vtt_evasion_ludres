@@ -7,6 +7,7 @@ namespace App\Mapper\Order;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
+use App\Dto\Enum\Size;
 use App\Dto\Filter\OrderFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
@@ -59,7 +60,8 @@ class OrderAdminListMapper
                 dropdown: $this->getDropdown($entity, $referer),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 action: $this->getAction($entity, $currentPage, $filter),
-                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
+                gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
+                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px_100px]',
                 gridTemplateLabels: 'grid-cols-[80px_auto_80px] lg:grid-cols-3',
                 gridTemplateBadges: 'grid-cols-1',
             );
@@ -95,6 +97,7 @@ class OrderAdminListMapper
                 url: $this->urlGenerator->generate('admin_order', ['orderHeader' => $entity->getId()]),
                 icon: 'lucide:check-check',
                 variant: ColorVariant::SUCCESS,
+                size: Size::SM,
             );
         }
         if ($status === OrderStatusEnum::VALIDED) {
@@ -110,6 +113,7 @@ class OrderAdminListMapper
                 url: $this->urlGenerator->generate('admin_order_status', $params),
                 icon: 'lucide:check-check',
                 variant: ColorVariant::ACCENT,
+                size: Size::SM,
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', 'order-list'),
                     new HtmlAttributView('data-turbo-method', 'post'),

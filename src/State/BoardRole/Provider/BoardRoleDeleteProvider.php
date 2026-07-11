@@ -7,7 +7,7 @@ namespace App\State\BoardRole\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\BoardRole;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class BoardRoleDeleteProvider implements FormComponentProviderInterface
 {

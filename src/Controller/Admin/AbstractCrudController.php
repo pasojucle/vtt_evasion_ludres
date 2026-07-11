@@ -6,12 +6,13 @@ namespace App\Controller\Admin;
 
 use App\Form\Filter\ListFilterType;
 use App\Service\UrlContextService;
-use App\State\HtmlProcessorInterface;
-use App\State\FilterInitializerInterface;
-use App\State\FormComponentProviderInterface;
-use App\State\JsonProcessorInterface;
-use App\State\ListProviderInterface;
-use App\State\StreamExportableInterface;
+use App\State\Interface\ComponentProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FilterInitializerInterface;
+use App\State\Interface\FormComponentProviderInterface;
+use App\State\Interface\JsonProcessorInterface;
+use App\State\Interface\ListProviderInterface;
+use App\State\Interface\StreamExportableInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -110,6 +111,20 @@ abstract class AbstractCrudController extends AbstractController
         $this->addFlash($result->flashType, $result->messageKey);
     
         return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
+    }
+
+    protected function handleComponentProcessAction(
+        object $object,
+        ComponentProcessorInterface $processor,
+    ): Response {
+        $result = $processor->process($object);
+        
+        $this->addFlash($result->flashType, $result->messageKey);
+
+        $component = $result->component;
+        return $this->render($component->GetTemplate(), [
+            $component->getName() => $component,
+        ]);
     }
 
     protected function handleJsonProcessAction(

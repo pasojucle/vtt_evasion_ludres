@@ -7,7 +7,7 @@ namespace App\State\SecondHandCategory\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\SecondHandCategory;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SecondHandCategoryDeleteProvider implements FormComponentProviderInterface
 {

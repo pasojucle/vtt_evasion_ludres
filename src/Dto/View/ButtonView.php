@@ -6,8 +6,10 @@ namespace App\Dto\View;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
+use App\Dto\Enum\Size;
+use App\Dto\View\Interface\ListActionViewInterface;
 
-readonly class ButtonView
+readonly class ButtonView implements ListActionViewInterface
 {
     public const string TOP = '_top';
     public const string MODAL_CONTENT = 'modal_content';
@@ -26,6 +28,7 @@ readonly class ButtonView
         public string $url,
         public ColorVariant $variant = ColorVariant::DEFAULT,
         public RoundedVariant $rounded = RoundedVariant::ROUNDED,
+        public Size $size = Size::SM,
         public ?string $label = null,
         public ?string $icon = null,
         public ?string $className = null,
@@ -34,5 +37,15 @@ readonly class ButtonView
         ],
         public string $title = '',
     ) {
+    }
+
+    public function getName(): string
+    {
+        return 'button';
+    }
+
+    public function getTemplate(): string
+    {
+        return 'components/_button.html.twig';
     }
 }

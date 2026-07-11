@@ -10,27 +10,30 @@ use App\Dto\Filter\SurveyFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
 use App\Dto\View\HtmlAttributView;
+use App\Dto\View\Interface\ListActionViewInterface;
 use App\Dto\View\LabelView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
+use App\Dto\View\ToggleStatusView;
 use App\Entity\Survey;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
+use App\Service\CsrfTokenService;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SurveyAdminListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private UrlContextService $urlContextService,
-        private TranslatorInterface $translator,
         private PaginatorMapper $paginatorMapper,
         private SurveyAdminDropdownMapper $surveyAdminDropdownMapper,
         private FilterChipsMapper $filterChipsMapper,
+        private SurveyStatusMapper $surveyStatusMapper,
+        private CsrfTokenService $csrfTokenService,
     ) {
     }
 
@@ -40,16 +43,15 @@ class SurveyAdminListMapper
 
         $items = [];
         foreach ($entities as $entity) {
-            $status = $entity->getStatus();
+            $tokenId = $this->csrfTokenService->getTokenId($entity);
+
             $items[] = new ListItemView(
                 labels: [
                     new LabelView($entity->getTitle()),
                 ],
                 indicators: $this->getIndicators($entity),
-                status: new BadgeView(
-                    $status->trans($this->translator),
-                    $status->variant()
-                ),
+                status: $this->surveyStatusMapper->mapToView($entity, $tokenId),
+                action: $this->getAction($entity, $tokenId),
                 counter: new BadgeView(
                     (string) $entity->getRespondents()->count(),
                 ),
@@ -57,6 +59,7 @@ class SurveyAdminListMapper
                 url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey_response_list', [
                     'survey' => $entity->getId()
                 ]),
+                gridTemplateRow: 'grid-cols-[1fr_50px]',
                 gridTemplateBadges: 'grid-cols-[1fr_1fr_30px]'
             );
         }
@@ -111,5 +114,14 @@ class SurveyAdminListMapper
         }
 
         return $indicators;
+    }
+
+    private function getAction(Survey $entity, string $toggleStatusId): ListActionViewInterface
+    {
+        return new ToggleStatusView(
+            url: $this->urlGenerator->generate('admin_survey_toggle', ['survey' => $entity->getId()]),
+            tokenId: $toggleStatusId,
+            isActive: !$entity->isDisabled(),
+        );
     }
 }

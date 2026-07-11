@@ -8,7 +8,7 @@ use App\Dto\View\DialogModalView;
 use App\Entity\BikeRide;
 use App\Mapper\DestructiveModalMapper;
 use App\Service\BikeRideService;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class ActivityDeleteProvider implements FormComponentProviderInterface
 {

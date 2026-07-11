@@ -8,7 +8,7 @@ use App\Dto\State\HtmlProcessorResult;
 use App\Entity\<?= $entity_name ?>;
 use App\Service\UrlContextService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 
 
 class <?= $entity_name ?><?= $action_name ?>Processor implements HtmlProcessorInterface

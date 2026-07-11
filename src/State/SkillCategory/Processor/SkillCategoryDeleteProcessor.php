@@ -7,7 +7,7 @@ namespace App\State\SkillCategory\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SkillCategory;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SkillCategoryDeleteProcessor implements HtmlProcessorInterface

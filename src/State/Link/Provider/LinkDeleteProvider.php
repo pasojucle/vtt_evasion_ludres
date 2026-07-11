@@ -7,7 +7,7 @@ namespace App\State\Link\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Link;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class LinkDeleteProvider implements FormComponentProviderInterface
 {

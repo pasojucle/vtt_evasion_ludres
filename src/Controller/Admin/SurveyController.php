@@ -7,17 +7,17 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Dto\Filter\SurveyFilter;
+use App\Dto\Payload\SurveyToggleDto;
 use App\Entity\History;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
 use App\Form\Admin\SurveyType;
 use App\Repository\SurveyIssueRepository;
 use App\State\Survey\Processor\SurveyDeleteProcessor;
-use App\State\Survey\Processor\SurveyDisableProcessor;
+use App\State\Survey\Processor\SurveyToggleProcessor;
 use App\State\Survey\Provider\SurveyAdminListProvider;
 use App\State\Survey\Provider\SurveyAdminProvider;
 use App\State\Survey\Provider\SurveyDeleteProvider;
-use App\State\Survey\Provider\SurveyDisableProvider;
 use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
 use App\UseCase\Survey\GetSurveyResults;
@@ -197,19 +197,18 @@ class SurveyController extends AbstractCrudController
         return $response;
     }
 
-    #[Route('disable/{survey}', name: 'admin_survey_disable', methods: ['GET', 'POST'])]
-    #[IsGranted('SURVEY_EDIT', 'survey')]
-    public function disable(
+
+    #[Route('/toggle/{survey}', name: 'admin_survey_toggle', methods: ['POST'])]
+    #[IsGranted('PRODUCT_EDIT', 'product')]
+    public function adminProduitDisbaled(
         Request $request,
-        SurveyDisableProcessor $processor,
-        SurveyDisableProvider $provider,
+        SurveyToggleProcessor $processor,
         Survey $survey
     ): Response {
-        return $this->handleFormComponentAction(
-            $request,
-            $survey,
-            $provider,
-            $processor,
+        
+        return $this->handleComponentProcessAction(
+            new SurveyToggleDto($survey, $request->request->get('token')),
+            $processor
         );
     }
 

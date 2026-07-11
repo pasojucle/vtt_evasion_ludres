@@ -6,7 +6,7 @@ namespace App\State\Message\Processor;
 
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Message;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MessageDeleteProcessor implements HtmlProcessorInterface

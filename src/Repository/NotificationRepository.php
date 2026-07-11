@@ -59,7 +59,7 @@ class NotificationRepository extends ServiceEntityRepository
             ->andWhere(
                 (new Expr())->lte('n.startAt', ':today'),
                 (new Expr())->gte('n.endAt', ':today'),
-                (new Expr())->eq('n.isDisabled', ':disabled'),
+                (new Expr())->isNull('n.disabled_at'),
                 (new Expr())->eq('n.public', ':public'),
                 (new Expr())->orX(
                     (new Expr())->lte('n.minAge', ':age'),
@@ -73,7 +73,6 @@ class NotificationRepository extends ServiceEntityRepository
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('today', $today->format('Y-m-d H:i:s')),
-                new Parameter('disabled', false),
                 new Parameter('public', false),
                 new Parameter('age', $age),
                 new Parameter('member', $member),
@@ -95,12 +94,11 @@ class NotificationRepository extends ServiceEntityRepository
             ->andWhere(
                 (new Expr())->lte('n.startAt', ':today'),
                 (new Expr())->gte('n.endAt', ':today'),
-                (new Expr())->eq('n.isDisabled', ':disabled'),
+                (new Expr())->isNull('n.disabled_at'),
                 (new Expr())->eq('n.public', ':public')
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('today', $today->format('Y-m-d H:i:s')),
-                new Parameter('disabled', 0),
                 new Parameter('public', 1),
             ]))
             ->orderBy('n.id', 'DESC')
@@ -114,13 +112,20 @@ class NotificationRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('n');
     }
 
-    public function filterDisabled(QueryBuilder $qb, PublishStatus $state): void
+    public function filterEnabled(QueryBuilder $qb): void
     {
         $qb
         ->andWhere(
-            $qb->expr()->eq('n.isDisabled', ':state')
-        )
-        ->setParameter('state', PublishStatus::DISABLED === $state);
+            $qb->expr()->isNull('n.disabled_at')
+        );
+    }
+
+    public function filterDisabled(QueryBuilder $qb): void
+    {
+        $qb
+        ->andWhere(
+            $qb->expr()->isNotNull('n.disabled_at')
+        );
     }
 
     public function filterIsPublic(QueryBuilder $qb, bool $isPublic): void

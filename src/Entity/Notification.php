@@ -2,13 +2,17 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\DisableableInterface;
+use App\Entity\Trait\DisableableTrait;
 use App\Repository\NotificationRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
-class Notification
+class Notification implements DisableableInterface
 {
+    use DisableableTrait;
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -31,9 +35,6 @@ class Notification
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $maxAge;
-
-    #[ORM\Column(type: 'boolean', options:['default' => false])]
-    private $isDisabled = false;
 
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $public = false;
@@ -111,18 +112,6 @@ class Notification
     public function setMaxAge(?int $maxAge): self
     {
         $this->maxAge = $maxAge;
-
-        return $this;
-    }
-
-    public function isDisabled(): ?bool
-    {
-        return $this->isDisabled;
-    }
-
-    public function setIsDisabled(bool $isDisabled): self
-    {
-        $this->isDisabled = $isDisabled;
 
         return $this;
     }

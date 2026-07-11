@@ -7,7 +7,7 @@ namespace App\State\Level\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Level;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LevelRestoreProcessor implements HtmlProcessorInterface

@@ -6,7 +6,7 @@ namespace App\State\Cluster\Processor;
 
 use App\Dto\Payload\ClusterSkillDto;
 use App\Dto\State\HtmlProcessorResult;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ClusterSkillDeleteProcessor implements HtmlProcessorInterface

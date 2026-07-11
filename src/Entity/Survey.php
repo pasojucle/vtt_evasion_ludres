@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\SurveyStatusEnum;
+use App\Entity\Interface\DisableableInterface;
+use App\Entity\Trait\DisableableTrait;
 use App\Form\Admin\SurveyType;
 use App\Repository\SurveyRepository;
 use DateInterval;
@@ -22,8 +24,10 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity(repositoryClass: SurveyRepository::class)]
-class Survey
+class Survey implements DisableableInterface
 {
+    use DisableableTrait;
+
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
@@ -42,9 +46,6 @@ class Survey
 
     #[OneToMany(targetEntity: SurveyIssue::class, mappedBy: 'survey', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     private Collection $surveyIssues;
-
-    #[Column(type: 'boolean')]
-    private bool $disabled = false;
 
     #[OneToMany(mappedBy: 'survey', targetEntity: Respondent::class)]
     private Collection $respondents;
@@ -91,7 +92,7 @@ class Survey
         return $this;
     }
 
-    public function getStartAt(): ?\DateTimeInterface
+    public function getStartAt(): ?DateTimeInterface
     {
         return $this->startAt;
     }
@@ -108,7 +109,7 @@ class Survey
         return $this->endAt;
     }
 
-    public function setEndAt(\DateTimeInterface $endAt): self
+    public function setEndAt(DateTimeInterface $endAt): self
     {
         $this->endAt = $endAt;
 
@@ -153,18 +154,6 @@ class Survey
     public function setTitle(?string $title): self
     {
         $this->title = ($title) ? $title : '';
-
-        return $this;
-    }
-
-    public function isDisabled(): bool
-    {
-        return $this->disabled;
-    }
-
-    public function setDisabled(bool $disabled): self
-    {
-        $this->disabled = $disabled;
 
         return $this;
     }

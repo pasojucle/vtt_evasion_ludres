@@ -7,7 +7,7 @@ namespace App\State\BikeRideType\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\BikeRideType;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BikeRideTypeRestoreProcessor implements HtmlProcessorInterface

@@ -7,19 +7,42 @@
             data-switch-off-value="{{form.vars.attr['data-switch-off']}}"
         {% endif %}
     >
-        <label class="switch min-w-8">
+        <label class="relative inline-block w-[30px] h-3.5 cursor-pointer select-none shrink-0">
+            
             {{ form_widget(form, {'attr': {
                 'data-action': 'change->switch#change',
-                'data-switch-target': "input"
+                'data-switch-target': "input",
+                'class': 'sr-only peer'
             }}) }}
-            <span class="slider round{% if form.vars.disabled %} disabled{% endif %}"></span>
+            
+            <span class="
+                absolute inset-0 rounded-full transition-all duration-300
+                {% if form.vars.disabled %}
+                    bg-slate-300
+                {% else %}
+                    bg-slate-200 peer-checked:bg-slate-500
+                {% endif %}
+                peer-focus:ring-1 peer-focus:ring-blue-500
+                after:content-[''] after:absolute after:bg-white after:rounded-full after:transition-all after:duration-300
+                after:h-2.5 after:w-2.5 after:left-[2px] after:bottom-[2px]
+                peer-checked:after:translate-x-4
+            "></span>
         </label>
+        
         {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off'] is defined %}
-            <label for="{{ form.vars.id }}" {% if form.vars.disabled %}class="disabled"{% endif %} data-switch-target="label">
-            {% if form.vars.checked %} {{form.vars.attr['data-switch-on'] }} {% else %} {{form.vars.attr['data-switch-off'] }} {% endif %}
+            <label 
+                for="{{ form.vars.id }}" 
+                class="text-sm font-medium select-none transition-colors {% if form.vars.disabled %}text-slate-400{% else %}text-foreground{% endif %}" 
+                data-switch-target="label"
+            >
+                {% if form.vars.checked %} {{ form.vars.attr['data-switch-on'] }} {% else %} {{ form.vars.attr['data-switch-off'] }} {% endif %}
             </label>
         {% else %}
-            {{ form_label(form) }}
+            {{ form_label(form, null, {
+                'label_attr': {
+                    'class': 'text-sm font-medium select-none transition-colors ' ~ (form.vars.disabled ? 'text-slate-400' : 'text-foreground')
+                }
+            }) }}
         {% endif %}
     </div>
 {% endblock %}

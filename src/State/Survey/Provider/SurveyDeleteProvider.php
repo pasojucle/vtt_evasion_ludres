@@ -7,7 +7,7 @@ namespace App\State\Survey\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Survey;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SurveyDeleteProvider implements FormComponentProviderInterface
 {
@@ -15,12 +15,15 @@ class SurveyDeleteProvider implements FormComponentProviderInterface
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
+
+    /**
+     * @param Survey $entity
+     */
     public function mapToView(object $entity): DialogModalView
     {
-        assert($entity instanceof Survey);
         
         return $this->destructiveModalMapper->mapToView(
-            sprintf('<p>Toutes les données relative à ce vote seront supprimées.</p><p>Etes-vous certain de supprimer le sondage %s ?</p><p>Toutes les données relatives au sondages seront supprimées.</p><p>Cette opération est irréversible.</p>'
+            sprintf('<p>Toutes les données relative à ce vote seront supprimées.</p><p>Etes-vous certain de supprimer le sondage <b>%s</b> ?</p><p>Toutes les données relatives au sondages seront supprimées.</p><p>Cette opération est irréversible.</p>'
             , $entity->getTitle()),
         );
     }

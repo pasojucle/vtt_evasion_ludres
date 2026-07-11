@@ -7,7 +7,7 @@ namespace App\State\Documentation\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Documentation;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class DocumentationDeleteProvider implements FormComponentProviderInterface
 {

@@ -10,7 +10,7 @@ use App\Entity\Member;
 use App\Entity\OrderHeader;
 use App\Repository\OrderLineRepository;
 use App\Repository\SurveyResponseRepository;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MemberDeleteProcessor implements HtmlProcessorInterface

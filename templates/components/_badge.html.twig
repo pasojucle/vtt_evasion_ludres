@@ -19,8 +19,16 @@
     (enum('App\\Dto\\Enum\\Size').LG.value): 'px-2 py-1 rounded-sm text-base font-semibold',
     (enum('App\\Dto\\Enum\\Size').ICON.value): 'p-1 rounded-full',
 } %}
-    
-<div class="flex items-center">
+
+{% set tag = badge.toggleStatusId ? 'turbo-frame' : 'div' %}
+
+<{{ tag }}
+    class="flex items-center"
+    {% if badge.toggleStatusId %}
+        id="toggle_status_{{ badge.toggleStatusId }}"
+        data-toggle-status-target="status"
+    {% endif %}
+>
     <div 
         class="{{ size_classes[badge.size.value] ?? size_classes.sm }} {% if badge.color is null %}{{ color_classes[badge.variant.value] ?? color_classes.default }}{% else %} custom-badge{% endif %}"
         {% if badge.color %}style="--badge-color: {{ badge.color }};"{% endif %}
@@ -31,4 +39,4 @@
             {{ badge.value}}
         {% endif %}
     </div>
-</div>
+</{{ tag }}>

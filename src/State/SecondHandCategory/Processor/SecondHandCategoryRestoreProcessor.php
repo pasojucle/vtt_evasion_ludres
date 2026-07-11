@@ -7,7 +7,7 @@ namespace App\State\SecondHandCategory\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SecondHandCategory;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SecondHandCategoryRestoreProcessor implements HtmlProcessorInterface
@@ -28,7 +28,7 @@ class SecondHandCategoryRestoreProcessor implements HtmlProcessorInterface
 
         return new HtmlProcessorResult(
             success: true,
-            messageKey: 'category.flash.success.delete',
+            messageKey: 'category.flash.success.restore',
             targetUrl: $targetUrl,
             flashType: 'success'
         );

@@ -45,7 +45,7 @@ class SurveyRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->leftJoin('s.members', 'm')
             ->andWhere(
-                (new Expr())->eq('s.disabled', 0),
+                (new Expr())->isNull('s.disabledAt'),
                 (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
                 (new Expr())->orX(
@@ -73,7 +73,7 @@ class SurveyRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->leftJoin('s.members', 'm')
             ->andWhere(
-                (new Expr())->eq('s.disabled', 0),
+                (new Expr())->isNull('s.disabledAt'),
                 (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
                 (new Expr())->isNull('s.bikeRide'),
@@ -127,7 +127,7 @@ class SurveyRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->join('s.respondents', 'r')
             ->andWhere(
-                (new Expr())->eq('s.disabled', ':disabled'),
+                (new Expr())->isNull('s.disabledAt'),
                 (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
                 (new Expr())->eq('r.member', ':member'),
@@ -137,7 +137,6 @@ class SurveyRepository extends ServiceEntityRepository
                 )
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('disabled', false),
                 new Parameter('member', $member),
                 new Parameter('survey', 'Survey'),
                 new Parameter('issue', 'SurveyIssue'),
@@ -234,27 +233,24 @@ class SurveyRepository extends ServiceEntityRepository
     {
         $qb->andWhere(
             $qb->expr()->gte('s.endAt', ':today'),
-            $qb->expr()->eq('s.disabled', ':disabled'),
+            $qb->expr()->isNull('s.disabledAt'),
         )
-        ->setParameter('today', $today)
-        ->setParameter('disabled', false);
+        ->setParameter('today', $today);
     }
 
     public function filterExpired(QueryBuilder $qb, DateTime $today): void
     {
         $qb->andWhere(
             $qb->expr()->lt('s.endAt', ':today'),
-            $qb->expr()->eq('s.disabled', ':disabled')
+            $qb->expr()->isNull('s.disabledAt')
         )
-        ->setParameter('today', $today)
-        ->setParameter('disabled', false);
+        ->setParameter('today', $today);
     }
 
     public function filterDisabled(QueryBuilder $qb): void
     {
         $qb->andWhere(
-            $qb->expr()->eq('s.disabled', ':disabled')
-        )
-        ->setParameter('disabled', true);
+            $qb->expr()->isNotNull('s.disabledAt')
+        );
     }
 }

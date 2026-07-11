@@ -14,6 +14,7 @@ use App\Dto\View\ButtonView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
+use App\Dto\View\Interface\ListActionViewInterface;
 use App\Dto\View\LabelView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
@@ -73,6 +74,7 @@ class RegistrationListMapper
                 dropdown: $this->registrationDropdownMapper->mapToView($entity, $referer),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
                 action: $this->getAction($licence, $currentPage, $filter),
+                gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_2fr]',
                 gridTemplateBadges: 'grid-cols-[auto_90px] lg:grid-cols-[auto_180px]',
             );
@@ -173,7 +175,7 @@ class RegistrationListMapper
         return $indicators;
     }
 
-    private function getAction(Licence $licence, ?int $currentPage, RegistrationFilter $filter): ?ButtonView
+    private function getAction(Licence $licence, ?int $currentPage, RegistrationFilter $filter): ?ListActionViewInterface
     {
         $state = $licence->getState();
         $params = [
@@ -189,6 +191,7 @@ class RegistrationListMapper
                 url: $this->urlGenerator->generate('admin_registration_receive', $params),
                 icon: 'lucide:square-check-big',
                 variant: ColorVariant::SUCCESS,
+                size: Size::SM,
                 title: 'Réceptionner le dossier d\'inscription',
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
@@ -199,12 +202,13 @@ class RegistrationListMapper
                 url: $this->urlGenerator->generate('admin_registration_register', $params),
                 icon: 'lucide:square-check-big',
                 variant: ColorVariant::SUCCESS,
+                size: Size::SM,
                 title: 'Inscrire à la FFvélo',
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
                 ],
             ),
-            default => null
+            default => null,
         };
     }
 }

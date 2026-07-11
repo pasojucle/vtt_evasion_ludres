@@ -7,7 +7,7 @@ namespace App\State\Order\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class OrderDeleteProcessor implements HtmlProcessorInterface

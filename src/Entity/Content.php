@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\ContentKindEnum;
+use App\Entity\Interface\DisableableInterface;
 use App\Entity\Interface\UploadableInterface;
+use App\Entity\Trait\DisableableTrait;
 use App\Repository\ContentRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,8 +17,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 
 #[ORM\Entity(repositoryClass: ContentRepository::class)]
-class Content implements UploadableInterface
+class Content implements UploadableInterface, DisableableInterface
 {
+    use DisableableTrait;
+
     public const ROUTES = [
         'home' => 'content.route.home',
         'registration_detail' => 'content.route.registration_detail',
@@ -59,9 +63,6 @@ class Content implements UploadableInterface
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
-
-    #[ORM\Column(type: 'boolean')]
-    private bool $isActive = true;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ? string $title = null;
@@ -164,18 +165,6 @@ class Content implements UploadableInterface
     public function setOrderBy(?int $orderBy): self
     {
         $this->orderBy = $orderBy;
-
-        return $this;
-    }
-
-    public function isActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
 
         return $this;
     }

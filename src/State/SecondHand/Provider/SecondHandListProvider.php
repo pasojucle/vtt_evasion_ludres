@@ -12,8 +12,8 @@ use App\Repository\SecondHandRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
-use App\State\FilterInitializerInterface;
-use App\State\ListProviderInterface;
+use App\State\Interface\FilterInitializerInterface;
+use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class SecondHandListProvider implements ListProviderInterface, FilterInitializerInterface

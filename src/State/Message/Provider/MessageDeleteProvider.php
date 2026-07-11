@@ -7,7 +7,7 @@ namespace App\State\Message\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Message;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class MessageDeleteProvider implements FormComponentProviderInterface
 {

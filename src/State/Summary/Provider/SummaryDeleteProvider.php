@@ -7,7 +7,7 @@ namespace App\State\Summary\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Summary;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SummaryDeleteProvider implements FormComponentProviderInterface
 {

@@ -7,7 +7,7 @@ namespace App\State\SlideshowImage\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\SlideshowImage;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SlideshowImageDeleteProvider implements FormComponentProviderInterface
 {

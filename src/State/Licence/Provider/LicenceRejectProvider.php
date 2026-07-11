@@ -9,7 +9,7 @@ use App\Dto\Form\LicenceRegister;
 use App\Dto\Form\LicenceReject;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 use App\State\Message\Provider\MessageProvider;
 
 /**

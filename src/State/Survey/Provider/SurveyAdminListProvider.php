@@ -15,7 +15,7 @@ use App\Repository\SurveyRepository;
 use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
-use App\State\ListProviderInterface;
+use App\State\Interface\ListProviderInterface;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 

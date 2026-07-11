@@ -17,9 +17,9 @@ use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use App\State\FilterHydratorTrait;
-use App\State\FilterInitializerInterface;
-use App\State\ListProviderInterface;
-use App\State\StreamExportableInterface;
+use App\State\Interface\FilterInitializerInterface;
+use App\State\Interface\ListProviderInterface;
+use App\State\Interface\StreamExportableInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class UserListProvider implements ListProviderInterface, FilterInitializerInterface, StreamExportableInterface

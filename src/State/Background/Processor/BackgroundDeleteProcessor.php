@@ -6,7 +6,7 @@ namespace App\State\Background\Processor;
 
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Background;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BackgroundDeleteProcessor implements HtmlProcessorInterface

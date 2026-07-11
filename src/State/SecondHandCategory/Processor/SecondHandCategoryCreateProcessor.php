@@ -6,7 +6,7 @@ namespace App\State\SecondHandCategory\Processor;
 
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\SecondHandCategory;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SecondHandCategoryCreateProcessor implements HtmlProcessorInterface

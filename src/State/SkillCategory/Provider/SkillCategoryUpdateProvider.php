@@ -6,7 +6,7 @@ namespace App\State\SkillCategory\Provider;
 
 use App\Dto\View\SheetView;
 use App\Entity\SkillCategory;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SkillCategoryUpdateProvider implements FormComponentProviderInterface
 {

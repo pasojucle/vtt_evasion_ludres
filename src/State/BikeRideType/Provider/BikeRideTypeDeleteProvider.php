@@ -7,7 +7,7 @@ namespace App\State\BikeRideType\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\BikeRideType;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class BikeRideTypeDeleteProvider implements FormComponentProviderInterface
 {

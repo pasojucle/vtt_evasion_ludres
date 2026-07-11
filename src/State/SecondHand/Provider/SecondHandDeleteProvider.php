@@ -7,7 +7,7 @@ namespace App\State\SecondHand\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\SecondHand;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SecondHandDeleteProvider implements FormComponentProviderInterface
 {

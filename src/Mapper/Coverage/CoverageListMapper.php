@@ -6,6 +6,7 @@ namespace App\Mapper\Coverage;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\Size;
 use App\Dto\Filter\CoverageFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
@@ -63,6 +64,8 @@ class CoverageListMapper
                 dropdown: $this->userDropdownMapper->mapToView($entity, $referer),
                 url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
                 action: $this->getAction($licence, $referer),
+                gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
+                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_200px_100px]',
             );
         }
         $currentSeason = $this->seasonService->getCurrentSeason();
@@ -139,6 +142,7 @@ class CoverageListMapper
             url: $this->urlContextService->generateUrl('admin_coverage_validate', ['licence' => $licence->getId(), ], $referer),
             icon: 'lucide:square-check-big',
             variant: ColorVariant::SUCCESS,
+            size: Size::SM,
             title: 'Valider l\'asssurance',
             htmlAttributes: [
                 new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)

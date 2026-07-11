@@ -8,7 +8,7 @@ use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Survey;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SurveyDeleteProcessor implements HtmlProcessorInterface

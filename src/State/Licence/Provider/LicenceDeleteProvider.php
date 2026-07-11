@@ -7,7 +7,7 @@ namespace App\State\Licence\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class LicenceDeleteProvider implements FormComponentProviderInterface
 {

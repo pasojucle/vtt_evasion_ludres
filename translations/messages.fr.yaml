@@ -225,7 +225,7 @@ survey:
   filter:
     pending: En cours
     expired: Expiré
-    disabled: Désactivé
+    disabled: Clôturer
   restriction:
     members: Limiter à des participants
     activity: Limiter aux participants d'une activité

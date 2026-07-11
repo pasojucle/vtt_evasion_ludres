@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\Filter\NotificationFilter;
+use App\Dto\Payload\NotificationToggleDto;
 use App\Entity\Notification;
 use App\Form\Admin\NotificationType;
 use App\State\Notification\Processor\NotificationToggleProcessor;
 use App\State\Notification\Provider\NotificationAdminListProvider;
-use App\State\Notification\Provider\NotificationToggleProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -78,18 +77,15 @@ class NotificationController extends AbstractCrudController
         ]);
     }
 
-    #[Route('/toggle/{notification}', name: 'toggle_disable', methods: ['GET', 'POST'])]
+    #[Route('/toggle/{notification}', name: 'toggle', methods: ['GET', 'POST'])]
     #[IsGranted('MODAL_WINDOW_EDIT', 'notification')]
     public function toggle(
         Request $request,
-        NotificationToggleProvider $provider,
         NotificationToggleProcessor $processor,
         Notification $notification
     ): Response {
-        return $this->handleFormComponentAction(
-            $request,
-            $notification,
-            $provider,
+        return $this->handleComponentProcessAction(
+            new NotificationToggleDto($notification, $request->request->get('token')),
             $processor
         );
     }

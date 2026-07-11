@@ -10,7 +10,7 @@ use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Member;
 use App\Service\LicenceService;
 use App\Service\MailerService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use App\State\Message\Provider\MessageProvider;
 use Doctrine\ORM\EntityManagerInterface;
 

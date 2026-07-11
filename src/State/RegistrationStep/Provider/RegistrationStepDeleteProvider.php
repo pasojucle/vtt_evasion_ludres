@@ -7,7 +7,7 @@ namespace App\State\RegistrationStep\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\RegistrationStep;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class RegistrationStepDeleteProvider implements FormComponentProviderInterface
 {

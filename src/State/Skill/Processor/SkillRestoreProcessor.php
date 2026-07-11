@@ -7,7 +7,7 @@ namespace App\State\Skill\Processor;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Skill;
 use App\Service\SoftDeleteService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SkillRestoreProcessor implements HtmlProcessorInterface

@@ -7,7 +7,7 @@ namespace App\State\Skill\Provider;
 use App\Dto\View\DialogModalView;
 use App\Entity\Skill;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class SkillDeleteProvider implements FormComponentProviderInterface
 {

@@ -7,7 +7,7 @@ namespace App\State\Cluster\Provider;
 use App\Dto\Payload\ClusterSkillDto;
 use App\Dto\View\DialogModalView;
 use App\Mapper\DestructiveModalMapper;
-use App\State\FormComponentProviderInterface;
+use App\State\Interface\FormComponentProviderInterface;
 
 class ClusterSkillDeleteProvider implements FormComponentProviderInterface
 {

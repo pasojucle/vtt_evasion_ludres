@@ -11,7 +11,7 @@ use App\Entity\Member;
 use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\UrlContextService;
-use App\State\HtmlProcessorInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LicenceRejectProcessor implements HtmlProcessorInterface
