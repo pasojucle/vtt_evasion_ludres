@@ -56,7 +56,7 @@ class BikeRideController extends AbstractCrudController
         Request $request,
         EditBikeRide $editBikeRide
     ): Response {
-        $bikeRide = null;
+        $bikeRide = new BikeRide();
         $filters = $request->getSession()->get('admin_bike_ride_list_filters');
         $form = $this->createForm(BikeRideType::class, $bikeRide);
 

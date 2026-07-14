@@ -24,6 +24,9 @@ class IsRegistrable
     
     public function execute(BikeRide $bikeRide, ?User $member): bool
     {
+        if (!$bikeRide->getBikeRideType()) {
+            return false;
+        }
         if ($bikeRide->getBikeRideType()->isPublic() && $bikeRide->registrationEnabled()) {
             return $this->isWithinDisplayPeriod($bikeRide);
         }

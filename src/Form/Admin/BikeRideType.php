@@ -51,18 +51,11 @@ class BikeRideType extends AbstractType
                     ;
                 },
                 'choice_label' => 'name',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
                 'attr' => [
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'bike-ride'
+                    'data-container-id' => 'bike-ride-general;bike-ride-medias;bike-ride-parameters'
                 ],
             ])
-            // ->add('bikeRideTypeChanged', HiddenType::class, [
-            //     'mapped' => false,
-            //     'data' => 0,
-            // ])
             ->add('file', FileType::class, [
                 'label' => 'Fichier (optionnel)',
                 'mapped' => false,
@@ -89,14 +82,6 @@ class BikeRideType extends AbstractType
                 'label' => 'Date de départ',
                 'widget' => 'single_text',
                 'html5' => true,
-                // 'format' => 'dd/MM/yyyy',
-                // 'attr' => [
-                //     'class' => 'js-datepicker',
-                //     'autocomplete' => 'off',
-                // ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('displayDuration', IntegerType::class, [
                 'label' => 'Durée d\'affichage (nbr de jours avant)',
@@ -105,16 +90,10 @@ class BikeRideType extends AbstractType
                     'min' => 0,
                     'max' => 90,
                 ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('private', CheckboxType::class, [
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-off' => 'Publication publique',
                     'data-switch-on' => 'Publication privée',
@@ -125,6 +104,9 @@ class BikeRideType extends AbstractType
                 'entry_type' => BikeRideTrackType::class,
                 'entry_options' => [
                     'label' => false,
+                    'attr' => [
+                        'class' => 'flex flex-col gap-4 border border-border rounded-sm p-2'
+                    ],
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,

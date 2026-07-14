@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\BoardRole;
 
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\Size;
 use App\Dto\Filter\BoardRoleFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
@@ -64,6 +65,7 @@ class BoardRoleListMapper
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
+                size: Size::ICON,
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),

@@ -1,0 +1,45 @@
+<div data-controller="tabs">
+    
+    <div class="flex flex-col">
+        <div class="hidden md:flex bg-slate-100 divide-x divide-border border-b border-border">
+            {% for tab in tabs %}
+                <div 
+                    class="flex-1 flex gap-2 items-center p-2 {% if loop.index == 1 %}bg-slate-300 {% else %}bg-slate-200{% endif %}"
+                    data-tabs-target="trigger"
+                    data-action="click->tabs#switchTab"
+                    data-index="{{loop.index}}"
+                >
+                    {{ ux_icon(tab.icon, {class: 'size-5'}) }}
+                    {{ tab.title }}
+                </div>
+            {% endfor %}
+        </div>
+        <div>
+            {% for tab in tabs %}
+                <div 
+                    class="flex items-center gap-2 p-2 border-b border-border lg:mb-4 {% if loop.index == 1 %}bg-slate-300 {% else %}bg-slate-200{% endif %} md:hidden"
+                    data-tabs-target="trigger"
+                    data-action="click->tabs#switchTab"
+                    data-index="{{loop.index}}"
+                >
+                    {{ ux_icon(tab.icon, {class: 'size-5'}) }}
+                    {{ tab.title }}
+                    <div 
+                        class="ml-auto{% if loop.index == 1 %} rotate-90{% endif %}"
+                        data-tabs-target="chevron"
+                        data-index="{{loop.index}}"
+                    >
+                        {{ ux_icon('lucide:chevron-down')}}
+                    </div>
+                </div>
+                <div  
+                    class="flex flex-col gap-4 p-4 lg:p-6{% if loop.index != 1 %} hidden{% endif %}"
+                    data-index="{{loop.index}}"
+                    data-tabs-target="panel"
+                >
+                    {{ tab.content }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

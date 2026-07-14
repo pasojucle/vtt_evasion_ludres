@@ -65,8 +65,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'label' => 'Type d\'activité',
                     'class' => BikeRideType::class,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
             new FilterFieldConfig(
@@ -76,8 +75,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'label' => 'Restriction',
                     'class' => ActivityRestriction::class,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
             new FilterFieldConfig(
@@ -87,10 +85,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'label' => 'Afficher les éléments supprimés',
                     'required' => false,
                     'block_prefix' => 'switch',
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4 flex gap-2 flex-row'],
-                    'attr' => [
-                        'class' => 'form-control',
-                    ],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4 flex gap-2 flex-row'],
                 ],
                 chipCcomputed: true,
             ),
@@ -101,10 +96,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'label' => 'Visibilité',
                     'class' => ActivityVisibility::class,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => [
-                        'class' => 'form-control',
-                    ],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
             new FilterFieldConfig(
@@ -119,8 +111,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                         '100' => 100,
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
                 chipCcomputed: true,
             ),
@@ -134,8 +125,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                         'Date (du plus récent au plus ancien)' => 'DESC',
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
         ];

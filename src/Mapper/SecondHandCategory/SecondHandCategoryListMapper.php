@@ -66,6 +66,7 @@ class SecondHandCategoryListMapper
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
+                size: Size::ICON,
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close')

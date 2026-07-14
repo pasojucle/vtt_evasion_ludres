@@ -6,6 +6,7 @@ namespace App\Mapper\BikeRideType;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
+use App\Dto\Enum\Size;
 use App\Dto\Filter\BikeRideTypeFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
@@ -54,6 +55,7 @@ class BikeRideTypeListMapper
                 status: $this->getStatus($entity),
                 dropdown: $this->dropDown($entity, $referer),
                 isDeleted: $entity->isDeleted(),
+                gridTemplateContent: 'grid-cols-1 grid-cols-[1fr_100px]'
             );
         }
 
@@ -67,6 +69,7 @@ class BikeRideTypeListMapper
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
+                size: Size::ICON,
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),

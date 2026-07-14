@@ -61,7 +61,7 @@ class OrderAdminListMapper
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 action: $this->getAction($entity, $currentPage, $filter),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
-                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px_100px]',
+                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateLabels: 'grid-cols-[80px_auto_80px] lg:grid-cols-3',
                 gridTemplateBadges: 'grid-cols-1',
             );
@@ -77,6 +77,7 @@ class OrderAdminListMapper
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
+                size: Size::ICON,
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close')

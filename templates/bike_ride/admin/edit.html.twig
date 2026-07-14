@@ -1,135 +1,197 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% set title = (bikeRide.id is null) ? 'Ajouter une sortie' : 'Modifier une sortie' %}
-
+{% set title = (bikeRide.id is null) ? 'Ajouter une activité' : 'Modifier une activité' %}
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">{{ title }}</h1>
-            <span class="tools">
-                <a href="{{ path('admin_bike_ride_list', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-            </span>
+    <div class="p-4 lg:p-6">
+        <div class="flex gap-2 mb-8">
+            <div>
+                <h1 class="font-bold text-3xl">{{ title }}</h1>
+                <div class="text-muted mt-1">Ajouter une activité en définissant les paramètres généreaux, des participants, des médias, des parcours...</div>
+            </div>
+            <div class="ml-auto">
+                <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
+                    <a href="{{ path('admin_bike_ride_list', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+                </div>
+            </div>
         </div>
+        
         {{ form_start(form) }}
-        <div id="bike_ride_container" class="wrapper-body">
-            <div class="d-flex gap-2 mb-20">
-                <div class="form-group-file flex-1 {% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}" data-controller="input-file">
-                    <div 
-                        class="input-file-button h-full"
-                        data-input-file-target="trigger" 
-                        data-action="click->input-file#selectFile">
-                        {% if bikeRide.filename is null %}
-                            <div data-placeholder="placeholder" class="d-flex flex-col align-items-center justify-content-center gap-2 h-full bg-gray-200 border">
-                                <i class="fa-regular fa-image text-3xl text-gray-500"></i>
-                                <div>Ajouter une image</div>
-                            </div>
-                        {% endif %}
-                        <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}" data-input-file-target="media">
-                    </div>
-                    {{ form_widget(form.file, {'attr':{'class': 'input-file d-none', 'data-input-file-target': 'input', 'data-action': 'change->input-file#previewFile'}}) }}   
-                    {{ form_errors(form.file) }} 
-                </div>
-
-                <div class="w-lg">
-                    {{ form_row(form.bikeRideType) }}
-                    {{ form_row(form.title) }}
-                    {{ form_row(form.content) }}
-                </div>
-            </div>
-            
-            <div class="form-group">
-                
-                {% if bikeRide.isPublic %}
-                    <b>Réglement et sécutité</b>
-                    <div class="mt-2 p-2 border-2 border-slate-200 rounded-sm">
-                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
-                            {{ form_row(form.rulesFile) }}
-                        </div>
-                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
-                            {{ form_row(form.rulesFileThumbnail) }}
-                        </div>
-                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
-                            {{ form_row(form.securityGuidelinesFile) }}
-                        </div>
-                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
-                            {{ form_row(form.securityGuidelinesFileThumbnail) }}
-                        </div>
-                    </div>
-                {% endif %}
-                <b>Traces GPX</b>
-                <div class="mt-2 p-2 border-2 border-slate-200 rounded-sm" data-controller="collection">
-                    <ul 
-                        class="mb-20" 
-                        data-collection-target="container"
-                        data-index="{{ form.bikeRideTracks|length > 0 ? form.bikeRideTracks|last.vars.name + 1 : 0 }}" 
-                        data-prototype="{{ form_widget(form.bikeRideTracks.vars.prototype)|e('html_attr') }}"
-                    >
-                        {% for item in form.bikeRideTracks %}
-                            <li>{{ form_widget(item) }}</li>
-                        {% endfor %}
-                    </ul>
-                    <div>
-                        <button 
-                            type="button" 
-                            class="p-2 bg-success text-white rounded-sm flex items-center gap-2 add-bike-ride-track" 
-                            data-action="click->collection#addItem"
-                        >
-                        {{ ux_icon('lucide:circle-plus') }} Ajouter un parcours
-                        </button>            
-                    </div>
-                </div>
-            </div>
-                
-            <div class="form-group">
-                {{ form_row(form.private) }}
-            </div>
-            <div class="form-group">
-                {{ form_row(form.notify) }}
-            </div>
-            {% if form.registrationEnabled is defined %}
-                <div class="form-group">
-                    {{ form_row(form.registrationEnabled) }}
-                </div>
-            {% endif %}
-            <div class="form-group">
+        
+        {# --- 1. CAPTURE DES ONGLETS --- #}
+        
+        {% set tab_general %}
+        <div data-id="bike-ride-general" data-form-modifier-target="container">
+            <div class="grid grid-col-1 lg:grid-cols-2 gap-y-4 gap-x-6">
+                {{ form_row(form.bikeRideType) }}
+                {{ form_row(form.title) }}
                 {{ form_row(form.startAt) }}
                 {{ form_row(form.endAt) }}
-            </div>
-            <div class="form-group">
                 {{ form_row(form.displayDuration) }}
                 {{ form_row(form.closingDuration) }}
             </div>
-            {% if form.registrationClosedMessage is defined %}
-                {{ form_row(form.registrationClosedMessage) }}
-            {% endif %}
-            <br>
-            <div data-id="bike-ride-restriction" data-form-modifier-target="container">
+            <div class="w-full mt-4">
+                {{ form_row(form.content) }}
+            </div>
+        </div>
+        {% endset %}
+
+        {% set tab_media %}
+            <div 
+                data-id="bike-ride-medias" 
+                data-form-modifier-target="container"
+                class="grid grid-cols-1 lg:grid-cols-3 gap-2"
+            >
+                <div 
+                    class="{% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}" 
+                    data-controller="input-file">
+                    <div>Image de présentation</div>
+                    <div 
+                        class="mt-1 h-96 flex flex-col justify-end gap-2 p-4 border border-border rounded-sm" 
+                        data-input-file-target="trigger" 
+                        data-action="click->input-file#selectFile"
+                    >
+                        <div class="flex-1 min-h-0 flex items-center justify-center">
+                            <img 
+                                class="max-h-full max-w-full object-contain" src="{{ bikeRide.filename }}" 
+                                alt="{{ bikeRide.title }}" 
+                                data-input-file-target="media"
+                            >
+                        </div>
+
+                        {% if bikeRide.filename is null %}
+                            <button 
+                                type="button"
+                                data-input-file-target="placeholder" 
+                                data-placeholder="placeholder" 
+                                class="flex flex-col items-center justify-center gap-2 h-9 bg-slate-300 border border-border"
+                            >
+                                <div class="flex items-center gap-2">
+                                    {{ ux_icon('lucide:upload') }}
+                                    <div>Ajouter une image</div>
+                                </div>
+                            </button>
+                        {% endif %}
+                    </div>
+                    {{ form_widget(form.file, {'attr':{
+                        'class': 'hidden', 
+                        'data-input-file-target': 'input', 
+                        'data-action': 'change->input-file#previewFile'
+                    }}) }}   
+                    {{ form_errors(form.file) }} 
+                </div>
+
+                {% if bikeRide.isPublic %}
+                    <div>
+                        <div>Règlement</div>
+                        <div class="mt-1 p-2 border-2 border-slate-200 rounded-sm flex flex-col gap-4">
+                            {{ form_row(form.rulesFile) }}
+                            {{ form_row(form.rulesFileThumbnail) }}
+                        </div>
+                    </div>
+                    <div>
+                        <div>Guide de la sécurité</div>
+                        <div class="mt-1 p-2 border-2 border-slate-200 rounded-sm flex flex-col gap-4">
+                            {{ form_row(form.securityGuidelinesFile) }}
+                            {{ form_row(form.securityGuidelinesFileThumbnail) }}
+                        </div>
+                    </div>
+                    
+                {% endif %}
+            </div>
+        {% endset %}
+
+        {% set tab_gpx %}
+            <div data-controller="collection" class="flex flex-col gap-4">
+                <ul 
+                    class="grid grid-cols-1 lg:grid-cols-2 gap-4" 
+                    data-collection-target="container" 
+                    data-index="{{ form.bikeRideTracks|length > 0 ? form.bikeRideTracks|last.vars.name + 1 : 0 }}" 
+                    data-prototype="{{ form_widget(form.bikeRideTracks.vars.prototype)|e('html_attr') }}"
+                >
+                    {% if form.bikeRideTracks.children|length == 0 %}
+                        <div 
+                            class="border border-border rounded-sm p-4"
+                            data-collection-target="empty"
+                        >
+                            {% include 'components/_empty.html.twig' with {icon: 'lucide:map-plus', message: 'Auncun parcours'} %}
+                        </div>
+                    {% endif %}
+                
+                    {% for item in form.bikeRideTracks %}
+                        <li>{{ form_widget(item) }}</li>
+                    {% endfor %}
+                </ul>
+                <div>
+                    <button type="button" class="p-2 bg-slate-500 text-white rounded-sm flex items-center gap-2 add-bike-ride-track" data-action="click->collection#addItem">
+                        {{ ux_icon('lucide:circle-plus') }} Ajouter un parcours
+                    </button>
+                </div>
+            </div>
+        {% endset %}
+
+        {% set tab_participants %}
+            <div data-id="bike-ride-participants" data-form-modifier-target="container">
                 {% for restriction in form.restriction %}
-                    <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
+                    <div class="py-1">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_USER_LIST') %}
-                        <div class="row row-align-top">
-                            <div class="form-group radio-group col-md-8">{{ form_row(form.members) }}</div>
-                            <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
+                        <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+                            <div class="">{{ form_row(form.members) }}</div>
+                            <div class="">{{ form_row(form.levelFilter) }}</div>
                         </div>
                     {% endif %}
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_RANGE_AGE') %}
-                        <div class="form-group">
-                            {{ form_row(form.minAge) }}
-                            {{ form_row(form.maxAge) }}
-                        </div>
+                        <div class="grid grid-cols-2 gap-4">{{ form_row(form.minAge) }} {{ form_row(form.maxAge) }}</div>
                     {% endif %}
                 {% endfor %}
             </div>
-        </div>
-        {% if bikeRide.survey %}
-            <div class="d-flex mx-20">
-                <div><a class="btn btn-xs btn-primary" href="{{ path('admin_survey', {'survey': bikeRide.survey.id})}}"><i class="fa-solid fa-up-right-from-square"></i></a></div>
-                <div class="ms-20">Sondage lié : {{ bikeRide.survey.title }}</div>
+        {% endset %}
+
+        {% set tab_settings %}
+            <div 
+                class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch"
+                data-id="bike-ride-parameters"
+                data-form-modifier-target="container"
+            >
+                <div class="flex flex-col">
+                    <div>Affichage</div>
+                    <div class="flex-1 mt-1 p-2 border-2 border-slate-200 rounded-sm flex flex-col gap-4">
+                        <div>{{ form_row(form.private) }}</div>
+                        <div>{{ form_row(form.notify) }}</div>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <div>Inscription</div>
+                    <div class="flex-1 mt-1 p-2 border-2 border-slate-200 rounded-sm flex flex-col gap-4">
+                        {% if form.registrationEnabled is defined %}
+                            <div>{{ form_row(form.registrationEnabled) }}</div>
+                        {% endif %}
+                        {% if form.registrationClosedMessage is defined %}
+                            <div>{{ form_row(form.registrationClosedMessage) }}</div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-        {% endif %}
-        <div class="wrapper-footer">
+        {% endset %}
+
+        {# --- 2. CRÉATION DU TABLEAU DE DONNÉES --- #}
+        
+        {% set form_tabs = [
+            { title: 'Général', icon: 'lucide:info', content: tab_general },
+            { title: 'Paramètres', icon: 'lucide:settings', content: tab_settings },
+            { title: 'Participants', icon: 'lucide:image', content: tab_participants },
+            { title: 'Médias', icon: 'lucide:image', content: tab_media },
+            { title: 'Parcours GPX', icon: 'lucide:map', content: tab_gpx },
+        ] %}
+
+        {# --- 3. APPEL DU COMPOSANT --- #}
+        
+        <div class="min-h-96 border border-border rounded-t-md">
+            {# Inclusion de ton futur composant réutilisable #}
+            {% include 'components/_tabs.html.twig' with { tabs: form_tabs } %}
+        </div>
+        <div class="w-full flex mt-4 lg:mt-6">
             {{ form_row(form.save) }}
         </div>
         {{ form_end(form) }}

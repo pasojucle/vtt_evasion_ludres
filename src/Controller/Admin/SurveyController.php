@@ -199,7 +199,7 @@ class SurveyController extends AbstractCrudController
 
 
     #[Route('/toggle/{survey}', name: 'admin_survey_toggle', methods: ['POST'])]
-    #[IsGranted('PRODUCT_EDIT', 'product')]
+    #[IsGranted('SURVEY_EDIT', subject: 'survey')]
     public function adminProduitDisbaled(
         Request $request,
         SurveyToggleProcessor $processor,

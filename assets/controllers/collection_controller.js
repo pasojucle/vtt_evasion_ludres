@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ["container"];
+    static targets = ["container", "empty"];
 
     addItem() {
         if (this.hasContainerTarget) {
@@ -15,6 +15,10 @@ export default class extends Controller {
 
             const item = document.createRange().createContextualFragment(html)
             this.containerTarget.appendChild(item);
+
+            if (this.hasEmptyTarget) {
+                this.emptyTarget.remove();
+            }
 
             // if (e.currentTarget.classList.contains('add-item-file')) {
             //     const inputFile = collectionHolder.lastChild.querySelector('input[type="file"]');

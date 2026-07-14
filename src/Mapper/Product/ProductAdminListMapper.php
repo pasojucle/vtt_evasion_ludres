@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\Product;
 
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\Size;
 use App\Dto\Filter\ProductFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\ButtonView;
@@ -75,6 +76,7 @@ class ProductAdminListMapper
             advancedFilter: new ButtonView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
+                size: Size::ICON,
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close')
@@ -118,12 +120,16 @@ class ProductAdminListMapper
         );
     }
 
-    private function getAction(Product $entity, string $toggleStatusId): ListActionViewInterface
+    private function getAction(Product $entity, string $toggleStatusId): ?ListActionViewInterface
     {
-        return new ToggleStatusView(
-            url: $this->urlGenerator->generate('admin_product_toggle', ['product' => $entity->getId()]),
-            tokenId: $toggleStatusId,
-            isActive: !$entity->isDisabled(),
-        );
+        if (!$entity->isDeleted()) {
+            return new ToggleStatusView(
+                url: $this->urlGenerator->generate('admin_product_toggle', ['product' => $entity->getId()]),
+                tokenId: $toggleStatusId,
+                isActive: !$entity->isDisabled(),
+            );
+        }
+
+        return null;
     }
 }

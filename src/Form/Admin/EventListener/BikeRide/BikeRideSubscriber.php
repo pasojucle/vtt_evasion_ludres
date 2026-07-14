@@ -63,7 +63,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
         $this->setRestriction($bikeRide);
 
         $userIds = [];
-        /** @var Member $$member */
+        /** @var Member $member */
         foreach ($bikeRide->getMembers() as $member) {
             $userIds[] = $member->getId();
         }
@@ -109,7 +109,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
 
         $event->setData($data);
         $event->getForm()->setData($bikeRide);
-
+        dump($levels);
        
         $this->modifier($event->getForm(), $bikeRideType, $registrationEnabled, $bikeRide, $restriction, $levelFilter, $userIds);
     }
@@ -117,7 +117,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?BikeRideKind $bikeRideType, bool $registrationEnabled, BikeRide $bikeRide, ?int $restriction, array $levelFilter, array $userIds): void
     {
         $isDiabled = false;
-        if (RegistrationEnum::NONE === $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::NONE === $bikeRideType?->getRegistration() ?? RegistrationEnum::NONE ) {
             $registrationEnabled = false;
             $isDiabled = true;
         }
@@ -125,17 +125,11 @@ class BikeRideSubscriber implements EventSubscriberInterface
             ->add('title', TextType::class, [
                 'label' => 'Titre',
                 'empty_data' => BikeRide::DEFAULT_TITLE,
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
             ])
             ->add('content', TiptapType::class, [
                 'label' => 'Détail (optionnel)',
                 'config_name' => 'full',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
             ])
             ->add('endAt', DateTimeType::class, [
                 'input' => 'datetime_immutable',
@@ -147,9 +141,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'class' => 'js-datepicker',
                     'autocomplete' => 'off',
                 ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'required' => false,
                 'disabled' => $isDiabled,
             ])
@@ -159,9 +150,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'attr' => [
                     'min' => 0,
                     'max' => 90,
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
                 ],
             ])
             ->add('restriction', ChoiceType::class, [
@@ -175,19 +163,16 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'choice_attr' => function () {
                     return [
                         'data-action' => 'change->form-modifier#change',
-                        'data-container-id' => 'bike-ride-restriction',
+                        'data-container-id' => 'bike-ride-participants',
                     ];
                 },
-                'disabled' => $isDiabled || $bikeRideType->isPublic(),
+                'disabled' => $isDiabled || $bikeRideType?->isPublic(),
             ])
             ->add('registrationEnabled', CheckboxType::class, [
                 'block_prefix' => 'switch',
                 'required' => false,
                 'data' => $registrationEnabled,
                 'disabled' => $isDiabled,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Les inscriptions et desinscriptions sont activées',
                     'data-switch-off' => 'Les inscriptions et desinscriptions sont bloquées',
@@ -196,8 +181,11 @@ class BikeRideSubscriber implements EventSubscriberInterface
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',
                 'attr' => [
-                    'class' => 'btn btn-primary float-right',
+                    'class' => 'bg-slate-500 hover:bg-slate-400 p-2 text-white',
                 ],
+                'row_attr' => [
+                    'class' => 'ml-auto',
+                ]
             ])
             ;
         if ($registrationEnabled) {
@@ -206,14 +194,11 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'label' => 'Message afficher à la cloture lors de l\'inscription',
                     'config_name' => 'base',
                     'required' => false,
-                    'row_attr' => [
-                        'class' => 'form-group',
-                    ]
                 ]);
         } else {
             $form->remove('registrationClosedMessage');
         }
-        $disabled = RegistrationEnum::NONE === $bikeRideType->getRegistration();
+        $disabled = RegistrationEnum::NONE === $bikeRideType?->getRegistration() ?? RegistrationEnum::NONE;
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_USER_LIST !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction;
         $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;
@@ -231,7 +216,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'disabled' => $disabledUsers,
                 'attr' => [
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'bike-ride-restriction',
+                    'data-container-id' => 'bike-ride-participants',
                     'data-userids' => ($userIds) ? implode(';', $userIds) : '',
                     'data-add-to-fetch' => 'userids',
                 ],
@@ -243,7 +228,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'autocomplete' => true,
                 'attr' => [
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'bike-ride-restriction',
+                    'data-container-id' => 'bike-ride-participants',
                     'data-width' => '100%',
                     'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
                     'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
@@ -258,7 +243,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'min' => 5,
                     'max' => 90,
                 ],
-                'row_attr' => ['class' => 'form-group-inline', ],
                 'required' => !$disabledMinAge,
                 'disabled' => $disabledMinAge,
             ])
@@ -268,7 +252,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'min' => 5,
                     'max' => 90,
                 ],
-                'row_attr' => ['class' => 'form-group-inline', ],
                 'required' => false,
                 'disabled' => $disabledMinAge,
                 'constraints' => [new RangeAge()]
@@ -276,16 +259,13 @@ class BikeRideSubscriber implements EventSubscriberInterface
             ->add('notify', CheckboxType::class, [
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-off' => 'Pas de notification',
                     'data-switch-on' => 'Afficher une une pop up pour notifier l\'activité',
                 ],
             ])
             ;
-        if ($bikeRideType->isPublic()) {
+        if ($bikeRideType?->isPublic()) {
             $rules = $bikeRide->getRules();
             $rulesThumbnail = $bikeRide->getRulesThumbnail();
             $securityGuidelines = $bikeRide->getSecurityGuidelines();
@@ -293,7 +273,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
 
             $form
                 ->add('rulesFile', FileType::class, [
-                    'label' => 'Règlement de la randonnée (optionnel)',
+                    'label' => 'Fichier PDF',
                     'mapped' => false,
                     'required' => false,
                     'block_prefix' => 'custom_file',
@@ -315,7 +295,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     ],
                 ])
                 ->add('rulesFileThumbnail', FileType::class, [
-                    'label' => 'Règlement de la randonnée - mignature (optionnel)',
+                    'label' => 'Mignature',
                     'mapped' => false,
                     'required' => false,
                     'block_prefix' => 'custom_file',
@@ -339,7 +319,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     ],
                 ])
                 ->add('securityGuidelinesFile', FileType::class, [
-                    'label' => 'Guide de la sécurité (optionnel)',
+                    'label' => 'Fichier pdf',
                     'mapped' => false,
                     'required' => false,
                     'block_prefix' => 'custom_file',
@@ -361,7 +341,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     ],
                 ])
                 ->add('securityGuidelinesFileThumbnail', FileType::class, [
-                    'label' => 'Guide de la sécurité  - mignature (optionnel)',
+                    'label' => 'Mignature',
                     'mapped' => false,
                     'required' => false,
                     'block_prefix' => 'custom_file',
@@ -421,21 +401,24 @@ class BikeRideSubscriber implements EventSubscriberInterface
 
     private function addOrRemoveUsers(array &$data, ?array $levels, ?array $userIds, BikeRide $bikeRide): void
     {
+        dump($data, $levels);
+        if (!array_key_exists('handler', $data)) {
+            return;
+        }
         $levelFilter = [];
         if (array_key_exists('levelFilter', $data)) {
             $levelFilter = array_map(function ($id) {
                 return 1 === preg_match('#(\d+)#', (string) $id) ? (int) $id : $id;
             }, $data['levelFilter']);
         }
+        dump($levelFilter);
         $members = [];
         if (array_key_exists('members', $data)) {
             $members = array_map(function ($id) {
                 return (int) $id;
             }, $data['members']);
         }
-        if (!array_key_exists('handler', $data)) {
-            return;
-        }
+        dump($members);
 
         $usersToAdd = [];
         $usersToRemove = [];
@@ -445,6 +428,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
             $usersToAdd = $this->getUsers($levelsToAdd);
             $usersToRemove = $this->getUsers($levelsToRemove);
         }
+        dump($usersToRemove);
         if (str_contains($data['handler'], 'userids')) {
             $usersToAdd = array_diff($userIds, $members);
             $usersToRemove = array_diff($members, $userIds);
@@ -458,6 +442,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 $data['members'][] = $id;
             }
         }
+        dump($usersToRemove);
         foreach ($usersToRemove as $member) {
             $id = ($member instanceof Member) ? $member->getId() : $member;
             $key = array_search($id, $data['members']);

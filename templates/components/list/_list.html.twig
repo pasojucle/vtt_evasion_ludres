@@ -24,10 +24,10 @@
             <div data-controller="filter">
                 <div class="flex flex-col lg:flex-row gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="border border-border rounded-sm flex items-center gap-2">
+                        <div class="border border-border rounded-sm flex items-center">
                             <div class="flex items-center p-2 rounded-l-sm bg-slate-500">{{ ux_icon('lucide:funnel', {'class': 'text-white'}) }}</div>
                             {{ form_start(form) }}
-                                <div class="flex items-center gap-4">
+                                <div class="flex items-center">
                                     {% for child in form.children %}
                                         {{ form_row(child)}}
                                     {% endfor %}

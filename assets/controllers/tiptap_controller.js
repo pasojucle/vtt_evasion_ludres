@@ -22,7 +22,8 @@ export default class extends Controller {
     static values = {
         content: String,
         token: String,
-        uploadUrl: String
+        uploadUrl: String,
+        toolbar: Array,
     };
 
     connect() {
@@ -97,9 +98,9 @@ export default class extends Controller {
     }
    
     createButton( action, content, isActive, title=null, value=null) {
-        const btnBase = 'px-1 py-1 rounded-md text-xs font-medium transition disabled:text-slate-200';
-        const btnActive = 'bg-blue-500 text-white border border-blue-600';
-        const btnInactive = 'bg-white text-slate-500 hover:bg-slate-200';
+        const btnBase = 'px-1 py-1 rounded-md text-xs font-medium transition disabled:text-muted-200';
+        const btnActive = 'bg-slate-500 text-white border border-slate-600';
+        const btnInactive = 'bg-slate-200 text-foreground/60 hover:text-foreground hover:bg-slate-300';
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = [btnBase, isActive ? btnActive : btnInactive].join(' ');
@@ -204,14 +205,17 @@ export default class extends Controller {
 
     renderToolbar() {
         const isInTable = this.editor.isActive('table');
-        console.log("isInTable", isInTable)
+        const config = this.hasToolbarValue 
+            ? this.toolbarValue 
+            : ['bold', 'italic', 'underline', 'font-color', 'alignment', 'heading'];
+        console.log("config", this.toolbarValue)
         const actions = [
-            { type: 'button', title: 'Bold', action: 'toggleBold', item: {icon: 'bold', isActive: this.editor.isActive('bold') } },
-            { type: 'button', title: 'Italique', action: 'toggleItalic', item: {icon: 'italic', isActive: this.editor.isActive('italic') }},
-            { type: 'button', title: 'Barré', action: 'toggleStrike', item: {icon: 'strike', isActive: this.editor.isActive('strike') }},
-            { type: 'button', title: 'Sousligner', action: 'toggleUnderline', item: {icon: 'underline', isActive: this.editor.isActive('underline') }},
+            { id: 'bold', type: 'button', title: 'Bold', action: 'toggleBold', item: {icon: 'bold', isActive: this.editor.isActive('bold') } },
+            { id: 'italic', type: 'button', title: 'Italique', action: 'toggleItalic', item: {icon: 'italic', isActive: this.editor.isActive('italic') }},
+            { id: 'strikethrough', type: 'button', title: 'Barré', action: 'toggleStrike', item: {icon: 'strike', isActive: this.editor.isActive('strike') }},
+            { id: 'underline', type: 'button', title: 'Sousligner', action: 'toggleUnderline', item: {icon: 'underline', isActive: this.editor.isActive('underline') }},
             { type: 'separator' },
-            { type: 'menu', title: 'Couleur de texte', action: 'setTextColor', icon: 'color', isActive: this.editor.isActive('textStyle'), enabled: true, items: [
+            { id: 'font-color', type: 'menu', title: 'Couleur de texte', action: 'setTextColor', icon: 'color', isActive: this.editor.isActive('textStyle'), enabled: true, items: [
                 { type: 'item', icon: 'square_red', value: '#fb2c36', isActive: this.editor.getAttributes('textStyle').color === '#fb2c36', enabled: true },
                 { type: 'item', icon: 'square_orange', value: '#ff6900', isActive: this.editor.getAttributes('textStyle').color === '#ff6900', enabled: true },
                 { type: 'item', icon: 'square_yellow', value: '#f0b100', isActive: this.editor.getAttributes('textStyle').color === '#f0b100', enabled: true },
@@ -223,30 +227,30 @@ export default class extends Controller {
                 { type: 'item', icon: 'square_pink', value: '#f6339a', isActive: this.editor.getAttributes('textStyle').color === '#f6339a', enabled: true },
                 { type: 'item', icon: 'eraser', value: '', isActive: false, enabled: true }
             ]},
-            { type: 'menu', title: 'Surlignage', action: 'toggleHighlight', icon: 'highlighter', isActive: this.editor.isActive('highlight'), enabled: true, items: [
+            { id: 'highlight',type: 'menu', title: 'Surlignage', action: 'toggleHighlight', icon: 'highlighter', isActive: this.editor.isActive('highlight'), enabled: true, items: [
                 { type: 'item', icon: 'square_yellow', value: '#f0b100', isActive: this.editor.getAttributes('highlight').color === '#f0b100', enabled: true },
                 { type: 'item', icon: 'square_green', value: '#00c950', isActive: this.editor.getAttributes('highlight').color === '#00c950', enabled: true },
                 { type: 'item', icon: 'eraser', value: null, isActive: false }
             ]},
             { type: 'separator' }, 
-            { type: 'menu', title: 'Titre', action: 'toggleHeader', icon: 'heading', isActive: this.editor.isActive('heading'), enabled: true, items: [
+            { id: 'heading', type: 'menu', title: 'Titre', action: 'toggleHeader', icon: 'heading', isActive: this.editor.isActive('heading'), enabled: true, items: [
                 { type: 'item', icon: 'h1',  isActive: this.editor.isActive('heading', { level: 1 }), value: 1, enabled: true },
                 { type: 'item', icon: 'h2', isActive: this.editor.isActive('heading', { level: 2 }), value: 2, enabled: true },
                 { type: 'item', icon: 'h3', isActive: this.editor.isActive('heading', { level: 3 }), value: 3, enabled: true },
                 { type: 'item', icon: 'eraser',  isActive: !this.editor.isActive('heading'), value: 0, enabled: true },
             ]},
-            { type: 'menu', title: 'Allignement', action: 'setTextAlign', icon: 'justify', isActive: this.editor.getAttributes('heading').textAlign, enabled: true, items: [
+            { id: 'alignment', type: 'menu', title: 'Allignement', action: 'setTextAlign', icon: 'justify', isActive: this.editor.getAttributes('heading').textAlign, enabled: true, items: [
                 { type: 'item', icon: 'left', isActive: this.editor.isActive({ textAlign: 'left' }), value: 'left', enabled: true },
                 { type: 'item', icon: 'center', isActive: this.editor.isActive({ textAlign: 'center' }), value: 'center', enabled: true },
                 { type: 'item', icon: 'right', isActive: this.editor.isActive({ textAlign: 'right' }), value: 'right', enabled: true},
                 { type: 'item', icon: 'justify', isActive: this.editor.isActive({ textAlign: 'justify' }), value: 'justify', enabled: true },
             ]},
-            { type: 'button', title: 'Liste à puce', action: 'toggleBulletList', item: { icon: 'bullet_list', isActive: this.editor.isActive('bulletList')}},
-            { type: 'button', title: 'Liste ordonnée', action: 'toggleOrderedList', item: { icon: 'ordered_list', isActive: this.editor.isActive('orderedList') }},
+            { id: 'bullet-list', type: 'button', title: 'Liste à puce', action: 'toggleBulletList', item: { icon: 'bullet_list', isActive: this.editor.isActive('bulletList')}},
+            { id: 'order-list', type: 'button', title: 'Liste ordonnée', action: 'toggleOrderedList', item: { icon: 'ordered_list', isActive: this.editor.isActive('orderedList') }},
             { type: 'separator' }, 
-            { type: 'button', title: 'Inserer un lien', action: 'addLink', item: { icon: 'link', isActive: this.editor.isActive('link') }},
-            { type: 'button', title: 'Citation', action: 'toggleBlockquote', item: { icon: 'blockquote', isActive: this.editor.isActive('blockquote') }},
-            { type: 'menu', title: 'Tableau', action: 'manageTable', icon: 'table', isActive: this.editor.isActive('table'), enabled: true, items: [
+            { id: 'link', type: 'button', title: 'Inserer un lien', action: 'addLink', item: { icon: 'link', isActive: this.editor.isActive('link') }},
+            { id: 'block-quote', type: 'button', title: 'Citation', action: 'toggleBlockquote', item: { icon: 'blockquote', isActive: this.editor.isActive('blockquote') }},
+            { id: 'table', type: 'menu', title: 'Tableau', action: 'manageTable', icon: 'table', isActive: this.editor.isActive('table'), enabled: true, items: [
                 { type: 'item', label: 'Insérer Tableau', value: 'insert', isActive: false, enabled: true},
                 { type: 'separator'},
                 { type: 'item', label: 'Ajouter Colonne', value: 'addColumn', isActive: false, enabled: isInTable },
@@ -255,21 +259,21 @@ export default class extends Controller {
                 { type: 'item', label: 'Supprimer Ligne', value: 'deleteRow', isActive: false, enabled: isInTable },
                 { type: 'item', label: 'Supprimer Tableau', value: 'delete', isActive: false, enabled: true },
             ]},
-            { type: 'button', title: 'Insérer une image', action: 'addImage', item: { icon: 'image', isActive: false }},
-            { type: 'menu', title: 'Redimentionner une image',action: 'setImageSize', icon: 'image_upscale', isActive: ['25%', '50%', '75%'].includes(this.editor.getAttributes('image').width), enabled: this.editor.isActive('image'), items: [
+            { id: 'image', type: 'button', title: 'Insérer une image', action: 'addImage', item: { icon: 'image', isActive: false }},
+            { id: 'image-size', type: 'menu', title: 'Redimentionner une image',action: 'setImageSize', icon: 'image_upscale', isActive: ['25%', '50%', '75%'].includes(this.editor.getAttributes('image').width), enabled: this.editor.isActive('image'), items: [
                 { type: 'item', label: 'Petit (25%)', isActive: this.editor.getAttributes('image').width ==='25%', value: '25%', enabled: true },
                 { type: 'item', label: 'Moyen (50%)', isActive: this.editor.getAttributes('image').width ==='50%' ,value: '50%', enabled: true },
                 { type: 'item', label: 'Large (75%)', isActive: this.editor.getAttributes('image').width ==='75%', value: '75%', enabled: true },
                 { type: 'item', label: 'Full (100%)', isActive: this.editor.getAttributes('image').width ==='100%', value: '100%', enabled: true },
             ]},
-            { type: 'button', title: 'Insérer une vidéo Youtube', action: 'addYoutubeVideo', item: { icon: 'youtube', isActive: this.editor.isActive('youtube') }},
+            { id: 'youtube', type: 'button', title: 'Insérer une vidéo Youtube', action: 'addYoutubeVideo', item: { icon: 'youtube', isActive: this.editor.isActive('youtube') }},
             { type: 'separator' }, 
-            { type: 'button', title: 'Annuler', action: 'undo', item: { icon: 'undo', isActive: false }},
-            { type: 'button', title: 'Refaire', action: 'redo', item: { icon: 'redo', action: 'redo', isActive: false }},
+            { id: 'undo', type: 'button', title: 'Annuler', action: 'undo', item: { icon: 'undo', isActive: false }},
+            { id: 'redo', type: 'button', title: 'Refaire', action: 'redo', item: { icon: 'redo', action: 'redo', isActive: false }},
         ];
 
         this.toolbarTarget.replaceChildren();
-        actions.forEach(data => {
+        actions.filter((tool => config.includes(tool.id))).forEach(data => {
             switch(data.type) {
                 case 'separator':
                     this.toolbarTarget.appendChild(this.createSeparator());

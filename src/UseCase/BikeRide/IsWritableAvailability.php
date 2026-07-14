@@ -27,6 +27,10 @@ class IsWritableAvailability
         if (!$member instanceof Member) {
             return false;
         }
+        
+        if (!$bikeRide->getBikeRideType()) {
+            return false;
+        }
 
         $bikeRideType = $bikeRide->getBikeRideType();
         if (RegistrationEnum::NONE === $bikeRideType->getRegistration()) {

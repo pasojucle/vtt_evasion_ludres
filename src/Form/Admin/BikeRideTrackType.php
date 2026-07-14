@@ -30,9 +30,6 @@ class BikeRideTrackType extends AbstractType
             $form
                 ->add('label', TextType::class, [
                     'label' => 'Libellé',
-                    'row_attr' => [
-                        'class' => 'form-group',
-                    ],
                 ])
                 ->add('file', FileType::class, [
                     'label' => 'Fichier GPX',
@@ -44,7 +41,6 @@ class BikeRideTrackType extends AbstractType
                         'filename' => $filename,
                     ],
                     'row_attr' => [
-                        'class' => 'form-group-inline form-group-file',
                         'data-controller' => "input-file"
                     ],
                     'constraints' => [
@@ -73,7 +69,6 @@ class BikeRideTrackType extends AbstractType
                             : null,
                     ],
                     'row_attr' => [
-                        'class' => 'form-group-inline form-group-file',
                         'data-controller' => "input-file"
                     ],
                     'constraints' => [

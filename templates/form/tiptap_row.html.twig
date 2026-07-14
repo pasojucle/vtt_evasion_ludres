@@ -1,15 +1,20 @@
 {% block tiptap_row %}
+    <div>{{ form_label(form) }}</div>
     <div 
         {{ stimulus_controller('tiptap', {
             id: form.vars.id,
             content: form.vars.value,
             uploadUrl: form.vars.upload_url,
-            token: app.user ? 'ton_logique_token' : null
+            token: app.user ? 'ton_logique_token' : null,
+            toolbar: form.vars.toolbar,
         }) }}
         class="tiptap-container min-h-[200px] border-2 border-slate-200 rounded-md mb-2"
     >
         {# La toolbar sera injectée ici ou déjà présente #}
-        <div data-tiptap-target="toolbar" class="relative p-1 bg-white flex flex-wrap place-content-between after:absolute after:left-0 after:w-full after:bottom-0 after:h-[2px] after:bg-slate-200"></div>
+        <div 
+            data-tiptap-target="toolbar" 
+            class="relative p-1 bg-slate-100 flex flex-wrap gap-2 after:absolute after:left-0 after:w-full after:bottom-0 after:h-[2px] after:bg-slate-200"
+        ></div>
         
         {# L'éditeur #}
         <div data-tiptap-target="editor" class="prose max-w-none p-2"></div>

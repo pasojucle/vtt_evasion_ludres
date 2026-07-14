@@ -20,9 +20,11 @@ class SurveyDeleteProcessor implements HtmlProcessorInterface
     ) {
     }
 
+    /**
+     * @implements HtmlProcessorInterface<Survey>
+     */
     public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
-    {
-        assert($entity instanceof Survey);
+    {;
         $this->surveyResponseRepository->deleteBySurvey($entity);
         $this->respondentRepository->deleteBySurvey($entity);
         if ($entity->getBikeRide()) {

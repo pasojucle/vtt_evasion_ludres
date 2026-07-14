@@ -14,7 +14,6 @@ import './styles/common.css';
 import './styles/modal.css';
 import './styles/dropdown.css';
 
-import './styles/switch-button.css';
 import './styles/radio.css';
 import './styles/component/checkbox.css';
 import './styles/component/radio-group.css';

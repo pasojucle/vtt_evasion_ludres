@@ -52,9 +52,11 @@ class BikeRideDtoTransformer
         $bikeRideDto = new BikeRideDto();
         if ($bikeRide) {
             $bikeRideDto->id = $bikeRide->getId();
-            $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
+            $bikeRideDto->bikeRideType = $bikeRide?->getBikeRideType() 
+                ? $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType())
+                : null;
             $bikeRideDto->title = $bikeRide->getTitle();
-            $bikeRideDto->type = $bikeRide->getBikeRideType()->getName();
+            $bikeRideDto->type = $bikeRide->getBikeRideType()?->getName();
             $bikeRideDto->content = $bikeRide->getContent();
             $bikeRideDto->startAt = $bikeRide->getStartAt();
             $bikeRideDto->endAt = $bikeRide->getEndAt();
@@ -77,7 +79,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user, $dateTimePeriod);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
             $bikeRideDto->btnRegistration = $this->getBtnRegistration($bikeRide, $user, $userAvailableSessions);
-            $bikeRideDto->isPublic = $bikeRide->getBikeRideType()->isPublic();
+            $bikeRideDto->isPublic = $bikeRide->getBikeRideType()?->isPublic() ?? false;
             $bikeRideDto->tracks = $this->getTracks($bikeRide);
         }
 
@@ -178,10 +180,10 @@ class BikeRideDtoTransformer
         return ($filename) ? $this->projectDirService->dir('', 'upload', $filename) : null;
     }
 
-    private function getMembers(DateTimeImmutable $startAt, BikeRideTypeDto $bikeRideType, Collection $clusters): string
+    private function getMembers(DateTimeImmutable $startAt, ?BikeRideTypeDto $bikeRideType, Collection $clusters): string
     {
         $members = 0;
-        if ($startAt < $this->today && $bikeRideType->isRegistrable) {
+        if ($startAt < $this->today && $bikeRideType?->isRegistrable) {
             foreach ($clusters as $cluster) {
                 foreach ($cluster->getSessions() as $session) {
                     if ($session->isPresent()) {
@@ -242,6 +244,10 @@ class BikeRideDtoTransformer
 
     private function getBtnRegistration(BikeRide $bikeRide, ?User $user, ?array $userAvailableSessions): ?array
     {
+        if (!$bikeRide->getId()) {
+            return null;
+        }
+        
         $unregistrable = $this->getUnregistrable($userAvailableSessions, $bikeRide);
         if ($unregistrable) {
             $unregistrable['modal'] = false;

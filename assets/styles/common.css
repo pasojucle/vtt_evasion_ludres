@@ -8,10 +8,6 @@ html,
 body,
 textarea,
 figure,
-label {
-    margin: 0;
-    padding: 0;
-}
 p:first-child,
 ul:first-child,
 ol:first-child,

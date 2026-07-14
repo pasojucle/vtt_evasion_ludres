@@ -63,21 +63,20 @@ class TiptapType extends AbstractType
         return $this->urlGenerator->generate('upload_file');
     }
 
-    private function getToolbar(string $name): array
+    private function getToolbar(string $name): string
     {
         $toolbars = [
-            'base' => [ 'bold', 'italic', 'underline', '|', 'fontColor', '|', 'alignment', '|', 'heading'],
-            'full' => [
-                'undo', 'redo',
-                '|', 'bold', 'italic', 'strikethrough', 'underline',
-                '|', 'alignment',
-                '|', 'bulletedList', 'numberedList',
-                '|', 'insertTable', 'imageUpload', 'resizeImage', 'mediaEmbed', 'link',
-                '|', 'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
-                '|', 'heading',
+            'base' => ['bold', 'italic', 'underline', 'font-color', 'alignment', 'heading'],
+            'full' => ['undo', 'redo',
+                'bold', 'italic', 'strikethrough', 'underline',
+                'alignment',
+                'bullet-list', 'order-list',
+                'table', 'image', 'image-size', 'link', 'block-quote', 'youtube',
+                'fontfamily', 'fontsize', 'font-color', 'highlight',
+                'heading',
             ],
         ];
 
-        return $toolbars[$name];
+        return json_encode($toolbars[$name] ?? $toolbars['base']);
     }
 }

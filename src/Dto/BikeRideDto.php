@@ -10,7 +10,7 @@ class BikeRideDto
 {
     public ?int $id = null;
 
-    public ?string $type;
+    public ?string $type = null;
 
     public ?string $title = null;
 
@@ -40,7 +40,7 @@ class BikeRideDto
 
     public ?string $period;
 
-    public BikeRideTypeDto $bikeRideType;
+    public ?BikeRideTypeDto $bikeRideType;
 
     public ?SurveyDto $survey = null;
 

@@ -48,7 +48,7 @@ class BikeRide implements UploadableInterface, SoftDeletableInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 150)]
     private string $title = '';
@@ -80,7 +80,7 @@ class BikeRide implements UploadableInterface, SoftDeletableInterface
 
     #[ORM\ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'bikeRides')]
     #[ORM\JoinColumn(nullable: false)]
-    private BikeRideType $bikeRideType;
+    private ?BikeRideType $bikeRideType = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $filename = null;
