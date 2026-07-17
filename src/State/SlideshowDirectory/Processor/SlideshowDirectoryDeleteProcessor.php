@@ -22,7 +22,7 @@ class SlideshowDirectoryDeleteProcessor implements HtmlProcessorInterface
     /**
      * @implements HtmlProcessorInterface<SlideshowDirectory>
      */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         $id = $entity->getId();
         foreach ($entity->getSlideshowImages() as $image) {

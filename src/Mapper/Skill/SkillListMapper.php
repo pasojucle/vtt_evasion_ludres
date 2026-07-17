@@ -113,7 +113,7 @@ class SkillListMapper
                     ),
                 ]
             );
-        } 
+        }
         return  new DropdownView(
             menuItems: [
                 new ButtonView(

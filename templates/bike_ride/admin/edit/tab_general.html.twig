@@ -1,0 +1,13 @@
+<div data-id="bike-ride-general" data-form-modifier-target="container">
+    <div class="grid grid-col-1 lg:grid-cols-2 gap-y-4 gap-x-6">
+        {{ form_row(form.bikeRideType) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.startAt) }}
+        {{ form_row(form.endAt) }}
+        {{ form_row(form.displayDuration) }}
+        {{ form_row(form.closingDuration) }}
+    </div>
+    <div class="w-full mt-4">
+        {{ form_row(form.content) }}
+    </div>
+</div>

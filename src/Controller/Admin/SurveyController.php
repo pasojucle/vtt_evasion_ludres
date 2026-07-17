@@ -205,7 +205,6 @@ class SurveyController extends AbstractCrudController
         SurveyToggleProcessor $processor,
         Survey $survey
     ): Response {
-        
         return $this->handleComponentProcessAction(
             new SurveyToggleDto($survey, $request->request->get('token')),
             $processor

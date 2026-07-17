@@ -10,6 +10,9 @@ use App\Mapper\DestructiveModalMapper;
 use App\Service\UserService;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<Member>
+ */
 class MemberDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
@@ -18,9 +21,6 @@ class MemberDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    /**
-     * @implements FormComponentProviderInterface<Member>
-     */
     public function mapToView(object $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(

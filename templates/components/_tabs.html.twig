@@ -37,7 +37,8 @@
                     data-index="{{loop.index}}"
                     data-tabs-target="panel"
                 >
-                    {{ tab.content }}
+                    {# {{ tab.content }} #}
+                    {% include tab.content %}
                 </div>
             {% endfor %}
         </div>

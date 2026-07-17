@@ -10,17 +10,18 @@ use App\Dto\View\BadgeView;
 use App\Entity\Product;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ProductStatusMapper {
-
+class ProductStatusMapper
+{
     public function __construct(
         private TranslatorInterface $translator,
-    ){}
+    ) {
+    }
 
     public function mapToView(Product $entity, string $toggleStatusId): BadgeView
     {
         if ($entity->isDeleted()) {
             return new BadgeView(
-                value :'Supprimée', 
+                value :'Supprimée',
                 variant: ColorVariant::DESTRUCTIVE,
                 toggleStatusId: $toggleStatusId,
             );
@@ -28,7 +29,7 @@ class ProductStatusMapper {
 
         $status = $entity->isDisabled() ? PublishStatus::DISABLED : PublishStatus::ENABLED;
         return new BadgeView(
-            value: $status->trans($this->translator), 
+            value: $status->trans($this->translator),
             variant: $status->variant(),
             toggleStatusId:$toggleStatusId,
         );

@@ -28,8 +28,8 @@ class ActivityAdminDropdownMapper
     {
         if ($bikeRide->isDeleted()) {
             return new DropdownView(
-            title: $bikeRide->__toString(),
-            menuItems: [
+                title: $bikeRide->__toString(),
+                menuItems: [
                 new ButtonView(
                     label: 'Restaurer',
                     url: $this->urlContextService->generateUrl('admin_bike_ride_restore', ['bikeRide' => $bikeRide->getId()], $referer),
@@ -37,14 +37,14 @@ class ActivityAdminDropdownMapper
                     variant: ColorVariant::DROPDOWN,
                 )
             ],
-        );
+            );
         }
 
         $menuItems = [];
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $menuItems[] = new ButtonView(
                 label: 'Modifier',
-                url: $this->urlGenerator->generate('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()]),
+                url: $this->urlContextService->generateUrl('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()], $referer),
                 icon: 'lucide:pencil',
                 variant: ColorVariant::DROPDOWN,
             );

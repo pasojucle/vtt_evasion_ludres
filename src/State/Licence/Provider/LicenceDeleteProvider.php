@@ -9,15 +9,18 @@ use App\Entity\Licence;
 use App\Mapper\DestructiveModalMapper;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<Licence>
+ */
 class LicenceDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
+
     public function mapToView(object $entity): DialogModalView
     {
-        /** @var Licence $entity */
         return $this->destructiveModalMapper->mapToView(
             sprintf(
                 'Etes vous certain de supprimer l\'inscription de <b>%s</b> ?',

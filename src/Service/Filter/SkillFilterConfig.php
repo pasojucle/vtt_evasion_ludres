@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-
 use App\Dto\Filter\SkillFilter;
 use App\Entity\Level;
 use App\Entity\SkillCategory;

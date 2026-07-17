@@ -1,6 +1,6 @@
 {% extends 'base_sheet.html.twig' %}
 {% block body %}
-    <div class="mb-2">
+    <div class="mb-2 flex flex-col gap-4">
         {% for child in form.children %}
             {{ form_row(child) }}
         {% endfor %}

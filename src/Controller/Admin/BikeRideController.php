@@ -12,13 +12,13 @@ use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
 use App\State\Activity\Processor\ActivityDeleteProcessor;
 use App\State\Activity\Processor\ActivityRestoreProcessor;
+use App\State\Activity\Processor\ActivityUpdateProcessor;
 use App\State\Activity\Provider\ActivityAdminListProvider;
 use App\State\Activity\Provider\ActivityDeleteProvider;
-use App\UseCase\BikeRide\EditBikeRide;
+use App\State\Activity\Provider\ActivityUpdateProvider;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
-use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\User\GetFramersFiltered;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,6 @@ class BikeRideController extends AbstractCrudController
 {
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
-        private GetFilters $getFilters,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private ClusterDtoTransformer $clusterDtoTransformer,
     ) {
@@ -54,58 +53,33 @@ class BikeRideController extends AbstractCrudController
     #[IsGranted('BIKE_RIDE_ADD')]
     public function adminAdd(
         Request $request,
-        EditBikeRide $editBikeRide
+        ActivityUpdateProvider $provider,
+        ActivityUpdateProcessor $processor,
     ): Response {
-        $bikeRide = new BikeRide();
-        $filters = $request->getSession()->get('admin_bike_ride_list_filters');
-        $form = $this->createForm(BikeRideType::class, $bikeRide);
-
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $bikeRide = $editBikeRide->execute($form, $request, true);
-
-            $this->addFlash('success', 'La sortie à bien été enregistrée');
-
-            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
-
-            return $this->redirectToRoute('admin_bike_ride_list', $filters);
-        }
-
-        return $this->render('bike_ride/admin/edit.html.twig', [
-            'form' => $form->createView(),
-            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'bike_rides_filters' => ($filters) ? $filters : [],
-        ]);
+        return $this->handleFormComponentAction(
+            $request,
+            new BikeRide(),
+            $provider,
+            $processor,
+            BikeRideType::class,
+        );
     }
 
     #[Route('/sortie/{bikeRide}', name: 'admin_bike_ride_edit', methods: ['GET', 'POST'], requirements:['bikeRide' => '\d+'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminEdit(
         Request $request,
-        EditBikeRide $editBikeRide,
+        ActivityUpdateProvider $provider,
+        ActivityUpdateProcessor $processor,
         ?BikeRide $bikeRide
     ): Response {
-        $filters = $request->getSession()->get('admin_bike_ride_list_filters');
-        $form = $this->createForm(BikeRideType::class, $bikeRide);
-
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $bikeRide = $editBikeRide->execute($form, $request);
-
-            $this->addFlash('success', 'La sortie à bien été enregistrée');
-
-            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
-
-            return $this->redirectToRoute('admin_bike_ride_list', $filters);
-        }
-
-        return $this->render('bike_ride/admin/edit.html.twig', [
-            'form' => $form->createView(),
-            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'bike_rides_filters' => ($filters) ? $filters : [],
-        ]);
+        return $this->handleFormComponentAction(
+            $request,
+            $bikeRide,
+            $provider,
+            $processor,
+            BikeRideType::class,
+        );
     }
 
     #[Route('/sortie/groupe/{bikeRide}', name: 'admin_bike_ride_cluster_show', methods: ['GET'])]

@@ -1,0 +1,27 @@
+
+<div data-controller="collection" class="flex flex-col gap-4">
+    <ul 
+        class="grid grid-cols-1 lg:grid-cols-2 gap-4" 
+        data-collection-target="container" 
+        data-index="{{ form.bikeRideTracks|length > 0 ? form.bikeRideTracks|last.vars.name + 1 : 0 }}" 
+        data-prototype="{{ form_widget(form.bikeRideTracks.vars.prototype)|e('html_attr') }}"
+    >
+        {% if form.bikeRideTracks.children|length == 0 %}
+            <div 
+                class="border border-border rounded-sm p-4"
+                data-collection-target="empty"
+            >
+                {% include 'components/_empty.html.twig' with {icon: 'lucide:map-plus', message: 'Auncun parcours'} %}
+            </div>
+        {% endif %}
+    
+        {% for item in form.bikeRideTracks %}
+            <li>{{ form_widget(item) }}</li>
+        {% endfor %}
+    </ul>
+    <div>
+        <button type="button" class="p-2 bg-slate-500 text-white rounded-sm flex items-center gap-2 add-bike-ride-track" data-action="click->collection#addItem">
+            {{ ux_icon('lucide:circle-plus') }} Ajouter un parcours
+        </button>
+    </div>
+</div>

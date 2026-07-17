@@ -6,7 +6,6 @@ namespace App\Dto\View;
 
 use App\Dto\View\Interface\ListActionViewInterface;
 
-
 readonly class ToggleStatusView implements ListActionViewInterface
 {
     /**

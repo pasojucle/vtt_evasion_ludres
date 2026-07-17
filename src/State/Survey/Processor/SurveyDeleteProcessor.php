@@ -23,8 +23,9 @@ class SurveyDeleteProcessor implements HtmlProcessorInterface
     /**
      * @implements HtmlProcessorInterface<Survey>
      */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
-    {;
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    {
+        ;
         $this->surveyResponseRepository->deleteBySurvey($entity);
         $this->respondentRepository->deleteBySurvey($entity);
         if ($entity->getBikeRide()) {

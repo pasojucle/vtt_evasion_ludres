@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Form;
+namespace App\Dto\Payload;
 
 use App\Entity\Licence;
 

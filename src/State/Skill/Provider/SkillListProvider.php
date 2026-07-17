@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\State\Skill\Provider;
 
-
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SkillFilter;
 use App\Dto\View\ListView;

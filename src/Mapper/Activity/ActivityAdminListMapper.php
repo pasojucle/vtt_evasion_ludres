@@ -94,7 +94,7 @@ class ActivityAdminListMapper
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             addItem: new ButtonView(
                 label: 'Ajouter une activité',
-                url: $this->urlGenerator->generate('admin_bike_ride_add'),
+                url: $this->urlContextService->generateUrl('admin_bike_ride_add', [], $referer),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),

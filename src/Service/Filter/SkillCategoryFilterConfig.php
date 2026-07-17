@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-
 use App\Dto\Filter\SkillCategoryFilter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

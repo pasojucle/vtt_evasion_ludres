@@ -13,7 +13,8 @@ class DisableService
 {
     public function __construct(
         private readonly Security $security
-    ) {}
+    ) {
+    }
 
     public function toggle(DisableableInterface $entity): void
     {

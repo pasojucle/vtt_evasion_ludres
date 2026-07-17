@@ -16,7 +16,6 @@ use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
-
 class ProductAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
@@ -47,7 +46,7 @@ class ProductAdminListProvider implements ListProviderInterface
     {
         $qb = $this->productRepository->findProductQuery();
 
-        match($filter->state) {
+        match ($filter->state) {
             PublishStatus::ENABLED => $this->productRepository->filterEnabled($qb),
             PublishStatus::DISABLED => $this->productRepository->filterDisabled($qb),
             default => null,

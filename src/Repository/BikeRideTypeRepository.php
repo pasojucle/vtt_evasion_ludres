@@ -49,6 +49,10 @@ class BikeRideTypeRepository extends ServiceEntityRepository
     {
         try {
             return $this->createQueryBuilder('brt')
+            ->andWhere(
+                (new Expr())->eq('brt.needFramers', ':needFramers')
+            )
+            ->setParameter('needFramers', true)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

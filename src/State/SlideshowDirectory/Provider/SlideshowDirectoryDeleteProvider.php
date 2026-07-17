@@ -9,6 +9,9 @@ use App\Entity\SlideshowDirectory;
 use App\Mapper\DestructiveModalMapper;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<SlideshowDirectory>
+ */
 class SlideshowDirectoryDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
@@ -16,9 +19,6 @@ class SlideshowDirectoryDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    /**
-     * @implements FormComponentProviderInterface<SlideshowDirectory>
-     */
     public function mapToView(object $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(

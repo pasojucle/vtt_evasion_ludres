@@ -7,9 +7,10 @@ namespace App\Controller\Admin;
 use App\Form\Filter\ListFilterType;
 use App\Service\UrlContextService;
 use App\State\Interface\ComponentProcessorInterface;
-use App\State\Interface\HtmlProcessorInterface;
 use App\State\Interface\FilterInitializerInterface;
+use App\State\Interface\FormAddComponentProviderInterface;
 use App\State\Interface\FormComponentProviderInterface;
+use App\State\Interface\HtmlProcessorInterface;
 use App\State\Interface\JsonProcessorInterface;
 use App\State\Interface\ListProviderInterface;
 use App\State\Interface\StreamExportableInterface;
@@ -74,8 +75,11 @@ abstract class AbstractCrudController extends AbstractController
         FormComponentProviderInterface $provider,
         HtmlProcessorInterface $processor,
         string $formClass = FormType::class,
-        array $formOptions = []
+        array $formOptions = [],
     ): Response {
+        if ($provider instanceof FormAddComponentProviderInterface) {
+            $provider->setDefaultValues($object);
+        }
         $view = $provider->mapToView($object);
 
         $response = new Response("OK", Response::HTTP_OK);
@@ -87,7 +91,11 @@ abstract class AbstractCrudController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                $result = $processor->process($object, $this->urlContextService->getRedirectUrl($request));
+                $result = $processor->process(
+                    $object,
+                    $request->files->get($form->getName()),
+                    $this->urlContextService->getRedirectUrl($request)
+                );
                 $this->addFlash($result->flashType, $result->messageKey);
                 
                 return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
@@ -95,6 +103,7 @@ abstract class AbstractCrudController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        $view = $provider->mapToView($object);
         return $this->render($view->getTemplate(), [
             'form' => $form->createView(),
             'view' => $view
@@ -106,7 +115,11 @@ abstract class AbstractCrudController extends AbstractController
         object $object,
         HtmlProcessorInterface $processor,
     ): Response {
-        $result = $processor->process($object, $this->urlContextService->getRedirectUrl($request));
+        $result = $processor->process(
+            $object,
+            null,
+            $this->urlContextService->getRedirectUrl($request)
+        );
         
         $this->addFlash($result->flashType, $result->messageKey);
     

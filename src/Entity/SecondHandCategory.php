@@ -7,7 +7,6 @@ use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\SecondHandCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-
 #[ORM\Entity(repositoryClass: SecondHandCategoryRepository::class)]
 class SecondHandCategory implements SoftDeletableInterface
 {

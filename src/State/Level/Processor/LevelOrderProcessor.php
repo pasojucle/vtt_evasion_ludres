@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Level\Processor;
 
-use App\Dto\State\JsonProcessorResult;
 use App\Dto\Payload\LevelOrderDto;
+use App\Dto\State\JsonProcessorResult;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\State\Interface\JsonProcessorInterface;

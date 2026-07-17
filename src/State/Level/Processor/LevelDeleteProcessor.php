@@ -23,7 +23,7 @@ class LevelDeleteProcessor implements HtmlProcessorInterface
     /**
      * @param Level $entity
      */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         $type = $entity->getType();
         $levels = $this->levelRepository->findByType($type);

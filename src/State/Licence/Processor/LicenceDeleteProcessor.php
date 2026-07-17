@@ -19,7 +19,7 @@ class LicenceDeleteProcessor implements HtmlProcessorInterface
     /**
      * @implements HtmlProcessorInterface<Licence>
      */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         foreach ($entity->getLicenceAgreements() as $licenceAgreement) {
             $this->entityManager->remove($licenceAgreement);

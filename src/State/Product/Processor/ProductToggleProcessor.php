@@ -48,7 +48,7 @@ class ProductToggleProcessor implements ComponentProcessorInterface
 
         return new ComponentProcessorResult(
             success: true,
-            messageKey: $product->isDisabled() 
+            messageKey: $product->isDisabled()
                 ? 'product.flash.success.disabled'
                 : 'product.flash.success.enabled',
             flashType: 'success',

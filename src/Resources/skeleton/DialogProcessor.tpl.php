@@ -20,7 +20,7 @@ class <?= $entity_name ?><?= $action_name ?>Processor implements HtmlProcessorIn
     /**
     * @implements HtmlProcessorInterface<<?= $entity_name ?>>
     */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         // $this->entityManager->remove($entity);
         $this->entityManager->flush();

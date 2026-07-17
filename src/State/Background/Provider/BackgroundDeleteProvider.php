@@ -9,12 +9,16 @@ use App\Entity\Background;
 use App\Mapper\DestructiveModalMapper;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<Background>
+ */
 class BackgroundDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
+
     public function mapToView(object $entity): DialogModalView
     {
         /** @var Background $entity */

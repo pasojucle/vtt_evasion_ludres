@@ -13,7 +13,8 @@ class SoftDeleteService
 {
     public function __construct(
         private readonly Security $security
-    ) {}
+    ) {
+    }
 
     public function softDelete(SoftDeletableInterface $entity): void
     {

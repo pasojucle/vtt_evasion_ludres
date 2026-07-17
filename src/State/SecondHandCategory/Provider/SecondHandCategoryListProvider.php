@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\State\SecondHandCategory\Provider;
 
-
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SecondHandCategoryFilter;
 use App\Dto\View\ListView;

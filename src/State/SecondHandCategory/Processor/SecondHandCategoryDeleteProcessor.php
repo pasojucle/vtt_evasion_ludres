@@ -21,11 +21,10 @@ class SecondHandCategoryDeleteProcessor implements HtmlProcessorInterface
     /**
      * @param SecondHandCategory $entity
      */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         $this->softDeleteService->softDelete($entity);
         $this->entityManager->flush();
-        dump($entity);
 
         return new HtmlProcessorResult(
             success: true,

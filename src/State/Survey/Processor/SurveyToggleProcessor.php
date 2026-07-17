@@ -48,7 +48,7 @@ class SurveyToggleProcessor implements ComponentProcessorInterface
 
         return new ComponentProcessorResult(
             success: true,
-            messageKey: $survey->isDisabled() 
+            messageKey: $survey->isDisabled()
                 ? 'survey.flash.success.disabled'
                 : 'survey.flash.success.enabled',
             flashType: 'success',

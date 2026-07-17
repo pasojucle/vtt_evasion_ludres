@@ -10,6 +10,9 @@ use App\Mapper\DestructiveModalMapper;
 use App\Service\BikeRideService;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<BikeRide>
+ */
 class ActivityDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
@@ -17,10 +20,9 @@ class ActivityDeleteProvider implements FormComponentProviderInterface
         private BikeRideService $bikeRideService,
     ) {
     }
+
     public function mapToView(object $entity): DialogModalView
     {
-        assert($entity instanceof BikeRide);
-        
         return $this->destructiveModalMapper->mapToView(
             sprintf(
                 '<p>Etes vous certain de supprimer<br>la sortie %s du %s',

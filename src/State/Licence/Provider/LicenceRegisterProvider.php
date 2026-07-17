@@ -5,20 +5,18 @@ declare(strict_types=1);
 namespace App\State\Licence\Provider;
 
 use App\Dto\Enum\DialogType;
-use App\Dto\Form\LicenceRegister;
+use App\Dto\Payload\LicenceRegister;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\State\Interface\FormComponentProviderInterface;
 
 /**
- * @implements FormComponentProviderInterface<Licence>
+ * @implements FormComponentProviderInterface<LicenceRegister>
  */
 class LicenceRegisterProvider implements FormComponentProviderInterface
 {
     public function mapToView(object $licenceRegister): DialogModalView
     {
-        assert($licenceRegister instanceof LicenceRegister);
-
         $licence = $licenceRegister->licence;
         return new DialogModalView(
             type: DialogType::SUCCESS,

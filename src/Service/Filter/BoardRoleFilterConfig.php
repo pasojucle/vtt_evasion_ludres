@@ -48,9 +48,9 @@ class BoardRoleFilterConfig implements FilterConfigInterface
     public function getAdvancedFields(): array
     {
         return [new FilterFieldConfig(
-                name: 'showDeleted',
-                type: CheckboxType::class,
-                options: [
+            name: 'showDeleted',
+            type: CheckboxType::class,
+            options: [
                     'label' => 'Afficher les éléments supprimés',
                     'required' => false,
                     'block_prefix' => 'switch',
@@ -59,8 +59,8 @@ class BoardRoleFilterConfig implements FilterConfigInterface
                         'class' => 'form-control',
                     ],
                 ],
-                chipCcomputed: true,
-            ),
+            chipCcomputed: true,
+        ),
             new FilterFieldConfig(
                 name: 'sort',
                 type: ChoiceType::class,

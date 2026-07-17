@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\State\Licence\Provider;
 
 use App\Dto\Enum\DialogType;
-use App\Dto\Form\LicenceRegister;
-use App\Dto\Form\LicenceReject;
+use App\Dto\Payload\LicenceReject;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\State\Interface\FormComponentProviderInterface;
 use App\State\Message\Provider\MessageProvider;
 
 /**
- * @implements FormComponentProviderInterface<Licence>
+ * @implements FormComponentProviderInterface<LicenceReject>
  */
 class LicenceRejectProvider implements FormComponentProviderInterface
 {
@@ -24,8 +23,6 @@ class LicenceRejectProvider implements FormComponentProviderInterface
 
     public function mapToView(object $licenceRegister): DialogModalView
     {
-        assert($licenceRegister instanceof LicenceRegister);
-
         $licence = $licenceRegister->licence;
         return new DialogModalView(
             type: DialogType::WARNING,

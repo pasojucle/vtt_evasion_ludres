@@ -25,7 +25,7 @@ class MemberDeleteProcessor implements HtmlProcessorInterface
     /**
      * @implements HtmlProcessorInterface<Member>
      */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         $this->removeRelations($entity);
         $this->entityManager->remove($entity);

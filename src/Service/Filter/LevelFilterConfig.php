@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-
 use App\Dto\Filter\LevelFilter;
 use App\Entity\Enum\LevelType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

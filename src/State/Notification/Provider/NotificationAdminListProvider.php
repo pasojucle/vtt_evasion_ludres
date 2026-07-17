@@ -49,7 +49,7 @@ class NotificationAdminListProvider implements ListProviderInterface
     {
         $qb = $this->notificationRepository->findNotificationQuery();
 
-        match($filter->status) {
+        match ($filter->status) {
             PublishStatus::ENABLED => $this->notificationRepository->filterEnabled($qb),
             PublishStatus::DISABLED => $this->notificationRepository->filterDisabled($qb),
             default => null,

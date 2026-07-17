@@ -99,7 +99,6 @@ class SecondHandCategoryListMapper
 
     private function dropDown(SecondHandCategory $entity, string $referer): DropdownView
     {
-
         if ($entity->isDeleted()) {
             return new DropdownView(
                 menuItems: [

@@ -1,0 +1,25 @@
+
+<div 
+    class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch"
+    data-id="bike-ride-parameters"
+    data-form-modifier-target="container"
+>
+    <div class="flex flex-col">
+        <div>Affichage</div>
+        <div class="flex-1 mt-1 p-2 border-2 border-slate-200 rounded-sm flex flex-col gap-4">
+            <div>{{ form_row(form.private) }}</div>
+            <div>{{ form_row(form.notify) }}</div>
+        </div>
+    </div>
+    <div class="flex flex-col">
+        <div>Inscription</div>
+        <div class="flex-1 mt-1 p-2 border-2 border-slate-200 rounded-sm flex flex-col gap-4">
+            {% if form.registrationEnabled is defined %}
+                <div>{{ form_row(form.registrationEnabled) }}</div>
+            {% endif %}
+            {% if form.registrationClosedMessage is defined %}
+                <div>{{ form_row(form.registrationClosedMessage) }}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>

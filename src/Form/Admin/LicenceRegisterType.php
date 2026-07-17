@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Dto\Form\LicenceRegister;
+use App\Dto\Payload\LicenceRegister;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,7 +23,8 @@ class LicenceRegisterType extends AbstractType
                 'constraints' => [
                     new Length([
                         'max' => 25,
-                    ]), ],
+                    ]),
+                ],
                 'attr' => [
                     'maxlength' => 25,
                 ],

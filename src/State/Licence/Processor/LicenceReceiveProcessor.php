@@ -18,7 +18,7 @@ class LicenceReceiveProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         /** @var Licence $entity */
         $tansition = ($entity->getState()->isYearly()) ? 'receive_yearly_file' : 'receive_trial_file';

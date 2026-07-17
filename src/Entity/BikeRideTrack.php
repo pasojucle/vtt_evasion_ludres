@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\UploadableInterface;
 use App\Repository\BikeRideTrackRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideTrackRepository::class)]
-class BikeRideTrack
+class BikeRideTrack implements UploadableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

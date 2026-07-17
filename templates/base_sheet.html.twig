@@ -2,7 +2,7 @@
     {% if form is defined and form is not null %}
         {{ form_start(form, {'attr': {'class':"flex flex-col h-full m-0"}})}}
     {% endif %}
-    <div class="flex-none items-center justify-between p-4 border-b border-border bg-slate-200">
+    <div class="p-4 border-b border-border bg-slate-200">
         <div class="flex gap-2">
             <div>
                 <h3 class="!mt-0 !mb-0 text-xl font-semibold text-slate-800">{{ view.title }}</h3>
@@ -23,7 +23,7 @@
     <div class="flex-1 overflow-y-auto p-4 space-y-4">
         {% block body %}{% endblock %}
     </div>
-    <div class="flex-none p-4 grid grid-cols-2 gap-3 border-t border-border bg-white">
+    <div class="p-4 grid grid-cols-2 gap-3 border-t border-border bg-white">
         <button type="button" data-action="click->sheet#close" class="p-2 bg-slate-300 lg:bg-slate-200 lg:hover:bg-slate-300">
             Annuler
         </button>

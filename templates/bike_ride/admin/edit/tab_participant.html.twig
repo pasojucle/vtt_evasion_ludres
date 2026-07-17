@@ -1,0 +1,14 @@
+<div data-id="bike-ride-participants" data-form-modifier-target="container">
+    {% for restriction in form.restriction %}
+        <div class="py-1">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
+        {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_USER_LIST') %}
+            <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+                <div class="">{{ form_row(form.members) }}</div>
+                <div class="">{{ form_row(form.levelFilter) }}</div>
+            </div>
+        {% endif %}
+        {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_RANGE_AGE') %}
+            <div class="grid grid-cols-2 gap-4">{{ form_row(form.minAge) }} {{ form_row(form.maxAge) }}</div>
+        {% endif %}
+    {% endfor %}
+</div>

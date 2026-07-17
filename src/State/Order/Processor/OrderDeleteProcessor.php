@@ -17,7 +17,7 @@ class OrderDeleteProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         /** @var OrderHeader $entity */
         $entity->setStatus(OrderStatusEnum::CANCELED);

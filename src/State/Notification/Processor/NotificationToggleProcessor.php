@@ -48,7 +48,7 @@ class NotificationToggleProcessor implements ComponentProcessorInterface
 
         return new ComponentProcessorResult(
             success: true,
-            messageKey: $notification->isDisabled() 
+            messageKey: $notification->isDisabled()
                 ? 'notification.flash.success.disabled'
                 : 'notification.flash.success.enabled',
             flashType: 'success',
@@ -56,4 +56,3 @@ class NotificationToggleProcessor implements ComponentProcessorInterface
         );
     }
 }
-

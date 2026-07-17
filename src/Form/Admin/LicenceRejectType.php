@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Dto\Form\LicenceReject;
+use App\Dto\Payload\LicenceReject;
 use App\Form\Type\TiptapType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

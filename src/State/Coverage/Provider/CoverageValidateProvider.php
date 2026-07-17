@@ -6,19 +6,16 @@ namespace App\State\Coverage\Provider;
 
 use App\Dto\Enum\DialogType;
 use App\Dto\View\DialogModalView;
-use App\Entity\Coverage;
 use App\Entity\Licence;
-use App\Mapper\DestructiveModalMapper;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<Licence>
+ */
 class CoverageValidateProvider implements FormComponentProviderInterface
 {
     public function mapToView(object $entity): DialogModalView
     {
-
-        // return $this->destructiveModalMapper->mapToView(sprintf('Confirmez-vous la validation de l'assurance', $entity->Valider));
-        /** @var Licence $entity */
-
         return new DialogModalView(
             type: DialogType::SUCCESS,
             title: 'Mon titre',

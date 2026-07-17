@@ -58,7 +58,7 @@ class ActivityAdminListProvider implements ListProviderInterface
         );
     }
 
-        private function getQueryBuilder(ActivityFilter $filter): QueryBuilder
+    private function getQueryBuilder(ActivityFilter $filter): QueryBuilder
     {
         $qb = $this->bikeRideRepository->findActivityQuery();
         match ($filter->period) {

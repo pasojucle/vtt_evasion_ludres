@@ -183,7 +183,7 @@ class BikeRideRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('br')
             ->andWhere(
                 (new Expr())->gte('br.startAt', ':today'),
-                (new Expr())->isNull('br.deletedAt',),
+                (new Expr())->isNull('br.deletedAt', ),
             )
             ->setParameter('today', $today)
             ->orderBy('br.startAt', 'ASC')

@@ -123,7 +123,6 @@ class ProductController extends AbstractCrudController
         ProductToggleProcessor $processor,
         Product $product
     ): Response {
-        
         return $this->handleComponentProcessAction(
             new ProductToggleDto($product, $request->request->get('token')),
             $processor

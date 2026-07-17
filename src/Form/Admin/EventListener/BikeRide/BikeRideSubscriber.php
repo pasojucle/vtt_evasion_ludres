@@ -14,7 +14,6 @@ use App\Form\Type\TiptapType;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\MemberRepository;
 use App\Service\LevelService;
-use App\Service\MessageService;
 use App\Service\SeasonService;
 use App\Validator\RangeAge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -36,7 +35,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly BikeRideTypeRepository $bikeRideTypeRepository,
-        private readonly MessageService $messageService,
         private readonly LevelService $levelService,
         private readonly MemberRepository $memberRepository,
         private readonly UrlGeneratorInterface $urlGenerator
@@ -55,11 +53,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
     {
         $bikeRide = $event->getData();
 
-        if (null === $bikeRide) {
-            $bikeRide = new BikeRide();
-            $bikeRide->setBikeRideType($this->bikeRideTypeRepository->findDefault());
-            $bikeRide->setRegistrationClosedMessage($this->messageService->getMessageById('REGISTRATION_CLOSED_DEFAULT_MESSAGE'));
-        }
         $this->setRestriction($bikeRide);
 
         $userIds = [];
@@ -109,7 +102,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
 
         $event->setData($data);
         $event->getForm()->setData($bikeRide);
-        dump($levels);
        
         $this->modifier($event->getForm(), $bikeRideType, $registrationEnabled, $bikeRide, $restriction, $levelFilter, $userIds);
     }
@@ -117,7 +109,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?BikeRideKind $bikeRideType, bool $registrationEnabled, BikeRide $bikeRide, ?int $restriction, array $levelFilter, array $userIds): void
     {
         $isDiabled = false;
-        if (RegistrationEnum::NONE === $bikeRideType?->getRegistration() ?? RegistrationEnum::NONE ) {
+        if (RegistrationEnum::NONE === $bikeRideType?->getRegistration()) {
             $registrationEnabled = false;
             $isDiabled = true;
         }
@@ -198,7 +190,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
         } else {
             $form->remove('registrationClosedMessage');
         }
-        $disabled = RegistrationEnum::NONE === $bikeRideType?->getRegistration() ?? RegistrationEnum::NONE;
+        $disabled = RegistrationEnum::NONE === $bikeRideType?->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_USER_LIST !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction;
         $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;
@@ -265,6 +257,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 ],
             ])
             ;
+
         if ($bikeRideType?->isPublic()) {
             $rules = $bikeRide->getRules();
             $rulesThumbnail = $bikeRide->getRulesThumbnail();
@@ -401,7 +394,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
 
     private function addOrRemoveUsers(array &$data, ?array $levels, ?array $userIds, BikeRide $bikeRide): void
     {
-        dump($data, $levels);
         if (!array_key_exists('handler', $data)) {
             return;
         }
@@ -411,14 +403,12 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 return 1 === preg_match('#(\d+)#', (string) $id) ? (int) $id : $id;
             }, $data['levelFilter']);
         }
-        dump($levelFilter);
         $members = [];
         if (array_key_exists('members', $data)) {
             $members = array_map(function ($id) {
                 return (int) $id;
             }, $data['members']);
         }
-        dump($members);
 
         $usersToAdd = [];
         $usersToRemove = [];
@@ -428,7 +418,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
             $usersToAdd = $this->getUsers($levelsToAdd);
             $usersToRemove = $this->getUsers($levelsToRemove);
         }
-        dump($usersToRemove);
         if (str_contains($data['handler'], 'userids')) {
             $usersToAdd = array_diff($userIds, $members);
             $usersToRemove = array_diff($members, $userIds);
@@ -442,7 +431,6 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 $data['members'][] = $id;
             }
         }
-        dump($usersToRemove);
         foreach ($usersToRemove as $member) {
             $id = ($member instanceof Member) ? $member->getId() : $member;
             $key = array_search($id, $data['members']);

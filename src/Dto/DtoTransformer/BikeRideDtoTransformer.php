@@ -52,7 +52,7 @@ class BikeRideDtoTransformer
         $bikeRideDto = new BikeRideDto();
         if ($bikeRide) {
             $bikeRideDto->id = $bikeRide->getId();
-            $bikeRideDto->bikeRideType = $bikeRide?->getBikeRideType() 
+            $bikeRideDto->bikeRideType = $bikeRide?->getBikeRideType()
                 ? $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType())
                 : null;
             $bikeRideDto->title = $bikeRide->getTitle();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
-use App\Dto\Form\LicenceRegister;
+use App\Dto\Payload\LicenceRegister;
 use App\Dto\Service\MailerResult;
 use App\Dto\State\HtmlProcessorResult;
 use App\Entity\Member;
@@ -14,6 +14,9 @@ use App\State\Interface\HtmlProcessorInterface;
 use App\State\Message\Provider\MessageProvider;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * @implements HtmlProcessorInterface<LicenceRegister>
+ */
 class LicenceRegisterProcessor implements HtmlProcessorInterface
 {
     public function __construct(
@@ -24,9 +27,8 @@ class LicenceRegisterProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
-        /** @var LicenceRegister $entity*/
         $licence = $entity->licence;
         
         $member = $licence->getMember();

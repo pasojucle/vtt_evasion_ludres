@@ -21,7 +21,7 @@ class SkillCategoryRestoreProcessor implements HtmlProcessorInterface
     /**
      * @param SkillCategory $entity
      */
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         $this->softDeleteService->restore($entity);
         $this->entityManager->flush();

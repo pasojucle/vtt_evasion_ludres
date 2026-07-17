@@ -2,7 +2,7 @@
 {# 1. Pour tous les inputs classiques (text, date, number, etc.) SAUF radio et checkbox #}
 {% block form_widget_simple %}
     {% set attr = attr|merge({
-        'class': attr.class|default('') ~ ' w-full h-8 leading-8 border-none bg-slate-200 text-foreground disabled:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400'
+        'class': attr.class|default('') ~ ' w-full h-8 leading-8 px-2 py-1 border-none bg-slate-200 text-foreground disabled:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400'
     }) %}
     {{ parent() }}
 {% endblock %}
@@ -12,7 +12,7 @@
     {% set background =  form.vars.uses_autocomplete is same as (true) ? 'border border-slate-200' : ' bg-slate-200' %}
     {% set height =  form.vars.multiple is same as (true) ? ' min-h-8' : ' h-8' %}
     {% set attr = attr|merge({
-        'class': attr.class|default('') ~ ' w-full leading-8 border-none text-foreground focus:outline-none'~ height ~ background
+        'class': attr.class|default('') ~ ' w-full leading-8 px-2 py-1 border-none text-foreground focus:outline-none'~ height ~ background
     }) %}
     {{ parent() }}
 {% endblock %}
@@ -21,7 +21,7 @@
 {# 3. Pour les zones de texte (textarea) #}
 {% block textarea_widget %}
     {% set attr = attr|merge({
-        'class': attr.class|default('') ~ ' w-full bg-slate-200 text-foreground focus:outline-none focus:ring-2 focus:ring-slate-400'
+        'class': attr.class|default('') ~ ' w-full px-2 py-1 bg-slate-200 text-foreground focus:outline-none focus:ring-2 focus:ring-slate-400'
     }) %}
     {% if attr.class is not defined and 'min-h-' not in attr.class %}
         {% set attr = attr|merge({'class': attr.class ~ ' min-h-[80px]'}) %}

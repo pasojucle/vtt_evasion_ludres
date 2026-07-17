@@ -26,9 +26,9 @@ class FilterController extends AbstractController
             throw $this->createNotFoundException();
         }
         $dataClass = $filterConfig->getDataClass();
-        $filter = $provider->getHydratedDto($request->query->all(), $dataClass);
+        $advancedFilter = $provider->getHydratedDto($request->query->all(), $dataClass);
 
-        $form = $this->createForm(FilterAdvancedType::class, $filter, [
+        $form = $this->createForm(FilterAdvancedType::class, $advancedFilter, [
             'action' => $request->getPathInfo(),
             'fields' => $filterConfig->getFields(),
             'advanced_fields' => $filterConfig->getAdvancedFields(),
@@ -36,12 +36,10 @@ class FilterController extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $advancedFilter = $form->getData();
-            
             return $this->redirectToRoute($route, $advancedFilter->toArray());
         }
 
-        return $this->render('filter/admin/advanced_filter.sheet.html.twig', [
+        return $this->render('components/_sheet.sheet.html.twig', [
             'view' => $provider->createSheet(),
             'form' => $form->createView(),
         ]);

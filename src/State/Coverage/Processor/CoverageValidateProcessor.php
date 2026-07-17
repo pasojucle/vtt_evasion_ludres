@@ -16,7 +16,7 @@ class CoverageValidateProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
     {
         /** @var Licence $entity */
         $entity->setCurrentSeasonForm(true);

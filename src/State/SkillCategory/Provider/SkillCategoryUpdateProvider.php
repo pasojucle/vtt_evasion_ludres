@@ -8,11 +8,11 @@ use App\Dto\View\SheetView;
 use App\Entity\SkillCategory;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<SkillCategory>
+*/
 class SkillCategoryUpdateProvider implements FormComponentProviderInterface
 {
-    /**
-      * @implements FormComponentProviderInterface<SkillCategory>
-      */
     public function mapToView(object $entity): SheetView
     {
         return new SheetView(

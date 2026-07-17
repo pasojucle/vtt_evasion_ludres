@@ -10,7 +10,6 @@ use App\Form\Admin\EventListener\BikeRide\BikeRideSubscriber;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\MemberRepository;
 use App\Service\LevelService;
-use App\Service\MessageService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -35,7 +34,6 @@ class BikeRideType extends AbstractType
         private readonly BikeRideTypeRepository $bikeRideTypeRepository,
         private readonly MemberRepository $memberRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly MessageService $messageService,
     ) {
     }
 
@@ -51,6 +49,7 @@ class BikeRideType extends AbstractType
                     ;
                 },
                 'choice_label' => 'name',
+                'placeholder' => 'Choisir un type d\'activité',
                 'attr' => [
                     'data-action' => 'change->form-modifier#change',
                     'data-container-id' => 'bike-ride-general;bike-ride-medias;bike-ride-parameters'
@@ -115,16 +114,13 @@ class BikeRideType extends AbstractType
             ])
         ;
 
-        $builder->addEventSubscriber(new BikeRideSubscriber($this->bikeRideTypeRepository, $this->messageService, $this->levelService, $this->memberRepository, $this->urlGenerator));
+        $builder->addEventSubscriber(new BikeRideSubscriber($this->bikeRideTypeRepository, $this->levelService, $this->memberRepository, $this->urlGenerator));
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => BikeRide::class,
-            'attr' => [
-                'data-controller' => 'form-modifier'
-            ]
         ]);
     }
 }

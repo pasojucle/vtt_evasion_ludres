@@ -15,9 +15,12 @@ class ClusterSkillDeleteProvider implements FormComponentProviderInterface
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
+
+    /**
+     * @implements FormComponentProviderInterface<ClusterSkillDto>
+     */
     public function mapToView(object $entity): DialogModalView
     {
-        /** @var ClusterSkillDto $entity */
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'évaluation <b>%s</b> ?',
             $entity->skill->getContent()

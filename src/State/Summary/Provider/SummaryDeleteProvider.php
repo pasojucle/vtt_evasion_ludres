@@ -9,16 +9,16 @@ use App\Entity\Summary;
 use App\Mapper\DestructiveModalMapper;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<Summary>
+ */
 class SummaryDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    
-    /**
-     * @implements FormComponentProviderInterface<Summary>
-     */
+
     public function mapToView(object $entity): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(

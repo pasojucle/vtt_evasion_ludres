@@ -6,7 +6,7 @@ namespace App\Service;
 
 use ReflectionClass;
 
-Class CsrfTokenService
+class CsrfTokenService
 {
     public function getTokenId(object $entity): string
     {

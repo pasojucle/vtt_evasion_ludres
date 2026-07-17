@@ -42,8 +42,7 @@ class SkillCategoryController extends AbstractCrudController
         Request $request,
         SkillCategoryCreateProvider $provider,
         SkillCategoryCreateProcessor $processor,
-    ): Response
-    {
+    ): Response {
         return $this->handleFormComponentAction(
             $request,
             new SkillCategory(),

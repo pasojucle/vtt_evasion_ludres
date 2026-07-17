@@ -8,11 +8,11 @@ use App\Dto\View\SheetView;
 use App\Entity\SecondHandCategory;
 use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<SecondHandCategory>
+ */
 class SecondHandCategoryUpdateProvider implements FormComponentProviderInterface
 {
-    /**
-     * @implements FormComponentProviderInterface<SecondHandCategory>
-     */
     public function mapToView(object $entity): SheetView
     {
         return new SheetView(
