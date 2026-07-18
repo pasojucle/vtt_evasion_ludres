@@ -7,7 +7,7 @@ namespace App\Mapper;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Repository\ParameterRepository;
@@ -29,7 +29,7 @@ class DropdownSettingsMapper
 
     /**
      * @param string $section
-     * @param ButtonView[] $menuItems
+     * @param LinkView[] $menuItems
      * @return DropdownView
      */
     public function mapToView(?string $section, string $referer, RoundedVariant $rounded, array $menuItems = []): DropdownView
@@ -47,31 +47,31 @@ class DropdownSettingsMapper
         );
     }
     
-    /** @return ButtonView[] */
+    /** @return LinkView[] */
     private function getParameters(string $section, string $referer): array
     {
-        return array_map(fn ($parameter) => new ButtonView(
+        return array_map(fn ($parameter) => new LinkView(
             label: $parameter->getLabel(),
             url: $this->urlContextService->generateUrl('admin_parameter_edit', ['parameter' => $parameter->getId()], $referer),
             icon: 'lucide:settings-2',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 new HtmlAttributView('data-action', 'click->dropdown#close')
             ],
         ), $this->parameterRepository->findBySectionId($section));
     }
 
-    /** @return ButtonView[] */
+    /** @return LinkView[] */
     private function getMessages(string $section, string $referer): array
     {
-        return array_map(fn ($message) => new ButtonView(
+        return array_map(fn ($message) => new LinkView(
             label: $this->replaceKeywords->replaceCurrentSaison($message['label'], $this->seasonService->getCurrentSeason()),
             url: $this->urlContextService->generateUrl('admin_message_edit_content', ['message' => $message['id']], $referer),
             icon: 'lucide:message-circle',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 new HtmlAttributView('data-action', 'click->dropdown#close')
             ],
         ), $this->messageService->getMessagesBySection($section));

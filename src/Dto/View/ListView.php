@@ -16,10 +16,10 @@ readonly class ListView
      * @param ?PaginatorView $paginator
      * @param ?DropdownView $tools
      * @param ?DropdownView $settings
-     * @param ?ButtonView $addItem
-     * @param ?ButtonView $advancedFilter
+     * @param ?LinkView $addItem
+     * @param ?LinkView $advancedFilter
      * @param FilterChip[] $filterChips
-     * @param ?ButtonView $wiki
+     * @param ?LinkView $wiki
      */
     public function __construct(
         public string $name,
@@ -29,10 +29,10 @@ readonly class ListView
         public ?PaginatorView $paginator = null,
         public ?DropdownView $tools = null,
         public ?DropdownView $settings = null,
-        public ?ButtonView $addItem = null,
-        public ?ButtonView $advancedFilter = null,
+        public ?LinkView $addItem = null,
+        public ?LinkView $advancedFilter = null,
         public array $filterChips = [],
-        public ?ButtonView $wiki = null,
+        public ?LinkView $wiki = null,
     ) {
     }
 }

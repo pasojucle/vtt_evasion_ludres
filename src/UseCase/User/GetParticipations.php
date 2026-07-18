@@ -12,7 +12,7 @@ use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\Member;
@@ -250,7 +250,7 @@ class GetParticipations
             variant: DropdownVariant::BUTTON,
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_participations_export'),
                     icon: 'lucide:file-down',

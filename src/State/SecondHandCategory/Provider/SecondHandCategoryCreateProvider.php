@@ -13,7 +13,7 @@ class SecondHandCategoryCreateProvider implements FormComponentProviderInterface
     /**
      * @implements FormComponentProviderInterface<SecondHandCategory>
      */
-    public function mapToView(object $entity): SheetView
+    public function mapToView(object $entity, ?string $fallback = null): SheetView
     {
         return new SheetView(
             title: 'Catégorie',

@@ -14,10 +14,10 @@
             </div>
             <div class="flex items-center gap-2 self-start lg:self-center shrink-0">
                 {% if second_hand.buttonEdit %}
-                    {% include "components/_button.html.twig" with {button: second_hand.buttonEdit} %}
+                    {% include "components/_link.html.twig" with {link: second_hand.buttonEdit} %}
                 {% endif %}
                 {% if second_hand.buttonDelete %}
-                    {% include "components/_button.html.twig" with {button: second_hand.buttonDelete} %}
+                    {% include "components/_link.html.twig" with {link: second_hand.buttonDelete} %}
                 {% endif %}
             </div>
         </div>
@@ -65,7 +65,7 @@
                         </div>
                         {% if second_hand.buttonValidate %}
                             <div class="mt-4">
-                                {% include "components/_button.html.twig" with {button: second_hand.buttonValidate} %}
+                                {% include "components/_link.html.twig" with {link: second_hand.buttonValidate} %}
                             </div>
                         {% endif %}
                     </div>

@@ -3,7 +3,7 @@
 {% block title %}{{ list.title }}{% endblock %}
 
 {% block body %}
-    <div class="p-4 lg:p-6">
+    <div class="p-4 lg:p-6 2xl:p-12">
         <div class="flex gap-2 mb-8">
             <div>
                 <h1 class="font-bold text-3xl">{{ list.title }}</h1>
@@ -12,7 +12,7 @@
             <div class="ml-auto">
                 <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
                     {% if list.wiki is not null %}
-                        {% include 'components/_button.html.twig' with {button: list.wiki} %}
+                        {% include 'components/_link.html.twig' with {link: list.wiki} %}
                     {% endif %}
                     {% if list.settings is not null %}
                         {% include 'components/_dropdown.html.twig' with {dropdown: list.settings} %}
@@ -35,12 +35,12 @@
                             {{ form_end(form) }} 
                         </div>
                         <div class="ml-auto">
-                            {% include 'components/_button.html.twig' with {button: list.advancedFilter} %}     
+                            {% include 'components/_link.html.twig' with {link: list.advancedFilter} %}     
                         </div>
                     </div>
                     {% if list.addItem %}
                         <div class="lg:ml-auto">
-                            {% include 'components/_button.html.twig' with {button: list.addItem} %}
+                            {% include 'components/_link.html.twig' with {link: list.addItem} %}
                         </div>
                     {% endif %}
                 </div>

@@ -33,11 +33,10 @@
                     </div>
                 </div>
                 <div  
-                    class="flex flex-col gap-4 p-4 lg:p-6{% if loop.index != 1 %} hidden{% endif %}"
+                    class="flex flex-col gap-4 p-4 lg:p-6 2xl:p-10 2xl:gap-10{% if loop.index != 1 %} hidden{% endif %}"
                     data-index="{{loop.index}}"
                     data-tabs-target="panel"
                 >
-                    {# {{ tab.content }} #}
                     {% include tab.content %}
                 </div>
             {% endfor %}

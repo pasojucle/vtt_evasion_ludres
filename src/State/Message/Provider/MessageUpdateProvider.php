@@ -10,7 +10,7 @@ use App\State\Interface\FormComponentProviderInterface;
 
 class MessageUpdateProvider implements FormComponentProviderInterface
 {
-    public function mapToView(object $entity): SheetView
+    public function mapToView(object $entity, ?string $fallback = null): SheetView
     {
         /** @var Message $entity */
 

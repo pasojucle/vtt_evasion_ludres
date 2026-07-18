@@ -6,12 +6,11 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\LicenceDto;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Member;
 use App\Model\Currency;
@@ -104,24 +103,24 @@ class LicenceDtoTransformer
         $licenceDto->id = $licence->getId();
         $state = $licence->getState();
         $licenceDto->stateAction = match (true) {
-            $state->toValidate() => new ButtonView(
+            $state->toValidate() => new LinkView(
                 label: 'Reçu',
                 url: $this->urlGenerator->generate('admin_registration_receive', ['licence' => $licence->getId()]),
                 icon: 'lucide:square-check-big',
                 variant: ColorVariant::SUCCESS,
                 title: 'Réceptionner le dossier d\'inscription',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
-            $state->toRegister() => new ButtonView(
+            $state->toRegister() => new LinkView(
                 label: 'Inscrit',
                 url: $this->urlGenerator->generate('admin_registration_register', ['licence' => $licence->getId()]),
                 icon: 'lucide:square-check-big',
                 variant: ColorVariant::SUCCESS,
                 title: 'Inscrire à la FFvélo',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
             default => null
@@ -135,14 +134,14 @@ class LicenceDtoTransformer
     public function coverageFromEntity(Licence $licence): LicenceDto
     {
         $licenceDto = new LicenceDto();
-        $licenceDto->stateAction = new ButtonView(
+        $licenceDto->stateAction = new LinkView(
             label: 'Valider',
             url: $this->urlGenerator->generate('admin_coverage_validate', ['licence' => $licence->getId()]),
             icon: 'lucide:square-check-big',
             variant: ColorVariant::SUCCESS,
             title: 'Valider l\'assurance ffvélo',
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
+                new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
             ],
         );
 

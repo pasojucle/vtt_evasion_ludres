@@ -9,7 +9,7 @@ use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\CoverageFilter;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -77,12 +77,12 @@ class CoverageListMapper
             items: $items,
             tools: $this->tools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_coverage_list'], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
@@ -108,7 +108,7 @@ class CoverageListMapper
         return new DropdownView(
             variant: DropdownVariant::GOST,
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_coverages_export', $filter->toArray()),
                     icon: 'lucide:file-down',
@@ -136,9 +136,9 @@ class CoverageListMapper
         );
     }
 
-    private function getAction(Licence $licence, ?string $referer): ButtonView
+    private function getAction(Licence $licence, ?string $referer): LinkView
     {
-        return new ButtonView(
+        return new LinkView(
             label: 'Valider',
             url: $this->urlContextService->generateUrl('admin_coverage_validate', ['licence' => $licence->getId(), ], $referer),
             icon: 'lucide:square-check-big',
@@ -146,7 +146,7 @@ class CoverageListMapper
             size: Size::SM,
             title: 'Valider l\'asssurance',
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
+                new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
             ],
         );
     }

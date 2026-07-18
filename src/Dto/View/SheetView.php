@@ -15,6 +15,11 @@ readonly class SheetView implements ComponentFormViewInterface
     ) {
     }
 
+    public function getName(): string
+    {
+        return 'sheet';
+    }
+
     public function getTemplate(): string
     {
         return 'components/_sheet.sheet.html.twig';

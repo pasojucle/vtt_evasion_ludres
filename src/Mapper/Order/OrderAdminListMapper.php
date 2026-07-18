@@ -10,7 +10,7 @@ use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\OrderFilter;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
@@ -74,12 +74,12 @@ class OrderAdminListMapper
             items: $items,
             settings: $this->dropdownSettingsMapper->mapToView('ORDER', $referer, RoundedVariant::ROUNDED_END),
             tools: $this->getTools($filter->toArray()),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
@@ -89,11 +89,11 @@ class OrderAdminListMapper
         );
     }
 
-    private function getAction(OrderHeader $entity, ?int $currentPage, OrderFilter $filter): ?ButtonView
+    private function getAction(OrderHeader $entity, ?int $currentPage, OrderFilter $filter): ?LinkView
     {
         $status = $entity->getStatus();
         if ($status === OrderStatusEnum::ORDERED) {
-            return new ButtonView(
+            return new LinkView(
                 label: 'Valider',
                 url: $this->urlGenerator->generate('admin_order', ['orderHeader' => $entity->getId()]),
                 icon: 'lucide:check-check',
@@ -109,7 +109,7 @@ class OrderAdminListMapper
             if ($filterHash = $filter->toEncodedString($currentPage)) {
                 $params['filter'] = $filterHash;
             }
-            $action = new ButtonView(
+            $action = new LinkView(
                 label: 'Cloturer',
                 url: $this->urlGenerator->generate('admin_order_status', $params),
                 icon: 'lucide:check-check',
@@ -131,13 +131,13 @@ class OrderAdminListMapper
     {
         return  new DropdownView(
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Supprimer',
                     url: $this->urlContextService->generateUrl('order_delete', ['orderHeader' => $order->getId()], $referer),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                         new HtmlAttributView('data-action', 'click->dropdown#close'),
                     ],
                 )
@@ -150,7 +150,7 @@ class OrderAdminListMapper
         $dropdown = new DropdownView(
             variant: DropdownVariant::GOST,
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_order_headers_export', $filter),
                     icon: 'lucide:file-down',

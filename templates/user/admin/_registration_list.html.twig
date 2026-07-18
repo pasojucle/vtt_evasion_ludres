@@ -37,7 +37,7 @@
                         {% include 'components/_dropdown.html.twig' with {dropdown: user.dropdown} %}
                     </div>
                     {% if user.lastLicence.stateAction %}
-                        {% include "components/_button.html.twig" with {button: user.lastLicence.stateAction} %}
+                        {% include "components/_link.html.twig" with {link: user.lastLicence.stateAction} %}
                     {% endif %}
                 </li>
             {% endfor %}

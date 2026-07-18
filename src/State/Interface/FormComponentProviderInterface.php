@@ -14,5 +14,5 @@ interface FormComponentProviderInterface
     /**
      * @param T $entity
      */
-    public function mapToView(object $entity): ComponentFormViewInterface;
+    public function mapToView(object $entity, ?string $fallback = null): ComponentFormViewInterface;
 }

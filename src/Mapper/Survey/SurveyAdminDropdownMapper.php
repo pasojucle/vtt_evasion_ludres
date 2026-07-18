@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\Survey;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -37,25 +37,25 @@ class SurveyAdminDropdownMapper
                 )
             ],
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter',
                     url: $this->urlGenerator->generate('admin_survey_export', ['survey' => $survey->getId()]),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                 ),
-                new ButtonView(
+                new LinkView(
                     label: 'Dupliquer',
                     url: $this->urlGenerator->generate('admin_survey_copy', ['survey' => $survey->getId()]),
                     icon: 'lucide:copy-plus',
                     variant: ColorVariant::DROPDOWN,
                 ),
-                new ButtonView(
+                new LinkView(
                     label: 'Supprimer',
                     url: $this->urlContextService->generateUrl('admin_survey_delete', ['survey' => $survey->getId()], $referer),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                         new HtmlAttributView('data-action', 'click->dropdown#close')
                     ],
                 )

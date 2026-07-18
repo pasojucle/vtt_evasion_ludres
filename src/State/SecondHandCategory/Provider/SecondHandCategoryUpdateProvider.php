@@ -13,7 +13,7 @@ use App\State\Interface\FormComponentProviderInterface;
  */
 class SecondHandCategoryUpdateProvider implements FormComponentProviderInterface
 {
-    public function mapToView(object $entity): SheetView
+    public function mapToView(object $entity, ?string $fallback = null): SheetView
     {
         return new SheetView(
             title: 'Catégorie',

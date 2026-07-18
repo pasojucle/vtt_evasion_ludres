@@ -50,7 +50,7 @@
 
       {% for item in dropdown.menuItems %}
           <li>
-            {% include 'components/_button.html.twig'  with {button: item} %}
+            {% include 'components/_link.html.twig'  with {link: item} %}
           </li>
       {% endfor %}
       {% for item in dropdown.actionItems %}

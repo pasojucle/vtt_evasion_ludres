@@ -1,0 +1,29 @@
+{% set base_classes = 'block transition' %}
+
+{% set spaces_classes = link.label ? '' : 'p-2' %}
+
+{% set size_classes = {
+    (enum('App\\Dto\\Enum\\Size').SM.value): 'px-2 py-1',
+    (enum('App\\Dto\\Enum\\Size').MD.value): 'px-3 py-2',
+    (enum('App\\Dto\\Enum\\Size').LG.value): 'px-3 py-2 font-semibold',
+    (enum('App\\Dto\\Enum\\Size').ICON.value): 'p-2',
+} %}
+{% set align_class = link.variant.value == 'dropdown' ? 'justify-start' : 'justify-center' %}
+
+{% import "components/_macros.html.twig" as utils %}
+<a href="{{ link.url }}" 
+   title="{{ link.title ?? link.label }}"
+   class="{{ base_classes }}  {{ utils.rounded_class(link.rounded.value) }} {{ utils.color_class(link.variant.value) }} hover:cursor-pointer"
+    {% for attribut in link.htmlAttributes %}
+        {{ attribut.name }}="{{ attribut.value }}"
+    {% endfor %}
+>
+    <div class="flex {{ align_class }}">
+        <div class="flex items-center gap-2 {{ size_classes[link.size.value] ?? size_classes.sm }}">
+            {% if link.icon %}{{ ux_icon(link.icon) }}{% endif %}
+            {% if link.label %}
+                <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ link.label}}</div>
+            {% endif %}
+        </div>
+    </div>
+</a>

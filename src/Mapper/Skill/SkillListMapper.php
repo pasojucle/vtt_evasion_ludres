@@ -9,7 +9,7 @@ use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SkillFilter;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
@@ -68,17 +68,17 @@ class SkillListMapper
             items: $items,
             settings: $this->settings($referer),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
-            addItem: new ButtonView(
+            addItem: new LinkView(
                 label: 'Ajouter une compétence',
                 url: $this->urlGenerator->generate('admin_skill_add'),
                 icon: 'lucide:plus',
@@ -90,7 +90,7 @@ class SkillListMapper
     private function settings(string $referer): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView(null, $referer, RoundedVariant::ROUNDED, [
-            new ButtonView(
+            new LinkView(
                 label: 'Catégories',
                 url: $this->urlGenerator->generate('admin_skill_category_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -103,7 +103,7 @@ class SkillListMapper
         if ($entity->isDeleted()) {
             return new DropdownView(
                 menuItems: [
-                    new ButtonView(
+                    new LinkView(
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_skill_restore', [
                             'skill' => $entity->getId()
@@ -116,19 +116,19 @@ class SkillListMapper
         }
         return  new DropdownView(
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Modifier',
                     url: $this->urlContextService->generateUrl('admin_skill_edit', ['skill' => $entity->getId()], $referer),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
-                 new ButtonView(
+                 new LinkView(
                      label: 'Supprimer',
                      url: $this->urlContextService->generateUrl('admin_skill_delete', ['skill' => $entity->getId()], $referer),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                         new HtmlAttributView('data-action', 'click->dropdown#close'),
                     ],
                  )

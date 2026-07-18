@@ -19,7 +19,7 @@ class BackgroundDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function mapToView(object $entity): DialogModalView
+    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
     {
         /** @var Background $entity */
         return $this->destructiveModalMapper->mapToView(

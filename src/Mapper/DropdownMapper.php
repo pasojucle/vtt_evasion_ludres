@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper;
 
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -45,32 +45,32 @@ class DropdownMapper
         $menuItems = [];
         $level = $user->getLevel();
         if ($this->security->isGranted('USER_LIST') && $level?->getType() === LevelType::SCHOOL) {
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Compétences',
                 url: $this->urlGenerator->generate('admin_member_skill_edit', ['member' => $user->getId()]),
                 icon: 'lucide:graduation-cap',
             );
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Participation',
                 url: $this->urlGenerator->generate('admin_user_participation', ['user' => $user->getId()]),
                 icon: 'lucide:chart-line',
             );
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Attestation d\'inscription CE',
                 url: $this->urlGenerator->generate('admin_user_certificate', ['member' => $user->getId()]),
                 icon: 'lucide:file-user',
             );
             if ($level?->isAccompanyingCertificat()) {
-                $menuItems[] = new ButtonView(
+                $menuItems[] = new LinkView(
                     label: 'Attestation adulte accompagnateur',
                     url: $this->urlGenerator->generate('admin_user_accompanying_certificate', ['member' => $user->getId()]),
                     icon: 'lucide:file-terminal',
                 );
             }
             if ($this->security->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
-                $menuItems[] = new ButtonView(
+                $menuItems[] = new LinkView(
                     label: 'Se connecter en tant que',
                     url: $this->urlGenerator->generate('home', ['_switch_user' => $user->getLicenceNumber()]),
                     icon: 'lucide:arrow-left-right',
@@ -108,13 +108,13 @@ class DropdownMapper
         $isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
         if ($isEditable && !$cluster->isComplete()) {
             if (in_array($session->getAvailability(), [AvailabilityEnum::NONE, AvailabilityEnum::AVAILABLE, AvailabilityEnum::REGISTERED])) {
-                $menuItems[] = new ButtonView(
+                $menuItems[] = new LinkView(
                     label: 'Changer de groupe',
                     url: $this->urlGenerator->generate('admin_bike_ride_switch_cluster', ['session' => $session->getId()]),
                     icon: 'lucide:refresh-cw',
                 );
             }
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Supprimer',
                 url: $this->urlGenerator->generate('admin_session_delete', ['session' => $session->getId()]),
                 icon: 'lucide:delete',
@@ -133,20 +133,20 @@ class DropdownMapper
         $user = $licence->getUser();
         $menuItems = $this->getMenuItemsfromUser($user);
         if ($licence->getState()->toValidate()) {
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Inscription incompète',
                 url: $this->urlGenerator->generate('admin_registration_reject', ['licence' => $licence->getId()]),
                 icon: 'lucide:message-circle-warning',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Supprimer l\'inscription',
                 url: $this->urlGenerator->generate('admin_delete_licence', ['licence' => $licence->getId()]),
                 icon: 'lucide:delete',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
         }
@@ -161,7 +161,7 @@ class DropdownMapper
     {
         return new DropdownView(
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Modifier',
                     url: $this->urlGenerator->generate('admin_bike_ride_type_edit', ['bikeRideType' => $bikeRideType->getId()]),
                     icon: 'lucide:pencil',
@@ -172,37 +172,37 @@ class DropdownMapper
 
     public function fromSurveyForList(Survey $survey): DropdownView
     {
-        $menuItems[] = new ButtonView(
+        $menuItems[] = new LinkView(
             label: 'Exporter',
             url: $this->urlGenerator->generate('admin_survey_export', ['survey' => $survey->getId()]),
             icon: 'lucide:file-down',
         );
-        $menuItems[] = new ButtonView(
+        $menuItems[] = new LinkView(
             label: 'Dupliquer',
             url: $this->urlGenerator->generate('admin_survey_copy', ['survey' => $survey->getId()]),
             icon: 'lucide:copy-plus',
         );
         if (!$survey->isDisabled()) {
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Modifier',
                 url: $this->urlGenerator->generate('admin_survey_edit', ['survey' => $survey->getId()]),
                 icon: 'lucide:pencil',
             );
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Cloturer',
                 url: $this->urlGenerator->generate('admin_survey_disable', ['survey' => $survey->getId()]),
                 icon: 'lucide:toggle-left',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
         }
-        $menuItems[] = new ButtonView(
+        $menuItems[] = new LinkView(
             label: 'Supprimer',
             url: $this->urlGenerator->generate('admin_survey_delete', ['survey' => $survey->getId()]),
             icon: 'lucide:delete',
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
             ],
         );
 
@@ -234,12 +234,12 @@ class DropdownMapper
     {
         return new DropdownView(
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Supprimer',
                     url: $this->urlGenerator->generate('order_delete', ['survey' => $order->getId()]),
                     icon: 'lucide:delete',
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                     ],
                 ),
             ]

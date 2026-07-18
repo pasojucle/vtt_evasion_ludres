@@ -15,9 +15,9 @@ use App\State\Interface\FormComponentProviderInterface;
  */
 class LicenceRegisterProvider implements FormComponentProviderInterface
 {
-    public function mapToView(object $licenceRegister): DialogModalView
+    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
     {
-        $licence = $licenceRegister->licence;
+        $licence = $entity->licence;
         return new DialogModalView(
             type: DialogType::SUCCESS,
             title: sprintf('Inscription de %s', $licence->getMember()->getIdentity()->getFullName()),

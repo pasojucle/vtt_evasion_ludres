@@ -15,7 +15,7 @@ class SkillDeleteProvider implements FormComponentProviderInterface
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(object $entity): DialogModalView
+    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
     {
         /** @var Skill $entity */
         return $this->destructiveModalMapper->mapToView(sprintf(

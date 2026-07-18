@@ -8,7 +8,7 @@
             </div>
         {% endif %}
         {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_RANGE_AGE') %}
-            <div class="grid grid-cols-2 gap-4">{{ form_row(form.minAge) }} {{ form_row(form.maxAge) }}</div>
+            <div class="grid grid-cols-2 gap-4 2xl:gap-10">{{ form_row(form.minAge) }} {{ form_row(form.maxAge) }}</div>
         {% endif %}
     {% endfor %}
 </div>

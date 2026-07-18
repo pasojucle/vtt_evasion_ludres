@@ -8,7 +8,7 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Enum\SurveyResponseValueType;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\SurveyResponse\SurveyResponseIssueView;
 use App\Dto\View\SurveyResponse\SurveyResponseListView;
@@ -46,13 +46,13 @@ class SurveyResponseMapper
                 type: $entity->getResponseType(),
                 content: $entity->getContent(),
                 types: $this->getSurveyResponsesByType($entity),
-                show: new ButtonView(
+                show: new LinkView(
                     url :$this->urlGenerator->generate('admin_survey_response_show', [
                         'surveyResponse' => $entity->getId()
                     ]),
                     icon:'lucide:users',
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                        new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     ],
                 )
             );

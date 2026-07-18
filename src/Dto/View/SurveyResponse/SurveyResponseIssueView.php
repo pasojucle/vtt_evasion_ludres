@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View\SurveyResponse;
 
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Entity\Enum\SurveyResponseType;
 
 readonly class SurveyResponseIssueView
@@ -17,7 +17,7 @@ readonly class SurveyResponseIssueView
         public SurveyResponseType $type,
         public string $content,
         public array $types,
-        public ButtonView $show,
+        public LinkView $show,
     ) {
     }
 }

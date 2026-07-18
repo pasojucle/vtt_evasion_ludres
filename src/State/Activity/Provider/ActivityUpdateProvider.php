@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Provider;
 
-use App\Dto\View\FormUpdateView;
+use App\Dto\Enum\Size;
+use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
+use App\Dto\View\FormTabWrapperView;
+use App\Dto\View\TabWrapperView;
 use App\Dto\View\TabView;
 use App\Entity\BikeRide;
-use App\Mapper\Activity\ActivityEditMapper;
+use App\Mapper\Activity\ActivityUpdateMapper;
 use App\Service\MessageService;
 use App\State\Interface\FormAddComponentProviderInterface;
 use App\State\Interface\FormComponentProviderInterface;
@@ -18,14 +22,15 @@ use App\State\Interface\FormComponentProviderInterface;
 class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddComponentProviderInterface
 {
     public function __construct(
-        private ActivityEditMapper $mapper,
+        private ActivityUpdateMapper $mapper,
         private MessageService $messageService,
     ) {
     }
 
-    public function mapToView(object $entity): FormUpdateView
+    public function mapToView(object $entity, ?string $fallback = null): FormTabWrapperView
     {
-        return new FormUpdateView(
+
+        return new FormTabWrapperView(
             name: 'activityEdit',
             title: ($entity->getId()) ? 'Modifier une activité' : 'Ajouter une activité',
             description: 'Ajouter une activité en définissant les paramètres généreaux, des participants, des médias, des parcours...',
@@ -37,12 +42,20 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
                 new TabView('Parcours GPX', 'lucide:map', 'bike_ride/admin/edit/tab_gpx.html.twig'),
             ],
             entity: $this->mapper->mapToView($entity),
-            back: null,
+            fallback: new LinkView(
+                url: $fallback,
+                icon: 'lucide:chevron-left',
+                size: Size::ICON
+            ),
+            submit: new ButtonView(
+                label: 'Enregister',
+                icon: 'lucide:square-check-big'
+            ),
         );
     }
 
     /**
-     * @param ?BikeRide $entity
+     * @param BikeRide $entity
      * @return BikeRide
      */
     public function setDefaultValues(object $entity): object

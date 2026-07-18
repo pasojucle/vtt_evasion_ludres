@@ -10,7 +10,7 @@ use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\UserFilter;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -79,12 +79,12 @@ class UserListMapper
             settings: $this->settings($referer),
             tools: $this->getTools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_user_list'], $filter->toQueryParams())),
                 size: Size::ICON,
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
@@ -97,17 +97,17 @@ class UserListMapper
     private function settings(string $referer): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('USER', $referer, RoundedVariant::ROUNDED_END, [
-            new ButtonView(
+            new LinkView(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_level_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonView(
+            new LinkView(
                 label: 'Compétences',
                 url: $this->urlGenerator->generate('admin_skill_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonView(
+            new LinkView(
                 label: 'Roles du bureau et comité',
                 url: $this->urlGenerator->generate('admin_board_role_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -136,7 +136,7 @@ class UserListMapper
             variant: DropdownVariant::GOST,
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter la sélection',
                     variant: ColorVariant::DROPDOWN,
                     url: $this->urlGenerator->generate('admin_members_export', $filter->toArray()),
@@ -146,7 +146,7 @@ class UserListMapper
                         new HtmlAttributView('data-turbo', 'false')
                     ],
                 ),
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter les évaluations de la sélection',
                     variant: ColorVariant::DROPDOWN,
                     url: $this->urlGenerator->generate('admin_user_skill_export', $filter->toArray()),
@@ -155,7 +155,7 @@ class UserListMapper
                         new HtmlAttributView('data-action', 'click->dropdown#close')
                     ],
                 ),
-                new ButtonView(
+                new LinkView(
                     label: 'Synthèse par saison',
                     variant: ColorVariant::DROPDOWN,
                     url: $this->urlGenerator->generate('admin_overview_season'),

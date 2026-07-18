@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\<?= $entity_name ?>;
 
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
@@ -73,19 +73,19 @@ class <?= $entity_name ?>ListMapper
             items: $items,
             settings: $this->settings(),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
             // TODO Définir le bouton pour ajouter un item
             // Exemple :
-            // addItem: new ButtonView(
+            // addItem: new LinkView(
             //     label: 'Ajouter une activité',
             //     url: $this->urlGenerator->generate('admin_bike_ride_add'),
             //     icon: 'lucide:plus',
@@ -94,7 +94,7 @@ class <?= $entity_name ?>ListMapper
 
             // TODO Définir le bouton pour afficher le wiki
             // Exemple :
-            // wiki: new ButtonView(
+            // wiki: new LinkView(
             //     url: $this->urlGenerator->generate('wiki_show', ['directory' => 'boutique']),
             //     title: 'wiki',
             //     icon: 'lucide:circle-help',
@@ -112,7 +112,7 @@ class <?= $entity_name ?>ListMapper
         return $this->dropdownSettingsMapper->mapToView('MA_SECTION', $referer, RoundedVariant::ROUNDED, [
             //TODO Ajouter d'autre boutons si besoins
             // Exemple
-            // new ButtonView(
+            // new LinkView(
             //     label: 'Types de rando',
             //     url: $this->urlGenerator->generate('admin_bike_ride_type_list'),
             //     variant: ColorVariant::DROPDOWN,

@@ -118,12 +118,12 @@ class GetSchedule
     // private function settings(): DropdownView
     // {
     //     return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', [
-    //         new ButtonView(
+    //         new LinkView(
     //             label: 'Types de rando',
     //             url: $this->urlGenerator->generate('admin_bike_ride_type_list'),
     //             variant: ColorVariant::DROPDOWN,
     //         ),
-    //         new ButtonView(
+    //         new LinkView(
     //             label: 'Indemnités',
     //             url: $this->urlGenerator->generate('admin_indemnity_list'),
     //             variant: ColorVariant::DROPDOWN,

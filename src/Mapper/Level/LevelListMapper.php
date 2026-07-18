@@ -9,7 +9,7 @@ use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\LevelFilter;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LabelView;
@@ -70,17 +70,17 @@ class LevelListMapper
             description: 'Administration des niveaux des adhérents du club.',
             items: $items,
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_level_list'], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
             filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
-            addItem: new ButtonView(
+            addItem: new LinkView(
                 label: 'Ajouter un niveau',
                 url: $this->urlGenerator->generate('admin_level_edit'),
                 icon: 'lucide:plus',
@@ -121,7 +121,7 @@ class LevelListMapper
         if ($entity->isDeleted()) {
             return new DropdownView(
                 menuItems: [
-                    new ButtonView(
+                    new LinkView(
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_level_restore', [
                             'level' => $entity->getId()
@@ -134,20 +134,20 @@ class LevelListMapper
         }
 
         $menusItems = [];
-        $menusItems[] = new ButtonView(
+        $menusItems[] = new LinkView(
             label: 'Modifier',
             url: $this->urlContextService->generateUrl('admin_level_edit', ['level' => $entity->getId()], $referer),
             icon: 'lucide:pencil',
             variant: ColorVariant::DROPDOWN,
         );
         if (!$entity->isProtected()) {
-            $menusItems[] = new ButtonView(
+            $menusItems[] = new LinkView(
                 label: 'Supprimer',
                 url: $this->urlContextService->generateUrl('admin_level_delete', ['level' => $entity->getId()], $referer),
                 icon: 'lucide:delete',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             );

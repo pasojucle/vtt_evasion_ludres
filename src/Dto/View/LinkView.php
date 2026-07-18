@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-use App\Dto\Enum\ButtonType;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\Interface\ListActionViewInterface;
 
-readonly class ButtonView implements ListActionViewInterface
+readonly class LinkView implements ListActionViewInterface
 {
     public const string TOP = '_top';
     public const string MODAL_CONTENT = 'modal_content';
     public const string SHEET_CONTENT = 'sheet_content';
 
     /**
-     * @param ButtonType $type
+     * @param string $url
      * @param ColorVariant $variant
      * @param RoundedVariant $rounded
      * @param ?string $label
@@ -26,7 +25,7 @@ readonly class ButtonView implements ListActionViewInterface
      * @param HtmlAttributView[] $htmlAttributes
      */
     public function __construct(
-        public ButtonType $type = ButtonType::SUBMIT,
+        public string $url,
         public ColorVariant $variant = ColorVariant::DEFAULT,
         public RoundedVariant $rounded = RoundedVariant::ROUNDED,
         public Size $size = Size::SM,
@@ -42,11 +41,11 @@ readonly class ButtonView implements ListActionViewInterface
 
     public function getName(): string
     {
-        return 'button';
+        return 'link';
     }
 
     public function getTemplate(): string
     {
-        return 'components/_button.html.twig';
+        return 'components/_link.html.twig';
     }
 }

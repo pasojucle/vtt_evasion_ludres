@@ -8,7 +8,7 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\NotificationFilter;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\Interface\ListActionViewInterface;
 use App\Dto\View\LabelView;
@@ -67,19 +67,19 @@ class NotificationAdminListMapper
             title: 'Notification Pop\'up',
             description: 'Administration des messages affichés dans les pop\'up.',
             items: $items,
-            addItem: new ButtonView(
+            addItem: new LinkView(
                 label: 'Ajouter une pop\'up',
                 url: $this->urlGenerator->generate('admin_notification_add'),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
             settings: $this->dropdownSettingsMapper->mapToView('ORDER', $referer, RoundedVariant::ROUNDED),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),

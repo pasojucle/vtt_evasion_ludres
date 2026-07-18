@@ -10,7 +10,7 @@ use App\Service\FileLocation\BikeRideFileLocation;
 use App\Service\FileLocation\DefaultFileLocation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ActivityEditMapper
+class ActivityUpdateMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,

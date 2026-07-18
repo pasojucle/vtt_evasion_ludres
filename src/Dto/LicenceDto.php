@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Entity\Enum\LicenceCategoryEnum;
 
 class LicenceDto
@@ -63,5 +63,5 @@ class LicenceDto
     public ?string $additionalFamilyMember = null;
     public ?array $familyMember = null;
 
-    public ?ButtonView $stateAction = null;
+    public ?LinkView $stateAction = null;
 }

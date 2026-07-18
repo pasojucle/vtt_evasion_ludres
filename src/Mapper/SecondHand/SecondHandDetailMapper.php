@@ -7,7 +7,7 @@ namespace App\Mapper\SecondHand;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\SecondHand\SecondHandDetailView;
 use App\Entity\Enum\SecondHandStateEnum;
@@ -56,14 +56,14 @@ class SecondHandDetailMapper
             sellerName: $identity->getFullName(),
             sellerEmail: $identity->getEmail(),
             sellerPhone: $identity->getMobile(),
-            buttonEdit: new ButtonView(
+            buttonEdit: new LinkView(
                 url: $this->urlContextService->generateUrl('admin_second_hand_edit', [
                     'secondHand' => $secondHand->getId(),
                 ], $referer),
                 label: 'Modifier',
                 icon: 'lucide:pencil'
             ),
-            buttonDelete: new ButtonView(
+            buttonDelete: new LinkView(
                 url: $this->urlContextService->generateUrl('admin_second_hand_delete', [
                     'secondHand' => $secondHand->getId(),
                 ], $listRoute),
@@ -71,7 +71,7 @@ class SecondHandDetailMapper
                 label: 'Supprimer',
                 icon: 'lucide:delete',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
@@ -88,10 +88,10 @@ class SecondHandDetailMapper
         return $defaultImage;
     }
 
-    private function buttonValidate(SecondHand $secondHand): ? ButtonView
+    private function buttonValidate(SecondHand $secondHand): ? LinkView
     {
         if (SecondHandStateEnum::DRAFT === $secondHand->getState()) {
-            return new ButtonView(
+            return new LinkView(
                 url: $this->urlGenerator->generate('admin_second_hand_validate', [
                     'secondHand' => $secondHand->getId(),
                 ]),

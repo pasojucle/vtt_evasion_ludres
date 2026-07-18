@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\Activity;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -30,7 +30,7 @@ class ActivityAdminDropdownMapper
             return new DropdownView(
                 title: $bikeRide->__toString(),
                 menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Restaurer',
                     url: $this->urlContextService->generateUrl('admin_bike_ride_restore', ['bikeRide' => $bikeRide->getId()], $referer),
                     icon: 'lucide:archive-restore',
@@ -42,25 +42,25 @@ class ActivityAdminDropdownMapper
 
         $menuItems = [];
         if ($this->security->isGranted('ROLE_ADMIN')) {
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Modifier',
                 url: $this->urlContextService->generateUrl('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()], $referer),
                 icon: 'lucide:pencil',
                 variant: ColorVariant::DROPDOWN,
             );
             if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
-                $menuItems[] = new ButtonView(
+                $menuItems[] = new LinkView(
                     label: 'Annuler',
                     url: $this->urlContextService->generateUrl('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()], $referer),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                         new HtmlAttributView('data-action', 'click->dropdown#close'),
                     ],
                 );
             }
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Exporter la séance',
                 url: $this->urlGenerator->generate('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
                 icon: 'lucide:file-down',
@@ -68,7 +68,7 @@ class ActivityAdminDropdownMapper
             );
         }
         if ($this->security->isGranted('SUMMARY_LIST')) {
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Actualités',
                 url: $this->urlGenerator->generate('admin_summary_list', ['bikeRide' => $bikeRide->getId()]),
                 icon: 'lucide:image',

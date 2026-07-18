@@ -18,6 +18,12 @@ readonly class DialogModalView implements ComponentFormViewInterface
     ) {
     }
 
+
+    public function getName(): string
+    {
+        return 'dialog';
+    }
+
     public function getTemplate(): string
     {
         return 'components/_dialog.modal.html.twig';

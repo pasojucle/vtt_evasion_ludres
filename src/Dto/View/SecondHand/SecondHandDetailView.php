@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\View\SecondHand;
 
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
-use Symfony\Component\Form\Button;
+use App\Dto\View\LinkView;
 
 class SecondHandDetailView
 {
@@ -27,9 +26,9 @@ class SecondHandDetailView
         public string $sellerName,
         public string $sellerEmail,
         public string $sellerPhone,
-        public ButtonView $buttonEdit,
-        public ButtonView $buttonDelete,
-        public ?ButtonView $buttonValidate = null,
+        public LinkView $buttonEdit,
+        public LinkView $buttonDelete,
+        public ?LinkView $buttonValidate = null,
     ) {
     }
 }

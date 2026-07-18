@@ -15,7 +15,7 @@ class SkillCategoryDeleteProvider implements FormComponentProviderInterface
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function mapToView(object $entity): DialogModalView
+    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
     {
         /** @var SkillCategory $entity */
         return $this->destructiveModalMapper->mapToView(

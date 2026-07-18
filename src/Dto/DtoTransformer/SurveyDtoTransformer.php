@@ -6,7 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\SurveyDto;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Entity\History;
 use App\Entity\Identity;
 use App\Entity\Member;
@@ -84,7 +84,7 @@ class SurveyDtoTransformer
             $surveyDto->id = $surveyEntity->getId();
             $surveyDto->title = $surveyEntity->getTitle();
             $surveyDto->dropdown = $this->dropdownMapper->fromSurveyForList($surveyEntity);
-            $surveyDto->responseAction = new ButtonView(
+            $surveyDto->responseAction = new LinkView(
                 label: $surveyEntity->getTitle(),
                 url: $this->urlGenerator->generate($surveyEntity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey', [
                     'survey' => $surveyEntity->getId()

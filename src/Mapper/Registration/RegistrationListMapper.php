@@ -10,7 +10,7 @@ use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\RegistrationFilter;
 use App\Dto\View\BadgeView;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -88,12 +88,12 @@ class RegistrationListMapper
             settings: $this->settings($referer),
             tools: $this->tools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            advancedFilter: new ButtonView(
+            advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::SHEET_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
@@ -104,12 +104,12 @@ class RegistrationListMapper
     public function settings(string $referer): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('REGISTRATION', $referer, RoundedVariant::ROUNDED, [
-            new ButtonView(
+            new LinkView(
                 label: 'Étapes des inscriptions',
                 url: $this->urlGenerator->generate('admin_registration_step_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonView(
+            new LinkView(
                 label: 'Gestions des autorisations',
                 url: $this->urlGenerator->generate('admin_agreement_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -123,7 +123,7 @@ class RegistrationListMapper
             variant: DropdownVariant::GOST,
             rounded: RoundedVariant::ROUNDED_NONE,
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_registrations_export', $filter->toArray()),
                     icon: 'lucide:file-down',
@@ -187,7 +187,7 @@ class RegistrationListMapper
         }
 
         return match (true) {
-            $state->toValidate() => new ButtonView(
+            $state->toValidate() => new LinkView(
                 label: 'Reçu',
                 url: $this->urlGenerator->generate('admin_registration_receive', $params),
                 icon: 'lucide:square-check-big',
@@ -195,10 +195,10 @@ class RegistrationListMapper
                 size: Size::SM,
                 title: 'Réceptionner le dossier d\'inscription',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
-            $state->toRegister() => new ButtonView(
+            $state->toRegister() => new LinkView(
                 label: 'Inscrit',
                 url: $this->urlGenerator->generate('admin_registration_register', $params),
                 icon: 'lucide:square-check-big',
@@ -206,7 +206,7 @@ class RegistrationListMapper
                 size: Size::SM,
                 title: 'Inscrire à la FFvélo',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT)
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
             default => null,

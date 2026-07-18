@@ -77,15 +77,14 @@ abstract class AbstractCrudController extends AbstractController
         string $formClass = FormType::class,
         array $formOptions = [],
     ): Response {
+        $fallback = $this->urlContextService->getRedirectUrl($request);
         if ($provider instanceof FormAddComponentProviderInterface) {
             $provider->setDefaultValues($object);
         }
-        $view = $provider->mapToView($object);
 
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm($formClass, $object, array_merge([
             'action' => $request->getUri(),
-            'attr' => $view->getFormAttr(),
         ], $formOptions));
         
         $form->handleRequest($request);
@@ -94,7 +93,7 @@ abstract class AbstractCrudController extends AbstractController
                 $result = $processor->process(
                     $object,
                     $request->files->get($form->getName()),
-                    $this->urlContextService->getRedirectUrl($request)
+                    $fallback,
                 );
                 $this->addFlash($result->flashType, $result->messageKey);
                 
@@ -103,7 +102,9 @@ abstract class AbstractCrudController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $view = $provider->mapToView($object);
+        $view = $provider->mapToView($object, $fallback);
+        $formView = $form->createView();
+        $formView->vars['attr'] = array_merge($formView->vars['attr'] ?? [], $view->getFormAttr());
         return $this->render($view->getTemplate(), [
             'form' => $form->createView(),
             'view' => $view

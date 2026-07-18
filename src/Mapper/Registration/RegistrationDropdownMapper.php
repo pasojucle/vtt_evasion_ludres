@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\Registration;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
 use App\Entity\User;
@@ -24,22 +24,22 @@ class RegistrationDropdownMapper
         $licence = $user->getLastLicence();
         $menuItems = $this->userDropdownMapper->getMenuItemsfromUser($user, $referer);
         if ($licence->getState()->toValidate()) {
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Inscription incompète',
                 url: $this->urlGenerator->generate('admin_registration_reject', ['licence' => $licence->getId()]),
                 icon: 'lucide:message-circle-warning',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
-            $menuItems[] = new ButtonView(
+            $menuItems[] = new LinkView(
                 label: 'Supprimer l\'inscription',
                 url: $this->urlGenerator->generate('admin_delete_licence', ['licence' => $licence->getId()]),
                 icon: 'lucide:delete',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', ButtonView::MODAL_CONTENT),
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
         }

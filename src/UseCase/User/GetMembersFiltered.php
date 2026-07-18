@@ -7,7 +7,7 @@ namespace App\UseCase\User;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -53,17 +53,17 @@ class GetMembersFiltered extends GetUsersFiltered
     public function settings(): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('USER', '$referer', RoundedVariant::ROUNDED_NONE, [
-            new ButtonView(
+            new LinkView(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_level_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonView(
+            new LinkView(
                 label: 'Compétences',
                 url: $this->urlGenerator->generate('admin_skill_list'),
                 variant: ColorVariant::DROPDOWN,
             ),
-            new ButtonView(
+            new LinkView(
                 label: 'Roles du bureau et comité',
                 url: $this->urlGenerator->generate('admin_board_role_list'),
                 variant: ColorVariant::DROPDOWN,
@@ -77,7 +77,7 @@ class GetMembersFiltered extends GetUsersFiltered
             variant: DropdownVariant::BUTTON,
             rounded: RoundedVariant::ROUNDED_END,
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     variant: ColorVariant::DROPDOWN,
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_members_export'),
@@ -87,7 +87,7 @@ class GetMembersFiltered extends GetUsersFiltered
                         new HtmlAttributView('data-turbo', 'false')
                     ],
                 ),
-                new ButtonView(
+                new LinkView(
                     variant: ColorVariant::DROPDOWN,
                     label: 'Exporter les évaluations de la sélection',
                     url: $this->urlGenerator->generate('admin_user_skill_export'),
@@ -96,7 +96,7 @@ class GetMembersFiltered extends GetUsersFiltered
                         new HtmlAttributView('data-action', 'click->dropdown#close')
                     ],
                 ),
-                new ButtonView(
+                new LinkView(
                     variant: ColorVariant::DROPDOWN,
                     label: 'Synthèse par saison',
                     url: $this->urlGenerator->generate('admin_overview_season'),

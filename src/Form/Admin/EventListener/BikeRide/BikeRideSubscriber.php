@@ -170,26 +170,12 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'data-switch-off' => 'Les inscriptions et desinscriptions sont bloquées',
                 ],
             ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'bg-slate-500 hover:bg-slate-400 p-2 text-white',
-                ],
-                'row_attr' => [
-                    'class' => 'ml-auto',
-                ]
-            ])
-            ;
-        if ($registrationEnabled) {
-            $form
-                ->add('registrationClosedMessage', TiptapType::class, [
-                    'label' => 'Message afficher à la cloture lors de l\'inscription',
-                    'config_name' => 'base',
-                    'required' => false,
-                ]);
-        } else {
-            $form->remove('registrationClosedMessage');
-        }
+            ->add('registrationClosedMessage', TiptapType::class, [
+                'label' => 'Message afficher à la cloture lors de l\'inscription',
+                'config_name' => 'base',
+                'required' => false,
+            ]);
+      
         $disabled = RegistrationEnum::NONE === $bikeRideType?->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_USER_LIST !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction;

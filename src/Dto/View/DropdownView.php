@@ -14,7 +14,7 @@ readonly class DropdownView
      * @param DropdownVariant $variant
      * @param RoundedVariant $rounded
      * @param DropdownItemView[] $infoItems
-     * @param ButtonView[] $menuItems
+     * @param LinkView[] $menuItems
      * @param DropdownItemView[] $actionItems
      */
     public function __construct(

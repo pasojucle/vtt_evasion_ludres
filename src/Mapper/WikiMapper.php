@@ -7,7 +7,7 @@ namespace App\Mapper;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\HtmlAttributView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -18,9 +18,9 @@ class WikiMapper
     ) {
     }
 
-    public function mapToView(string $dirName, RoundedVariant $rounded = RoundedVariant::ROUNDED): ButtonView
+    public function mapToView(string $dirName, RoundedVariant $rounded = RoundedVariant::ROUNDED): LinkView
     {
-        return new ButtonView(
+        return new LinkView(
             url: $this->urlGenerator->generate('wiki_show', ['directory' => $dirName]),
             title: 'wiki',
             icon: 'lucide:circle-help',

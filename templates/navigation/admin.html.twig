@@ -13,10 +13,12 @@
         </div>
     </div>
 </div>
-{# <nav class="bg-slate-900 h-lvh flex flex-col shadow-xl text-slate-200 select-none" data-nav-sm-target="container"> #}
-<nav class="fixed left-0 top-0 w-64 bg-slate-900 h-screen flex flex-col shadow-xl text-slate-200 select-none z-50 overflow-hidden" data-nav-sm-target="container">
+<nav 
+    class="fixed left-0 top-0 w-64 2xl:w-80 bg-slate-900 h-screen flex flex-col shadow-xl text-slate-200 select-none z-50 overflow-hidden" 
+    data-nav-sm-target="container"
+>
     <!-- Header avec Logo -->
-    <div class="hidden lg:flex p-6  items-center gap-4 bg-slate-950/50 border-b border-white/5">
+    <div class="hidden lg:flex p-6 2xl:px-8 items-center gap-4 bg-slate-950/50 border-b border-white/5">
         <div class="w-10 h-10 p-1 bg-white rounded-xl shadow-inner">
             <img src="/logos/logo.png" alt="vtt évasion Ludres" class="w-full h-full object-contain">
         </div>
@@ -35,7 +37,7 @@
                     <button 
                         data-collapse-target="trigger" 
                         data-action="click->collapse#toggle"
-                        class="w-full flex items-center px-6 py-2 transition-colors hover:text-white group"
+                        class="w-full flex items-center px-6 2xl:px-8 py-2 transition-colors hover:text-white group"
                     >
                         <span class="text-xs font-bold uppercase tracking-widest text-slate-500 group-hover:text-primary transition-colors">
                             {{ group.label|trans }}

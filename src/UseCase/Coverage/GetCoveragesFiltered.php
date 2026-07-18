@@ -7,7 +7,7 @@ namespace App\UseCase\Coverage;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
-use App\Dto\View\ButtonView;
+use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
@@ -62,7 +62,7 @@ class GetCoveragesFiltered extends GetUsersFiltered
             variant: DropdownVariant::BUTTON,
             rounded: RoundedVariant::ROUNDED,
             menuItems: [
-                new ButtonView(
+                new LinkView(
                     label: 'Exporter la sélection',
                     url: $this->urlGenerator->generate('admin_coverages_export'),
                     icon: 'lucide:file-down',
