@@ -1,0 +1,49 @@
+<div class="px-4 bg-slate-300 flex items-center h-8">
+    <div class="text-xs font-semibold uppercase text-white">
+        <h2>Identité</h2>
+    </div>
+    <div class="ml-auto">
+        {% include view.action.template with {(view.action.name): view.action} %}
+    </div>
+</div>
+<div class="p-4 2xl:p-6">
+    <dl class="flex flex-col gap-4 text-sm">
+        <div class="flex flex-col gap-1">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Né(e) le :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.birthDate }}<br>
+                {% if view.birthPlace %}
+                    <span class="text-muted/80">à {{ view.birthPlace }}</span>
+                {% endif %}
+            </dd>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Adresse :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.address }}<br>
+                <span>{{ view.city }}</span>
+            </dd>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Mail :</dt>
+            <dd class="font-medium">
+                {% include "components/_phone.html.twig" with {view: view.email} %}
+            </dd>
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Téléphones :</dt>
+            <dd class="text-foreground font-medium tracking-wide flex items-center gap-2">
+                {% for phone in view.phones %}
+                    {% include "components/_phone.html.twig" with {view: phone} %}
+                    {% if loop.index < view.phones|length %}
+                        <div class="text-muted text-xs">{{ ux_icon('lucide:circle-small') }}</div>
+                    {% endif %}
+                {% endfor %}
+            </dd>
+        </div>
+
+    </dl>
+</div>

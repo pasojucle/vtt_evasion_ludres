@@ -24,11 +24,16 @@
         {% block body %}{% endblock %}
     </div>
     <div class="p-4 grid grid-cols-2 gap-3 border-t border-border bg-white">
-        <button type="button" data-action="click->sheet#close" class="p-2 bg-slate-300 lg:bg-slate-200 lg:hover:bg-slate-300">
+        <button 
+            type="button"
+            data-action="click->sheet#close" 
+            class="p-2 bg-slate-300 lg:bg-slate-200 lg:hover:bg-slate-300"
+        >
             Annuler
         </button>
         <button 
             type="submit"
+            data-action="click->sheet#close" 
             class="p-2 flex justify-center text-white bg-accent lg:bg-accent/80 lg:hover:bg-accent"
         >
             <div class="flex items-center gap-2">

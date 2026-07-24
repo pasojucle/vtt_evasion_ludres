@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\Level\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\Level;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\SoftDeleteService;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 
-class LevelDeleteProcessor implements HtmlProcessorInterface
+class LevelDeleteProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private LevelRepository $levelRepository,
@@ -23,7 +23,7 @@ class LevelDeleteProcessor implements HtmlProcessorInterface
     /**
      * @param Level $entity
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         $type = $entity->getType();
         $levels = $this->levelRepository->findByType($type);
@@ -31,7 +31,7 @@ class LevelDeleteProcessor implements HtmlProcessorInterface
         $this->softDeleteService->softDelete($entity);
         $this->orderByService->setNewOrders($entity, $levels, count($levels));
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'level.flash.success.delete',

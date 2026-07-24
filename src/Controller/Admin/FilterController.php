@@ -39,7 +39,7 @@ class FilterController extends AbstractController
             return $this->redirectToRoute($route, $advancedFilter->toArray());
         }
 
-        return $this->render('components/_sheet.sheet.html.twig', [
+        return $this->render('components/_form.sheet.html.twig', [
             'view' => $provider->createSheet(),
             'form' => $form->createView(),
         ]);

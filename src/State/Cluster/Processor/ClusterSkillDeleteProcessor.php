@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\State\Cluster\Processor;
 
 use App\Dto\Payload\ClusterSkillDto;
-use App\Dto\State\HtmlProcessorResult;
-use App\State\Interface\HtmlProcessorInterface;
+use App\Dto\State\RedirectProcessorResult;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ClusterSkillDeleteProcessor implements HtmlProcessorInterface
+class ClusterSkillDeleteProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         /** @var ClusterSkillDto $entity */
         $cluster = $entity->cluster;
@@ -25,7 +25,7 @@ class ClusterSkillDeleteProcessor implements HtmlProcessorInterface
         $cluster->removeSkill($skill);
         $this->entityManager->flush();
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             messageKey: 'cluster_skill.flash.success.delete',
             targetUrl: $targetUrl,

@@ -22,7 +22,7 @@ class <?= $entity_name ?><?= $action_name ?>Provider implements FormComponentPro
 
     }
 
-    public function mapToView(object  $entity): DialogModalView
+    public function getFormView(object  $entity): DialogModalView
     {
         // return $this->destructiveModalMapper->mapToView(sprintf('<?= $message ?>', $entity-><?= $getter ?>));
 

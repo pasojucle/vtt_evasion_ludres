@@ -90,7 +90,7 @@ export default class extends Controller {
         }
     }
     fetchData = async () => {
-        await fetch(Routing.generate('form_validator'), {
+        await fetch('/form/validator', {
             method: 'POST',
             body : this.formData,
         })
@@ -224,14 +224,14 @@ class Field {
     setStatus = (status) => {
         this.status = status;
         const fieldEl = this.getFieldEl();
-        if (status === 'SUCCESS') {
-            fieldEl.parentElement.classList.remove('alert-warning');
-            fieldEl.parentElement.classList.add('success'); 
+        if (status === 'SUCCESS') { 
+            fieldEl.classList.add('border-b', 'border-success', 'border-solid');
+            fieldEl.classList.remove('border-destructive');
         } else if (status === 'ALERT_WARNING') {
-            fieldEl.parentElement.classList.add('alert-warning');
-            fieldEl.parentElement.classList.remove('success');
+            fieldEl.classList.add('border-b', 'border-destructive', 'border-solid')
+            fieldEl.classList.remove('border-success');
         } else {
-            fieldEl.parentElement.classList.remove('alert-warning', 'success');
+            fieldEl.classList.remove('border-success', 'border-destructive');
         }
     }
     refreshDynamicFields = () => {

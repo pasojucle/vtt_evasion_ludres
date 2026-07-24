@@ -19,7 +19,7 @@ class SummaryDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'actualité <b>%s</b> ?',

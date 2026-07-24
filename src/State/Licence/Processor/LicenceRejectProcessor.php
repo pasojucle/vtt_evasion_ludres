@@ -6,17 +6,17 @@ namespace App\State\Licence\Processor;
 
 use App\Dto\Payload\LicenceReject;
 use App\Dto\Service\MailerResult;
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\Member;
 use App\Service\LicenceService;
 use App\Service\MailerService;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @implements HtmlProcessorInterface<LicenceReject>
+ * @implements FormRedirectProcessorInterface<LicenceReject>
  */
-class LicenceRejectProcessor implements HtmlProcessorInterface
+class LicenceRejectProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -25,7 +25,7 @@ class LicenceRejectProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         $licence = $entity->licence;
         $member = $licence->getMember();
@@ -38,7 +38,7 @@ class LicenceRejectProcessor implements HtmlProcessorInterface
             $this->entityManager->persist($licence);
             $this->entityManager->flush();
 
-            return new HtmlProcessorResult(
+            return new RedirectProcessorResult(
                 success: true,
                 targetUrl: $targetUrl,
                 messageKey: 'registration.flash.success.reject',
@@ -46,7 +46,7 @@ class LicenceRejectProcessor implements HtmlProcessorInterface
             );
         }
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: false,
             targetUrl: $targetUrl,
             messageKey: 'registration.flash.error.reject',

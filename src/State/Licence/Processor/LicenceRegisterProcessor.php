@@ -6,18 +6,18 @@ namespace App\State\Licence\Processor;
 
 use App\Dto\Payload\LicenceRegister;
 use App\Dto\Service\MailerResult;
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\Member;
 use App\Service\LicenceService;
 use App\Service\MailerService;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use App\State\Message\Provider\MessageProvider;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @implements HtmlProcessorInterface<LicenceRegister>
+ * @implements FormRedirectProcessorInterface<LicenceRegister>
  */
-class LicenceRegisterProcessor implements HtmlProcessorInterface
+class LicenceRegisterProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -27,7 +27,7 @@ class LicenceRegisterProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         $licence = $entity->licence;
         
@@ -42,7 +42,7 @@ class LicenceRegisterProcessor implements HtmlProcessorInterface
 
         $result = $this->sendMail($licenceNumber, $member);
         if (false === $result?->success) {
-            return new HtmlProcessorResult(
+            return new RedirectProcessorResult(
                 success: false,
                 targetUrl: $targetUrl,
                 messageKey: 'registration.flash.danger.received',
@@ -50,7 +50,7 @@ class LicenceRegisterProcessor implements HtmlProcessorInterface
             );
         }
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'registration.flash.success.received',

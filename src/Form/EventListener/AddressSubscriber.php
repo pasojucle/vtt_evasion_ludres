@@ -61,7 +61,7 @@ class AddressSubscriber implements EventSubscriberInterface
                     new PostalCode()
                 ],
                 'row_attr' => [
-                    'class' => 'form-group-inline ' . $options['row_class'],
+                    'class' => $options['row_class'],
                 ],
                 'attr' => [
                     'data-constraint' => 'app-PostalCode',
@@ -78,8 +78,9 @@ class AddressSubscriber implements EventSubscriberInterface
                 'choices' => $this->communes($postalCode),
                 'placeholder' => 'Sélectionner une commune',
                 'row_attr' => [
-                    'class' => 'form-group-inline ' . $options['row_class'],
-                    'id' => $communeId,
+                    'class' => $options['row_class'],
+                    'data-id' => $communeId,
+                    'data-form-modifier-target' => 'container',
                 ],
                 'attr' => [
                     'data-constraint' => 'app-PostalCode',

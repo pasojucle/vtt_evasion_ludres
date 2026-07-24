@@ -13,6 +13,7 @@ use App\Repository\MemberRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\State\User\Provider\UserListProvider;
+use App\State\User\Provider\UserReadProvider;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetOverviewSeason;
 use App\UseCase\User\GetParticipation;
@@ -54,16 +55,12 @@ class UserController extends AbstractCrudController
         UserListProvider $provider,
         Request $request
     ): StreamedResponse {
-        /**  @var UserFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
-
-        $response = new StreamedResponse(function () use ($provider, $filter) {
-            $provider->streamExportContent($filter);
-        });
-        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export_adherents.csv"');
-
-        return $response;
+        return $this->handleExportAction(
+            $request,
+            UserFilter::class,
+            $provider,
+            'export_adherents.csv'
+        );
     }
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
@@ -85,15 +82,16 @@ class UserController extends AbstractCrudController
     #[IsGranted('USER_SHARE', 'user')]
     public function adminUser(
         User $user,
-        Request $request
+        Request $request,
+        UserReadProvider $provider,
     ): Response {
-        $session = $request->getSession();
-
-        return $this->render('user/admin/user.html.twig', [
-            'user' => $this->userDtoTransformer->fromEntity($user),
-            'referer' => $session->get('admin_user_redirect'),
-        ]);
+        return $this->handleComponentAction(
+            $request,
+            $provider,
+            $user
+        );
     }
+
 
     #[Route('/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], requirements: ['user' => '\d+'], defaults:['filtered' => false])]
     #[IsGranted('USER_VIEW', 'user')]
@@ -108,7 +106,7 @@ class UserController extends AbstractCrudController
 
     #[Route('/adherent/participation/export/{user}', name: 'user_participation_export', methods: ['GET', 'POST'], requirements: ['user' => '\d+'])]
     #[IsGranted('USER_VIEW', 'user')]
-    public function adminUserParticipationExeport(
+    public function adminUserParticipationExport(
         GetParticipation $getParticipation,
         Request $request,
         User $user,

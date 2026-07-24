@@ -20,7 +20,7 @@ class LicenceRejectProvider implements FormComponentProviderInterface
         private MessageProvider $messageProvider,
     ) {
     }
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         $licence = $entity->licence;
         return new DialogModalView(

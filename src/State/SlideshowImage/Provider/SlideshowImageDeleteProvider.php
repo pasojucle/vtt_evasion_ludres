@@ -19,7 +19,7 @@ class SlideshowImageDeleteProvider implements FormComponentProviderInterface
     /**
      * @implements FormComponentProviderInterface<SlideshowImage>
      */
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'image <b>%s</b> ?',

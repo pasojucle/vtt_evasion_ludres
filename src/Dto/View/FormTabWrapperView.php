@@ -6,18 +6,17 @@ namespace App\Dto\View;
 
 use App\Dto\View\Interface\ComponentFormViewInterface;
 
-readonly class FormTabWrapperView extends TabWrapperView implements ComponentFormViewInterface
+readonly class FormTabWrapperView implements ComponentFormViewInterface
 {
     public function __construct(
-        string $name,
-        string $title,
-        string $description,
-        array $tabs,
-        TabEntityInterface $entity,
-        ?LinkView $fallback,
+        public string $name,
+        public string $title,
+        public string $description,
+        public array $tabs,
+        public TabEntityInterface $entity,
+        public ?LinkView $fallback,
         public ButtonView $submit
     ) {
-        parent::__construct($name, $title, $description, $tabs, $entity, $fallback);
     }
 
     public function getName(): string

@@ -19,7 +19,7 @@ class DocumentationDeleteProvider implements FormComponentProviderInterface
     /**
      * @implements FormComponentProviderInterface<Documentation>
      */
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la documentation %s', $entity->getName()));
     }

@@ -21,7 +21,7 @@ class MemberDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'utilisateur <b>%s</b> ?',

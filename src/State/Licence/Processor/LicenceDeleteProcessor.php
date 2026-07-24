@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\Licence;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class LicenceDeleteProcessor implements HtmlProcessorInterface
+class LicenceDeleteProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager
@@ -17,9 +17,9 @@ class LicenceDeleteProcessor implements HtmlProcessorInterface
     }
 
     /**
-     * @implements HtmlProcessorInterface<Licence>
+     * @implements FormRedirectProcessorInterface<Licence>
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         foreach ($entity->getLicenceAgreements() as $licenceAgreement) {
             $this->entityManager->remove($licenceAgreement);
@@ -28,7 +28,7 @@ class LicenceDeleteProcessor implements HtmlProcessorInterface
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             messageKey: 'licence.flash.success.delete',
             targetUrl: $targetUrl,

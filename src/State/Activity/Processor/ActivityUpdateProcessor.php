@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\BikeRide;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use App\UseCase\v2\Activity\UpdateActivity;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ActivityUpdateProcessor implements HtmlProcessorInterface
+class ActivityUpdateProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -21,7 +21,7 @@ class ActivityUpdateProcessor implements HtmlProcessorInterface
     /**
      * @param BikeRide $entity
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         $entity = $this->updateActivity->execute($entity, $uploadFiles);
 
@@ -33,7 +33,7 @@ class ActivityUpdateProcessor implements HtmlProcessorInterface
         
         $this->entityManager->flush();
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: $messageKey,

@@ -13,8 +13,7 @@ readonly class TabWrapperView implements ComponentViewInterface
      */
     public function __construct(
         public string $name,
-        public string $title,
-        public string $description,
+        public string $header,
         public array $tabs,
         public TabEntityInterface $entity,
         public ?LinkView $fallback,

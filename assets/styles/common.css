@@ -57,10 +57,10 @@ h6{
 aside, details, figcaption, figure, footer, header, hgroup, nav, section {
     display: block;
 }
-img, table, td, blockquote, code, pre, textarea, input, video {
+/* img, table, td, blockquote, code, pre, textarea, input, video {
     max-width: 100%;
     box-sizing: border-box;
-}
+} */
 div, textarea, table, td, th, code, pre, samp {
     word-wrap: break-word;
 }

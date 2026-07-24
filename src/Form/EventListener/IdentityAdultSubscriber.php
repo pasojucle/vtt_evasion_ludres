@@ -55,9 +55,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
         $form
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
                 'constraints' => [
                     new NotNull(),
                     new NotBlank(),
@@ -70,9 +67,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
                 'constraints' => [
                     new NotNull(),
                     new NotBlank(),
@@ -90,6 +84,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 'disabled' => $isYearly,
             ])
             ->add('address', AddressType::class, [
+                'label' => false,
                 'required' => true,
                 'gardian' => 'member',
                 'attr' => ['data-gardian' => 'member'],
@@ -97,9 +92,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
             ->add('phone', TextType::class, [
                 'label' => 'Téléphone fixe',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new Phone(),
                 ],
@@ -114,9 +106,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 'label' => 'Je suis né à l\'étranger',
                 'mapped' => false,
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-action' => 'click->form-modifier#change',
                     'data-container-id' => 'birth-place',
@@ -124,11 +113,14 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'data' => $foreignBorn,
             ])
-            ->add('pictureFile', FileType::class, [
+            ->add('passportPhoto', FileType::class, [
                 'label' => 'Photo d\'itentité',
                 'mapped' => false,
                 'required' => false,
                 'block_prefix' => 'custom_file',
+                'row_attr' => [
+                    'data-controller' => 'input-file',
+                ],
                 'attr' => [
                     'accept' => '.bmp,.jpeg,.jpg,.png',
                 ],
@@ -171,7 +163,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
     {
         $isYearly = $form->getConfig()->getOption('is_yearly');
         $hidden = LicenceCategoryEnum::ADULT !== $category;
-        $class = ($hidden) ? 'hidden' : 'form-group-inline';
+        $class = ($hidden) ? 'hidden' : '';
         list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
         $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
         $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
@@ -192,9 +184,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-action' => 'change->form-modifier#change',
                     'data-container-id' => 'category-container',
                     'data-form-validator-target' => 'field',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group',
                 ],
                 'disabled' => $isYearly,
                 'constraints' => [
@@ -239,9 +228,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     ? '<p>Adresse mail (de l\'enfant)<br> Le mail de contact avec le club sera celui du parent</p>'
                     : 'Adresse mail',
                 'label_html' => true,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new Email(),
                 ],
@@ -255,9 +241,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 'label' => LicenceCategoryEnum::SCHOOL === $category
                     ? 'Téléphone mobile (de l\'enfant)'
                     : 'Téléphone mobile',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new Phone(),
                 ],
@@ -312,7 +295,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
 
     private function getBirthPlaceClasses(bool $foreignBorn): array
     {
-        $birthPlaceClasses = ['form-group-inline birth-place', 'form-group-inline birth-place d-none'];
+        $birthPlaceClasses = ['birth-place', 'birth-place hidden'];
         if ($foreignBorn) {
             return array_reverse($birthPlaceClasses);
         };

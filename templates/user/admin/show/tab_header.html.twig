@@ -1,0 +1,15 @@
+<div>
+    <h1 class="font-bold text-3xl">{{ entity.fullName }}</h1>
+    <div class="flex flex-col gap-1 mt-1">
+        <div class="flex items-center gap-2 text-muted">
+            {{ entity.levelType }}
+            {% include entity.level.template with {(entity.level.name): entity.level }%}
+        </div>
+        <div class="flex gap-2 text-muted">
+            <div>Autorisation{% if 1 < entity.authorizations|length %}s{% endif %}</div>
+            {% for authorization in entity.authorizations %}
+                {% include authorization.template with {(authorization.name): authorization }%}
+            {% endfor %}
+        </div>
+    </div>
+</div>

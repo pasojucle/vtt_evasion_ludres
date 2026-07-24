@@ -14,7 +14,7 @@ use App\State\Interface\FormComponentProviderInterface;
  */
 class CoverageValidateProvider implements FormComponentProviderInterface
 {
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         return new DialogModalView(
             type: DialogType::SUCCESS,

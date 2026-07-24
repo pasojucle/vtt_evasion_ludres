@@ -14,7 +14,7 @@ use App\State\Interface\FormComponentProviderInterface;
  */
 class LicenceReceiveProvider implements FormComponentProviderInterface
 {
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         $message = ($entity->getState()->isYearly())
             ? 'Confirmez-vous la bonne réception du dossier d\'inscription de %s signé avec le paiement?'

@@ -13,7 +13,7 @@ use App\State\Interface\FormComponentProviderInterface;
 */
 class SkillCategoryCreateProvider implements FormComponentProviderInterface
 {
-    public function mapToView(object $entity, ?string $fallback = null): SheetView
+    public function getFormView(object $entity, ?string $fallback = null): SheetView
     {
         return new SheetView(
             title: 'Catégories',

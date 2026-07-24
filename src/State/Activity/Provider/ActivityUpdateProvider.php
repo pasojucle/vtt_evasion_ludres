@@ -8,7 +8,6 @@ use App\Dto\Enum\Size;
 use App\Dto\View\ButtonView;
 use App\Dto\View\LinkView;
 use App\Dto\View\FormTabWrapperView;
-use App\Dto\View\TabWrapperView;
 use App\Dto\View\TabView;
 use App\Entity\BikeRide;
 use App\Mapper\Activity\ActivityUpdateMapper;
@@ -27,17 +26,18 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
     ) {
     }
 
-    public function mapToView(object $entity, ?string $fallback = null): FormTabWrapperView
+    public function getFormView(object $entity, ?string $fallback = null): FormTabWrapperView
     {
+        $action = ($entity->getId()) ? 'Modifier' : 'Ajouter';
 
         return new FormTabWrapperView(
             name: 'activityEdit',
-            title: ($entity->getId()) ? 'Modifier une activité' : 'Ajouter une activité',
-            description: 'Ajouter une activité en définissant les paramètres généreaux, des participants, des médias, des parcours...',
+            title: sprintf('%s une activité', $action),
+            description: sprintf('%s une activité en définissant les paramètres généreaux, des participants, des médias, des parcours...', $action),
             tabs: [
                 new TabView('Général', 'lucide:info', 'bike_ride/admin/edit/tab_general.html.twig'),
                 new TabView('Options', 'lucide:settings-2', 'bike_ride/admin/edit/tab_option.html.twig'),
-                new TabView('Participants', 'lucide:image', 'bike_ride/admin/edit/tab_participant.html.twig', ),
+                new TabView('Participants', 'lucide:users', 'bike_ride/admin/edit/tab_participant.html.twig', ),
                 new TabView('Médias', 'lucide:image', 'bike_ride/admin/edit/tab_media.html.twig'),
                 new TabView('Parcours GPX', 'lucide:map', 'bike_ride/admin/edit/tab_gpx.html.twig'),
             ],
@@ -48,7 +48,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
                 size: Size::ICON
             ),
             submit: new ButtonView(
-                label: 'Enregister',
+                label: $action,
                 icon: 'lucide:square-check-big'
             ),
         );

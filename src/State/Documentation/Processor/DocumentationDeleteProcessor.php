@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\Documentation\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\Documentation;
 use App\Repository\DocumentationRepository;
 use App\Service\OrderByService;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class DocumentationDeleteProcessor implements HtmlProcessorInterface
+class DocumentationDeleteProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -20,7 +20,7 @@ class DocumentationDeleteProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         /** @var Documentation $entity*/
         $this->entityManager->remove($entity);
@@ -29,7 +29,7 @@ class DocumentationDeleteProcessor implements HtmlProcessorInterface
         $documentations = $this->documentationRepository->findAll();
         $this->orderByService->resetOrders($documentations);
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             messageKey: 'documentation.flash.success.delete',
             targetUrl: $targetUrl,

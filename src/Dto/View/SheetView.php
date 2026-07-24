@@ -22,7 +22,7 @@ readonly class SheetView implements ComponentFormViewInterface
 
     public function getTemplate(): string
     {
-        return 'components/_sheet.sheet.html.twig';
+        return 'components/_form.sheet.html.twig';
     }
 
     public function getFormAttr(): array

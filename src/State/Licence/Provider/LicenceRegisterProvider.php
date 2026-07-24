@@ -15,7 +15,7 @@ use App\State\Interface\FormComponentProviderInterface;
  */
 class LicenceRegisterProvider implements FormComponentProviderInterface
 {
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         $licence = $entity->licence;
         return new DialogModalView(

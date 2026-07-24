@@ -24,7 +24,7 @@
                         href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id})}}" 
                         class="w-full rounded-md border border-border"
                     >
-                        <div class="bg-slate-300 flex items-center justify-center h-8">
+                        <div class="bg-slate-300 flex items-center justify-center h-8 text-xs font-semibold uppercase">
                             <h2>{{ bikeRide.title }} du {{ bikeRide.period }}</h2>
                         </div>
                         <turbo-frame 
@@ -63,7 +63,7 @@
             {% endfor %}
             {% for participation in widgets.participations %}
             <div class="flex-1 min-w-80 rounded-md border border-border bg-slate-100">
-                <div class="bg-slate-300 flex items-center justify-center h-8">
+                <div class="bg-slate-300 flex items-center justify-center h-8 text-xs font-semibold uppercase">
                     <h2>{{ participation.title }}</h2>
                 </div>
                 <div class="p-3">
@@ -84,7 +84,7 @@
             {% for list in widgets.lists %}
             <div class="flex-1 min-w-80 rounded-md border border-border bg-slate-100">
                 <a href="{{ list.url }}">
-                    <div class="bg-slate-300 flex items-center justify-center h-8">
+                    <div class="bg-slate-300 flex items-center justify-center h-8 text-xs font-semibold uppercase">
                         <h2>{{ list.title }}</h2>
                     </div>
                     <turbo-frame 

@@ -20,7 +20,7 @@ class BikeRideTypeDeleteProvider implements FormComponentProviderInterface
      * @param BikeRideType $entity
      * @implements FormComponentProviderInterface<BikeRideType>
      */
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf('Etes vous certain de supprimer le type d\'activité %s', $entity->getName())

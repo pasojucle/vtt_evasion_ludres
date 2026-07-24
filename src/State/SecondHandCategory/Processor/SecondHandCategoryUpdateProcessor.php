@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\SecondHandCategory\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\SecondHandCategory;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SecondHandCategoryUpdateProcessor implements HtmlProcessorInterface
+class SecondHandCategoryUpdateProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -17,13 +17,13 @@ class SecondHandCategoryUpdateProcessor implements HtmlProcessorInterface
     }
 
     /**
-     * @implements HtmlProcessorInterface<SecondHandCategory>
+     * @implements FormRedirectProcessorInterface<SecondHandCategory>
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         $this->entityManager->flush();
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'secondHandCategory.flash.success.Uupdate',

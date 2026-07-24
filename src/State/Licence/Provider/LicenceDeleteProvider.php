@@ -19,7 +19,7 @@ class LicenceDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function mapToView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf(

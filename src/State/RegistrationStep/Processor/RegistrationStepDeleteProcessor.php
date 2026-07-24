@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\RegistrationStep\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\RegistrationStep;
 use App\Repository\RegistrationStepRepository;
 use App\Service\OrderByService;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class RegistrationStepDeleteProcessor implements HtmlProcessorInterface
+class RegistrationStepDeleteProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -20,7 +20,7 @@ class RegistrationStepDeleteProcessor implements HtmlProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         /** @var RegistrationStep $entity */
         $group = $entity->getRegistrationStepGroup();
@@ -31,7 +31,7 @@ class RegistrationStepDeleteProcessor implements HtmlProcessorInterface
         $registrationSteps = $this->registrationStepRepository->findByGroup($group->getId());
         $this->orderByService->resetOrders($registrationSteps);
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             messageKey: 'message.flash.success.delete',
             targetUrl: $targetUrl,

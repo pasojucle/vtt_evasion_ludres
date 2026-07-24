@@ -9,5 +9,6 @@ interface ComponentFormViewInterface
     public function getName(): string;
     
     public function getTemplate(): string;
+    
     public function getFormAttr(): array;
 }

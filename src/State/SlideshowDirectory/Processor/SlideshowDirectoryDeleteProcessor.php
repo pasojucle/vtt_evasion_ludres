@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\SlideshowDirectory\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\SlideshowDirectory;
 use App\Service\ProjectDirService;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class SlideshowDirectoryDeleteProcessor implements HtmlProcessorInterface
+class SlideshowDirectoryDeleteProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -20,9 +20,9 @@ class SlideshowDirectoryDeleteProcessor implements HtmlProcessorInterface
     }
 
     /**
-     * @implements HtmlProcessorInterface<SlideshowDirectory>
+     * @implements FormRedirectProcessorInterface<SlideshowDirectory>
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         $id = $entity->getId();
         foreach ($entity->getSlideshowImages() as $image) {
@@ -35,7 +35,7 @@ class SlideshowDirectoryDeleteProcessor implements HtmlProcessorInterface
         $filesystem = new Filesystem();
         $filesystem->remove($this->projectDir->path('slideshow', (string) $id));
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             messageKey: 'slideshow.directory.flash.success.delete',
             targetUrl: $targetUrl,

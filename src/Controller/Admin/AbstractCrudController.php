@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\State\RedirectProcessorResult;
+use App\Dto\State\TurboStreamProcessorResult;
 use App\Form\Filter\ListFilterType;
 use App\Service\UrlContextService;
 use App\State\Interface\ComponentProcessorInterface;
+use App\State\Interface\ComponentProviderInterface;
 use App\State\Interface\FilterInitializerInterface;
 use App\State\Interface\FormAddComponentProviderInterface;
 use App\State\Interface\FormComponentProviderInterface;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use App\State\Interface\JsonProcessorInterface;
 use App\State\Interface\ListProviderInterface;
 use App\State\Interface\StreamExportableInterface;
+use App\State\Interface\TurboStreamProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Contracts\Service\Attribute\Required;
+use Symfony\UX\Turbo\TurboBundle;
 
 abstract class AbstractCrudController extends AbstractController
 {
@@ -72,8 +78,8 @@ abstract class AbstractCrudController extends AbstractController
     protected function handleFormComponentAction(
         Request $request,
         object $object,
-        FormComponentProviderInterface $provider,
-        HtmlProcessorInterface $processor,
+        FormComponentProviderInterface | TurboStreamProviderInterface $provider,
+        FormProcessorInterface $processor,
         string $formClass = FormType::class,
         array $formOptions = [],
     ): Response {
@@ -95,14 +101,24 @@ abstract class AbstractCrudController extends AbstractController
                     $request->files->get($form->getName()),
                     $fallback,
                 );
-                $this->addFlash($result->flashType, $result->messageKey);
+                if ($result instanceof RedirectProcessorResult) {
+                    $this->addFlash($result->flashType, $result->messageKey);
                 
-                return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
+                    return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
+                }
+                if ($result instanceof TurboStreamProcessorResult) {
+
+                    return $this->render($result->laziTemplate, [
+                        'view' => $provider->getStreamView($object),
+                        ], new Response('', Response::HTTP_OK, [
+                            'Content-Type' => 'text/vnd.turbo-stream.html',
+                        ]));
+                }
             }
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $view = $provider->mapToView($object, $fallback);
+        $view = $provider->getFormView($object, $fallback);
         $formView = $form->createView();
         $formView->vars['attr'] = array_merge($formView->vars['attr'] ?? [], $view->getFormAttr());
         return $this->render($view->getTemplate(), [
@@ -114,7 +130,7 @@ abstract class AbstractCrudController extends AbstractController
     protected function handleProcessAction(
         Request $request,
         object $object,
-        HtmlProcessorInterface $processor,
+        FormRedirectProcessorInterface $processor,
     ): Response {
         $result = $processor->process(
             $object,
@@ -169,5 +185,18 @@ abstract class AbstractCrudController extends AbstractController
         $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
 
         return $response;
+    }
+
+    protected function handleComponentAction(
+        Request $request,
+        ComponentProviderInterface $provider,
+        object $object,
+    ): Response {
+        $fallback = $this->urlContextService->getRedirectUrl($request);
+
+        $view = $provider->getView($object, $fallback);
+        return $this->render($view->getTemplate(), [
+            'view' => $view
+        ]);
     }
 }

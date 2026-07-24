@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Processor;
 
-use App\Dto\State\HtmlProcessorResult;
+use App\Dto\State\RedirectProcessorResult;
 use App\Entity\Survey;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
-use App\State\Interface\HtmlProcessorInterface;
+use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SurveyDeleteProcessor implements HtmlProcessorInterface
+class SurveyDeleteProcessor implements FormRedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -21,9 +21,9 @@ class SurveyDeleteProcessor implements HtmlProcessorInterface
     }
 
     /**
-     * @implements HtmlProcessorInterface<Survey>
+     * @implements FormRedirectProcessorInterface<Survey>
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): HtmlProcessorResult
+    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
         ;
         $this->surveyResponseRepository->deleteBySurvey($entity);
@@ -35,7 +35,7 @@ class SurveyDeleteProcessor implements HtmlProcessorInterface
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 
-        return new HtmlProcessorResult(
+        return new RedirectProcessorResult(
             success: true,
             targetUrl: $targetUrl,
             messageKey: 'registration.flash.success.received',
