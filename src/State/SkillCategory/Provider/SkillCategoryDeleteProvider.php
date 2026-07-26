@@ -25,4 +25,9 @@ class SkillCategoryDeleteProvider implements FormComponentProviderInterface
             )
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

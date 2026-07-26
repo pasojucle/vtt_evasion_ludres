@@ -23,4 +23,9 @@ class RegistrationStepDeleteProvider implements FormComponentProviderInterface
             $entity->getTitle()
         ));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

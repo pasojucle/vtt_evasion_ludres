@@ -92,7 +92,6 @@ class UserController extends AbstractCrudController
         );
     }
 
-
     #[Route('/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], requirements: ['user' => '\d+'], defaults:['filtered' => false])]
     #[IsGranted('USER_VIEW', 'user')]
     public function adminUserParticipation(

@@ -172,8 +172,8 @@ class ClusterDtoTransformer
                 'birthCountry' => $birthCountry,
                 'email' => ($userEntity instanceof Guest) ? $userEntity->getEmail() : $identity->getEmail(),
                 'phone' => implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()])),
-                'emergencyPhone' => $identity->getEmergencyPhone(),
-                'emergencyContact' => $identity->getEmergencyContact(),
+                // 'emergencyPhone' => $identity->getEmergencyPhone(),
+                // 'emergencyContact' => $identity->getEmergencyContact(),
                 'picture' => $this->identityService->getPicture($identity->getFilename()),
             ];
             if ($userEntity instanceof Member) {

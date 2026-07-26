@@ -21,4 +21,9 @@ class SkillCategoryCreateProvider implements FormComponentProviderInterface
             action: 'Ajouter',
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

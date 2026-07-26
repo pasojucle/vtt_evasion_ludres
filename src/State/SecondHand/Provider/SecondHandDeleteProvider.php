@@ -22,4 +22,9 @@ class SecondHandDeleteProvider implements FormComponentProviderInterface
             sprintf('Etes vous certain de supprimer l\'annonce %s ?', $entity->getName()),
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

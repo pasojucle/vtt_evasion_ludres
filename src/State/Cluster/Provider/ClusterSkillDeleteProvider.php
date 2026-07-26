@@ -26,4 +26,9 @@ class ClusterSkillDeleteProvider implements FormComponentProviderInterface
             $entity->skill->getContent()
         ));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

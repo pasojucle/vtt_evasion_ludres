@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\Activity;
 
 use App\Dto\View\Activity\ActivityDto;
+use App\Dto\View\Activity\ActivityView;
 use App\Entity\BikeRide;
 use App\Service\FileLocation\BikeRideFileLocation;
 use App\Service\FileLocation\DefaultFileLocation;
@@ -18,13 +19,13 @@ class ActivityUpdateMapper
         private DefaultFileLocation $defaultFileLocation,
     ) {
     }
-    public function mapToView(BikeRide $entity): ActivityDto
+    public function mapToView(BikeRide $entity): ActivityView
     {
         [$directoy, $filename] = $entity->getFilename()
             ? [$this->bikeRideFileLocation->getBaseDirectoryName(), $entity->getFilename()]
             : [$this->defaultFileLocation->getBaseDirectoryName(), 'camera.jpg'];
 
-        return new ActivityDto(
+        return new ActivityView(
             id: $entity->getId(),
             title: $entity->getTitle(),
             filename: $entity->getFilename(),

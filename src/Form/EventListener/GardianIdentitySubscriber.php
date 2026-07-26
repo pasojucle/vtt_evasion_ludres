@@ -44,9 +44,6 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
         $form
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new NotNull(),
                     new NotBlank(),
@@ -56,9 +53,6 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new NotNull(),
                     new NotBlank(),
@@ -68,9 +62,6 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
             ])
             ->add('mobile', TextType::class, [
                 'label' => 'Téléphone mobile',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new Phone(),
                 ],
@@ -83,9 +74,6 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Adresse mail',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new Email(),
                 ],
@@ -95,17 +83,6 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                     'data-form-validator-target' => 'field'
                 ],
             ])
-            ->add('otherAddress', CheckboxType::class, [
-                'label' => 'Réside à une autre adresse que l\'enfant',
-                'required' => false,
-                'mapped' => false,
-                'attr' => [
-                    'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => sprintf('address-container-%s', $options['gardian']->value),
-                    'data-form-validator-target' => 'field'
-                ],
-                'data' => $otherAddress,
-            ])
         ;
 
         if (GardianKindEnum::LEGAL_GARDIAN == $options['gardian']) {
@@ -113,9 +90,6 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                 ->add('phone', TextType::class, [
                     'label' => 'Téléphone fixe',
                     'required' => false,
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
                     'constraints' => [
                         new Phone(),
                     ],
@@ -138,15 +112,24 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                         'data-constraint' => 'app-BirthDate',
                         'data-form-validator-target' => 'field'
                     ],
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
                     'constraints' => [
                         new BirthDate(),
                     ],
                 ])
                 ;
         }
+        $form
+            ->add('otherAddress', CheckboxType::class, [
+                'label' => 'Réside à une autre adresse que l\'enfant',
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => sprintf('address-container-%s', $options['gardian']->value),
+                    'data-form-validator-target' => 'field'
+                ],
+                'data' => $otherAddress,
+            ]);
         $this->modifier($form, $otherAddress);
     }
 
@@ -164,12 +147,18 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
 
     private function modifier(FormInterface $form, bool $otherAddress): void
     {
+        $gardian = $form->getConfig()->getOption('gardian')->value;
         $form
             ->add('address', AddressType::class, [
+                'label' => false,
                 'row_class' => ($otherAddress) ? 'identity-address' : 'identity-address hidden',
                 'required' => $otherAddress,
-                'gardian' => $form->getConfig()->getOption('gardian')->value,
-                'attr' => ['data-gardian' => $form->getConfig()->getOption('gardian')->value],
+                'gardian' => $gardian,
+                'attr' => [
+                    'data-gardian' => $gardian,
+                    'data-id' => sprintf('address-container-%s', $gardian),
+                    'data-form-modifier-target' => 'container'
+                ],
             ]);
     }
 }

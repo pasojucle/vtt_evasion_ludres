@@ -53,14 +53,8 @@ class Identity implements UploadableInterface
     #[ORM\ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
     private ?Commune $birthCommune = null;
 
-    #[ORM\Column(type: 'string', length: 14, nullable: true)]
-    private ?string $emergencyPhone = null;
-
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $birthCountry = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $emergencyContact = null;
 
     /**
      * @var Collection<int, MemberGardian>
@@ -230,18 +224,6 @@ class Identity implements UploadableInterface
         return $this;
     }
 
-    public function getEmergencyPhone(): ?string
-    {
-        return $this->emergencyPhone;
-    }
-
-    public function setEmergencyPhone(?string $emergencyPhone): self
-    {
-        $this->emergencyPhone = $emergencyPhone;
-
-        return $this;
-    }
-
     public function getBirthCountry(): ?string
     {
         return $this->birthCountry;
@@ -250,18 +232,6 @@ class Identity implements UploadableInterface
     public function setBirthCountry(?string $birthCountry): static
     {
         $this->birthCountry = $birthCountry;
-
-        return $this;
-    }
-
-    public function getEmergencyContact(): ?string
-    {
-        return $this->emergencyContact;
-    }
-
-    public function setEmergencyContact(?string $emergencyContact): static
-    {
-        $this->emergencyContact = $emergencyContact;
 
         return $this;
     }

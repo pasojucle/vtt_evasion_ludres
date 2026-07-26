@@ -21,4 +21,9 @@ class SkillCategoryUpdateProvider implements FormComponentProviderInterface
             action: 'Modifier',
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

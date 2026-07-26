@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Licence;
+use App\Entity\Member;
 use App\Form\GardianType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -31,6 +32,7 @@ class GardiansType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'data_class' => Member::class,
             'category' => Licence::CATEGORY_ADULT,
             'is_yearly' => null,
         ]);

@@ -23,4 +23,9 @@ class SkillDeleteProvider implements FormComponentProviderInterface
             strip_tags($entity->getContent())
         ));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

@@ -53,9 +53,9 @@ class IdentityDtoTransformer
         $identityDto->address = $this->addressDtoTransformer->fromEntity($address, $histories);
         $identityDto->email = ($identity->getUser() instanceof Guest) ? $identity->getUser()->getEmail() : $identity->getEmail();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
-        $identityDto->emergencyPhone = $identity->getEmergencyPhone();
-        $identityDto->emergencyPhoneAnchor = $this->getPhoneAnchor($identity->getEmergencyPhone());
-        $identityDto->emergencyContact = $identity->getEmergencyContact();
+        // $identityDto->emergencyPhone = $identity->getEmergencyPhone();
+        // $identityDto->emergencyPhoneAnchor = $this->getPhoneAnchor($identity->getEmergencyPhone());
+        // $identityDto->emergencyContact = $identity->getEmergencyContact();
         $identityDto->phonesAnchor = $this->getPhonesAnchor($identity);
         $identityDto->picture = $this->identityService->getPicture($identity->getFilename());
 

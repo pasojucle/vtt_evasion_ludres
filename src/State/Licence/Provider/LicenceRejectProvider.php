@@ -39,4 +39,9 @@ class LicenceRejectProvider implements FormComponentProviderInterface
             $this->messageProvider->getMessageById('REGISTRATION_REJECT_MESSAGE', $licence->getMember())
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

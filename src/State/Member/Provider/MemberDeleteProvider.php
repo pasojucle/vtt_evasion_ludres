@@ -28,4 +28,9 @@ class MemberDeleteProvider implements FormComponentProviderInterface
             $this->userService->getFullname($entity)
         ));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

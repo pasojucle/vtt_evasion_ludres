@@ -26,4 +26,9 @@ class SlideshowImageDeleteProvider implements FormComponentProviderInterface
             $entity->getFilename()
         ));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

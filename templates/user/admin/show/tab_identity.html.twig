@@ -1,11 +1,5 @@
 
-    <div class="grid grid-cols-1 lg:grid-cols-[150px_1fr_1fr] gap-4 2xl:gap-12">
-        <turbo-frame 
-            id="passport-photo-{{ view.entity.identityId }}"
-            class="min-h-0 flex items-center justify-center rounded-md border border-border p-4"
-        >
-            {% include "identity/admin/_passport_photo.html.twig" with {view: view.entity} %}
-        </turbo-frame >
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 2xl:gap-12">
         <div class="rounded-md border border-border">
             <turbo-frame 
                 id="identity-{{ view.entity.identityId }}"
@@ -44,36 +38,59 @@
                 </div>
             </turbo-frame>
         </div>
-        <div class="rounded-md border border-border">
-            <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
-                <h2>Contacts</h2>
-            </div>
-            <div class="animate-pulse flex flex-col gap-2 p-3">
-                <div class="flex">
-                    <div class="h-4 w-28 bg-slate-200"></div>
-                    <div class="ml-auto h-4 w-4 bg-slate-200"></div>
+        <div class="flex flex-col gap-4">
+            {% for gardian in view.entity.gardians %}
+                <div class="rounded-md border border-border">
+                    <turbo-frame 
+                        id="gardian-{{ gardian.id }}"
+                        src="{{ path('admin_gardian_show', {gardian: gardian.id}) }}"
+                    >
+                        <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
+                            <h2>{{ gardian.kind }}</h2>
+                        </div>
+                        <div class="animate-pulse p-4 2xl:p-6">
+                            <dl class="flex flex-col gap-4 text-sm">
+                                <div class="flex flex-col gap-1">
+                                    <dt class="h-4 w-28 bg-slate-200"></dt>
+                                    <dd class="h-4 w-32 bg-slate-200"></dd>
+                                </div>
+
+                                <div class="flex flex-col gap-1">
+                                    <dt class="h-4 w-32 bg-slate-200"></dt>
+                                    <dd class="h-4 w-63 bg-slate-200"></dd>
+                                </div>
+
+                            </dl>
+                        </div>
+                    </turbo-frame>
                 </div>
-                <div class="flex">
-                    <div class="h-4 w-36 bg-slate-200"></div>
-                    <div class="ml-auto h-4 w-4 bg-slate-200"></div>
+            {% endfor %}
+            {% if view.entity.emergencyContactId %}
+            <div class="rounded-md border border-border">
+                    <turbo-frame 
+                        id="emergency-contact-{{ view.entity.emergencyContactId }}"
+                        src="{{ path('admin_emergency_contact_show', {emergencyContact: view.entity.emergencyContactId}) }}"
+                    >
+                        <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
+                            <h2>Contact d'urgence</h2>
+                        </div>
+                        <div class="animate-pulse p-4 2xl:p-6">
+                            <dl class="flex flex-col gap-4 text-sm">
+                                <div class="flex flex-col gap-1">
+                                    <dt class="h-4 w-28 bg-slate-200"></dt>
+                                    <dd class="h-4 w-32 bg-slate-200"></dd>
+                                </div>
+
+                                <div class="flex flex-col gap-1">
+                                    <dt class="h-4 w-32 bg-slate-200"></dt>
+                                    <dd class="h-4 w-63 bg-slate-200"></dd>
+                                </div>
+
+                            </dl>
+                        </div>
+                    </turbo-frame>
                 </div>
-                <div class="flex">
-                    <div class="h-4 w-32 bg-slate-200"></div>
-                    <div class="ml-auto h-4 w-4 bg-slate-200"></div>
-                </div>
-                <div class="flex">
-                    <div class="h-4 w-24 bg-slate-200"></div>
-                    <div class="ml-auto h-4 w-4 bg-slate-200"></div>
-                </div>
-                <div class="flex">
-                    <div class="h-4 w-32 bg-slate-200"></div>
-                    <div class="ml-auto h-4 w-4 bg-slate-200"></div>
-                </div>
-                <div class="flex">
-                    <div class="h-4 w-28 bg-slate-200"></div>
-                    <div class="ml-auto h-4 w-4 bg-slate-200"></div>
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 <div>

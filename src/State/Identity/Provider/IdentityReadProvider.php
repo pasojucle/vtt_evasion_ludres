@@ -4,33 +4,46 @@ declare(strict_types=1);
 
 namespace App\State\Identity\Provider;
 
+use App\Dto\View\Identity\IdentitySheetView;
 use App\Dto\View\Identity\IdentityView;
-use App\Dto\View\SheetView;
 use App\Entity\Identity;
 use App\Mapper\Identity\IdentityReadMapper;
-use App\State\Interface\FormComponentProviderInterface;
+
 use App\State\Interface\TurboStreamProviderInterface;
 
 
 /**
- * @implements FormComponentProviderInterface<Identity>
  * @implements TurboStreamProviderInterface<Identity>
  */
-class IdentityReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
+class IdentityReadProvider implements TurboStreamProviderInterface
 {
     public function __construct(
         private IdentityReadMapper $identityReadMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): SheetView
+    public function getFormView(object $entity, ?string $fallback = null): IdentitySheetView
     {
-        return new SheetView(
+        return new IdentitySheetView(
             title: 'Modifier',
             description: 'blabla',
             action: 'Modifier'
         );
         
+    }
+
+    public function getFormOptions(object $entity): array
+    {
+        $user = $entity->getMember();
+        $licence = $user->getLastLicence();
+        return [
+            'category' => $licence->getCategory(),
+            'is_yearly' => $licence->getState()->isYearly(),
+            'is_gardian' => false,
+            'attr' => [
+                'data-controller' => 'form-modifier form-validator',
+            ],
+        ];
     }
 
     public function getStreamView(object $entity): IdentityView

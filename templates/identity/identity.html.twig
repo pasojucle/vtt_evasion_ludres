@@ -49,12 +49,12 @@
             <div class="form-group">{{ form_row(identity.profession) }}</div>
         {% endif %}
         
-        {% if identity.emergencyPhone is defined %}
+        {# {% if identity.emergencyPhone is defined %}
             <div class="form-group">
                 {{ form_row(identity.emergencyPhone) }}
                 {{ form_row(identity.emergencyContact) }}
             </div>
-        {% endif %}
+        {% endif %} #}
         {% if identity.email is defined %}
             <div class="form-group">{{ form_row(identity.email) }}</div>
         {% endif %}

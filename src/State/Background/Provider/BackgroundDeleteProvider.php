@@ -26,4 +26,9 @@ class BackgroundDeleteProvider implements FormComponentProviderInterface
             sprintf('Etes vous certain de supprimer l\'image de fond %s', $entity->getFilename()),
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

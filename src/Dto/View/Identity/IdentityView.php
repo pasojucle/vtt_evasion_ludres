@@ -25,6 +25,7 @@ readonly class IdentityView implements TurboStreamViewInterface
         public EmailView $email,
         public array $phones,
         public string $passportPhoto,
+        public ?string $profession,
         public LinkView $action,
     ) {
     }

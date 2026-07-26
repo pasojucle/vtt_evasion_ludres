@@ -2,13 +2,27 @@
     <div class="text-xs font-semibold uppercase text-white">
         <h2>Identité</h2>
     </div>
-    <div class="ml-auto">
+    <div class="ml-auto -mr-2">
         {% include view.action.template with {(view.action.name): view.action} %}
     </div>
 </div>
 <div class="p-4 2xl:p-6">
-    <dl class="flex flex-col gap-4 text-sm">
-        <div class="flex flex-col gap-1">
+    <dl class="flex flex-col gap-2 text-sm">
+        <div class="flex gap-4 items-center">
+            <div class="w-32 h-32 p-2 flex items-center justify-center border border-border rounded-sm">
+                <img 
+                    class="w-full h-full object-contain" src="{{ view.passportPhoto }}" 
+                    alt="{{ view.fullName }}" 
+                >
+            </div>
+            <div class="flex flex-col">
+                <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Nom :</dt>
+                <dd class="font-medium">
+                    {{ view.fullName }}
+                </dd>
+            </div>
+        </div>
+        <div class="flex flex-col">
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Né(e) le :</dt>
             <dd class="text-foreground font-medium">
                 {{ view.birthDate }}<br>
@@ -18,7 +32,7 @@
             </dd>
         </div>
 
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col">
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Adresse :</dt>
             <dd class="text-foreground font-medium">
                 {{ view.address }}<br>
@@ -26,14 +40,14 @@
             </dd>
         </div>
 
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col">
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Mail :</dt>
             <dd class="font-medium">
                 {% include "components/_phone.html.twig" with {view: view.email} %}
             </dd>
         </div>
 
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col">
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Téléphones :</dt>
             <dd class="text-foreground font-medium tracking-wide flex items-center gap-2">
                 {% for phone in view.phones %}
@@ -44,6 +58,13 @@
                 {% endfor %}
             </dd>
         </div>
-
+        {% if view.profession %}
+            <div class="flex flex-col">
+                <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Profession :</dt>
+                <dd class="text-foreground font-medium">
+                    {{ view.profession }}<br>
+                </dd>
+            </div>
+        {% endif %}
     </dl>
 </div>

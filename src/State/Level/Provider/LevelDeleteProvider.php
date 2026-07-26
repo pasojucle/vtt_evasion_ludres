@@ -19,4 +19,9 @@ class LevelDeleteProvider implements FormComponentProviderInterface
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le niveau %s', $entity->getTitle()));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

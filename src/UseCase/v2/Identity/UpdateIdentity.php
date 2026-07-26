@@ -8,9 +8,7 @@ use App\Entity\Identity;
 use App\Service\CommuneService;
 use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 class UpdateIdentity
 {

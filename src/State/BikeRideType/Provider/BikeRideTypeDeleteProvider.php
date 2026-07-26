@@ -26,4 +26,9 @@ class BikeRideTypeDeleteProvider implements FormComponentProviderInterface
             sprintf('Etes vous certain de supprimer le type d\'activité %s', $entity->getName())
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

@@ -39,6 +39,7 @@ class IdentityReadMapper
             phones: array_map(fn ($phone) => new PhoneView($phone),
              array_filter([$identity->getMobile(), $identity->getPhone()])),
             passportPhoto: $this->passportPhotoMapper->mapToView($identity->getFilename()),
+            profession: $identity->getProfession(),
             action: new LinkView(
                 url: $this->urlGenerator->generate('admin_identity_edit', ['identity' => $identity->getId()]),
                 variant: ColorVariant::GOST,

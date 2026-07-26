@@ -85,7 +85,6 @@ class LicenceController extends AbstractCrudController
             provider: $provider,
             processor: $processor,
             formClass: LicenceRegisterType::class,
-            formOptions: $provider->getFormOptions($licence)
         );
     }
 }

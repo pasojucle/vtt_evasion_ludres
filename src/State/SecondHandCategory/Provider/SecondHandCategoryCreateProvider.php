@@ -21,4 +21,9 @@ class SecondHandCategoryCreateProvider implements FormComponentProviderInterface
             action: 'Ajouter',
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

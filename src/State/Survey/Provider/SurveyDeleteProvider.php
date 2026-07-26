@@ -25,4 +25,9 @@ class SurveyDeleteProvider implements FormComponentProviderInterface
             sprintf('<p>Toutes les données relative à ce vote seront supprimées.</p><p>Etes-vous certain de supprimer le sondage <b>%s</b> ?</p><p>Toutes les données relatives au sondages seront supprimées.</p><p>Cette opération est irréversible.</p>', $entity->getTitle()),
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

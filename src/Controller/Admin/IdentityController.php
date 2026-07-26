@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class IdentityController extends AbstractCrudController
 {
-    #[Route('/admin/identite/{identity}', name: 'admin_identity_show', methods: ['GET', 'POST'])]
+    #[Route('/admin/identite/{identity}', name: 'admin_identity_show', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'identity')]
     public function show(
         IdentityReadProvider $provider,
@@ -35,23 +35,13 @@ class IdentityController extends AbstractCrudController
         IdentityUpdateProcessor $processor,
         Identity $identity,
     ): Response {
-        $user = $identity->getMember();
-        $licence = $user->getLastLicence();
 
         return $this->handleFormComponentAction(
             $request,
             $identity,
             $provider,
             $processor,
-            IdentityType::class,
-            [
-                'category' => $licence->getCategory(),
-                'is_yearly' => $licence->getState()->isYearly(),
-                'is_gardian' => false,
-                'attr' => [
-                    'data-controller' => 'form-modifier form-validator',
-                ],
-            ],
+            IdentityType::class
         );
     }
 }

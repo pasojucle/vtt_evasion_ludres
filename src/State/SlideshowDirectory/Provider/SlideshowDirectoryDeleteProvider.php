@@ -28,4 +28,9 @@ class SlideshowDirectoryDeleteProvider implements FormComponentProviderInterface
             $entity->getName()
         ));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

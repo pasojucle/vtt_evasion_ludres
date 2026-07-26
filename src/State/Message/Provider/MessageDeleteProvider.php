@@ -23,4 +23,9 @@ class MessageDeleteProvider implements FormComponentProviderInterface
             $entity->getLabel()
         ));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

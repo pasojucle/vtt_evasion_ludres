@@ -23,4 +23,9 @@ class DocumentationDeleteProvider implements FormComponentProviderInterface
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la documentation %s', $entity->getName()));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

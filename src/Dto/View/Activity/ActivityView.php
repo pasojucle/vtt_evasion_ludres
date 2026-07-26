@@ -6,7 +6,7 @@ namespace App\Dto\View\Activity;
 
 use App\Dto\View\TabEntityInterface;
 
-readonly class ActivityDto implements TabEntityInterface
+readonly class ActivityView implements TabEntityInterface
 {
     public function __construct(
         public ?int $id,

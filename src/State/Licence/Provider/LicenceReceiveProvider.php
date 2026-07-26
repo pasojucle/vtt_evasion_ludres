@@ -28,4 +28,9 @@ class LicenceReceiveProvider implements FormComponentProviderInterface
             icon: 'lucide:square-check-big'
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

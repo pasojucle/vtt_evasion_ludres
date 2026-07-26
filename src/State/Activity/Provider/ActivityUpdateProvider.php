@@ -54,6 +54,11 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
         );
     }
 
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
+
     /**
      * @param BikeRide $entity
      * @return BikeRide

@@ -36,8 +36,15 @@
     {{ parent() }}
 {% endblock %}
 
+{% block checkbox_widget %}
+    {% set attr = attr|merge({
+        'class': attr.class|default('') ~ ' hidden peer'
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
 {% block form_label %}
-    {% if 'radio' in block_prefixes %}
+    {% if 'radio' in block_prefixes or 'checkbox' in block_prefixes %}
         {% set label_attr = label_attr|merge({
             'class': label_attr.class|default('') ~ " relative pl-8 leading-8 cursor-pointer select-none text-foreground transition-all" ~
             " before:content-[''] before:block before:absolute before:top-0 before:left-0 before:w-6 before:h-6 before:rounded-md before:bg-transparent before:border before:border-border before:transition-transform" ~

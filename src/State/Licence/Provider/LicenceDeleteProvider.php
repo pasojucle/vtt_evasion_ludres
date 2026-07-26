@@ -28,4 +28,9 @@ class LicenceDeleteProvider implements FormComponentProviderInterface
             )
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

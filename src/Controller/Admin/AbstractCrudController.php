@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Contracts\Service\Attribute\Required;
-use Symfony\UX\Turbo\TurboBundle;
 
 abstract class AbstractCrudController extends AbstractController
 {
@@ -78,10 +77,9 @@ abstract class AbstractCrudController extends AbstractController
     protected function handleFormComponentAction(
         Request $request,
         object $object,
-        FormComponentProviderInterface | TurboStreamProviderInterface $provider,
+        FormComponentProviderInterface $provider,
         FormProcessorInterface $processor,
         string $formClass = FormType::class,
-        array $formOptions = [],
     ): Response {
         $fallback = $this->urlContextService->getRedirectUrl($request);
         if ($provider instanceof FormAddComponentProviderInterface) {
@@ -91,7 +89,7 @@ abstract class AbstractCrudController extends AbstractController
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm($formClass, $object, array_merge([
             'action' => $request->getUri(),
-        ], $formOptions));
+        ], $provider->getFormOptions($object)));
         
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
@@ -106,7 +104,7 @@ abstract class AbstractCrudController extends AbstractController
                 
                     return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
-                if ($result instanceof TurboStreamProcessorResult) {
+                if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
 
                     return $this->render($result->laziTemplate, [
                         'view' => $provider->getStreamView($object),

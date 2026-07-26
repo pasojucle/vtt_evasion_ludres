@@ -20,4 +20,9 @@ class SecondHandCategoryDeleteProvider implements FormComponentProviderInterface
         /** @var SecondHandCategory $entity */
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la catégorie %s', $entity->getName()));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

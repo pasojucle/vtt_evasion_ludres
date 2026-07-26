@@ -121,6 +121,9 @@ class Member extends User implements PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'member', cascade: ['persist', 'remove'])]
     private ?Health $health = null;
 
+    #[ORM\OneToOne(mappedBy: 'member', cascade: ['persist', 'remove'])]
+    protected ?EmergencyContact $emergencyContact = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -590,6 +593,28 @@ class Member extends User implements PasswordAuthenticatedUserInterface
         }
 
         $this->health = $health;
+
+        return $this;
+    }
+
+    public function getEmergencyContact(): ?EmergencyContact
+    {
+        return $this->emergencyContact;
+    }
+
+    public function setEmergencyContact(?EmergencyContact $emergencyContact): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($emergencyContact === null && $this->emergencyContact !== null) {
+            $this->emergencyContact->setMember(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($emergencyContact !== null && $emergencyContact->getMember() !== $this) {
+            $emergencyContact->setMember($this);
+        }
+
+        $this->emergencyContact = $emergencyContact;
 
         return $this;
     }

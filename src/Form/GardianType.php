@@ -40,9 +40,6 @@ class GardianType extends AbstractType
                         },
                         $notAllowedKinship
                     ),
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
                     'attr' => [
                         'data-constraint' => '',
                     ],
@@ -51,7 +48,10 @@ class GardianType extends AbstractType
                     'label' => false,
                     'category' => $options['category'],
                     'is_yearly' => $options['is_yearly'],
-                    'gardian' => $gardian->getKind()
+                    'gardian' => $gardian->getKind(),
+                    'attr' => [
+                        'class' => 'flex flex-col gap-4'
+                    ]
                 ])
             ;
         });

@@ -1,0 +1,21 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    {% dump(form) %}
+    <div class="mb-2 flex flex-col gap-4">
+        {{ form_row(form.kinship) }}
+        {{ form_row(form.identity.name) }}
+        {{ form_row(form.identity.firstName) }}
+        {{ form_row(form.identity.email) }}
+        {{ form_row(form.identity.mobile) }}
+        {{ form_row(form.identity.phone) }}
+        {{ form_row(form.identity.birthDate) }}
+        {{ form_row(form.identity.otherAddress) }}
+        <div
+            data-id="birth-place"
+            data-form-modifier-target="container"
+        >
+            {{ form_row(form.identity.address) }}
+        </div>
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}

@@ -7,7 +7,7 @@ namespace App\State\Interface;
 /**
  * @template T of object
  */
-interface FormAddComponentProviderInterface
+interface FormAddComponentProviderInterface extends FormComponentProviderInterface
 {
     /**
      * @param T $entity

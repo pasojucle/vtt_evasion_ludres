@@ -23,4 +23,9 @@ class BoardRoleDeleteProvider implements FormComponentProviderInterface
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le role %s', $entity->getName()));
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

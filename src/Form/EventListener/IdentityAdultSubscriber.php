@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form\EventListener;
 
 use App\Entity\Enum\LicenceCategoryEnum;
-use App\Entity\Identity;
 use App\Form\AddressType;
 use App\Form\Admin\CommuneAutocompleteField;
 use App\Service\LicenceService;
@@ -53,6 +52,29 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
         $isYearly = $form->getConfig()->getOption('is_yearly');
         $foreignBorn = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
         $form
+            ->add('passportPhoto', FileType::class, [
+                'label' => 'Photo d\'itentité',
+                'mapped' => false,
+                'required' => false,
+                'block_prefix' => 'custom_file',
+                'row_attr' => [
+                    'data-controller' => 'input-file',
+                ],
+                'attr' => [
+                    'accept' => '.bmp,.jpeg,.jpg,.png',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/bmp',
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
+                    ]),
+                ],
+            ])
             ->add('name', TextType::class, [
                 'label' => 'Nom',
                 'constraints' => [
@@ -87,7 +109,10 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 'label' => false,
                 'required' => true,
                 'gardian' => 'member',
-                'attr' => ['data-gardian' => 'member'],
+                'attr' => [
+                    'data-gardian' => 'member',
+                    'class' => 'flex flex-col gap-4',
+                ],
             ])
             ->add('phone', TextType::class, [
                 'label' => 'Téléphone fixe',
@@ -113,29 +138,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'data' => $foreignBorn,
             ])
-            ->add('passportPhoto', FileType::class, [
-                'label' => 'Photo d\'itentité',
-                'mapped' => false,
-                'required' => false,
-                'block_prefix' => 'custom_file',
-                'row_attr' => [
-                    'data-controller' => 'input-file',
-                ],
-                'attr' => [
-                    'accept' => '.bmp,.jpeg,.jpg,.png',
-                ],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '1024k',
-                        'mimeTypes' => [
-                            'image/bmp',
-                            'image/jpeg',
-                            'image/png',
-                        ],
-                        'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
-                    ]),
-                ],
-            ])
+        
             ->add('schoolTestingRegistration', HiddenType::class, [
                 'mapped' => false,
                 'constraints' => [
@@ -261,34 +264,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-form-validator-target' => 'field',
                 ],
                 'required' => false,
-            ])
-            ->add('emergencyPhone', TextType::class, [
-                'label' => 'Télephone de la personne à prévenir en cas d\'urgence',
-                'row_attr' => [
-                    'class' => $class,
-                ],
-                'constraints' => [
-                    new Phone(),
-                ],
-                'attr' => [
-                    'data-constraint' => 'app-Phone',
-                    'data-multiple-fields' => 1,
-                    'autocomplete' => 'off',
-                    'class' => 'phone-number',
-                    'data-form-validator-target' => 'field',
-                ],
-                'required' => !$hidden,
-            ])
-            ->add('emergencyContact', TextType::class, [
-                'label' => 'Lien de parenté (Mari, Femme, Fils, Fille, Frère, Sœur, Oncle, Tante, Grand parents.....)',
-                'row_attr' => [
-                    'class' => $class,
-                ],
-                'attr' => [
-                    'data-constraint' => '',
-                    'data-form-validator-target' => 'field',
-                ],
-                'required' => !$hidden,
             ])
         ;
     }

@@ -22,4 +22,9 @@ class OrderDeleteProvider implements FormComponentProviderInterface
             sprintf('Etes vous certain de supprimer la commande  %s ?', $entity->getId())
         );
     }
+
+    public function getFormOptions(object $entity): array
+    {
+        return [];
+    }
 }

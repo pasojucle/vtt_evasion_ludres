@@ -9,7 +9,7 @@ use App\Dto\View\Interface\TurboStreamViewInterface;
 /**
  * @template T of object
  */
-interface TurboStreamProviderInterface
+interface TurboStreamProviderInterface extends FormComponentProviderInterface
 {
     /**
      * @param T $entity

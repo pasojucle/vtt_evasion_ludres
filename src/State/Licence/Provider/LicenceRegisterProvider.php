@@ -38,8 +38,9 @@ class LicenceRegisterProvider implements FormComponentProviderInterface
         );
     }
 
-    public function getFormOptions(Licence $licence): array
+    public function getFormOptions(object $entity): array
     {
+        $licence = $entity->licence;
         $member = $licence->getMember();
 
         return [

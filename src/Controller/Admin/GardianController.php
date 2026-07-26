@@ -4,44 +4,44 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Member;
-use App\Form\GardiansType;
-use App\Service\GardianService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\MemberGardian;
+use App\Form\GardianType;
+use App\State\Gardian\Processor\GardianUpdateProcessor;
+use App\State\Gardian\Provider\GardianReadProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class GardianController extends AbstractController
+#[Route('/admin/responsable', name: 'admin_gardian_')]
+class GardianController extends AbstractCrudController
 {
-    #[Route('/admin/responsables/edit/{member}', name: 'admin_gardians_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'member')]
+    #[Route('/{gardian}', name: 'show', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'gardian')]
+    public function show(
+        GardianReadProvider $provider,
+        MemberGardian $gardian,
+    ): Response {
+        
+        return $this->render('gardian/admin/show.html.twig', [
+            'view' => $provider->getStreamView($gardian),
+        ]);
+    }
+
+    #[Route('/edit/{gardian}', name: 'edit', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'gardian')]
     public function adminEdit(
         Request $request,
-        UserDtoTransformer $userDtoTransformer,
-        GardianService $gardianService,
-        Member $member,
+        GardianReadProvider $provider,
+        GardianUpdateProcessor $processor,
+        MemberGardian $gardian,
     ): Response {
-        $licence = $member->getLastLicence();
-        $form = $this->createForm(GardiansType::class, $member, [
-            'category' => $licence->getCategory(),
-            'is_yearly' => $licence->getState()->isYearly(),
-        ]);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $gardianService->setAddress($member);
-
-            return $this->redirectToRoute('admin_user', [
-                'user' => $member->getId(),
-            ]);
-        }
-
-        return $this->render('gardian/edit.html.twig', [
-            'user' => $userDtoTransformer->fromEntity($member),
-            'form' => $form->createView(),
-        ]);
+        return $this->handleFormComponentAction(
+            $request,
+            $gardian,
+            $provider,
+            $processor,
+            GardianType::class
+        );
     }
 }
