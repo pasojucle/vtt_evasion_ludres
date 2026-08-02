@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Licence;
 use App\Form\LicenceAgreementType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -32,10 +35,7 @@ class LicenceType extends AbstractType
             $form = $event->getForm();
             $options = $form->getConfig()->getOptions();
             if ($licence->getId() === $options['season_licence']?->id) {
-                $choicesCoverage = array_flip(Licence::COVERAGES);
-                if (LicenceCategoryEnum::SCHOOL === $options['category']) {
-                    array_shift($choicesCoverage);
-                }
+                $isScholl = LicenceCategoryEnum::SCHOOL === $options['category'];
 
                 if (RegistrationFormEnum::OVERVIEW === $options['current']->getForm()) {
                     $form
@@ -65,9 +65,18 @@ class LicenceType extends AbstractType
 
                 if (RegistrationFormEnum::LICENCE_COVERAGE === $options['current']->getForm()) {
                     $form
-                        ->add('coverage', ChoiceType::class, [
+                        ->add('coverage', EnumType::class, [
                             'label' => 'Selectionnez une formule d\'assurance oblogatoire',
-                            'choices' => $choicesCoverage,
+                            'class' => LicenceCoverageEnum::class,
+                            'choice_filter' => ChoiceList::filter(
+                                $this,
+                                function (LicenceCoverageEnum $coverage) use ($isScholl): bool {
+                                    if ($isScholl) {
+                                        return $coverage !== LicenceCoverageEnum::MINI_GEAR;
+                                    }
+                                    return  true;
+                                },
+                            ),
                             'expanded' => true,
                             'multiple' => false,
                         ])

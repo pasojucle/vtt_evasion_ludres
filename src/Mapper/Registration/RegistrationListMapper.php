@@ -72,7 +72,7 @@ class RegistrationListMapper
                     variant: $state->variant(),
                 ),
                 dropdown: $this->registrationDropdownMapper->mapToView($entity, $referer),
-                url: $this->urlGenerator->generate("admin_user", ['user' => $entity->getId()]),
+                url: $this->urlGenerator->generate("admin_user_show", ['user' => $entity->getId()]),
                 action: $this->getAction($licence, $currentPage, $filter),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_2fr]',

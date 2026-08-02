@@ -26,7 +26,7 @@ class IdentityReadProvider implements TurboStreamProviderInterface
     {
         return new IdentitySheetView(
             title: 'Modifier',
-            description: 'blabla',
+            description: 'Modifier l\'identité',
             action: 'Modifier'
         );
         

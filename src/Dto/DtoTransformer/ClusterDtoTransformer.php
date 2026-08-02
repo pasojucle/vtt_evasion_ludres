@@ -195,9 +195,7 @@ class ClusterDtoTransformer
                     'content' => $userEntity->getHealth()?->getContent()
                 ];
                 $user['lastLicence'] = [
-                    'coverageStr' => (!empty($userLicence->getCoverage()))
-                        ? $this->translator->trans(Licence::COVERAGES[$userLicence->getCoverage()])
-                        : null
+                    'coverageStr' => $userLicence->getCoverage()->trans($this->translator),
                 ];
             }
 

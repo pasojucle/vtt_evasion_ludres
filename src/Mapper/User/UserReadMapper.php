@@ -39,7 +39,7 @@ class UserReadMapper
             ]: [new ArrayCollection(), null];
 
         return new UserReadView(
-            id: $identity->getId(),
+            id: $entity->getId(),
             identityId: $identity->getId(),
             licenceId: $licence->getId(),
             passportPhoto: $this->passportPhotoMapper->mapToView($identity->getFilename()),

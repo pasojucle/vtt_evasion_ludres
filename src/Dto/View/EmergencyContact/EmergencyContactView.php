@@ -13,7 +13,7 @@ readonly class EmergencyContactView implements TurboStreamViewInterface
 {
     public function __construct(
         public int $id,
-        public string $kinship,
+        public ?string $kinship,
         public PhoneView $phone,
         public LinkView $action,
     ) {

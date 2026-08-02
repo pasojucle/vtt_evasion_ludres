@@ -35,7 +35,7 @@ class RegistrationDropdownMapper
             );
             $menuItems[] = new LinkView(
                 label: 'Supprimer l\'inscription',
-                url: $this->urlGenerator->generate('admin_delete_licence', ['licence' => $licence->getId()]),
+                url: $this->urlGenerator->generate('admin_licence_delete', ['licence' => $licence->getId()]),
                 icon: 'lucide:delete',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [

@@ -65,7 +65,7 @@ class UserListMapper
                     color: $level->getColor(),
                 ),
                 dropdown: $this->userDropdownMapper->mapToView($entity, $referer),
-                url: $this->urlContextService->generateUrl("admin_user", ['user' => $entity->getId()], $referer),
+                url: $this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $referer),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateBadges: 'grid-cols-[auto_160px]',
             );

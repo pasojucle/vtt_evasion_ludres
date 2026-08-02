@@ -73,7 +73,7 @@ class NotificationAdminListMapper
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER', $referer, RoundedVariant::ROUNDED),
+            settings: $this->dropdownSettingsMapper->mapToView('MODAL', $referer, RoundedVariant::ROUNDED),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',

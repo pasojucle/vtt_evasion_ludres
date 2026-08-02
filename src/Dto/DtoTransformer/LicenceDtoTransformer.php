@@ -8,6 +8,7 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\LicenceDto;
 use App\Dto\View\LinkView;
 use App\Dto\View\HtmlAttributView;
+use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
@@ -57,14 +58,14 @@ class LicenceDtoTransformer
             $licenceDto->shortSeason = $this->getSeason($licence->getSeason());
             $licenceDto->fullSeason = $this->getFullSeason($licence->getSeason());
             $licenceDto->isYearly = $licence->getState()->isYearly();
-            $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
-            $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]) : null;
+            $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage()->value : null;
+            $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $licence->getCoverage()->trans($this->translator): null;
             $licenceDto->options = $licence->getOptions();
             $licenceDto->category = $licence->getCategory();
             $licenceDto->state = $this->getState($licence->getState());
             $licenceDto->lock = $licence->getSeason() !== $currentSeason;
             $licenceDto->currentSeasonForm = $this->getCurrentSeasonForm($licence, $currentSeason);
-            $licenceDto->isVae = $this->isVae($licence->isVae(), $licence->getCategory());
+            $licenceDto->isVae = $this->isVae($licence->getBikeType(), $licence->getCategory());
             $licenceDto->toValidate = $licence->getState()->toValidate();
             $licenceDto->toRegister = $licence->getState()->toRegister();
             $licenceDto->isRegistered = $licence->getState()->isRegistered();
@@ -182,10 +183,10 @@ class LicenceDtoTransformer
         return $coverageFormStartAt->setTime(0, 0, 0) < new DateTime() && !$licence->getCurrentSeasonForm();
     }
 
-    private function isVae(bool $isVae, LicenceCategoryEnum $category): ?string
+    private function isVae(BikeTypeEnum $bikeType, LicenceCategoryEnum $category): ?string
     {
         if (LicenceCategoryEnum::ADULT === $category) {
-            return $isVae ? 'VTT à assistance électrique' : 'Vélo musculaire';
+            return $bikeType->trans($this->translator);
         }
         return null;
     }
@@ -228,9 +229,7 @@ class LicenceDtoTransformer
         $member = $licence->getUser();
         if ($member instanceof Member && $licence->getState()->isYearly()) {
             $isRenovating = $this->isRenovating($member, $currentSeason);
-            $membershipFee = (null !== $licence->getCoverage())
-                ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), !$isRenovating, $licence->getFamilyMember())
-                : null;
+            $membershipFee = $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), !$isRenovating, $licence->getFamilyMember());
             if (null !== $membershipFee) {
                 $membershipFeeAmount = $membershipFee->getAmount();
             }
@@ -245,7 +244,7 @@ class LicenceDtoTransformer
                 $amount = new Currency($amount);
                 $amount->sub($indemnities);
 
-                $coveragesToString = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
+                $coveragesToString = $licence->getCoverage()->trans($this->translator);
                 if ($member->getLevel()?->getType() === LevelType::FRAME) {
                     $amountToStr .= sprintf('Le montant des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());

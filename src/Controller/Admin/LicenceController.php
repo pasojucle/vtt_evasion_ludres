@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Dto\Form\LicenceRegister;
+
 use App\Entity\Licence;
+use App\Entity\User;
+use App\Form\Admin\LicenceMemberType;
 use App\Form\Admin\LicenceRegisterType;
 use App\Form\Admin\LicenceRejectType;
-use App\Service\LicenceService;
-use App\Service\MailerService;
 use App\State\Licence\Processor\LicenceDeleteProcessor;
 use App\State\Licence\Processor\LicenceReceiveProcessor;
 use App\State\Licence\Processor\LicenceRegisterProcessor;
 use App\State\Licence\Processor\LicenceRejectProcessor;
+use App\State\Licence\Processor\LicenceUpdateProcessor;
 use App\State\Licence\Provider\LicenceDeleteProvider;
+use App\State\Licence\Provider\LicenceReadProvider;
 use App\State\Licence\Provider\LicenceReceiveProvider;
 use App\State\Licence\Provider\LicenceRegisterProvider;
 use App\State\Licence\Provider\LicenceRejectProvider;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,7 +27,37 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class LicenceController extends AbstractCrudController
 {
-    #[Route('/admin/inscription/delete/{licence}', name: 'admin_delete_licence', methods: ['GET', 'POST'])]
+    #[Route('/admin/licence/{user}', name: 'admin_licence_show', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'user')]
+    public function show(
+        LicenceReadProvider $provider,
+        User $user,
+    ): Response {
+        
+        return $this->render('licence/admin/show.html.twig', [
+            'view' => $provider->getStreamView($user),
+        ]);
+    }
+    
+    #[Route('/admin/licence/edit/{user}', name: 'admin_licence_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'user')]
+    public function adminEdit(
+        Request $request,
+        LicenceReadProvider $provider,
+        LicenceUpdateProcessor $processor,
+        User $user,
+    ): Response {
+
+        return $this->handleFormComponentAction(
+            $request,
+            $user,
+            $provider,
+            $processor,
+            LicenceMemberType::class
+        );
+    }
+
+    #[Route('/admin/inscription/delete/{licence}', name: 'admin_licence_delete', methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminDeleteLicence(
         Request $request,

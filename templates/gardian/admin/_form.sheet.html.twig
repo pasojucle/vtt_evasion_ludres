@@ -7,8 +7,12 @@
         {{ form_row(form.identity.firstName) }}
         {{ form_row(form.identity.email) }}
         {{ form_row(form.identity.mobile) }}
-        {{ form_row(form.identity.phone) }}
-        {{ form_row(form.identity.birthDate) }}
+        {% if form.idnetity.phone is defined %}
+            {{ form_row(form.identity.phone) }}
+        {% endif %}
+        {% if form.identity.birthDate is defined %}
+            {{ form_row(form.identity.birthDate) }}
+        {% endif %}
         {{ form_row(form.identity.otherAddress) }}
         <div
             data-id="birth-place"

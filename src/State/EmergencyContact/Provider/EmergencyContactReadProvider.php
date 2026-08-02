@@ -25,7 +25,7 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
     {
         return new SheetView(
             title: 'Modifier',
-            description: 'blabla',
+            description: 'Modifier le contact d\'urgence',
             action: 'Modifier'
         );
         

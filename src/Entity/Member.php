@@ -476,12 +476,13 @@ class Member extends User implements PasswordAuthenticatedUserInterface
      */
     public function getPermissions(): array
     {
+        $permissions = [];
         /** @var MemberPermission $memberPermission */
         foreach ($this->memberPermissions as $memberPermission) {
-            $this->permissions[] = $memberPermission->getPermission();
+            $permissions[] = $memberPermission->getPermission();
         }
     
-        return $this->permissions;
+        return $permissions;
     }
 
     public function addPermission(PermissionEnum $permission): static

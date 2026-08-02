@@ -22,7 +22,7 @@
                     <div class="bg-slate-300 uppercase pl-4 pr-2 py-2 text-white text-sm flex gap-4 items-center">
                         <div class="flex items-center">{{ issue.content }}</div>
                         <div class="ml-auto">
-                            {% include "components/_link.html.twig" with {'button': issue.show} %}
+                            {% include "components/_link.html.twig" with {'link': issue.show} %}
                         </div>
                     </div>
                     <div class="grid {{ type_classes[issue.type.value] ?? type_classes.text }} grow">

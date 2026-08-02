@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Licence;
 use App\Entity\MembershipFeeAmount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -24,7 +25,7 @@ class MembershipFeeAmountRepository extends ServiceEntityRepository
         parent::__construct($registry, MembershipFeeAmount::class);
     }
 
-    public function findOneByLicence(int $coverage, bool $isNewMember, ?Licence $familyMember): ?MembershipFeeAmount
+    public function findOneByLicence(LicenceCoverageEnum $coverage, bool $isNewMember, ?Licence $familyMember): ?MembershipFeeAmount
     {
         try {
             return $this->createQueryBuilder('mfa')

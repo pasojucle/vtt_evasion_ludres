@@ -10,6 +10,7 @@ use App\Entity\Address;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\GardianKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Health;
@@ -133,14 +134,12 @@ class GetProgress
             if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_yearly_registration')) {
                 throw new ConflictHttpException('Unable to start yearly registration. The license is not in a valid state for this transition.');
             }
-            if ($this->member->getLastLicence()->getCoverage()) {
-                $this->seasonLicence->setCoverage($this->member->getLastLicence()->getCoverage());
-            }
+            $this->seasonLicence->setCoverage($this->member->getLastLicence()->getCoverage());
         } else {
             if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_trial')) {
                 throw new ConflictHttpException('Unable to start trial registration. The license is not in a valid state for this transition.');
             }
-            $this->seasonLicence->setCoverage(Licence::COVERAGE_MINI_GEAR)
+            $this->seasonLicence->setCoverage(LicenceCoverageEnum::MINI_GEAR)
             ;
         }
         if ($this->member->getIdentity()) {

@@ -1,0 +1,68 @@
+<div class="px-4 bg-slate-300 flex items-center h-8">
+    <div class="text-xs font-semibold uppercase text-white flex gap-2">
+        <h2>Licence</h2>
+    </div>
+    <div class="ml-auto -mr-2">
+        {% include view.editAction.template with {(view.editAction.name): view.editAction} %}
+    </div>
+</div>
+<div class="p-4 2xl:p-6">
+    <dl class="flex flex-col gap-2 text-sm">
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Numéro :</dt>
+            <dd class="text-foreground font-medium flex flex-col gap-2">
+                {{ view.number }}
+                {% include view.sendNuberLicenceAction.template with {(view.sendNuberLicenceAction.name): view.sendNuberLicenceAction} %}
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Saison :</dt>
+            <dd class="text-foreground font-medium">
+                {% include view.season.template with {(view.season.name): view.season} %}
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Date d'inscription :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.createdAt }}
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Statut :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.state }}
+                {% if view.yearlyCoverage %}
+                    {% include view.yearlyCoverage.template with {(view.yearlyCoverage.name): view.yearlyCoverage} %}
+                {% endif %}
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Assurance :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.coverage }}
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Type :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.bikeType }}
+            </dd>
+        </div>
+        {% if view.familyMember %}
+            <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+                <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Un membre de la famille est inscrit au club :</dt>
+                <dd class="text-foreground font-medium">
+                    <a href="{{ view.familyMemberUrl  }}" class="text-primary hover:underline break-all" data-turbo-frame="_top">
+                        {{ view.familyMember  }}
+                    </a>
+                </dd>
+            </div>
+        {% endif %}
+
+    </dl>
+</div>

@@ -22,7 +22,7 @@ class LicenceDto
 
     public ?bool $isYearly = false;
 
-    public ?int $coverage;
+    public ?string $coverage;
 
     public ?string $coverageStr;
 

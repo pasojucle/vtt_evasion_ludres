@@ -32,7 +32,7 @@ class HealthController extends AbstractController
             $entityManager->persist($health);
             $entityManager->flush();
 
-            return $this->redirectToRoute('admin_user', [
+            return $this->redirectToRoute('admin_user_show', [
                 'user' => $member->getId(),
             ]);
         }

@@ -4,29 +4,26 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\LicenceCoverageEnum;
 use App\Repository\MembershipFeeAmountRepository;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: MembershipFeeAmountRepository::class)]
+
+#[ORM\Entity(repositoryClass: MembershipFeeAmountRepository::class)]
 class MembershipFeeAmount
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'float')]
+    #[ORM\Column(type: 'float')]
     private float $amount;
 
-    #[Column(type: 'integer', nullable: true)]
-    private ?int $coverage;
+    #[ORM\Column(type: 'string', enumType: LicenceCoverageEnum::class, options:['default' => LicenceCoverageEnum::UNDEFINED->value])]
+    private LicenceCoverageEnum $coverage = LicenceCoverageEnum::UNDEFINED;
 
-    #[ManyToOne(targetEntity: MembershipFee::class, inversedBy: 'membershipFeeAmounts')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: MembershipFee::class, inversedBy: 'membershipFeeAmounts')]
+    #[ORM\JoinColumn(nullable: false)]
     private MembershipFee $membershipFee;
 
     public function getId(): ?int
@@ -46,12 +43,12 @@ class MembershipFeeAmount
         return $this;
     }
 
-    public function getCoverage(): ?int
+    public function getCoverage(): LicenceCoverageEnum
     {
         return $this->coverage;
     }
 
-    public function setCoverage(int $coverage): self
+    public function setCoverage(LicenceCoverageEnum $coverage): self
     {
         $this->coverage = $coverage;
 

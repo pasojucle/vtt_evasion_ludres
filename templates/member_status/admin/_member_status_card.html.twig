@@ -1,0 +1,35 @@
+<div class="px-4 bg-slate-300 flex items-center h-8">
+    <div class="text-xs font-semibold uppercase text-white flex gap-2">
+        <h2>Status au club</h2>
+    </div>
+    <div class="ml-auto -mr-2">
+        {% include view.action.template with {(view.action.name): view.action} %}
+    </div>
+</div>
+<div class="p-4 2xl:p-6">
+    <dl class="flex flex-col gap-2 text-sm">
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Niveau :</dt>
+            <dd class="font-medium flex gap-2">
+                <div class="text-foreground">{{ view.levelType }}</div>
+                {% include view.level.template with {(view.level.name): view.level} %}
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Fonction :</dt>
+            <dd class="font-medium">
+                {{ view.boardRole }}
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:flex-wrap 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Permissions d'accès au site internet :</dt>
+            <dd class="font-medium flex flex-wrap gap-2">
+                {% for permission in view.permissions %}
+                    {% include permission.template with {(permission.name): permission} %}
+                {% endfor %}
+            </dd>
+        </div>      
+    </dl>
+</div>

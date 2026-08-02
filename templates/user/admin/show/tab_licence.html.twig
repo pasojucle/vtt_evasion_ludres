@@ -1,0 +1,116 @@
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 2xl:gap-12">
+    
+        <div class="flex flex-col gap-4">
+            <div class="rounded-md border border-border">
+                <turbo-frame 
+                    id="member-status-{{ view.entity.id }}"
+                    src="{{ path('admin_member_status_show', {member: view.entity.id}) }}"
+                >
+                    <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
+                        <h2>Statut au club</h2>
+                    </div>
+                    <div class="animate-pulse p-4 2xl:p-6">
+                        <dl class="flex flex-col gap-4 text-sm">
+                            <div class="flex flex-col gap-1">
+                                <dt class="h-4 w-28 bg-slate-200"></dt>
+                                <dd class="h-4 w-32 bg-slate-200"></dd>
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <dt class="h-4 w-32 bg-slate-200"></dt>
+                                <dd class="h-4 w-63 bg-slate-200"></dd>
+                            </div>
+                        </dl>
+                    </div>
+                </turbo-frame>
+            </div>
+            <div class="rounded-md border border-border">
+                <turbo-frame 
+                    id="emergency-contact-{{ view.entity.emergencyContactId }}"
+                    {# src="{{ path('admin_emergency_contact_show', {emergencyContact: view.entity.emergencyContactId}) }}" #}
+                >
+                    <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
+                        <h2>Authorisations</h2>
+                    </div>
+                    <div class="animate-pulse p-4 2xl:p-6">
+                        <dl class="flex flex-col gap-4 text-sm">
+                            <div class="flex flex-col gap-1">
+                                <dt class="h-4 w-28 bg-slate-200"></dt>
+                                <dd class="h-4 w-32 bg-slate-200"></dd>
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <dt class="h-4 w-32 bg-slate-200"></dt>
+                                <dd class="h-4 w-63 bg-slate-200"></dd>
+                            </div>
+                        </dl>
+                    </div>
+                </turbo-frame>
+            </div>
+            <div class="rounded-md border border-border">
+                <turbo-frame 
+                    id="emergency-contact-{{ view.entity.emergencyContactId }}"
+                    {# src="{{ path('admin_emergency_contact_show', {emergencyContact: view.entity.emergencyContactId}) }}" #}
+                >
+                    <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
+                        <h2>Informations saniatires</h2>
+                    </div>
+                    <div class="animate-pulse p-4 2xl:p-6">
+                        <dl class="flex flex-col gap-4 text-sm">
+                            <div class="flex flex-col gap-1">
+                                <dt class="h-4 w-28 bg-slate-200"></dt>
+                                <dd class="h-4 w-32 bg-slate-200"></dd>
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <dt class="h-4 w-32 bg-slate-200"></dt>
+                                <dd class="h-4 w-63 bg-slate-200"></dd>
+                            </div>
+                        </dl>
+                    </div>
+                </turbo-frame>
+            </div>
+        </div>
+
+        <div class="rounded-md border border-border">
+            <turbo-frame 
+                id="licence-{{ view.entity.licenceId }}"
+                src="{{ path('admin_licence_show', {user: view.entity.id}) }}"
+            >
+                <div class="px-4 bg-slate-300 flex items-center h-8">
+                    <div class="text-xs font-semibold uppercase text-white">
+                        <h2>Licence</h2>
+                    </div>
+                </div>
+                <div class="animate-pulse p-4 2xl:p-6">
+                    <dl class="flex flex-col gap-4 text-sm">
+                        <div class="flex flex-col gap-1">
+                            <dt class="h-4 w-28 bg-slate-200"></dt>
+                            <dd class="h-4 w-32 bg-slate-200"></dd>
+                            <dd class="h-4 w-52 bg-slate-200"></dd>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <dt class="h-4 w-32 bg-slate-200"></dt>
+                            <dd class="h-4 w-48 bg-slate-200"></dd>
+                            <dd class="h-4 w-48 bg-slate-200"></dd>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <dt class="h-4 w-24 bg-slate-200"></dt>
+                            <dd class="h-4 w-60 bg-slate-200"></dd>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <dt class="h-4 w-32 bg-slate-200"></dt>
+                            <dd class="h-4 w-63 bg-slate-200"></dd>
+                        </div>
+
+                    </dl>
+                </div>
+            </turbo-frame>
+        </div>
+        
+    </div>
+<div>

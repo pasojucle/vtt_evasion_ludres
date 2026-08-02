@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\AgreementKindEnum;
+use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Enum\RegistrationFormEnum;
@@ -21,6 +23,7 @@ use LogicException;
 #[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
 {
+    //TODO convertir coverage et bikeType en enum
     public const COVERAGE_MINI_GEAR = 1;
 
     public const COVERAGE_SMALL_GEAR = 2;
@@ -82,8 +85,8 @@ class Licence
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $coverage = null;
+    #[ORM\Column(type: 'string', enumType: LicenceCoverageEnum::class, options:['default' => LicenceCoverageEnum::UNDEFINED->value])]
+    private LicenceCoverageEnum $coverage = LicenceCoverageEnum::UNDEFINED;
 
     #[ORM\Column(type: 'boolean')]
     private bool $magazineSubscription = false;
@@ -106,8 +109,8 @@ class Licence
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $currentSeasonForm = false;
 
-    #[ORM\Column(type: 'boolean', options:['default' => false])]
-    private $isVae = false;
+    #[ORM\Column(type: 'string', enumType: BikeTypeEnum::class, options:['default' => BikeTypeEnum::MUSCULAR->value])]
+    private $bikeType = BikeTypeEnum::MUSCULAR;
 
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $testingAt = null;
@@ -158,12 +161,12 @@ class Licence
         return $this->id;
     }
 
-    public function getCoverage(): ?int
+    public function getCoverage(): LicenceCoverageEnum
     {
         return $this->coverage;
     }
 
-    public function setCoverage(int $coverage): self
+    public function setCoverage(LicenceCoverageEnum $coverage): self
     {
         $this->coverage = $coverage;
 
@@ -266,14 +269,14 @@ class Licence
         return $this;
     }
 
-    public function isVae(): ?bool
+    public function getBikeType(): BikeTypeEnum
     {
-        return $this->isVae;
+        return $this->bikeType;
     }
 
-    public function setIsVae(bool $isVae): self
+    public function setBikeType(BikeTypeEnum $bikeType): self
     {
-        $this->isVae = $isVae;
+        $this->bikeType = $bikeType;
 
         return $this;
     }

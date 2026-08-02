@@ -10,6 +10,7 @@ licence:
     mini_gear: Mini braquet
     small_gear: Petit braquet
     high_gear: Grand braquet 
+    undefined: Aucune
   category:
     school: Mineur
     adult: Adulte

@@ -7,11 +7,9 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Filter\UserFilter;
 use App\Entity\User;
-use App\Form\Admin\MemberType;
-use App\Form\Admin\UserBoardRoleType;
+use App\Form\Admin\LicenceMemberType;
 use App\Repository\MemberRepository;
-use App\Service\MailerService;
-use App\Service\MessageService;
+use App\State\User\Processor\LicenceNumberSendProcessor;
 use App\State\User\Provider\UserListProvider;
 use App\State\User\Provider\UserReadProvider;
 use App\UseCase\User\GetFramersFiltered;
@@ -19,7 +17,6 @@ use App\UseCase\User\GetOverviewSeason;
 use App\UseCase\User\GetParticipation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -75,7 +72,7 @@ class UserController extends AbstractCrudController
         return new JsonResponse($provider->copyEmailListToClipboard($filter));
     }
 
-    #[Route('/adherent/{user}', name: 'user', requirements:['user' => '\d+'], methods: ['GET'])]
+    #[Route('/adherent/{user}', name: 'user_show', requirements:['user' => '\d+'], methods: ['GET'])]
     #[Route('/inscription/adherent/{user}', name: 'registration_user', requirements:['user' => '\d+'], methods: ['GET'])]
     #[Route('/adherent/calendrier/{user}', name: 'bike_rides_user', requirements:['user' => '\d+'], methods: ['GET'])]
     #[Route('/adherent/assurance/{user}', name: 'coverage_user', requirements:['user' => '\d+'], methods: ['GET'])]
@@ -120,7 +117,7 @@ class UserController extends AbstractCrudController
         User $user
     ): Response {
         $licence = $user->getLastLicence();
-        $form = $this->createForm(MemberType::class, $user, [
+        $form = $this->createForm(LicenceMemberType::class, $user, [
             'category' => $licence->getCategory(),
             'season_licence' => $licence,
         ]);
@@ -131,7 +128,7 @@ class UserController extends AbstractCrudController
 
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_user', [
+            return $this->redirectToRoute('admin_user_show', [
                 'user' => $user->getId(),
             ]);
         }
@@ -142,51 +139,20 @@ class UserController extends AbstractCrudController
         ]);
     }
 
-    #[Route('/adherent/role/{user}', name: 'user_board_role', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'user')]
-    public function adminUserRole(
-        Request $request,
-        User $user
-    ): Response {
-        $form = $this->createForm(UserBoardRoleType::class, $user);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_user', [
-                'user' => $user->getId(),
-            ]);
-        }
-
-        return $this->render('user/admin/boardRole.html.twig', [
-            'user' => $this->userDtoTransformer->fromEntity($user),
-            'form' => $form->createView(),
-        ]);
-    }
-
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'user')]
     public function adminSendLicence(
-        MailerService $mailerService,
-        MessageService $messageService,
+        LicenceNumberSendProcessor $processor,
         User $user
-    ): RedirectResponse {
-        $identity = $user->getMainIdentity();
-        $subject = 'Votre numero de licence';
-        $mailerService->sendMailToMember(
-            $identity->getEmail(),
-            $identity->getFullName(),
-            $subject,
-            $messageService->getMessageById('EMAIL_LICENCE_VALIDATE')
-        );
+    ): Response {
 
-        $this->addFlash('success', 'Le messsage à été envoyé avec succès');
+    $result = $processor->process($user);
 
-        return $this->redirectToRoute('admin_user_edit', [
-            'user' => $user->getId(),
-        ]);
+    return $this->render($result->laziTemplate, [
+        'flashes' => [$result->flashMessage->type => [$result->flashMessage->message]],
+        ], new Response('', Response::HTTP_OK, [
+            'Content-Type' => 'text/vnd.turbo-stream.html',
+        ]));
     }
 
     #[Route('/adherent/autocomplete', name: 'member_autocomplete', methods: ['GET'])]

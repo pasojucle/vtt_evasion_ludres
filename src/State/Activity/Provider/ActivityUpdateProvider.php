@@ -56,7 +56,11 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
 
     public function getFormOptions(object $entity): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-controller' => 'form-modifier'
+            ]
+        ];
     }
 
     /**

@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
-class UserBoardRoleType extends AbstractType
+class MemberStatusType extends AbstractType
 {
     public function __construct(
         private Security $security,
@@ -54,9 +54,6 @@ class UserBoardRoleType extends AbstractType
 
                     return 'Encadrement';
                 },
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('boardRole', EntityType::class, [
                 'label' => 'Fonction',
@@ -67,17 +64,7 @@ class UserBoardRoleType extends AbstractType
                     ;
                 },
                 'placeholder' => 'Aucun',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'required' => false,
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => '<i class="fas fa-check"></i> Modifier',
-                'label_html' => true,
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
             ])
         ;
 
@@ -88,6 +75,7 @@ class UserBoardRoleType extends AbstractType
                 $notAllowedPermission = PermissionEnum::PERMISSION;
                 $form
                     ->add('permissions', EnumType::class, [
+                        'label' => 'Permissions d\'accès au site internet',
                         'class' => PermissionEnum::class,
                         'choice_filter' => ChoiceList::filter(
                             $this,

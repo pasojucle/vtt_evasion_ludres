@@ -48,9 +48,8 @@ class SecondHandCategoryRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->andWhere(
-                (new Expr())->eq('c.deleted', ':deleted')
+                (new Expr())->isNull('c.deletedAt')
             )
-            ->setParameter('deleted', false)
             ->orderBy('c.name', 'ASC')
             ->getQuery()
             ->getResult();

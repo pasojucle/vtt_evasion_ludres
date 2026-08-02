@@ -40,7 +40,7 @@ class LicenceAuthorizationController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_user', [
+            return $this->redirectToRoute('admin_user_show', [
                 'user' => $member->getId(),
             ]);
         }

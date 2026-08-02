@@ -9,6 +9,7 @@ use App\Dto\View\Gardian\GardianView;
 use App\Entity\MemberGardian;
 use App\Mapper\Gardian\GardianReadMapper;
 use App\State\Interface\TurboStreamProviderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 /**
@@ -18,6 +19,7 @@ class GardianReadProvider implements TurboStreamProviderInterface
 {
     public function __construct(
         private GardianReadMapper $gardianReadMapper,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -25,7 +27,7 @@ class GardianReadProvider implements TurboStreamProviderInterface
     {
         return new GardianSheetView(
             title: 'Modifier',
-            description: 'blabla',
+            description: sprintf('Modifier le %s', $entity->getKind()->trans($this->translator)),
             action: 'Modifier'
         );
         

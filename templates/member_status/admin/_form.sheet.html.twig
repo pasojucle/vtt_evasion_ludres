@@ -1,0 +1,13 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    <div class="mb-2 flex flex-col gap-4">
+        {{ form_row(form.level) }}
+        {{ form_row(form.boardRole) }}
+        {% if form.permissions is defined %}
+            <div id="permissions">
+                {{ form_row(form.permissions) }}
+            </div>
+        {% endif %}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
