@@ -11,7 +11,7 @@ use App\Entity\Member;
 use App\Entity\User;
 use App\Mapper\Gardian\GardianReadMapper;
 use App\Mapper\Identity\PassportPhotoMapper;
-use App\Mapper\Licence\LicenceAgreementMapper;
+use App\Mapper\LicenceAuthorization\LicenceAuthorizationBadgeMapper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -19,7 +19,7 @@ class UserReadMapper
 {
     public function __construct(
         private TranslatorInterface $translator,
-        private LicenceAgreementMapper $licenceAgreementMapper,
+        private LicenceAuthorizationBadgeMapper $LicenceAuthorizationBadgeMapper,
         private PassportPhotoMapper $passportPhotoMapper,
         private GardianReadMapper $gardianReadMapper,
     ) {
@@ -53,7 +53,7 @@ class UserReadMapper
                 value: sprintf('%s-%s', $season, $season + 1),
                 variant: ColorVariant::ACCENT
             ),
-            authorizations: array_map(fn($authorization) => $this->licenceAgreementMapper->mapToview($authorization), $authorizations),
+            authorizations: array_map(fn($authorization) => $this->LicenceAuthorizationBadgeMapper->mapToview($authorization), $authorizations),
             gardians: $phones,
             emergencyContactId: $emergencyContact,
         );

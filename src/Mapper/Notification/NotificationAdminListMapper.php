@@ -16,7 +16,6 @@ use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Dto\View\ToggleStatusView;
 use App\Entity\Notification;
-use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\Notification\NotificationStatusMapper;
 use App\Mapper\PaginatorMapper;
@@ -29,7 +28,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class NotificationAdminListMapper
 {
     public function __construct(
-        private DropdownSettingsMapper $dropdownSettingsMapper,
         private UrlGeneratorInterface $urlGenerator,
         private PaginatorMapper $paginatorMapper,
         private NotificationStatusMapper $notificationStatusMapper,
@@ -73,7 +71,6 @@ class NotificationAdminListMapper
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
-            settings: $this->dropdownSettingsMapper->mapToView('MODAL', $referer, RoundedVariant::ROUNDED),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',

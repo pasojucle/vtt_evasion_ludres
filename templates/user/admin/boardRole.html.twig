@@ -7,12 +7,13 @@
         <div class="wrapper-title" {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
             <h1 class="font-bold text-3xl">{{ user.member.fullName }}</h1>
             <span class="tools">
-                <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.id}) }}"
+                <a href="{{ referer is defined ? referer : path('admin_user_show', {'user': user.id}) }}"
                     class="btn btn-ico" title="Retour à la fiche de l'adhérents">
                     <i class="fas fa-chevron-left"></i>
                 </a>
             </span>
         </div>
+
 
         {{ form_start(form) }}
         <div class="wrapper-body">

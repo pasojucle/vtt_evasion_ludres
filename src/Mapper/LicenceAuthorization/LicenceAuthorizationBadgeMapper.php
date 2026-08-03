@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\Licence;
+namespace App\Mapper\LicenceAuthorization;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
 use App\Entity\LicenceAgreement;
 
-class LicenceAgreementMapper
+class LicenceAuthorizationBadgeMapper
 {
     public function mapToview(LicenceAgreement $licenceAgreement): BadgeView
     {

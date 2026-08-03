@@ -52,7 +52,6 @@ class LicenceReadMapper
                 : null,
             sendNuberLicenceAction:new LinkView(
                 url: $this->urlGenerator->generate('admin_send_number_licence', ['user' => $entity->getId()]),
-                variant: ColorVariant::ACCENT,
                 icon: 'lucide:send',
                 size: Size::SM,
                 label: 'Envoyer le numéro de licence',

@@ -1,0 +1,14 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    {% dump(form) %}
+    <div class="mb-2 flex flex-col gap-4">
+        {% for child in form.licenceAuthorizations %}
+        {{ form_label(child)}}
+            <div>
+                {{ form_widget(child)}}
+                
+            </div>
+        {% endfor %}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}

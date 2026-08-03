@@ -27,8 +27,8 @@
             </div>
             <div class="rounded-md border border-border">
                 <turbo-frame 
-                    id="emergency-contact-{{ view.entity.emergencyContactId }}"
-                    {# src="{{ path('admin_emergency_contact_show', {emergencyContact: view.entity.emergencyContactId}) }}" #}
+                    id="licence-authorizations-{{ view.entity.licenceId }}"
+                    src="{{ path('admin_licence_authorizations_show', {licence: view.entity.licenceId}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
                         <h2>Authorisations</h2>

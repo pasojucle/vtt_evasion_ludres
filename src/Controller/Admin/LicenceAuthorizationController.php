@@ -6,49 +6,46 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\LicenceAgreementDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\LicenceAgreement;
-use App\Entity\Member;
-use App\Form\LicenceAgreementType;
+use App\Entity\Licence;
+use App\Form\Admin\LicenceAuthorizationsType;
+use App\State\LicenceAuthorization\Processor\LicenceAuthorizationsUpdateProcessor;
+use App\State\LicenceAuthorization\Provider\LicenceAuthorizationsReadProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/autorisation/licence/', name: 'admin_licence_authorization_')]
-class LicenceAuthorizationController extends AbstractController
+#[Route('/admin/autorisations/licence', name: 'admin_licence_authorizations')]
+class LicenceAuthorizationController extends AbstractCrudController
 {
-    public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserDtoTransformer $userDtoTransformer,
-        private readonly LicenceAgreementDtoTransformer $approvalDtoTransformer,
-    ) {
+    #[Route('/{licence}', name: '_show', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'licence')]
+    public function show(
+        LicenceAuthorizationsReadProvider $provider,
+        Licence $licence,
+    ): Response {
+        
+        return $this->render('licence_authorization/admin/show.html.twig', [
+            'view' => $provider->getStreamView($licence),
+        ]);
     }
+    
+    #[Route('/edit/{licence}', name: '_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'licence')]
+    public function adminEdit(
+        Request $request,
+        LicenceAuthorizationsReadProvider $provider,
+        LicenceAuthorizationsUpdateProcessor $processor,
+        Licence $licence,
+    ): Response {
 
-    #[Route('edit/{licenceAuthorization}', name: 'edit', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'licenceAuthorization')]
-    public function edit(Request $request, LicenceAgreement $licenceAuthorization): Response
-    {
-        /** @var Member $member */
-        $member = $licenceAuthorization->getLicence()->getMember();
-        $form = $this->createForm(LicenceAgreementType::class, $licenceAuthorization, [
-            'action' => $request->getUri(),
-        ]);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_user_show', [
-                'user' => $member->getId(),
-            ]);
-        }
-
-        return $this->render('licenceAuthorization/admin/edit.html.twig', [
-            'user' => $this->userDtoTransformer->fromEntity($member),
-            'approval' => $this->approvalDtoTransformer->fromEntity($licenceAuthorization),
-            'form' => $form->createView(),
-        ]);
+        return $this->handleFormComponentAction(
+            $request,
+            $licence,
+            $provider,
+            $processor,
+            LicenceAuthorizationsType::class
+        );
     }
 }

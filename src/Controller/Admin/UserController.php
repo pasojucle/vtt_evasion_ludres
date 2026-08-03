@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Filter\UserFilter;
+use App\Entity\Member;
 use App\Entity\User;
 use App\Form\Admin\LicenceMemberType;
 use App\Repository\MemberRepository;
@@ -139,14 +140,14 @@ class UserController extends AbstractCrudController
         ]);
     }
 
-    #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
-    #[IsGranted('USER_EDIT', 'user')]
+    #[Route('/send/numberlicence/{member}', name: 'send_number_licence', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'member')]
     public function adminSendLicence(
         LicenceNumberSendProcessor $processor,
-        User $user
+        Member $member
     ): Response {
 
-    $result = $processor->process($user);
+    $result = $processor->process($member);
 
     return $this->render($result->laziTemplate, [
         'flashes' => [$result->flashMessage->type => [$result->flashMessage->message]],

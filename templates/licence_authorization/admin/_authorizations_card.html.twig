@@ -1,0 +1,21 @@
+<div class="px-4 bg-slate-300 flex items-center h-8">
+    <div class="text-xs font-semibold uppercase text-white">
+        <h2>Autorisations</h2>
+    </div>
+    <div class="ml-auto -mr-2">
+        {% include view.editAction.template with {(view.editAction.name): view.editAction} %}
+    </div>
+</div>
+<div class="p-4 2xl:p-6">
+    <dl class="flex flex-col gap-2 text-sm">
+        {% for authorization in view.authorizations %}
+            <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+                <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">{{ authorization.title}}</dt>
+                <dd class="text-foreground font-medium flex gap-2">
+                    {% include authorization.badge.template with {(authorization.badge.name): authorization.badge} %}
+                    <div>{{ authorization.label }}</div>
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+</div>
