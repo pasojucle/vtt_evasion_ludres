@@ -32,16 +32,18 @@ class UserReadMapper
         $level = $entity->getLevel();
         $authorizations = $licence->getLicenceAuthorizations();
 
-        [$phones, $emergencyContact] = ($entity instanceof Member)
+        [$phones, $emergencyContact, $heath] = ($entity instanceof Member)
             ? [
                 $entity->getMemberGardians()->map(fn ($gardian) => $this->gardianReadMapper->mapToView($gardian)),
                 $entity->getEmergencyContact()?->getId(),
-            ]: [new ArrayCollection(), null];
+                $entity->getHealth()
+            ]: [new ArrayCollection(), null, null];
 
         return new UserReadView(
             id: $entity->getId(),
             identityId: $identity->getId(),
             licenceId: $licence->getId(),
+            healthId: $heath?->getId(),
             passportPhoto: $this->passportPhotoMapper->mapToView($identity->getFilename()),
             fullName: $identity->getFullName(),
             levelType: $level->getType()->trans($this->translator),

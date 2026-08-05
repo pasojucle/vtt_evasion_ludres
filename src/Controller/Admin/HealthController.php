@@ -4,42 +4,46 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Member;
+
+use App\Entity\Health;
 use App\Form\Admin\HealthType;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\State\Health\Processor\HealthUpdateProcessor;
+use App\State\Health\Provider\HealthReadProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class HealthController extends AbstractController
+#[Route('/admin/sante', name: 'admin_health')]
+class HealthController extends AbstractCrudController
 {
-    #[Route('/admin/sante/edit/{member}', name: 'admin_health_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'member')]
+    #[Route('/{health}', name: '_show', methods: ['GET'], defaults:['heath' => null])]
+    #[IsGranted('USER_EDIT', 'health')]
+    public function show(
+        HealthReadProvider $provider,
+        Health $health,
+    ): Response {
+        
+        return $this->render('health/admin/show.html.twig', [
+            'view' => $provider->getStreamView($health),
+        ]);
+    }
+    
+    #[Route('/edit/{health}', name: '_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'health')]
     public function adminEdit(
         Request $request,
-        UserDtoTransformer $userDtoTransformer,
-        EntityManagerInterface $entityManager,
-        Member $member
+        HealthReadProvider $provider,
+        HealthUpdateProcessor $processor,
+        Health $health,
     ): Response {
-        $form = $this->createForm(HealthType::class, $member->getHealth());
-        $form->handleRequest($request);
 
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $health = $form->getData();
-            $entityManager->persist($health);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('admin_user_show', [
-                'user' => $member->getId(),
-            ]);
-        }
-
-        return $this->render('health/admin/edit.html.twig', [
-            'user' => $userDtoTransformer->fromEntity($member),
-            'form' => $form->createView(),
-        ]);
+        return $this->handleFormComponentAction(
+            $request,
+            $health,
+            $provider,
+            $processor,
+            HealthType::class
+        );
     }
 }

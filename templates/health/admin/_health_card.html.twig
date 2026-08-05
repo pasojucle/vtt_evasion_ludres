@@ -1,0 +1,25 @@
+<div class="px-4 bg-slate-300 flex items-center h-8">
+    <div class="text-xs font-semibold uppercase text-white">
+        <h2>Informations sanitaires</h2>
+    </div>
+    <div class="ml-auto -mr-2">
+        {% include view.action.template with {(view.action.name): view.action} %}
+    </div>
+</div>
+<div class="p-4 2xl:p-6">
+    <dl class="flex flex-col gap-2 text-sm">
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Date du dernier certificat médical :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.medicalCertificateDate }}<br>
+            </dd>
+        </div>
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Pathologie :</dt>
+            <dd class="text-foreground font-medium">
+                {{ view.content }}<br>
+            </dd>
+        </div>
+    </dl>
+</div>

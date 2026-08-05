@@ -7,13 +7,11 @@ namespace App\UseCase\v2\Identity;
 use App\Entity\Identity;
 use App\Service\CommuneService;
 use App\Service\UploadService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UpdateIdentity
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private UploadService $uploadService,
         private CommuneService $communeService,
     ) {
@@ -30,7 +28,5 @@ class UpdateIdentity
         if ($identity->getBirthCommune()) {
             $this->communeService->addIfNotExists($identity->getBirthCommune());
         };
-
-        $this->entityManager->flush();
     }
 }

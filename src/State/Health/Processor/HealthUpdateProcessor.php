@@ -2,18 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\State\Identity\Processor;
+namespace App\State\Health\Processor;
 
 use App\Dto\State\TurboStreamProcessorResult;
 use App\Entity\Identity;
 use App\State\Interface\FormTurboStreamProcessorInterface;
-use App\UseCase\v2\Identity\UpdateIdentity;
 use Doctrine\ORM\EntityManagerInterface;
 
-class IdentityUpdateProcessor implements FormTurboStreamProcessorInterface
+class HealthUpdateProcessor implements FormTurboStreamProcessorInterface
 {
     public function __construct(
-        private UpdateIdentity $updateIdentity,
         private EntityManagerInterface $entityManager,
     ) {
     }
@@ -23,10 +21,8 @@ class IdentityUpdateProcessor implements FormTurboStreamProcessorInterface
      */
     public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
-        $passportPhoto = $uploadFiles['passportPhoto'] ?? null;
-        $this->updateIdentity->execute($entity, $passportPhoto);
         $this->entityManager->flush();
 
-        return new TurboStreamProcessorResult('identity/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult('health/admin/update.lazy.html.twig');
     }
 }

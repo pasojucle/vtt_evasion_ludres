@@ -43,6 +43,9 @@ class CoverageFilterConfig implements FilterConfigInterface
                     'label' => false,
                     'class' => Member::class,
                     'autocomplete_url' => 'admin_coverage_autocomplete',
+                    'attr' => [
+                        'data-action' => 'change->filter#submit',
+                    ],
                     'required' => false,
                 ],
             ),

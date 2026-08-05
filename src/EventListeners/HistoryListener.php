@@ -85,7 +85,7 @@ class HistoryListener
         $member = match (true) {
             $reflexionClass->hasMethod('getmemberGardians') && !$entity->getMemberGardians()->isEmpty() => $entity->getMemberGardians()->first()->getMember(),
             $reflexionClass->hasMethod('getIdentities') => $entity->getIdentities()->first()->getMember(),
-            $reflexionClass->hasMethod('getMember') => $entity->getUser(),
+            $reflexionClass->hasMethod('getMember') => $entity->getMember(),
             default => null,
         };
         if ($member instanceof Member && 1 < $member->getLicences()->count()) {

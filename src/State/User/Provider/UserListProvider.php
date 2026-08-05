@@ -83,9 +83,10 @@ class UserListProvider implements ListProviderInterface, FilterInitializerInterf
         return $this->emailClipboardMapper->mapToEmailCsvString($entities);
     }
 
-    public function getAutocompleteChoices(UserFilter $filter): array
+    public function getAutocompleteChoices(string $query, UserFilter $filter): array
     {
         $qb = $this->getQueryBuilder($filter);
+        $this->memberRepository->filterTerm($qb, $query);
 
         return $this->autocompleteMapper->mapToChoices($qb->getQuery()->getResult());
     }

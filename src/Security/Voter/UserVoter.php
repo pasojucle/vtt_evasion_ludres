@@ -82,7 +82,7 @@ class UserVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence|LicenceAgreement|Identity|MemberGardian|EmergencyContact|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence|LicenceAgreement|Identity|MemberGardian|EmergencyContact|Session|Health $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
             return true;
@@ -100,7 +100,7 @@ class UserVoter extends Voter
         return $isUserWithPermission;
     }
 
-    private function canShare(TokenInterface $token, User $user, null|User|UserDto|Licence|Agreement|Session|Identity|MemberGardian|EmergencyContact $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
+    private function canShare(TokenInterface $token, User $user, null|User|UserDto|Licence|Agreement|Session|Identity|MemberGardian|EmergencyContact|Health $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
     {
         if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
@@ -109,7 +109,7 @@ class UserVoter extends Voter
         return $isUserWithSharePermission;
     }
 
-    private function isOwner(null|User|UserDto|Licence|LicenceAgreement|Session|Identity|MemberGardian|EmergencyContact $subject, User $user): bool
+    private function isOwner(null|User|UserDto|Licence|LicenceAgreement|Session|Identity|MemberGardian|EmergencyContact|Health $subject, User $user): bool
     {
         if (!$subject) {
             return false;
@@ -132,6 +132,11 @@ class UserVoter extends Voter
         if ($subject instanceof Licence) {
             $userLicence = $subject->getUser();
             return $userLicence instanceof Member && $userLicence === $user;
+        }
+
+        if ($subject instanceof Health) {
+            $memberHealth = $subject->getMember();
+            return $memberHealth === $user;
         }
 
         if ($subject instanceof LicenceAgreement) {

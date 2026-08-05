@@ -58,7 +58,8 @@ class RegistrationController extends AbstractCrudController
     ): JsonResponse {
         /**  @var RegistrationFilter $filter */
         $filter = $provider->getHydratedDto($request->query->all(), RegistrationFilter::class);
+        $query = $request->query->get('query');
 
-        return new JsonResponse(['results' => $provider->getAutocompleteChoices($filter)]);
+        return new JsonResponse(['results' => $provider->getAutocompleteChoices($query, $filter)]);
     }
 }

@@ -76,7 +76,8 @@ class CoverageController extends AbstractCrudController
     ): JsonResponse {
         /**  @var CoverageFilter $filter */
         $filter = $provider->getHydratedDto($request->query->all(), CoverageFilter::class);
+        $query = $request->query->get('query');
 
-        return new JsonResponse(['results' => $provider->getAutocompleteChoices($filter)]);
+        return new JsonResponse(['results' => $provider->getAutocompleteChoices($query, $filter)]);
     }
 }

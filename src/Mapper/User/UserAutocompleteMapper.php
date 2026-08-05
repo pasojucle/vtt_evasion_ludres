@@ -18,7 +18,7 @@ class UserAutocompleteMapper
                 'text' => $user->getIdentity()->getFullName(),
             ];
         }
-
+        dump($results);
         return $results;
     }
 }

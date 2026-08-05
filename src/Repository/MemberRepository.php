@@ -1157,6 +1157,17 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
+    public function filterTerm(QueryBuilder &$qb, string $term): void
+    {
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->like('LOWER(i.name)', ':term'),
+                $qb->expr()->like('LOWER(i.firstName)', ':term'),
+            )
+        )
+        ->setParameter('term', sprintf('%%%s%%', strtolower($term)));
+    }
+
     public function countByLevelAndSeason(Level $level, int $season): int
     {
         return $this->createQueryBuilder('m')

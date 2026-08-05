@@ -50,11 +50,11 @@
             </div>
             <div class="rounded-md border border-border">
                 <turbo-frame 
-                    id="emergency-contact-{{ view.entity.emergencyContactId }}"
-                    {# src="{{ path('admin_emergency_contact_show', {emergencyContact: view.entity.emergencyContactId}) }}" #}
+                    id="health-{{ view.entity.healthId }}"
+                    src="{{ path('admin_health_show', {health: view.entity.healthId}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
-                        <h2>Informations saniatires</h2>
+                        <h2>Informations sanitaires</h2>
                     </div>
                     <div class="animate-pulse p-4 2xl:p-6">
                         <dl class="flex flex-col gap-4 text-sm">

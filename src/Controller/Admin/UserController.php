@@ -164,8 +164,9 @@ class UserController extends AbstractCrudController
     ): JsonResponse {
         /**  @var UserFilter $filter */
         $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
+        $query = $request->query->get('query');
 
-        return new JsonResponse(['results' => $provider->getAutocompleteChoices($filter)]);
+        return new JsonResponse(['results' => $provider->getAutocompleteChoices($query, $filter)]);
     }
 
     #[Route('/encadrant/autocomplete', name: 'framer_autocomplete', methods: ['GET'])]

@@ -63,9 +63,10 @@ class RegistrationListProvider implements ListProviderInterface, StreamExportabl
         );
     }
 
-    public function getAutocompleteChoices(RegistrationFilter $filter): array
+    public function getAutocompleteChoices(string $term, RegistrationFilter $filter): array
     {
         $qb = $this->getQueryBuilder($filter);
+        $this->memberRepository->filterTerm($qb, $term);
 
         return $this->autocompleteMapper->mapToChoices($qb->getQuery()->getResult());
     }
