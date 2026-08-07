@@ -35,26 +35,6 @@ class MemberStatusType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('level', EntityType::class, [
-                'label' => 'Niveau',
-                'class' => Level::class,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('l')
-                        ->andWhere(
-                            (new Expr())->isNull('l.deletedAt'),
-                        )
-                        ->addOrderBy('l.type', 'ASC')
-                        ->addOrderBy('l.orderBy', 'ASC')
-                    ;
-                },
-                'group_by' => function ($choice, $key, $value) {
-                    if (LevelType::SCHOOL === $choice->getType()) {
-                        return 'Adhérent';
-                    }
-
-                    return 'Encadrement';
-                },
-            ])
             ->add('boardRole', EntityType::class, [
                 'label' => 'Fonction',
                 'class' => BoardRole::class,

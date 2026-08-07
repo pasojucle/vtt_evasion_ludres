@@ -13,9 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+
+#[Route('/admin/identite', name: 'admin_identity')]
 class IdentityController extends AbstractCrudController
 {
-    #[Route('/admin/identite/{identity}', name: 'admin_identity_show', methods: ['GET'])]
+    #[Route('/show/{identity}', name: '_show', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'identity')]
     public function show(
         IdentityReadProvider $provider,
@@ -27,7 +29,7 @@ class IdentityController extends AbstractCrudController
         ]);
     }
     
-    #[Route('/admin/identite/edit/{identity}', name: 'admin_identity_edit', methods: ['GET', 'POST'])]
+    #[Route('/edit/{identity}', name: '_edit', methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'identity')]
     public function adminEdit(
         Request $request,

@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\State\MemberLevel\Provider;
+
+use App\Dto\View\SheetView;
+use App\Dto\View\MemberLevel\MemberLevelView;
+use App\Entity\Member;
+use App\Mapper\MemberLevel\MemberLevelReadMapper;
+use App\State\Interface\TurboStreamProviderInterface;
+
+
+/**
+ * @implements TurboStreamProviderInterface<Member>
+ */
+class MemberLevelReadProvider implements TurboStreamProviderInterface
+{
+    public function __construct(
+        private MemberLevelReadMapper $memberLevelReadMapper,
+    ) {
+    }
+
+    public function getFormView(object $entity, ?string $fallback = null): SheetView
+    {
+        return new SheetView(
+            title: 'Modifier',
+            description: 'Modifier le niveau de l\'adhérent',
+            action: 'Modifier'
+        );
+    }
+
+    public function getFormOptions(object $entity): array
+    {   
+
+        return [];
+    }
+
+    public function getStreamView(object $entity): MemberLevelView
+    {
+
+        return $this->memberLevelReadMapper->mapToView($entity);
+    }
+}

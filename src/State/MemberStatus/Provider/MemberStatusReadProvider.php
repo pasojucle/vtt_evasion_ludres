@@ -25,7 +25,7 @@ class MemberStatusReadProvider implements TurboStreamProviderInterface
     {
         return new MemberStatusSheetView(
             title: 'Modifier',
-            description: 'Modifier le statut de l\'hadenrent dans le club ',
+            description: 'Modifier le statut de l\'adhérent dans le club ',
             action: 'Modifier'
         );
     }

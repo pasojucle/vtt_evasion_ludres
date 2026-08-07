@@ -8,13 +8,6 @@
 </div>
 <div class="p-4 2xl:p-6">
     <dl class="flex flex-col gap-2 text-sm">
-        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
-            <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Niveau :</dt>
-            <dd class="font-medium flex gap-2">
-                <div class="text-foreground">{{ view.levelType }}</div>
-                {% include view.level.template with {(view.level.name): view.level} %}
-            </dd>
-        </div>
 
         <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Fonction :</dt>
