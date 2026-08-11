@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
@@ -400,5 +401,61 @@ class SessionRepository extends ServiceEntityRepository
             ->groupBy('b.id')
             ->getQuery()
             ->getArrayResult();
+    }
+
+    public function getSessionQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('se')
+            ->join('se.cluster', 'cl')->addSelect('cl')
+            ->join('cl.bikeRide', 'br')->addSelect('br');
+    }
+
+    public function filterMember(QueryBuilder $qb, Member $member): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('se.member', ':member')
+        )
+        ->setParameter('member', $member);
+    } 
+
+    public function filterType(QueryBuilder $qb, BikeRideType $bikeRideType): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('br.bikeRideType', ':bikeRideType')
+        )
+        ->setParameter('bikeRideType', $bikeRideType);
+    } 
+
+    public function filterparticipated(QueryBuilder $qb): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('se.isPresent', ':isPresent')
+        )
+        ->setParameter('isPresent', true);
+    }  
+
+    public function filterUser(QueryBuilder $qb, User $user): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('se.user', ':user')
+        )
+        ->setParameter('user', $user);
+    } 
+
+    public function filterPeriod(QueryBuilder $qb, DateTimeImmutable $startAt, DateTimeImmutable $endAt): void
+    {
+        $qb
+            ->andWhere(
+                    $qb->expr()->between('br.startAt', ':startAt', ':endAt')
+                )
+            ->setParameter('startAt', $startAt)
+            ->setParameter('endAt', $endAt);
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('se.startAt', $direction);
     }
 }

@@ -2,19 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\View\MemberLevel;
+namespace App\Dto\View\MemberParticipation;
 
 use App\Dto\View\BadgeView;
 use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 
 
-readonly class MemberLevelView implements TurboStreamViewInterface
+readonly class MemberParticipationView implements TurboStreamViewInterface
 {
+    /**
+     * @param BadgeView[] $activities
+     */
     public function __construct(
         public int $id,
-        public BadgeView $level,
-        public string $levelType,
+        public array $activities,
         public LinkView $action,
     ) {
     }

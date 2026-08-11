@@ -50,7 +50,7 @@ class LicenceReadMapper
             familyMemberUrl: $familiMember 
                 ? $this->urlGenerator->generate('admin_user_show', ['user' => $familiMember->getId()])
                 : null,
-            sendNuberLicenceAction:new LinkView(
+            sendNuberLicenceAction: new LinkView(
                 url: $this->urlGenerator->generate('admin_send_number_licence', ['member' => $entity->getId()]),
                 icon: 'lucide:send',
                 size: Size::SM,

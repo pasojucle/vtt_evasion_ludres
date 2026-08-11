@@ -154,6 +154,14 @@ class BikeRide implements UploadableInterface, SoftDeletableInterface
         return $this->title;
     }
 
+    public function getShorTilte(string $title): string
+    {
+        if (1 === preg_match('#^(.+)\s\((.+)\)$#', $title, $matches)) {
+            return $matches[1];
+        }
+        return $title;
+    }
+
     public function setTitle(?string $title): static
     {
         $this->title = $title;

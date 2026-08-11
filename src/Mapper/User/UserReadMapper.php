@@ -24,7 +24,7 @@ class UserReadMapper
         private GardianReadMapper $gardianReadMapper,
     ) {
     }
-    public function mapToView(User $entity): UserReadView
+    public function mapToView(User $entity, array $seasonPeriod): UserReadView
     {
         $identity = $entity->getIdentity();
         $licence = $entity->getLastLicence();
@@ -58,6 +58,11 @@ class UserReadMapper
             authorizations: array_map(fn($authorization) => $this->LicenceAuthorizationBadgeMapper->mapToview($authorization), $authorizations),
             gardians: $phones,
             emergencyContactId: $emergencyContact,
+            participationParams: [
+                'member' => $entity->getId(),
+                'startAt' => $seasonPeriod['startAt']->format('Y-m-d'),
+                'endAt' => $seasonPeriod['endAt']->format('Y-m-d'),
+            ],
         );
     }
 }

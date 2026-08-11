@@ -11,19 +11,12 @@ use App\Entity\Member;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class MemberLevelType extends AbstractType
 {
-    public function __construct(
-        private Security $security,
-        private AccessDecisionManagerInterface $accessDecisionManager
-    ) {
-    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

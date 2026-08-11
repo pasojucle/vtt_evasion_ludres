@@ -68,8 +68,8 @@ abstract class AbstractCrudController extends AbstractController
             'list' => $provider->getCollection(
                 $filter,
                 $filterConfig,
-                $request->attributes->get('_route'),
-                $request->query->getInt('page', 1)
+                $route,
+                $request->query->getInt('page', 1),
             ),
         ]);
     }
@@ -107,7 +107,7 @@ abstract class AbstractCrudController extends AbstractController
                 if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
 
                     return $this->render($result->laziTemplate, [
-                        'view' => $provider->getStreamView($object),
+                            'view' => $provider->getStreamView($object),
                         ], new Response('', Response::HTTP_OK, [
                             'Content-Type' => 'text/vnd.turbo-stream.html',
                         ]));

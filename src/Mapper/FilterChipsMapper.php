@@ -11,6 +11,7 @@ use App\Service\Filter\FilterFieldConfig;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -60,6 +61,7 @@ class FilterChipsMapper
             EnumType::class => $rawValue->trans($this->translator),
             EntityType::class => $rawValue->__toString(),
             ChoiceType::class => $this->resolveChoiceLabel($field->options['choices'], $rawValue),
+            DateType::class => $rawValue?->format('d/m/Y'),
             default => (string) $rawValue
         };
 

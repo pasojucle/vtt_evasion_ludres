@@ -11,6 +11,7 @@ use App\Dto\View\TabView;
 use App\Entity\Enum\LevelType;
 use App\Entity\User;
 use App\Mapper\User\UserReadMapper;
+use App\Service\SeasonService;
 use App\State\Interface\ComponentProviderInterface;
 
 /**
@@ -20,6 +21,7 @@ class UserReadProvider implements ComponentProviderInterface
 {
     public function __construct(
         private UserReadMapper $mapper,
+        private SeasonService $seasonService,
     ) {
     }
 
@@ -38,7 +40,10 @@ class UserReadProvider implements ComponentProviderInterface
             name: sprintf('user-%s', $entity->getId()),
             header: 'user/admin/show/tab_header.html.twig',
             tabs: $tabs,
-            entity: $this->mapper->mapToView($entity),
+            entity: $this->mapper->mapToView(
+                $entity,
+                $this->seasonService->getCurrentSeasonPeriod()
+            ),
             fallback: new LinkView(
                 url: $fallback,
                 icon: 'lucide:chevron-left',

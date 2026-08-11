@@ -6,6 +6,7 @@ namespace App\Mapper;
 
 use App\Dto\Filter\AbstractFilter;
 use BackedEnum;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
@@ -70,6 +71,11 @@ class FilterMapper
                     'bool' => filter_var($rawValue, FILTER_VALIDATE_BOOLEAN),
                     default => $rawValue,
                 };
+                continue;
+            }
+
+            if ('DateTimeImmutable' === $type->getName()) {
+                $arguments[$name] = new DateTimeImmutable($rawValue);
                 continue;
             }
 

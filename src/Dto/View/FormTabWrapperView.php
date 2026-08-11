@@ -26,7 +26,7 @@ readonly class FormTabWrapperView implements ComponentFormViewInterface
 
     public function getTemplate(): string
     {
-        return 'components/_form_tabs_wrapper.html.twig';
+        return 'components/tab/_form_tabs_wrapper.html.twig';
     }
 
     public function getFormAttr(): array

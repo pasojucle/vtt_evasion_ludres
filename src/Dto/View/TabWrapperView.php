@@ -27,6 +27,6 @@ readonly class TabWrapperView implements ComponentViewInterface
 
     public function getTemplate(): string
     {
-        return 'components/_tabs_wrapper.html.twig';
+        return 'components/tab/_tabs_wrapper.html.twig';
     }
 }

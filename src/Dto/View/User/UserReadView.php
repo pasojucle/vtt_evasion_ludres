@@ -26,6 +26,7 @@ readonly class UserReadView implements TabEntityInterface
         public array $authorizations,
         public Collection $gardians,
         public ?int $emergencyContactId,
+        public array $participationParams,
     ) {
     }
 }

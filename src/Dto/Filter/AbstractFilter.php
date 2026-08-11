@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\Filter;
 
 use BackedEnum;
+use DateTimeImmutable;
 
 abstract class AbstractFilter
 {
@@ -39,6 +40,7 @@ abstract class AbstractFilter
 
         return match (true) {
             $value instanceof BackedEnum => $value->value,
+            $value instanceof DateTimeImmutable => $value->format('Y-m-d'),
             is_object($value) && method_exists($value, 'getId') => $value->getId(),
             default => $value
         };
