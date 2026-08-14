@@ -8,7 +8,6 @@ use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 
-
 readonly class EmergencyContactView implements TurboStreamViewInterface
 {
     public function __construct(

@@ -6,8 +6,8 @@ namespace App\State\Activity\Provider;
 
 use App\Dto\Enum\Size;
 use App\Dto\View\ButtonView;
-use App\Dto\View\LinkView;
 use App\Dto\View\FormTabWrapperView;
+use App\Dto\View\LinkView;
 use App\Dto\View\TabView;
 use App\Entity\BikeRide;
 use App\Mapper\Activity\ActivityUpdateMapper;

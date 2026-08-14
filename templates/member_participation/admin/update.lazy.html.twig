@@ -1,17 +1,6 @@
-<turbo-stream action="update" target="member-participation-filter-{{ view.memberId }}">
+<turbo-stream action="update" target="member-participation-{{ view.memberId }}">
     <template>
-        {% include 'member_participation/admin/_filter_card.html.twig' %}
-    </template>
-</turbo-stream>
-
-<turbo-stream action="replace" target="member-participation-{{ view.memberId }}">
-    <template>
-        <turbo-frame 
-            id="member-participation-{{ view.memberId}}"
-            src="{{ path('admin_member_participation_list', view.queries) }}"
-        >
-            {% include "member_participation/admin/_activities_skeleton.html.twig" %}
-        </turbo-frame>
+        {% include 'member_participation/admin/_participation_cards.html.twig' %}
     </template>
 </turbo-stream>
 

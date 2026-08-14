@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Entity\Member;
 use App\Form\Admin\MemberStatusType;
 use App\State\MemberStatus\Processor\MemberStatusUpdateProcessor;
@@ -23,7 +22,6 @@ class MemberStatusController extends AbstractCrudController
         MemberStatusReadProvider $provider,
         Member $member,
     ): Response {
-        
         return $this->render('member_status/admin/show.html.twig', [
             'view' => $provider->getStreamView($member),
         ]);
@@ -37,7 +35,6 @@ class MemberStatusController extends AbstractCrudController
         MemberStatusUpdateProcessor $processor,
         Member $member,
     ): Response {
-
         return $this->handleFormComponentAction(
             $request,
             $member,

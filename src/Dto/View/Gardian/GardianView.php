@@ -9,7 +9,6 @@ use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 
-
 readonly class GardianView implements TurboStreamViewInterface
 {
     /**
@@ -18,7 +17,7 @@ readonly class GardianView implements TurboStreamViewInterface
     public function __construct(
         public int $id,
         public string $kind,
-        public string $fullName, 
+        public string $fullName,
         public ?string $address,
         public ?string $city,
         public EmailView $email,

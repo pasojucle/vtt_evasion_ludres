@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
 #[Route('/admin/identite', name: 'admin_identity')]
 class IdentityController extends AbstractCrudController
 {
@@ -23,7 +22,6 @@ class IdentityController extends AbstractCrudController
         IdentityReadProvider $provider,
         Identity $identity,
     ): Response {
-        
         return $this->render('identity/admin/show.html.twig', [
             'view' => $provider->getStreamView($identity),
         ]);
@@ -37,7 +35,6 @@ class IdentityController extends AbstractCrudController
         IdentityUpdateProcessor $processor,
         Identity $identity,
     ): Response {
-
         return $this->handleFormComponentAction(
             $request,
             $identity,

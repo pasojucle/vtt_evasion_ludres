@@ -219,6 +219,6 @@ class SlideshowController extends AbstractCrudController
             };
         }
 
-        return new JsonResponse(['errorCode' => 1, 'message' => 'Auncune données valides']);
+        return new JsonResponse(['errorCode' => 1, 'message' => 'Aucune données valides']);
     }
 }

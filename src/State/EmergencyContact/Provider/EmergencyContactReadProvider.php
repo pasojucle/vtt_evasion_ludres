@@ -10,7 +10,6 @@ use App\Entity\EmergencyContact;
 use App\Mapper\EmergencyContact\EmergencyContactReadMapper;
 use App\State\Interface\TurboStreamProviderInterface;
 
-
 /**
  * @implements TurboStreamProviderInterface<EmergencyContact>
  */
@@ -28,12 +27,10 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
             description: 'Modifier le contact d\'urgence',
             action: 'Modifier'
         );
-        
     }
 
     public function getFormOptions(object $entity): array
-    {   
-
+    {
         return [
             'attr' => [
                 'data-controller' => 'form-validator',
@@ -41,9 +38,8 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity): EmergencyContactView
+    public function getStreamView(object $entity, array $context = []): EmergencyContactView
     {
-
         return $this->emergencyContactReadMapper->mapToView($entity);
     }
 }

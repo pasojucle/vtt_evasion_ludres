@@ -16,8 +16,7 @@ class LicenceAuthorizationMapper
     {
         $agreement = $licenceAgreement->getAgreement();
         if ($licenceAgreement->isAgreed()) {
-
-            return new LicenceAuthorizationView( 
+            return new LicenceAuthorizationView(
                 $licenceAgreement->getId(),
                 $agreement->getTitle(),
                 $agreement->getAuthorizationMessage(),
@@ -29,7 +28,7 @@ class LicenceAuthorizationMapper
             );
         }
 
-        return new LicenceAuthorizationView( 
+        return new LicenceAuthorizationView(
             $licenceAgreement->getId(),
             $agreement->getTitle(),
             $agreement->getRejectionMessage(),

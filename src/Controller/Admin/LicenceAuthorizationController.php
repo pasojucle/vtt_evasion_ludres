@@ -25,7 +25,6 @@ class LicenceAuthorizationController extends AbstractCrudController
         LicenceAuthorizationsReadProvider $provider,
         Licence $licence,
     ): Response {
-        
         return $this->render('licence_authorization/admin/show.html.twig', [
             'view' => $provider->getStreamView($licence),
         ]);
@@ -39,7 +38,6 @@ class LicenceAuthorizationController extends AbstractCrudController
         LicenceAuthorizationsUpdateProcessor $processor,
         Licence $licence,
     ): Response {
-
         return $this->handleFormComponentAction(
             $request,
             $licence,

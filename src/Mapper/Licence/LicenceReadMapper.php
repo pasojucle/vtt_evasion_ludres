@@ -19,7 +19,8 @@ class LicenceReadMapper
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
-    ){}
+    ) {
+    }
 
     public function mapToView(User $entity): LicenceView
     {
@@ -38,7 +39,7 @@ class LicenceReadMapper
             createdAt: $licence->getCreatedAt()?->format('m/d/Y') ?? 'Inconnue',
             state: $licence->getState()->trans($this->translator),
             category: $licence->getCategory()->trans($this->translator),
-            yearlyCoverage: !$licence->getCurrentSeasonForm() 
+            yearlyCoverage: !$licence->getCurrentSeasonForm()
                 ? new BadgeView(
                     sprintf('Assurance %s manquante', $season),
                     ColorVariant::DESTRUCTIVE,
@@ -47,7 +48,7 @@ class LicenceReadMapper
             coverage: $licence->getCoverage()->trans($this->translator),
             bikeType: $licence->getBikeType()->trans($this->translator),
             familyMember: $familiMember?->getIdentity()->getFullName(),
-            familyMemberUrl: $familiMember 
+            familyMemberUrl: $familiMember
                 ? $this->urlGenerator->generate('admin_user_show', ['user' => $familiMember->getId()])
                 : null,
             sendNuberLicenceAction: new LinkView(

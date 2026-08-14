@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace App\Mapper\MemberParticipation;
 
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\Size;
 use App\Dto\Filter\MemberParticipationFilter;
 use App\Dto\View\BadgeView;
+use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LinkView;
 use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\MemberParticipation\MemberActivityView;
-use App\Entity\Member;
 use App\Entity\Session;
 use App\Mapper\BikeRide\BikeRidePeriodMapper;
 use App\Model\Currency;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MemberParticipationReadMapper
@@ -21,34 +24,42 @@ class MemberParticipationReadMapper
     public function __construct(
         private TranslatorInterface $translator,
         private BikeRidePeriodMapper $bikeRidePeriodMapper,
-    ){}
+        private UrlGeneratorInterface $urlGenerator,
+    ) {
+    }
 
     public function mapToView(
-        Member $entity, 
-        array $indemnities, 
-        Paginator $sessions,
+        MemberParticipationFilter $filter,
+        ?float $totalIndemnity,
+        array $sessionAmounts,
+        Paginator $paginatedSessions,
         string $route,
         int $currentPage,
-        MemberParticipationFilter $fiter,
-    ): MemberActivitiesView
-    {
-        $levelId = $entity->getLevel()?->getId() ?? 0;
-        $indemnityMap = $this->mapIndemnities($indemnities);
+    ): MemberActivitiesView {
+        $member = $filter->member;
 
         return new MemberActivitiesView(
-            memberId: $entity->getId(),
-            counter: $sessions->count(),
-            activities: array_map(function (Session $session) use ($levelId, $indemnityMap) {
+            memberId: $member->getId(),
+            queries: $filter->toArray(),
+            period: sprintf('Du %s au %s', $filter->startAt->format('d/m/Y'), $filter->endAt->format('d/m/Y')),
+            type: $filter->type?->getName(),
+            action: new LinkView(
+                url: $this->urlGenerator->generate('admin_member_participation_filter', $filter->toArray()),
+                icon: 'lucide:settings-2',
+                size: Size::ICON,
+                htmlAttributes: [
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                ],
+            ),
+            counter: $paginatedSessions->count(),
+            activities: array_map(function (Session $session) use ($sessionAmounts) {
                 $bikeRide = $session->getCluster()->getBikeRide();
-                $bikeRideTypeId = $bikeRide->getBikeRideType()->getId();
-                $amount = $session->isPresent() 
-                    ? $indemnityMap["{$levelId}_{$bikeRideTypeId}"] ?? 0.0
-                    : null;
+                $amount = $sessionAmounts[$session->getId()] ?? null;
 
                 return new MemberActivityView(
                     period: $this->bikeRidePeriodMapper->mapToView($bikeRide),
                     title: $bikeRide->getTitle(),
-                    practice: $session->isPresent() 
+                    practice: $session->isPresent()
                         ? new BadgeView(
                             $session->getPractice()->trans($this->translator),
                             ColorVariant::SUCCESS,
@@ -57,25 +68,14 @@ class MemberParticipationReadMapper
                             'Absent',
                             ColorVariant::DESTRUCTIVE,
                         ),
-                    indemnity: $amount 
+                    indemnity: $amount
                         ? new BadgeView((new Currency($amount))->toString())
                         : null,
                 );
-                }, iterator_to_array($sessions)),
+            }, iterator_to_array($paginatedSessions)),
+            totalIndemnity: ($totalIndemnity)
+                ? new BadgeView((new Currency($totalIndemnity))->toString())
+                : null,
         );
-    }
-
-    private function mapIndemnities(array $indemnities): array
-    {
-        $indemnityMap = [];
-        foreach ($indemnities as $indemnity) {
-            $key = sprintf('%d_%d', 
-                $indemnity->getLevel()->getId(), 
-                $indemnity->getBikeRideType()->getId()
-            );
-            $indemnityMap[$key] = $indemnity->getAmount();
-        }
-
-        return $indemnityMap;
     }
 }

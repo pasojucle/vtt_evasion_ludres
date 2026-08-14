@@ -146,10 +146,9 @@ class UserController extends AbstractCrudController
         LicenceNumberSendProcessor $processor,
         Member $member
     ): Response {
+        $result = $processor->process($member);
 
-    $result = $processor->process($member);
-
-    return $this->render($result->laziTemplate, [
+        return $this->render($result->laziTemplate, [
         'flashes' => [$result->flashMessage->type => [$result->flashMessage->message]],
         ], new Response('', Response::HTTP_OK, [
             'Content-Type' => 'text/vnd.turbo-stream.html',

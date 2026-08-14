@@ -12,7 +12,6 @@ class BikeRidePeriodMapper
 {
     public function mapToView(BikeRide $bikeRide): string
     {
-        dump($bikeRide->getStartAt());
         $startAt = $bikeRide->getStartAt();
         $endAt = $bikeRide->getEndAt();
         return  (null === $endAt)

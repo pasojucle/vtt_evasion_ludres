@@ -11,7 +11,6 @@ use App\Mapper\Identity\IdentityReadMapper;
 
 use App\State\Interface\TurboStreamProviderInterface;
 
-
 /**
  * @implements TurboStreamProviderInterface<Identity>
  */
@@ -29,7 +28,6 @@ class IdentityReadProvider implements TurboStreamProviderInterface
             description: 'Modifier l\'identité',
             action: 'Modifier'
         );
-        
     }
 
     public function getFormOptions(object $entity): array
@@ -46,7 +44,7 @@ class IdentityReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity): IdentityView
+    public function getStreamView(object $entity, array $context = []): IdentityView
     {
         $address = $entity->getAddress();
 

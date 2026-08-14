@@ -9,7 +9,6 @@ use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 
-
 readonly class IdentityView implements TurboStreamViewInterface
 {
     /**
@@ -18,8 +17,8 @@ readonly class IdentityView implements TurboStreamViewInterface
     public function __construct(
         public int $id,
         public string $fullName,
-        public string $birthDate, 
-        public string $birthPlace, 
+        public string $birthDate,
+        public string $birthPlace,
         public string $address,
         public string $city,
         public EmailView $email,

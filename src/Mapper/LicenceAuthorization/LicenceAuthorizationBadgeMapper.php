@@ -27,6 +27,5 @@ class LicenceAuthorizationBadgeMapper
             variant: ColorVariant::DESTRUCTIVE,
             size: Size::ICON,
         );
-
     }
 }

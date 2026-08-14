@@ -10,7 +10,6 @@ use App\Entity\Member;
 use App\Mapper\MemberStatus\MemberStatusReadMapper;
 use App\State\Interface\TurboStreamProviderInterface;
 
-
 /**
  * @implements TurboStreamProviderInterface<Member>
  */
@@ -31,14 +30,12 @@ class MemberStatusReadProvider implements TurboStreamProviderInterface
     }
 
     public function getFormOptions(object $entity): array
-    {   
-
+    {
         return [];
     }
 
-    public function getStreamView(object $entity): MemberStatusView
+    public function getStreamView(object $entity, array $context = []): MemberStatusView
     {
-
         return $this->memberClubReadMapper->mapToView($entity);
     }
 }

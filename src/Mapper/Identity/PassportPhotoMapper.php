@@ -10,10 +10,9 @@ use App\Service\FileService;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
 class PassportPhotoMapper
 {
-        public function __construct(
+    public function __construct(
         private IdentityFileLocation $identityFileLocation,
         private DefaultFileLocation $defaultFileLocation,
         private UrlGeneratorInterface $urlGenerator,

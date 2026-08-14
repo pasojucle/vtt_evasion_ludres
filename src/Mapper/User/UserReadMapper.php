@@ -37,7 +37,7 @@ class UserReadMapper
                 $entity->getMemberGardians()->map(fn ($gardian) => $this->gardianReadMapper->mapToView($gardian)),
                 $entity->getEmergencyContact()?->getId(),
                 $entity->getHealth()
-            ]: [new ArrayCollection(), null, null];
+            ] : [new ArrayCollection(), null, null];
 
         return new UserReadView(
             id: $entity->getId(),
@@ -55,7 +55,7 @@ class UserReadMapper
                 value: sprintf('%s-%s', $season, $season + 1),
                 variant: ColorVariant::ACCENT
             ),
-            authorizations: array_map(fn($authorization) => $this->LicenceAuthorizationBadgeMapper->mapToview($authorization), $authorizations),
+            authorizations: array_map(fn ($authorization) => $this->LicenceAuthorizationBadgeMapper->mapToview($authorization), $authorizations),
             gardians: $phones,
             emergencyContactId: $emergencyContact,
             participationParams: [

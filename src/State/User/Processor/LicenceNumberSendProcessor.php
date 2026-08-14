@@ -11,14 +11,14 @@ use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ReplaceKeywordsService;
 
-
 class LicenceNumberSendProcessor
 {
     public function __construct(
         private MailerService $mailerService,
         private MessageService $messageService,
         private ReplaceKeywordsService $replaceKeywords,
-    ){}
+    ) {
+    }
 
     public function process(Member $entity): TurboStreamProcessorResult
     {

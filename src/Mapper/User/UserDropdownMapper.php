@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Mapper\User;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
+use App\Dto\View\LinkView;
 use App\Entity\Enum\LevelType;
 use App\Entity\User;
 use App\Service\UrlContextService;

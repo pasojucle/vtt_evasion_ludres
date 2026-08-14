@@ -20,7 +20,8 @@ class GardianReadMapper
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
-    ){}
+    ) {
+    }
 
     public function mapToView(MemberGardian $entity): GardianView
     {
@@ -32,10 +33,12 @@ class GardianReadMapper
             kind: $entity->getKind()->trans($this->translator),
             fullName: $identity->getFullName(),
             address: $address->getStreet(),
-            city: sprintf('%s %s',$address->getCommune()->getPostalCode(), $address->getCommune()->getName()),
+            city: sprintf('%s %s', $address->getCommune()->getPostalCode(), $address->getCommune()->getName()),
             email: new EmailView($identity->getEmail()),
-            phones: array_map(fn ($phone) => new PhoneView($phone),
-             array_filter([$identity->getMobile(), $identity->getPhone()])),
+            phones: array_map(
+                fn ($phone) => new PhoneView($phone),
+                array_filter([$identity->getMobile(), $identity->getPhone()])
+            ),
             action: new LinkView(
                 url: $this->urlGenerator->generate('admin_gardian_edit', ['gardian' => $entity->getId()]),
                 variant: ColorVariant::GOST,

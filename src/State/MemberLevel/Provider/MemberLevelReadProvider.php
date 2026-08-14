@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\State\MemberLevel\Provider;
 
-use App\Dto\View\SheetView;
 use App\Dto\View\MemberLevel\MemberLevelView;
+use App\Dto\View\SheetView;
 use App\Entity\Member;
 use App\Mapper\MemberLevel\MemberLevelReadMapper;
 use App\State\Interface\TurboStreamProviderInterface;
-
 
 /**
  * @implements TurboStreamProviderInterface<Member>
@@ -31,14 +30,12 @@ class MemberLevelReadProvider implements TurboStreamProviderInterface
     }
 
     public function getFormOptions(object $entity): array
-    {   
-
+    {
         return [];
     }
 
-    public function getStreamView(object $entity): MemberLevelView
+    public function getStreamView(object $entity, array $context = []): MemberLevelView
     {
-
         return $this->memberLevelReadMapper->mapToView($entity);
     }
 }

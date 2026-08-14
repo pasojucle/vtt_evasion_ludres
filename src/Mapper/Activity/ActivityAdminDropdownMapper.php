@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Mapper\Activity;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\LinkView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LinkView;
 use App\Entity\BikeRide;
 use App\Service\UrlContextService;
 use DateTimeImmutable;

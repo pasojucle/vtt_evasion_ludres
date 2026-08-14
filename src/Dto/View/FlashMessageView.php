@@ -12,5 +12,6 @@ readonly class FlashMessageView
     public function __construct(
         public string $type,
         public string $message,
-    ){}
+    ) {
+    }
 }

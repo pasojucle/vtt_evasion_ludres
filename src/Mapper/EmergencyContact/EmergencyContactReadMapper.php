@@ -17,11 +17,11 @@ class EmergencyContactReadMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-    ){}
+    ) {
+    }
 
     public function mapToView(EmergencyContact $entity): EmergencyContactView
     {
-
         return new EmergencyContactView(
             id: $entity->getId(),
             kinship: $entity->getKinship(),

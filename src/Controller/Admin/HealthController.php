@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Entity\Health;
 use App\Form\Admin\HealthType;
 use App\State\Health\Processor\HealthUpdateProcessor;
@@ -23,7 +22,6 @@ class HealthController extends AbstractCrudController
         HealthReadProvider $provider,
         Health $health,
     ): Response {
-        
         return $this->render('health/admin/show.html.twig', [
             'view' => $provider->getStreamView($health),
         ]);
@@ -37,7 +35,6 @@ class HealthController extends AbstractCrudController
         HealthUpdateProcessor $processor,
         Health $health,
     ): Response {
-
         return $this->handleFormComponentAction(
             $request,
             $health,

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Mapper\Registration;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\LinkView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LinkView;
 use App\Entity\User;
 use App\Mapper\User\UserDropdownMapper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

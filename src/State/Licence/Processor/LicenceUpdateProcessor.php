@@ -9,7 +9,6 @@ use App\Entity\User;
 use App\State\Interface\FormTurboStreamProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-
 /**
  * @implements FormTurboStreamProcessorInterface<User>
  */

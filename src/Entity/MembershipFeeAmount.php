@@ -8,7 +8,6 @@ use App\Entity\Enum\LicenceCoverageEnum;
 use App\Repository\MembershipFeeAmountRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-
 #[ORM\Entity(repositoryClass: MembershipFeeAmountRepository::class)]
 class MembershipFeeAmount
 {

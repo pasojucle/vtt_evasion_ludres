@@ -22,7 +22,6 @@ class GardianController extends AbstractCrudController
         GardianReadProvider $provider,
         MemberGardian $gardian,
     ): Response {
-        
         return $this->render('gardian/admin/show.html.twig', [
             'view' => $provider->getStreamView($gardian),
         ]);

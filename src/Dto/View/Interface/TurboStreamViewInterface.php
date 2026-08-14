@@ -6,5 +6,4 @@ namespace App\Dto\View\Interface;
 
 interface TurboStreamViewInterface
 {
-
 }

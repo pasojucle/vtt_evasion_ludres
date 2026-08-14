@@ -125,7 +125,7 @@ class UserVoter extends Voter
         }
 
         if ($subject instanceof MemberGardian || $subject instanceof EmergencyContact) {
-            $currentUser =  $subject->getMember();
+            $currentUser = $subject->getMember();
             return $currentUser === $user;
         }
 

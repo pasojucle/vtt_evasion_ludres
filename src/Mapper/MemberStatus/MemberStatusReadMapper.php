@@ -8,8 +8,8 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
 use App\Dto\View\HtmlAttributView;
-use App\Dto\View\MemberStatus\MemberStatusView;
 use App\Dto\View\LinkView;
+use App\Dto\View\MemberStatus\MemberStatusView;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Member;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -22,7 +22,8 @@ class MemberStatusReadMapper
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
         private Security $security,
-    ){}
+    ) {
+    }
 
     public function mapToView(Member $entity): MemberStatusView
     {
@@ -32,7 +33,7 @@ class MemberStatusReadMapper
             id: $entity->getId(),
             boardRole: $entity->getBoardRole()?->getName() ?? 'Adhérent',
             permissions: !empty($permissions)
-                ? array_map(fn(PermissionEnum $permision) => new BadgeView(
+                ? array_map(fn (PermissionEnum $permision) => new BadgeView(
                     $permision->trans($this->translator),
                 ), $permissions)
                 : [new BadgeView(

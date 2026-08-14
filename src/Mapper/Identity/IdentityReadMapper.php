@@ -20,7 +20,8 @@ class IdentityReadMapper
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private PassportPhotoMapper $passportPhotoMapper,
-    ){}
+    ) {
+    }
 
     public function mapToView(Identity $identity, Address $address): IdentityView
     {
@@ -31,13 +32,15 @@ class IdentityReadMapper
         return new IdentityView(
             id: $identity->getId(),
             fullName: $identity->getFullName(),
-            birthDate: $identity->getBirthDate()->format('d/m/Y'), 
+            birthDate: $identity->getBirthDate()->format('d/m/Y'),
             birthPlace: $birthPlace,
             address: $address->getStreet(),
-            city: sprintf('%s %s',$address->getCommune()->getPostalCode(), $address->getCommune()->getName()),
+            city: sprintf('%s %s', $address->getCommune()->getPostalCode(), $address->getCommune()->getName()),
             email: new EmailView($identity->getEmail()),
-            phones: array_map(fn ($phone) => new PhoneView($phone),
-             array_filter([$identity->getMobile(), $identity->getPhone()])),
+            phones: array_map(
+                fn ($phone) => new PhoneView($phone),
+                array_filter([$identity->getMobile(), $identity->getPhone()])
+            ),
             passportPhoto: $this->passportPhotoMapper->mapToView($identity->getFilename()),
             profession: $identity->getProfession(),
             action: new LinkView(

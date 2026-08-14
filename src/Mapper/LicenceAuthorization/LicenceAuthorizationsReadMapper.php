@@ -13,20 +13,20 @@ use App\Entity\Licence;
 use App\Entity\LicenceAgreement;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
 class LicenceAuthorizationsReadMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private LicenceAuthorizationMapper $LicenceAuthorizationMapper
-    ){}
+    ) {
+    }
 
     public function mapToView(Licence $entity): LicenceAuthorizationsView
     {
-
         return new LicenceAuthorizationsView(
             $entity->getId(),
-            array_map(fn (LicenceAgreement $licenceAgreement) => $this->LicenceAuthorizationMapper->mapToView($licenceAgreement),
+            array_map(
+                fn (LicenceAgreement $licenceAgreement) => $this->LicenceAuthorizationMapper->mapToView($licenceAgreement),
                 $entity->getLicenceAuthorizations()
             ),
             new LinkView(

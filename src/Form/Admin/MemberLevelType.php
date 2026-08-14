@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-
 use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use App\Entity\Member;

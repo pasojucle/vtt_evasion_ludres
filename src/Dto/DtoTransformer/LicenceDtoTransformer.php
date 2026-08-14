@@ -6,8 +6,8 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\LicenceDto;
-use App\Dto\View\LinkView;
 use App\Dto\View\HtmlAttributView;
+use App\Dto\View\LinkView;
 use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceCategoryEnum;
@@ -59,7 +59,7 @@ class LicenceDtoTransformer
             $licenceDto->fullSeason = $this->getFullSeason($licence->getSeason());
             $licenceDto->isYearly = $licence->getState()->isYearly();
             $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage()->value : null;
-            $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $licence->getCoverage()->trans($this->translator): null;
+            $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $licence->getCoverage()->trans($this->translator) : null;
             $licenceDto->options = $licence->getOptions();
             $licenceDto->category = $licence->getCategory();
             $licenceDto->state = $this->getState($licence->getState());

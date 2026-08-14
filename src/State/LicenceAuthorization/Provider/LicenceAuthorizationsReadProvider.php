@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\LicenceAuthorization\Provider;
 
-
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsSheetView;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsView;
 use App\Entity\Licence;
 
 use App\Mapper\LicenceAuthorization\LicenceAuthorizationsReadMapper;
 use App\State\Interface\TurboStreamProviderInterface;
-
 
 /**
  * @implements TurboStreamProviderInterface<Licence>
@@ -30,7 +28,6 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
             description: 'Modifier les autorisations',
             action: 'Modifier'
         );
-        
     }
 
     public function getFormOptions(object $entity): array
@@ -42,9 +39,8 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity): LicenceAuthorizationsView
+    public function getStreamView(object $entity, array $context = []): LicenceAuthorizationsView
     {
-
         return $this->licenceAuthorizationsMapper->mapToView($entity);
     }
 }

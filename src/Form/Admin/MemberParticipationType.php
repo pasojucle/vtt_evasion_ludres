@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-
 use App\Dto\Filter\MemberParticipationFilter;
 use App\Entity\BikeRideType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

@@ -14,5 +14,5 @@ interface TurboStreamProviderInterface extends FormComponentProviderInterface
     /**
      * @param T $entity
      */
-    public function getStreamView(object $entity): TurboStreamViewInterface;
+    public function getStreamView(object $entity, array $context = []): TurboStreamViewInterface;
 }

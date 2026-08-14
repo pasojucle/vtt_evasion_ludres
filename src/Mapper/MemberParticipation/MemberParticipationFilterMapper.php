@@ -15,14 +15,12 @@ class MemberParticipationFilterMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-    ){}
+    ) {
+    }
 
     public function mapToView(
         MemberParticipationFilter $filter,
-    ): MemberParticipationFilterView
-    {
-        dump($filter);
-
+    ): MemberParticipationFilterView {
         return new MemberParticipationFilterView(
             memberId: $filter->member->getId(),
             queries: $filter->toArray(),

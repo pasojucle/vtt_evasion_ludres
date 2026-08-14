@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\Admin\LicenceMemberType;
@@ -33,7 +32,6 @@ class LicenceController extends AbstractCrudController
         LicenceReadProvider $provider,
         User $user,
     ): Response {
-        
         return $this->render('licence/admin/show.html.twig', [
             'view' => $provider->getStreamView($user),
         ]);
@@ -47,7 +45,6 @@ class LicenceController extends AbstractCrudController
         LicenceUpdateProcessor $processor,
         User $user,
     ): Response {
-
         return $this->handleFormComponentAction(
             $request,
             $user,

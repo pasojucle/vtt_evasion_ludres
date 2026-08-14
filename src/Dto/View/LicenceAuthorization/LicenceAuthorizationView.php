@@ -7,7 +7,6 @@ namespace App\Dto\View\LicenceAuthorization;
 use App\Dto\View\BadgeView;
 use App\Dto\View\Interface\TurboStreamViewInterface;
 
-
 readonly class LicenceAuthorizationView implements TurboStreamViewInterface
 {
     public function __construct(

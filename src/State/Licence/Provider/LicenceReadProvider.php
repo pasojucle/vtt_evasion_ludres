@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Mapper\Licence\LicenceReadMapper;
 use App\State\Interface\TurboStreamProviderInterface;
 
-
 /**
  * @implements TurboStreamProviderInterface<User>
  */
@@ -28,12 +27,10 @@ class LicenceReadProvider implements TurboStreamProviderInterface
             description: 'Modifier les informations de la licence',
             action: 'Modifier'
         );
-        
     }
 
     public function getFormOptions(object $entity): array
-    {   
-
+    {
         return [
             'attr' => [
                 'data-controller' => 'form-validator',
@@ -41,9 +38,8 @@ class LicenceReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity): LicenceView
+    public function getStreamView(object $entity, array $context = []): LicenceView
     {
-
         return $this->licenceReadMapper->mapToView($entity);
     }
 }

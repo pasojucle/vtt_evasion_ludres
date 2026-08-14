@@ -11,7 +11,6 @@ use App\Mapper\Gardian\GardianReadMapper;
 use App\State\Interface\TurboStreamProviderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
 /**
  * @implements TurboStreamProviderInterface<MemberGardian>
  */
@@ -30,11 +29,10 @@ class GardianReadProvider implements TurboStreamProviderInterface
             description: sprintf('Modifier le %s', $entity->getKind()->trans($this->translator)),
             action: 'Modifier'
         );
-        
     }
 
     public function getFormOptions(object $entity): array
-    {   
+    {
         $member = $entity->getMember();
         $licence = $member->getLastLicence();
 
@@ -47,9 +45,8 @@ class GardianReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity): GardianView
+    public function getStreamView(object $entity, array $context = []): GardianView
     {
-
         return $this->gardianReadMapper->mapToView($entity);
     }
 }

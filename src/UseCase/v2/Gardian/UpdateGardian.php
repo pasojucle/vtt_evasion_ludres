@@ -14,8 +14,8 @@ class UpdateGardian
     ) {
     }
 
-    public function execute(?MemberGardian $gardian) {
-        
+    public function execute(?MemberGardian $gardian)
+    {
         $gardianIdentity = $gardian->getIdentity();
         $gardianAddress = $gardianIdentity->getAddress();
         if (!$gardianIdentity->hasAddress() && null !== $gardianAddress) {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Entity\Member;
 use App\Form\Admin\MemberLevelType;
 use App\State\MemberLevel\Processor\MemberLevelUpdateProcessor;
@@ -23,7 +22,6 @@ class MemberLevelController extends AbstractCrudController
         MemberLevelReadProvider $provider,
         Member $member,
     ): Response {
-        
         return $this->render('member_level/admin/show.html.twig', [
             'view' => $provider->getStreamView($member),
         ]);
@@ -37,7 +35,6 @@ class MemberLevelController extends AbstractCrudController
         MemberLevelUpdateProcessor $processor,
         Member $member,
     ): Response {
-
         return $this->handleFormComponentAction(
             $request,
             $member,

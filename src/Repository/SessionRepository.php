@@ -416,7 +416,7 @@ class SessionRepository extends ServiceEntityRepository
             $qb->expr()->eq('se.member', ':member')
         )
         ->setParameter('member', $member);
-    } 
+    }
 
     public function filterType(QueryBuilder $qb, BikeRideType $bikeRideType): void
     {
@@ -424,7 +424,7 @@ class SessionRepository extends ServiceEntityRepository
             $qb->expr()->eq('br.bikeRideType', ':bikeRideType')
         )
         ->setParameter('bikeRideType', $bikeRideType);
-    } 
+    }
 
     public function filterparticipated(QueryBuilder $qb): void
     {
@@ -432,7 +432,7 @@ class SessionRepository extends ServiceEntityRepository
             $qb->expr()->eq('se.isPresent', ':isPresent')
         )
         ->setParameter('isPresent', true);
-    }  
+    }
 
     public function filterUser(QueryBuilder $qb, User $user): void
     {
@@ -440,14 +440,14 @@ class SessionRepository extends ServiceEntityRepository
             $qb->expr()->eq('se.user', ':user')
         )
         ->setParameter('user', $user);
-    } 
+    }
 
     public function filterPeriod(QueryBuilder $qb, DateTimeImmutable $startAt, DateTimeImmutable $endAt): void
     {
         $qb
             ->andWhere(
-                    $qb->expr()->between('br.startAt', ':startAt', ':endAt')
-                )
+                $qb->expr()->between('br.startAt', ':startAt', ':endAt')
+            )
             ->setParameter('startAt', $startAt)
             ->setParameter('endAt', $endAt);
     }

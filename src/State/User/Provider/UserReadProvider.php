@@ -6,8 +6,8 @@ namespace App\State\User\Provider;
 
 use App\Dto\Enum\Size;
 use App\Dto\View\LinkView;
-use App\Dto\View\TabWrapperView;
 use App\Dto\View\TabView;
+use App\Dto\View\TabWrapperView;
 use App\Entity\Enum\LevelType;
 use App\Entity\User;
 use App\Mapper\User\UserReadMapper;
@@ -17,7 +17,7 @@ use App\State\Interface\ComponentProviderInterface;
 /**
  * @implements ComponentProviderInterface<User>
  */
-class UserReadProvider implements ComponentProviderInterface 
+class UserReadProvider implements ComponentProviderInterface
 {
     public function __construct(
         private UserReadMapper $mapper,

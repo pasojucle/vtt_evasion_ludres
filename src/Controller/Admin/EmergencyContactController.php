@@ -22,7 +22,6 @@ class EmergencyContactController extends AbstractCrudController
         EmergencyContactReadProvider $provider,
         EmergencyContact $emergencyContact,
     ): Response {
-        
         return $this->render('emergency_contact/admin/show.html.twig', [
             'view' => $provider->getStreamView($emergencyContact),
         ]);

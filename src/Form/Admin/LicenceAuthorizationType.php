@@ -33,7 +33,7 @@ class LicenceAuthorizationType extends AbstractType
                     ],
                     'required' => false,
                 ]);
-        }); 
+        });
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
