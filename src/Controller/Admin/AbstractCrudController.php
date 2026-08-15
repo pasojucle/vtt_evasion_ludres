@@ -95,7 +95,6 @@ abstract class AbstractCrudController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-                dump($object);
                 $result = $processor->process(
                     $object,
                     $request->files->get($form->getName()),
@@ -107,7 +106,6 @@ abstract class AbstractCrudController extends AbstractController
                     return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
                 if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
-                    dump($result, $provider->getStreamView($object, $context));
                     return $this->render($result->laziTemplate, [
                             'view' => $provider->getStreamView($object, $context),
                         ], new Response('', Response::HTTP_OK, [

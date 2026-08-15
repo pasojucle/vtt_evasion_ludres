@@ -4,33 +4,37 @@ declare(strict_types=1);
 
 namespace App\State\MemberParticipation\Provider;
 
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\MemberParticipationFilter;
 use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\SheetView;
-use App\Entity\Enum\LevelType;
+use App\Mapper\MemberParticipation\MemberParticipationExportMapper;
 use App\Mapper\MemberParticipation\MemberParticipationReadMapper;
 use App\Repository\IndemnityRepository;
 use App\Repository\SessionRepository;
 use App\Service\Indemnity\ComputeParticipationIndemnity;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\Interface\StreamExportableInterface;
 use App\State\Interface\TurboStreamProviderInterface;
 use App\State\MemberParticipation\Enum\QueryScope;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 
 /**
  * @implements TurboStreamProviderInterface<MemberParticipationFilter>
  */
-class MemberParticipationReadProvider implements TurboStreamProviderInterface
+class MemberParticipationReadProvider implements TurboStreamProviderInterface, StreamExportableInterface
 {
     use FilterHydratorTrait;
 
     public function __construct(
         private IndemnityRepository $indemnityRepository,
         private MemberParticipationReadMapper $memberParticipationReadMapper,
+        private MemberParticipationExportMapper $memberParticipationExportMapper,
         private SessionRepository $sessionRepository,
         private PaginatorService $paginator,
-        private ComputeParticipationIndemnity $computeParticipationIndemnity,
     ) {
     }
 
@@ -58,7 +62,8 @@ class MemberParticipationReadProvider implements TurboStreamProviderInterface
 
         $indemnityMap = $this->mapIndemnities($this->indemnityRepository->findAll());
 
-        $globalResult = ($this->computeParticipationIndemnity)(
+        $computeParticipationIndemnity = new ComputeParticipationIndemnity();
+        $globalResult = $computeParticipationIndemnity(
             sessions: $allPeriodSessions,
             level: $entity->member?->getLevel(),
             indemnityMap: $indemnityMap
@@ -73,9 +78,21 @@ class MemberParticipationReadProvider implements TurboStreamProviderInterface
                 $currentPage,
                 PaginatorService::PAGINATOR_PER_PAGE
             ),
+            lineChartParticipations: array_column($this->getParticipations($entity), 'total', 'month'),
+            lineChartPeriod: $this->getPeriod($entity->startAt, $entity->endAt),
             route: $context['route'],
             currentPage: $currentPage,
         );
+    }
+        
+    /**
+     * @param MemberParticipationFilter $filter
+     */
+    public function streamExportContent(AbstractFilter $filter): void
+    {
+        $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
+
+        $this->memberParticipationExportMapper->streamToCsv($entities, $filter);
     }
 
     private function getQueryBuilder(MemberParticipationFilter $filter, QueryScope $scope = QueryScope::LIST): QueryBuilder
@@ -120,25 +137,37 @@ class MemberParticipationReadProvider implements TurboStreamProviderInterface
         return $indemnityMap;
     }
 
-    private function getAmount(MemberParticipationFilter $filter, array $indemnityMap): ?string
+    private function getParticipations(MemberParticipationFilter $filter): array
     {
-        $member = $filter->member;
-        $level = $member->getLevel();
+        $qb = $this->sessionRepository->getCountSessionQuery();
 
-        if (!$level || LevelType::FRAME !== $level->getType()) {
-            return null;
+        $this->sessionRepository->filterUser($qb, $filter->member);
+
+        $this->sessionRepository->filterparticipated($qb);
+
+        if ($filter->startAt && $filter->endAt) {
+            $this->sessionRepository->filterPeriod($qb, $filter->startAt, $filter->endAt);
+        };
+
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @return DateTimeImmutable[]
+     */
+    public function getPeriod(DateTimeInterface $startAt, DateTimeInterface $endAt): array
+    {
+        $current = DateTimeImmutable::createFromInterface($startAt)->modify('first day of this month');
+        $end = DateTimeImmutable::createFromInterface($endAt)->modify('first day of this month');
+
+        $months = [];
+
+        while ($current <= $end) {
+            $months[] = $current;
+            $current = $current->modify('+1 month');
         }
 
-        $levelId = $level->getId();
-        $qb = $this->getQueryBuilder($filter, QueryScope::INDEMNITY);
-
-        $amount = 0;
-        foreach ($qb->getQuery()->getResult() as $session) {
-            $bikeRide = $session->getCluster()->getBikeRide();
-            $bikeRideTypeId = $bikeRide->getBikeRideType()->getId();
-            $amount += $indemnityMap["{$levelId}_{$bikeRideTypeId}"] ?? 0.0;
-        }
-
-        return (string) $amount;
+        return $months;
     }
 }

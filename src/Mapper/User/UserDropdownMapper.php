@@ -41,12 +41,6 @@ class UserDropdownMapper
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $menuItems[] = new LinkView(
-                label: 'Participation',
-                variant: ColorVariant::DROPDOWN,
-                url: $this->urlContextService->generateUrl('admin_user_participation', ['user' => $user->getId()], $referer),
-                icon: 'lucide:chart-line',
-            );
-            $menuItems[] = new LinkView(
                 label: 'Attestation d\'inscription CE',
                 variant: ColorVariant::DROPDOWN,
                 url: $this->urlContextService->generateUrl('admin_user_certificate', ['member' => $user->getId()], $referer),

@@ -279,12 +279,12 @@ class SessionRepository extends ServiceEntityRepository
      * @param bool $isSchool
      * @param DateTimeImmutable $startAt
      * @param DateTimeImmutable $endAt
-     * @return array<int, array{count: int, startAt: \DateTimeInterface}>
+     * @return array<int, array{total: int, date: \DateTimeInterface}>
      */
     public function findParticipation(bool $isSchool, DateTimeImmutable $startAt, DateTimeImmutable $endAt): array
     {
         return $this->createQueryBuilder('s')
-            ->select(sprintf('%s as count', (new Expr())->count('s.isPresent')), 'br.startAt')
+            ->select(sprintf('%s as total', (new Expr())->count('s.isPresent')), 'br.startAt as date')
             ->join('s.cluster', 'c')
             ->join('c.bikeRide', 'br')
             ->join('br.bikeRideType', 'brt')
@@ -408,6 +408,19 @@ class SessionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('se')
             ->join('se.cluster', 'cl')->addSelect('cl')
             ->join('cl.bikeRide', 'br')->addSelect('br');
+    }
+
+    public function getCountSessionQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('se')
+            ->select(
+                'COUNT(se.isPresent) as total',
+                "DATE_FORMAT(br.startAt, '%Y-%m') as month"
+            )
+            ->join('se.cluster', 'cl')
+            ->join('cl.bikeRide', 'br')
+            ->groupBy('month')
+            ->orderBy('month', 'ASC');
     }
 
     public function filterMember(QueryBuilder $qb, Member $member): void

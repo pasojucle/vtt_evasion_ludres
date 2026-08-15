@@ -15,6 +15,7 @@ use App\Dto\View\MemberParticipation\MemberActivityView;
 use App\Entity\Session;
 use App\Mapper\BikeRide\BikeRidePeriodMapper;
 use App\Model\Currency;
+use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,32 +25,46 @@ class MemberParticipationReadMapper
     public function __construct(
         private TranslatorInterface $translator,
         private BikeRidePeriodMapper $bikeRidePeriodMapper,
+        private MemberParticipationLineChartMapper $memberParticipationLineChartMapper,
         private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
+    /**
+     * @param DateTimeImmutable[] $lineChartPeriod
+     */
     public function mapToView(
         MemberParticipationFilter $filter,
         ?float $totalIndemnity,
         array $sessionAmounts,
         Paginator $paginatedSessions,
+        array $lineChartParticipations,
+        array $lineChartPeriod,
         string $route,
         int $currentPage,
     ): MemberActivitiesView {
         $member = $filter->member;
+        $queriyParams = $filter->toArray();
 
         return new MemberActivitiesView(
             memberId: $member->getId(),
             queries: $filter->toArray(),
             period: sprintf('Du %s au %s', $filter->startAt->format('d/m/Y'), $filter->endAt->format('d/m/Y')),
             type: $filter->type?->getName(),
-            action: new LinkView(
-                url: $this->urlGenerator->generate('admin_member_participation_filter', $filter->toArray()),
+            filterAction: new LinkView(
+                url: $this->urlGenerator->generate('admin_member_participation_filter', $queriyParams),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
                     new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
+            ),
+            exportAction: new LinkView(
+                variant: ColorVariant::GOST,
+                url: $this->urlGenerator->generate('admin_member_participation_export', $queriyParams),
+                icon: 'lucide:file-down',
+                size: Size::ICON,
+                title: 'Exporter la sélection',
             ),
             counter: $paginatedSessions->count(),
             activities: array_map(function (Session $session) use ($sessionAmounts) {
@@ -76,6 +91,10 @@ class MemberParticipationReadMapper
             totalIndemnity: ($totalIndemnity)
                 ? new BadgeView((new Currency($totalIndemnity))->toString())
                 : null,
+            lineChartParticipations : $this->memberParticipationLineChartMapper->mapToView(
+                $lineChartParticipations,
+                $lineChartPeriod,
+            ),
         );
     }
 }

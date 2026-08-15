@@ -70,11 +70,10 @@
                         <div class="content-center"
                             data-controller="line-chart"
                             data-line-chart-url-value="{{ path('admin_participation_monthly', {'isSchool': participation.isSchool})}}"
-                            data-line-chart-format-value="card"
                         >
                             <canvas 
                                 id="school_line_chart_{{ loop.index }}" 
-                                class="line-chart"
+                                class="w-full"
                                 data-line-chart-target="canvas"
                             ></canvas>
                         </div>

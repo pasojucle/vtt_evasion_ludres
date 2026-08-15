@@ -19,7 +19,10 @@
     {% endfor %}
 >
     <div class="flex {{ align_class }}">
-        <div class="flex items-center gap-2 {{ size_classes[link.size.value] ?? size_classes.sm }}">
+        <div 
+            class="flex items-center gap-2 {{ size_classes[link.size.value] ?? size_classes.sm }}"
+            title="{{ link.title }}"
+        >
             {% if link.icon %}{{ ux_icon(link.icon) }}{% endif %}
             {% if link.label %}
                 <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-56">{{ link.label}}</div>

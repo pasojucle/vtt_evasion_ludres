@@ -18,10 +18,12 @@ readonly class MemberActivitiesView implements TurboStreamViewInterface
         public array $queries,
         public string $period,
         public ?string $type,
-        public LinkView $action,
+        public LinkView $filterAction,
+        public LinkView $exportAction,
         public int $counter,
         public array $activities,
         public ?BadgeView $totalIndemnity,
+        public string $lineChartParticipations,
     ) {
     }
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\View\LineShart;
+namespace App\Dto\View\LineChart;
 
-readonly class LineShartView
+readonly class LineChartView
 {
     /**
-    * @param LineShartItemView[] $items
+    * @param LineChartItemView[] $items
     */
     public function __construct(
         public array $items,

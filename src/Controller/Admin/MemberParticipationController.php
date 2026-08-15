@@ -40,7 +40,7 @@ class MemberParticipationController extends AbstractCrudController
     #[IsGranted('USER_EDIT', 'member')]
     public function filter(
         Request $request,
-        MemberParticipationreadProvider $provider,
+        MemberParticipationReadProvider $provider,
         MemberParticipationProcessor $processor,
         Member $member,
     ): Response {
@@ -57,6 +57,23 @@ class MemberParticipationController extends AbstractCrudController
                 'route' => $request->attributes->get('_route'),
                 'page' => $request->query->getInt('page', 1),
             ]
+        );
+    }
+
+    #[Route('/export/{member}', name: '_export', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'member')]
+    public function lineChart(
+        Request $request,
+        MemberParticipationReadProvider $provider,
+        Member $member,
+    ): Response {
+        $request->query->set('member', $member->getId());
+
+        return $this->handleExportAction(
+            $request,
+            MemberParticipationFilter::class,
+            $provider,
+            sprintf('export_participation_%s.csv', $member->getLicenceNumber())
         );
     }
 }

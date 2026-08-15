@@ -3,7 +3,7 @@
         <h2>Activités - {{ view.counter }}</h2>
     </div>
     <div class="ml-auto -mr-2">
-        {# {% include view.action.template with {(view.action.name): view.action} %} #}
+        {% include view.exportAction.template with {(view.exportAction.name): view.exportAction} %}
     </div>
 </div>
 <div class="p-4 2xl:p-6">
@@ -15,9 +15,9 @@
             {% include 'components/_empty.html.twig' with {icon: 'lucide:bike', message: 'Aucune activités'} %}
         </div>
     {% endif %}
-    <ul class="flex flex-col gap-2 text-sm divide-y divide-border">
+    <ul class="flex flex-col text-sm divide-y divide-border">
         {% for activity in view.activities %}
-            <li class="grid grid-cols-[auto_60px_60px] items-center">
+            <li class="py-1 grid grid-cols-[auto_60px_60px] items-center">
                 <div class="flex flex-col gap-1">
                     <div class="text-xs font-semibold uppercase tracking-wider text-muted">{{ activity.period }}</div>
                     <div>{{ activity.title }}</div>
