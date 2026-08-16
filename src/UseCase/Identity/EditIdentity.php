@@ -23,7 +23,6 @@ class EditIdentity
     public function execute(Request $request, ?Identity $identity, FormInterface $form): void
     {
         //TODO voir si on peu récupérer file depuis data
-        dump($form->getData());
         if ($request->files->get('identitiy')) {
             $pictureFile = $request->files->get('identity')[0]['pictureFile'];
             $newFilename = $this->uploadService->uploadFile($pictureFile, $identity);

@@ -43,7 +43,7 @@
         <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Mail :</dt>
             <dd class="font-medium">
-                {% include "components/_phone.html.twig" with {view: view.email} %}
+                {% include view.email.template with {(view.email.name): view.email} %}
             </dd>
         </div>
 
@@ -51,7 +51,7 @@
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Téléphones :</dt>
             <dd class="text-foreground font-medium tracking-wide flex items-center gap-2">
                 {% for phone in view.phones %}
-                    {% include "components/_phone.html.twig" with {view: phone} %}
+                    {% include phone.template with {(phone.name): phone} %}
                     {% if loop.index < view.phones|length %}
                         <div class="text-muted text-xs">{{ ux_icon('lucide:circle-small') }}</div>
                     {% endif %}

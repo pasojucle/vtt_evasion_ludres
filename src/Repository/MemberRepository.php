@@ -892,7 +892,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         return $this->createQueryBuilder('m')
             ->leftJoin('m.identity', 'i')->addSelect('i')
             ->leftJoin('m.level', 'le')->addSelect('le')
-            ->leftJoin('m.licences', 'li')->addSelect('li')
+            ->innerJoin('m.licences', 'li')->addSelect('li')
         ;
     }
     

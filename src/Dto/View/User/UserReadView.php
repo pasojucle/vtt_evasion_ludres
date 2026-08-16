@@ -20,7 +20,7 @@ readonly class UserReadView implements TabEntityInterface
         public ?int $healthId,
         public string $passportPhoto,
         public string $fullName,
-        public string $levelType,
+        public ?string $levelType,
         public BadgeView $level,
         public BadgeView $season,
         public array $authorizations,

@@ -21,6 +21,7 @@ use App\Entity\Member;
 use App\Entity\User;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
+use App\Mapper\Level\LevelBadgeMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\WikiMapper;
 use App\Service\Filter\FilterConfigInterface;
@@ -36,6 +37,7 @@ class UserListMapper
         private FilterChipsMapper $filterChipsMapper,
         private UserDropdownMapper $userDropdownMapper,
         private PaginatorMapper $paginatorMapper,
+        private LevelBadgeMapper $levelBadgeMapper,
         private WikiMapper $wikiMapper,
         private UrlContextService $urlContextService,
     ) {
@@ -60,10 +62,7 @@ class UserListMapper
                     new LabelView($identity->getFullName()),
                 ],
                 indicators: $this->getIndicators($entity),
-                status: new BadgeView(
-                    value:$level->getTitle(),
-                    color: $level->getColor(),
-                ),
+                status: $this->levelBadgeMapper->mapToView($level),
                 dropdown: $this->userDropdownMapper->mapToView($entity, $referer),
                 url: $this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $referer),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
@@ -118,9 +117,15 @@ class UserListMapper
     private function getIndicators(User $entity): array
     {
         return [
-            new BadgeView(
+            ($entity->getLevel())
+            ? new BadgeView(
                 value: $entity->getLevel()->getType()->getIcon(),
                 variant: ColorVariant::ACCENT,
+                size: Size::ICON,
+            )
+            : new BadgeView(
+                value: 'lucide:badge-help',
+                variant: ColorVariant::WARNING,
                 size: Size::ICON,
             ),
             new BadgeView(

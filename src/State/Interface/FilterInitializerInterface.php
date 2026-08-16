@@ -8,5 +8,5 @@ use App\Dto\Filter\AbstractFilter;
 
 interface FilterInitializerInterface
 {
-    public function initializeFilters(AbstractFilter $filter): void;
+    public function initializeFilters(AbstractFilter $filter, array $queryParams = []): void;
 }

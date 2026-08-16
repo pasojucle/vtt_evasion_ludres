@@ -11,7 +11,7 @@
         <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Téléphone :</dt>
             <dd class="font-medium">
-                {% include "components/_phone.html.twig" with {view: view.phone} %}
+                {% include view.phone.template with {(view.phone.name): view.phone} %}
             </dd>
         </div>
 

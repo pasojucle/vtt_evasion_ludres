@@ -32,7 +32,7 @@ class UserReadProvider implements ComponentProviderInterface
             new TabView('Licence & statut', 'lucide:id-card', 'user/admin/show/tab_licence.html.twig'),
             new TabView('Participation', 'lucide:chart-line', 'user/admin/show/tab_participation.html.twig'),
         ];
-        if (LevelType::SCHOOL === $entity->getLevel()->getType()) {
+        if (LevelType::SCHOOL === $entity->getLevel()?->getType()) {
             $tabs[] = new TabView('Compétences', 'lucide:graduation-cap', 'user/admin/show/tab_skill.html.twig');
         }
 

@@ -11,6 +11,7 @@ use App\Entity\Member;
 use App\Entity\User;
 use App\Mapper\Gardian\GardianReadMapper;
 use App\Mapper\Identity\PassportPhotoMapper;
+use App\Mapper\Level\LevelBadgeMapper;
 use App\Mapper\LicenceAuthorization\LicenceAuthorizationBadgeMapper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,6 +23,7 @@ class UserReadMapper
         private LicenceAuthorizationBadgeMapper $LicenceAuthorizationBadgeMapper,
         private PassportPhotoMapper $passportPhotoMapper,
         private GardianReadMapper $gardianReadMapper,
+        private LevelBadgeMapper $levelBadgeMapper,
     ) {
     }
     public function mapToView(User $entity, array $seasonPeriod): UserReadView
@@ -46,11 +48,8 @@ class UserReadMapper
             healthId: $heath?->getId(),
             passportPhoto: $this->passportPhotoMapper->mapToView($identity->getFilename()),
             fullName: $identity->getFullName(),
-            levelType: $level->getType()->trans($this->translator),
-            level: new BadgeView(
-                value: $level->getTitle(),
-                color: $level->getColor(),
-            ),
+            levelType: $level?->getType()->trans($this->translator),
+            level: $this->levelBadgeMapper->mapToView($level),
             season: new BadgeView(
                 value: sprintf('%s-%s', $season, $season + 1),
                 variant: ColorVariant::ACCENT

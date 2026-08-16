@@ -29,20 +29,39 @@ class FilterChipsMapper
         $filterSchips = [];
         $queries = $filter->toQueryParams();
         $routeName = $filterConfig->getRouteName();
+        $preserdNullAttributes = $filter->getPreservedNullAttributes();
         foreach ($filterConfig->getAdvancedFields() as $field) {
             $name = $field->name;
             $rawValue = $filter->$name;
+            $isPreservdeNull = in_array($name, $preserdNullAttributes);
             if (null === $rawValue) {
                 continue;
             }
             if (is_array($rawValue)) {
                 foreach ($rawValue as $key => $rawValueItem) {
-                    $this->addChip($field, $name, $rawValueItem, $filterSchips, $routeName, $queries, $key);
+                    $this->addChip(
+                        $field,
+                        $name,
+                        $rawValueItem,
+                        $filterSchips,
+                        $routeName,
+                        $queries,
+                        $isPreservdeNull,
+                        $key
+                    );
                 }
                 continue;
             }
 
-            $this->addChip($field, $name, $rawValue, $filterSchips, $routeName, $queries);
+            $this->addChip(
+                $field,
+                $name,
+                $rawValue,
+                $filterSchips,
+                $routeName,
+                $queries,
+                $isPreservdeNull,
+            );
         }
 
         return $filterSchips;
@@ -55,6 +74,7 @@ class FilterChipsMapper
         array &$filterSchips,
         string $routeName,
         array $queries,
+        bool $isPreserdNull,
         ?int $key = null,
     ): void {
         $label = match ($field->type) {
@@ -70,10 +90,9 @@ class FilterChipsMapper
                 ? sprintf('%s', $field->options['label'] ?? $name)
                 : sprintf('%s: %s', $field->options['label'] ?? $name, $label);
         }
-
         $filterSchips[] = new FilterChip(
             $label,
-            $this->getRemoveUrl($routeName, $queries, $name, $key),
+            $this->getRemoveUrl($routeName, $queries, $name, $isPreserdNull, $key),
         );
     }
 
@@ -93,12 +112,20 @@ class FilterChipsMapper
         return (string) $searchedValue;
     }
 
-    private function getRemoveUrl(string $routeName, array $queries, string $name, ?int $key): string
+    private function getRemoveUrl(string $routeName, array $queries, string $name, bool $isPreservedNull, ?int $key): string
     {
         if (null !== $key) {
-            unset($queries[$name][$key]);
+            if ($isPreservedNull) {
+                $queries[$name][$key] = '';
+            } else {
+                unset($queries[$name][$key]);
+            }
         } else {
-            unset($queries[$name]);
+            if ($isPreservedNull) {
+                $queries[$name] = '';
+            } else {
+                unset($queries[$name]);
+            }
         }
 
         return $this->urlGenerator->generate($routeName, $queries);

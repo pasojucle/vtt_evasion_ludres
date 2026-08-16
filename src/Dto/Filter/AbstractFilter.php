@@ -9,17 +9,27 @@ use DateTimeImmutable;
 
 abstract class AbstractFilter
 {
+    public function getPreservedNullAttributes(): array
+    {
+        return [];
+    }
+
     public function toArray(): array
     {
         $properties = [];
+        $preservedNulls = $this->getPreservedNullAttributes();
+
         foreach (get_object_vars($this) as $name => $value) {
             if (null !== $value && '' !== $value) {
                 $properties[$name] = $this->normalizeValue($value);
+            } elseif (in_array($name, $preservedNulls, true)) {
+                $properties[$name] = '';
             }
         }
 
         return $properties;
     }
+
     public function AllowedtoArray(array $names): array
     {
         $properties = [];

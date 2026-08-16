@@ -32,10 +32,15 @@ class UserFilter extends AbstractFilter
     ) {
     }
 
-    public function setDefaultSeason(SeasonService $seasonService): void
+    public function setDefaultSeason(SeasonService $seasonService, array $queryParams): void
     {
-        if (null === $this->season) {
+        if (!array_key_exists('season', $queryParams)) {
             $this->season = $seasonService->getCurrentSeason();
         }
+    }
+
+    public function getPreservedNullAttributes(): array
+    {
+        return ['season'];
     }
 }

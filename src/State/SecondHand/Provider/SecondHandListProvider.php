@@ -47,7 +47,7 @@ class SecondHandListProvider implements ListProviderInterface, FilterInitializer
         );
     }
 
-    public function initializeFilters(AbstractFilter $filter): void
+    public function initializeFilters(AbstractFilter $filter, array $queryParams = []): void
     {
         /** @var SecondHandFilter $filter */
         $filter->setDefaultState();

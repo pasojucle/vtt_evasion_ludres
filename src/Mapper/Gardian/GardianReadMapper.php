@@ -6,6 +6,7 @@ namespace App\Mapper\Gardian;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
+use App\Dto\View\BadgeView;
 use App\Dto\View\EmailView;
 use App\Dto\View\Gardian\GardianView;
 use App\Dto\View\HtmlAttributView;
@@ -34,7 +35,12 @@ class GardianReadMapper
             fullName: $identity->getFullName(),
             address: $address->getStreet(),
             city: sprintf('%s %s', $address->getCommune()->getPostalCode(), $address->getCommune()->getName()),
-            email: new EmailView($identity->getEmail()),
+            email: $identity->getEmail()
+                ? new EmailView($identity->getEmail())
+                : new BadgeView(
+                    value: 'Non renseigné',
+                    variant: ColorVariant::WARNING,
+                ),
             phones: array_map(
                 fn ($phone) => new PhoneView($phone),
                 array_filter([$identity->getMobile(), $identity->getPhone()])

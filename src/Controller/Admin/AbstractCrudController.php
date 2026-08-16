@@ -43,12 +43,13 @@ abstract class AbstractCrudController extends AbstractController
         Request $request,
     ): Response {
         $route = $request->attributes->get('_route');
+        $queryParams = $request->query->all();
 
-        $filter = $provider->getHydratedDto($request->query->all(), $filterClass);
+        $filter = $provider->getHydratedDto($queryParams, $filterClass);
         if ($provider instanceof FilterInitializerInterface) {
-            $provider->initializeFilters($filter);
+            $provider->initializeFilters($filter, $queryParams);
         }
-    
+
         $filterConfig = $provider->getFilterConfig($route);
         if (!$filterConfig) {
             throw $this->createNotFoundException();

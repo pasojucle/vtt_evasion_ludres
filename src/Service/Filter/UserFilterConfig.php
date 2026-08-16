@@ -6,6 +6,7 @@ namespace App\Service\Filter;
 
 use App\Dto\Filter\UserFilter;
 use App\Entity\Enum\PermissionEnum;
+use App\Entity\Member;
 use App\Form\Admin\UserAutocompleteField;
 use App\Form\ChoiceProvider\LevelChoiceProvider;
 use App\Form\ChoiceProvider\SeasonChoiceProvider;
@@ -44,6 +45,7 @@ class UserFilterConfig implements FilterConfigInterface
                 type: UserAutocompleteField::class,
                 options: [
                     'label' => false,
+                    'class' => Member::class,
                     'autocomplete_url' => 'admin_member_autocomplete',
                     'attr' => [
                         'data-action' => 'change->filter#submit',

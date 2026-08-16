@@ -13,7 +13,7 @@ readonly class MemberLevelView implements TurboStreamViewInterface
     public function __construct(
         public int $id,
         public BadgeView $level,
-        public string $levelType,
+        public ?string $levelType,
         public LinkView $action,
     ) {
     }

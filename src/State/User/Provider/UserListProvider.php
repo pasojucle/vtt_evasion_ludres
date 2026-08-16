@@ -62,10 +62,10 @@ class UserListProvider implements ListProviderInterface, FilterInitializerInterf
         );
     }
 
-    public function initializeFilters(AbstractFilter $filter): void
+    public function initializeFilters(AbstractFilter $filter, array $queryParams = []): void
     {
         /** @var UserFilter $filter */
-        $filter->setDefaultSeason($this->seasonService);
+        $filter->setDefaultSeason($this->seasonService, $queryParams);
     }
 
     public function streamExportContent(AbstractFilter $filter): void
@@ -94,7 +94,7 @@ class UserListProvider implements ListProviderInterface, FilterInitializerInterf
     private function getQueryBuilder(UserFilter $filter): QueryBuilder
     {
         $qb = $this->memberRepository->getMemberQuery();
-        
+
         if ($filter->member) {
             $this->memberRepository->filterMember($qb, $filter->member->getId());
         }
