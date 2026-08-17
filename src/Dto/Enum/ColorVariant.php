@@ -29,4 +29,6 @@ enum ColorVariant: string
     case YELLOW = 'yellow';
 
     case DROPDOWN = 'dropdown';
+
+    case OUTLINE = 'outline';
 }

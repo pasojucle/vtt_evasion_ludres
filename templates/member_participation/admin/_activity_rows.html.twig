@@ -1,0 +1,17 @@
+{% for activity in activities %}
+    <li class="py-1 grid grid-cols-[auto_60px_60px] items-center">
+        <div class="flex flex-col gap-1">
+            <div class="text-xs font-semibold uppercase tracking-wider text-muted">{{ activity.period }}</div>
+            <div>{{ activity.title }}</div>
+        </div>
+        <div>
+            {% include activity.practice.template with {(activity.practice.name): activity.practice} %}
+        </div>
+        <div class="flex justify-end font-mono">
+            {% if activity.indemnity %}
+                {% include activity.indemnity.template with {(activity.indemnity.name): activity.indemnity} %}
+            {% endif %}
+        </div>
+    </li>
+{% endfor %}
+  

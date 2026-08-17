@@ -15,22 +15,15 @@
             {% include 'components/_empty.html.twig' with {icon: 'lucide:bike', message: 'Aucune activités'} %}
         </div>
     {% endif %}
-    <ul class="flex flex-col text-sm divide-y divide-border">
-        {% for activity in view.activities %}
-            <li class="py-1 grid grid-cols-[auto_60px_60px] items-center">
-                <div class="flex flex-col gap-1">
-                    <div class="text-xs font-semibold uppercase tracking-wider text-muted">{{ activity.period }}</div>
-                    <div>{{ activity.title }}</div>
-                </div>
-                <div>
-                    {% include activity.practice.template with {(activity.practice.name): activity.practice} %}
-                </div>
-                <div class="flex justify-end font-mono">
-                    {% if activity.indemnity %}
-                        {% include activity.indemnity.template with {(activity.indemnity.name): activity.indemnity} %}
-                    {% endif %}
-                </div>
-            </li>
-        {% endfor %}   
+    <ul 
+        class="flex flex-col text-sm divide-y divide-border"
+        id="member-participation-rows-{{ view.memberId }}"
+    >
+        {% include "member_participation/admin/_activity_rows.html.twig" with {activities: view.activities} %}
     </ul>
+    <div id="member-participation-load-more-{{ view.memberId }}" class="mt-4 text-center">
+        {% if view.loadMoreAction %}
+            {% include view.loadMoreAction.template with {(view.loadMoreAction.name): view.loadMoreAction} %}
+        {% endif %}
+    </div>
 </div>

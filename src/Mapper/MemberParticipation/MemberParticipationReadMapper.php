@@ -15,6 +15,7 @@ use App\Dto\View\MemberParticipation\MemberActivityView;
 use App\Entity\Session;
 use App\Mapper\BikeRide\BikeRidePeriodMapper;
 use App\Model\Currency;
+use App\Service\PaginatorService;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -46,6 +47,9 @@ class MemberParticipationReadMapper
         $member = $filter->member;
         $queriyParams = $filter->toArray();
 
+        dump($paginatedSessions->count());
+        $hasMoreSessions = $currentPage * PaginatorService::PAGINATOR_PER_PAGE < $paginatedSessions->count();
+
         return new MemberActivitiesView(
             memberId: $member->getId(),
             queries: $filter->toArray(),
@@ -66,6 +70,14 @@ class MemberParticipationReadMapper
                 size: Size::ICON,
                 title: 'Exporter la sélection',
             ),
+            loadMoreAction: ($hasMoreSessions)
+                ? new LinkView(
+                    label: 'Afficher plus',
+                    url: $this->urlGenerator->generate('admin_member_participation_list', array_merge($queriyParams, ['page' => $currentPage + 1])),
+                    variant: ColorVariant::OUTLINE,
+                    icon: 'lucide:chevron-down',
+                )
+                : null,
             counter: $paginatedSessions->count(),
             activities: array_map(function (Session $session) use ($sessionAmounts) {
                 $bikeRide = $session->getCluster()->getBikeRide();

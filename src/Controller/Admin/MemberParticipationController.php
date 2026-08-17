@@ -26,12 +26,24 @@ class MemberParticipationController extends AbstractCrudController
     ): Response {
         $filter = $provider->getHydratedDto($request->query->all(), MemberParticipationFilter::class);
         $filter->member = $member;
+        $currentPage = $request->query->getInt('page', 1);
+
+        if (1 < $currentPage) {
+            return $this->render('member_participation/admin/load_more.lazy.html.twig', [
+                'view' => $provider->getStreamView($filter, [
+                        'route' => $request->attributes->get('_route'),
+                        'page' => $currentPage,
+                    ]),
+                ], new Response('', Response::HTTP_OK, [
+                    'Content-Type' => 'text/vnd.turbo-stream.html',
+                ]));
+        }
 
         return $this->render('member_participation/admin/show.html.twig', [
             'view' => $provider->getStreamView($filter, [
                 'filter' => $filter,
                 'route' => $request->attributes->get('_route'),
-                'page' => $request->query->getInt('page', 1),
+                'page' => $currentPage,
             ]),
         ]);
     }
@@ -55,7 +67,7 @@ class MemberParticipationController extends AbstractCrudController
             MemberParticipationType::class,
             [
                 'route' => $request->attributes->get('_route'),
-                'page' => $request->query->getInt('page', 1),
+                'page' => 1,
             ]
         );
     }

@@ -20,6 +20,7 @@ readonly class MemberActivitiesView implements TurboStreamViewInterface
         public ?string $type,
         public LinkView $filterAction,
         public LinkView $exportAction,
+        public ?LinkView $loadMoreAction,
         public int $counter,
         public array $activities,
         public ?BadgeView $totalIndemnity,

@@ -1,0 +1,15 @@
+<turbo-stream action="append" target="member-participation-rows-{{ view.memberId }}">
+    <template>
+        {% include "member_participation/admin/_activity_rows.html.twig" with {activities: view.activities} %}
+    </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="member-participation-load-more-{{ view.memberId }}">
+    <template>
+        <div id="member-participation-load-more-{{ view.memberId }}" class="mt-4 text-center">
+            {% if view.loadMoreAction %}
+                {% include view.loadMoreAction.template with {(view.loadMoreAction.name): view.loadMoreAction} %}
+            {% endif %}
+        </div>
+    </template>
+</turbo-stream>
