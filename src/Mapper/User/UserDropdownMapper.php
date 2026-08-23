@@ -31,14 +31,6 @@ class UserDropdownMapper
     {
         $menuItems = [];
         $level = $user->getLevel();
-        if ($this->security->isGranted('USER_LIST') && $level?->getType() === LevelType::SCHOOL) {
-            $menuItems[] = new LinkView(
-                label: 'Compétences',
-                variant: ColorVariant::DROPDOWN,
-                url: $this->urlContextService->generateUrl('admin_member_skill_edit', ['member' => $user->getId()], $referer),
-                icon: 'lucide:graduation-cap',
-            );
-        }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $menuItems[] = new LinkView(
                 label: 'Attestation d\'inscription CE',

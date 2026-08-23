@@ -82,7 +82,7 @@ class SecondHandListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
         );
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Health\Provider;
 
+use App\Dto\State\TurboStreamContext;
 use App\Dto\View\Health\HealthView;
 use App\Dto\View\SheetView;
 use App\Entity\Health;
@@ -35,7 +36,7 @@ class HealthReadProvider implements TurboStreamProviderInterface
         return [];
     }
 
-    public function getStreamView(object $entity, array $context = []): HealthView
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): HealthView
     {
         return $this->identityReadMapper->mapToView($entity);
     }

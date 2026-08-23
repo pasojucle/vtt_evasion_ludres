@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Dto\Filter\AbstractFilter;
+use App\Dto\Filter\RangeChip;
 use App\Form\HiddenChoiceType;
 use App\Form\HiddenEntityType;
 use App\Form\HiddenEnumType;
-use ReflectionClass;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -26,7 +25,8 @@ readonly class FilterFieldConfig
         public array $options,
         public array $allowedFilterNames = [],
         public bool $isSubscriberFlield = false,
-        public bool $chipCcomputed = false,
+        public bool $computedChip = false,
+        public ?RangeChip $rangeChip = null,
     ) {
         $dataClass = $this->options['class'] ?? null;
         $multiple = $this->options['multiple'] ?? false;

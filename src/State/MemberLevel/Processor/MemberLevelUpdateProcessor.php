@@ -23,6 +23,6 @@ class MemberLevelUpdateProcessor implements FormTurboStreamProcessorInterface
     {
         $this->entityManager->flush();
     
-        return new TurboStreamProcessorResult('member_level/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult(true);
     }
 }

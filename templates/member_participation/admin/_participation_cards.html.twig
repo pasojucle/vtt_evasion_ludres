@@ -3,14 +3,10 @@
 >
     <div class="lg:col-span-2">
         <div class="size-max">
-            <div class="flex gap-4 items-center">
-                <div class="text-muted font-semibold uppercase tracking-wider ">
-                    {{ view.period }}
-                </div>
-                <div>
-                    {{ view.type }}
-                </div>
-                <div>
+            <div class="flex gap-4 items-center text-muted font-semibold tracking-wider">
+                {% include 'components/_filter_chips.html.twig' with {chips: view.filterChips} %}
+
+                <div class="ml-auto">
                     {% include view.filterAction.template with {(view.filterAction.name): view.filterAction} %}
                 </div>
             </div>
@@ -28,9 +24,9 @@
                 </div>
                 <div class="p-4 2xl:p-6">
                     <dl class="flex flex-col gap-4 text-sm">
-                        <div class="flex gap-1">
+                        <div class="grid grid-cols-[1fr_60px] items-center gap-1">
                             <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Total des indemnités sur la période</dt>
-                            <dd class="ml-auto">
+                            <dd class="flex justify-end">
                                 {% include view.totalIndemnity.template with {(view.totalIndemnity.name): view.totalIndemnity} %}
                             </dd>
                         </div>

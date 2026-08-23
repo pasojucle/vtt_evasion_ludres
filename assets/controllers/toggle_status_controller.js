@@ -23,7 +23,7 @@ export default class extends Controller {
         }
 
         const data = new FormData();
-        data.append("token", this.tokenValue);
+        data.append("csrfToken", this.tokenValue);
                     console.log("data", data)
 
 

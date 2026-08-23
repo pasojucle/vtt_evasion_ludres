@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\State\RedirectProcessorResult;
+use App\Dto\State\TurboStreamContext;
 use App\Dto\State\TurboStreamProcessorResult;
+use App\Form\Filter\FilterAdvancedType;
 use App\Form\Filter\ListFilterType;
 use App\Service\UrlContextService;
 use App\State\Interface\ComponentProcessorInterface;
@@ -16,6 +19,7 @@ use App\State\Interface\FormComponentProviderInterface;
 use App\State\Interface\FormProcessorInterface;
 use App\State\Interface\FormRedirectProcessorInterface;
 use App\State\Interface\JsonProcessorInterface;
+use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\Interface\ListProviderInterface;
 use App\State\Interface\StreamExportableInterface;
 use App\State\Interface\TurboStreamProviderInterface;
@@ -37,7 +41,7 @@ abstract class AbstractCrudController extends AbstractController
         $this->urlContextService = $urlContextService;
     }
 
-    protected function handleListAction(
+    protected function handleListPaginedAction(
         string $filterClass,
         ListProviderInterface $provider,
         Request $request,
@@ -75,13 +79,38 @@ abstract class AbstractCrudController extends AbstractController
         ]);
     }
 
+    protected function handleListLoadMoreAction(
+        Request $request,
+        string $filterClass,
+        ListLoadMoreProviderInterface $provider,
+        TurboStreamContext $context
+    ): Response {
+        $queryParams = $request->query->all();
+        $filter = new $filterClass();
+        $filter = $provider->getHydratedDto($queryParams, $filterClass);
+
+        $currentPage = $context->page;
+        $view = $provider->getStreamView($filter, $context);
+        if (1 < $currentPage) {
+            return $this->render($view->getStreamLoadMoreTemplate(), [
+                'view' => $view,
+                ], new Response('', Response::HTTP_OK, [
+                    'Content-Type' => 'text/vnd.turbo-stream.html',
+                ]));
+        }
+
+        return $this->render($view->getTemplate(), [
+            'view' => $view,
+        ]);
+    }
+
     protected function handleFormComponentAction(
         Request $request,
         object $object,
         FormComponentProviderInterface $provider,
         FormProcessorInterface $processor,
         string $formClass = FormType::class,
-        array $context = [],
+        ?TurboStreamContext $context = null,
     ): Response {
         $fallback = $this->urlContextService->getRedirectUrl($request);
         if ($provider instanceof FormAddComponentProviderInterface) {
@@ -107,8 +136,10 @@ abstract class AbstractCrudController extends AbstractController
                     return $this->redirect($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
                 if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
-                    return $this->render($result->laziTemplate, [
-                            'view' => $provider->getStreamView($object, $context),
+                    $streamView = $provider->getStreamView($object, $context);
+
+                    return $this->render($streamView->getStreamTemplate(), [
+                            'view' => $streamView,
                         ], new Response('', Response::HTTP_OK, [
                             'Content-Type' => 'text/vnd.turbo-stream.html',
                         ]));
@@ -151,7 +182,7 @@ abstract class AbstractCrudController extends AbstractController
         $this->addFlash($result->flashType, $result->messageKey);
 
         $component = $result->component;
-        return $this->render($component->GetTemplate(), [
+        return $this->render($component->getTemplate(), [
             $component->getName() => $component,
         ]);
     }
@@ -197,5 +228,75 @@ abstract class AbstractCrudController extends AbstractController
         return $this->render($view->getTemplate(), [
             'view' => $view
         ]);
+    }
+
+    protected function handleStreamFilterAction(
+        Request $request,
+        object $entity,
+        ListLoadMoreProviderInterface $provider,
+    ): Response {
+        $route = $request->attributes->get('_route');
+        $queryParams = $request->query->all();
+
+        $filterConfig = $provider->getFilterConfig($route);
+        if (!$filterConfig) {
+            throw $this->createNotFoundException();
+        }
+        $dataClass = $filterConfig->getDataClass();
+        $filter = $provider->getHydratedDto($queryParams, $dataClass);
+
+        $form = $this->createForm(FilterAdvancedType::class, $filter, [
+            'action' => $request->getPathInfo(),
+            'fields' => $filterConfig->getFields(),
+            'advanced_fields' => $filterConfig->getAdvancedFields(),
+            'data_class' => $dataClass,
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $streamView = $provider->getStreamView($filter, new TurboStreamContext(
+                $request->attributes->get('_route'),
+                $request->query->getInt('page', 1),
+                $entity
+            ));
+
+            return $this->render($streamView->getStreamTemplate(), [
+                    'view' => $streamView,
+                ], new Response('', Response::HTTP_OK, [
+                    'Content-Type' => 'text/vnd.turbo-stream.html',
+                ]));
+        }
+
+        return $this->render('components/_form.sheet.html.twig', [
+            'view' => $provider->getFormView($entity),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    protected function handleStreamFilterDeleteAction(
+        Request $request,
+        object $entity,
+        ListLoadMoreProviderInterface $provider,
+        string $filterRoute,
+    ): Response {
+        $queryParams = $request->query->all();
+
+        $filterConfig = $provider->getFilterConfig($filterRoute);
+        if (!$filterConfig) {
+            throw $this->createNotFoundException();
+        }
+        $dataClass = $filterConfig->getDataClass();
+        $filter = $provider->getHydratedDto($queryParams, $dataClass);
+
+        $streamView = $provider->getStreamView($filter, new TurboStreamContext(
+            $filterRoute,
+            1,
+            $entity
+        ));
+
+        return $this->render($streamView->getStreamTemplate(), [
+                'view' => $streamView,
+            ], new Response('', Response::HTTP_OK, [
+                'Content-Type' => 'text/vnd.turbo-stream.html',
+            ]));
     }
 }

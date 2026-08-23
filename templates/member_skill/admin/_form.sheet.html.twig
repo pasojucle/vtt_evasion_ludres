@@ -1,0 +1,15 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    {% dump(form) %}
+    <div class="mb-2 flex flex-col gap-4">
+        {{ form_row(form.category) }}
+        {{ form_row(form.level) }}
+        <div
+            data-id="sheet-skills-container"
+            data-form-modifier-target="container"
+        >
+            {{ form_row(form.skill) }}
+        </div>
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}

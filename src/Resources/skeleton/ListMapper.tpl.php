@@ -82,7 +82,7 @@ class <?= $entity_name ?>ListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             // TODO Définir le bouton pour ajouter un item
             // Exemple :
             // addItem: new LinkView(

@@ -6,4 +6,5 @@ namespace App\Dto\View\Interface;
 
 interface TurboStreamViewInterface
 {
+    public function getStreamTemplate(): string;
 }

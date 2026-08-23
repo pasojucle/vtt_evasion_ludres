@@ -15,6 +15,7 @@ use App\Entity\Licence;
 use App\Entity\LicenceAgreement;
 use App\Entity\Member;
 use App\Entity\MemberGardian;
+use App\Entity\MemberSkill;
 use App\Entity\Session;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -56,7 +57,8 @@ class UserVoter extends Voter
             $subject instanceof EmergencyContact ||
             $subject instanceof Health ||
             $subject instanceof LicenceAgreement ||
-            $subject instanceof Session
+            $subject instanceof Session ||
+            $subject instanceof MemberSkill
         );
     }
 
@@ -82,8 +84,13 @@ class UserVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence|LicenceAgreement|Identity|MemberGardian|EmergencyContact|Session|Health $subject, bool $isActiveUser, bool $isUserWithPermission): bool
-    {
+    private function canEdit(
+        TokenInterface $token,
+        User $user,
+        null|User|UserDto|Licence|LicenceAgreement|Identity|MemberGardian|EmergencyContact|Session|Health|MemberSkill $subject,
+        bool $isActiveUser,
+        bool $isUserWithPermission
+    ): bool {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
             return true;
         }
@@ -100,8 +107,14 @@ class UserVoter extends Voter
         return $isUserWithPermission;
     }
 
-    private function canShare(TokenInterface $token, User $user, null|User|UserDto|Licence|Agreement|Session|Identity|MemberGardian|EmergencyContact|Health $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
-    {
+    private function canShare(
+        TokenInterface $token,
+        User $user,
+        null|User|UserDto|Licence|Agreement|Session|Identity|MemberGardian|EmergencyContact|Health|MemberSkill $subject,
+        bool $isActiveUser,
+        bool $isUserWithPermission,
+        bool $isUserWithSharePermission
+    ): bool {
         if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
         }
@@ -109,8 +122,10 @@ class UserVoter extends Voter
         return $isUserWithSharePermission;
     }
 
-    private function isOwner(null|User|UserDto|Licence|LicenceAgreement|Session|Identity|MemberGardian|EmergencyContact|Health $subject, User $user): bool
-    {
+    private function isOwner(
+        null|User|UserDto|Licence|LicenceAgreement|Session|Identity|MemberGardian|EmergencyContact|Health|MemberSkill $subject,
+        User $user
+    ): bool {
         if (!$subject) {
             return false;
         }

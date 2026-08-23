@@ -1,0 +1,9 @@
+{% for skill in skills %}
+    <li 
+        class="grid grid-cols-1 lg:grid-cols-[auto_250px] items-center"
+        id="member-skill-{{ skill.id }}"
+    >
+        {% include "member_skill/admin/_skill_row.html.twig" %}
+    </li>
+{% endfor %}
+  

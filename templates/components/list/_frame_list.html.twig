@@ -19,7 +19,7 @@
                         {% if item.action and  item.action.name == "toggle"%} 
                             data-controller="toggle-status"
                             data-toggle-status-url-value="{{ item.action.url }}"
-                            data-toggle-status-token-value="{{ csrf_token(item.action.tokenId) }}"
+                            data-toggle-status-token-value="{{ csrf_token(item.action.csrfToken) }}"
                         {% endif %}
                     >
                         {% if item.url %}

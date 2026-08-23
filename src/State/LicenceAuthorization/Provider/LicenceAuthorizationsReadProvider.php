@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\LicenceAuthorization\Provider;
 
+use App\Dto\State\TurboStreamContext;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsSheetView;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsView;
 use App\Entity\Licence;
@@ -39,7 +40,7 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, array $context = []): LicenceAuthorizationsView
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): LicenceAuthorizationsView
     {
         return $this->licenceAuthorizationsMapper->mapToView($entity);
     }

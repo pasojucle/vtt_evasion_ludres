@@ -18,4 +18,9 @@ readonly class HealthView implements TurboStreamViewInterface
         public LinkView $action,
     ) {
     }
+
+    public function getStreamTemplate(): string
+    {
+        return 'health/admin/update.lazy.html.twig';
+    }
 }

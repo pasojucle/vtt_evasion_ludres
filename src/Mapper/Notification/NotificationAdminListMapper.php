@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Mapper\Notification;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\NotificationFilter;
 use App\Dto\View\HtmlAttributView;
@@ -24,6 +23,7 @@ use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class NotificationAdminListMapper
 {
@@ -34,6 +34,7 @@ class NotificationAdminListMapper
         private FilterChipsMapper $filterChipsMapper,
         private UrlContextService $urlContextService,
         private CsrfTokenService $csrfTokenService,
+        private CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -44,6 +45,7 @@ class NotificationAdminListMapper
         /** @var Notification $entity */
         foreach ($entities as $entity) {
             $tokenId = $this->csrfTokenService->getTokenId($entity);
+            $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
 
             $items[] = new ListItemView(
                 labels: [
@@ -51,7 +53,7 @@ class NotificationAdminListMapper
                     new LabelView(sprintf('Du %s au %s', $entity->getStartAt()->format('d/m/y'), $entity->getEndAt()->format('d/m/y'))),
                 ],
                 status: $this->notificationStatusMapper->mapToView($entity, $tokenId),
-                action: $this->getAction($entity, $tokenId),
+                action: $this->getAction($entity, $tokenValue),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 gridTemplateRow: 'grid-cols-[1fr_50px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[3fr_1fr]',
@@ -80,16 +82,16 @@ class NotificationAdminListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
         );
     }
 
-    private function getAction(Notification $entity, string $toggleStatusId): ListActionViewInterface
+    private function getAction(Notification $entity, string $csrfToken): ListActionViewInterface
     {
         return new ToggleStatusView(
             url: $this->urlGenerator->generate('admin_notification_toggle', ['notification' => $entity->getId()]),
-            tokenId: $toggleStatusId,
+            csrfToken: $csrfToken,
             isActive: !$entity->isDisabled(),
         );
     }

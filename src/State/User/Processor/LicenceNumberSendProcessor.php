@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\User\Processor;
 
 use App\Dto\State\TurboStreamProcessorResult;
+use App\Dto\View\FlashesView;
 use App\Dto\View\FlashMessageView;
 use App\Entity\Member;
 use App\Service\MailerService;
@@ -34,8 +35,8 @@ class LicenceNumberSendProcessor
         );
 
         return new TurboStreamProcessorResult(
-            'flash_messages/flash_messages.lazy.html.twig',
-            new FlashMessageView('success', 'Le messsage a été envoyé avec succès')
+            success: true,
+            flashMessages: FlashesView::create('success', 'Le messsage a été envoyé avec succès.')
         );
     }
 }

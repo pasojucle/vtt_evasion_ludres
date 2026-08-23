@@ -5,104 +5,124 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\SkillDtoTransformer;
+use App\Dto\Filter\MemberSkillFilter;
+use App\Dto\Payload\MemberSkillCreatePayload;
+use App\Dto\Payload\MemberSkillEvaluationPayload;
+use App\Dto\State\TurboStreamContext;
+use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Member;
 use App\Entity\MemberSkill;
 use App\Form\Admin\MemberSkillAddType;
-use App\Form\Admin\MemberSkillCollectionType;
-use App\Form\Admin\MemberSkillType;
-use App\Form\Admin\SkillFilterType;
-use App\Repository\MemberSkillRepository;
-use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\State\MemberSkill\Processor\MemberSkillCreateProcessor;
+use App\State\MemberSkill\Processor\MemberSkillEvaluationProcessor;
+use App\State\MemberSkill\Provider\MemberSkillCreateProvider;
+use App\State\MemberSkill\Provider\MemberSkillReadProvider;
+use App\State\MemberSkill\Provider\MemberSkillUpdateProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\UX\Turbo\TurboBundle;
 
-#[Route(path: '/admin/membre/competences', name: 'admin_member_skill_')]
-class MemberSkillController extends AbstractController
+#[Route(path: '/admin/membre/competences', name: 'admin_member_skill')]
+class MemberSkillController extends AbstractCrudController
 {
     public function __construct(
-        private MemberSkillRepository $memberSkillRepository,
         private SkillDtoTransformer $skillDtoTransformer,
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    #[Route(path: '/edit/{member}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[Route('/list/{member}', name: '_list', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]
-    public function edit(
+    public function show(
         Request $request,
-        Member $member
+        MemberSkillReadProvider $provider,
+        Member $member,
     ): Response {
-        $formFilter = $this->createForm(SkillFilterType::class);
-        $formFilter->handleRequest($request);
-        $memberSkills = $this->memberSkillRepository->findByMember(
-            $member,
-            $formFilter->get('skillCategory')->getData(),
-            $formFilter->get('level')->getData(),
+
+        return $this->handleListLoadMoreAction(
+            $request,
+            MemberSkillFilter::class,
+            $provider,
+            new TurboStreamContext(
+                $request->attributes->get('_route'),
+                $request->query->getInt('page', 1),
+                $member
+            )
         );
-
-        $form = $this->createForm(MemberSkillCollectionType::class, ['memberSkills' => new ArrayCollection($memberSkills)], [
-            'action' => $request->getUri(),
-            'text_type' => MemberSkillType::BY_SKILLS,
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            /** @var MemberSkill $memberSkill */
-            foreach ($data['memberSkills'] as $memberSkill) {
-                $memberSkill->setEvaluateAt(new DateTimeImmutable());
-            }
-            $this->entityManager->flush();
-        }
-
-        return $this->render('member_skill/admin/edit.html.twig', [
-            'form' => $form->createView(),
-            'formFilter' => $formFilter->createView(),
-            'member' => $member,
-        ]);
     }
 
-    #[Route(path: '/add/{member}', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[Route('/filter/{member}', name: '_filter', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'member')]
+    public function filter(
+        Request $request,
+        MemberSkillReadProvider $provider,
+        Member $member,
+    ): Response {
+        return $this->handleStreamFilterAction(
+            $request,
+            $member,
+            $provider,
+        );
+    }
+
+    #[Route('/delete/filter/{member}', name: '_filter_delete', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'member')]
+    public function deleteFilter(
+        Request $request,
+        MemberSkillReadProvider $provider,
+        Member $member,
+    ): Response {
+        return $this->handleStreamFilterDeleteAction(
+            $request,
+            $member,
+            $provider,
+            'admin_member_skill_filter'
+        );
+    }
+
+    #[Route(path: '/edit/{memberSkill}/{evaluation}', name: '_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'memberSkill')]
+    public function edit(
+        Request $request,
+        MemberSkillUpdateProvider $provider,
+        MemberSkillEvaluationProcessor $processor,
+        MemberSkill $memberSkill,
+        EvaluationEnum $evaluation
+    ): Response {
+        $token = $request->query->get('csrfToken');
+        $result = $processor->process(
+            new MemberSkillEvaluationPayload($memberSkill, $evaluation, $token),
+            null,
+        );
+
+        $streamView = ($result->success)
+            ? $provider->getStreamView($memberSkill)
+            : $result->flashMessages;
+
+        return $this->render($streamView->getStreamTemplate(),[ 
+                'view' => $streamView, 
+            ], new Response('', Response::HTTP_OK, [
+                'Content-Type' => 'text/vnd.turbo-stream.html',
+            ]));
+    }
+
+    #[Route(path: '/add/{member}', name: '_add', methods: ['GET', 'POST'])]
     #[IsGranted('SKILL_ADD')]
     public function add(
         Request $request,
+        MemberSkillCreateProvider $provider,
+        MemberSkillCreateProcessor $processor,
         Member $member
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(MemberSkillAddType::class, null, [
-            'action' => $request->getUri(),
-            'memberId' => $member->getId(),
-        ]);
 
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $skill = $form->get('skill')->getData();
-                $member->addMemberSkill($skill);
-                $this->entityManager->flush();
-
-                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                    $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-                    
-                    return $this->render('cluster/admin/skill_added.stream.html.twig', [
-                        'skill' => $this->skillDtoTransformer->fromEntity($skill),
-                        'member' => $member,
-                    ]);
-                }
-
-                return $this->redirectToRoute('admin_membver_skill_edit', ['member' => $member->getId()]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('member_skill/admin/skill_add.modal.html.twig', [
-            'form' => $form->createView(),
-            'member' => $member,
-        ], $response);
+        return $this->handleFormComponentAction(
+            $request,
+            new MemberSkillCreatePayload($member),
+            $provider,
+            $processor,
+            MemberSkillAddType::class
+        );
     }
 }

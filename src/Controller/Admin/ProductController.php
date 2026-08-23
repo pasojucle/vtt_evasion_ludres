@@ -33,7 +33,7 @@ class ProductController extends AbstractCrudController
         ProductAdminListProvider $provider,
         Request $request
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             ProductFilter::class,
             $provider,
             $request
@@ -124,7 +124,7 @@ class ProductController extends AbstractCrudController
         Product $product
     ): Response {
         return $this->handleComponentProcessAction(
-            new ProductToggleDto($product, $request->request->get('token')),
+            new ProductToggleDto($product, $request->request->get('csrfToken')),
             $processor
         );
     }

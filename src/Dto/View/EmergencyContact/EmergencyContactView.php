@@ -17,4 +17,9 @@ readonly class EmergencyContactView implements TurboStreamViewInterface
         public LinkView $action,
     ) {
     }
+
+    public function getStreamTemplate(): string
+    {
+        return 'emergency_contact/admin/update.lazy.html.twig';
+    }
 }

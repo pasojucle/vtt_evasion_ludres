@@ -82,7 +82,7 @@ class ProductAdminListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             wiki:  $this->wikiMapper->mapToView('boutique'),
         );
     }
@@ -120,12 +120,12 @@ class ProductAdminListMapper
         );
     }
 
-    private function getAction(Product $entity, string $toggleStatusId): ?ListActionViewInterface
+    private function getAction(Product $entity, string $csrfToken): ?ListActionViewInterface
     {
         if (!$entity->isDeleted()) {
             return new ToggleStatusView(
                 url: $this->urlGenerator->generate('admin_product_toggle', ['product' => $entity->getId()]),
-                tokenId: $toggleStatusId,
+                csrfToken: $csrfToken,
                 isActive: !$entity->isDisabled(),
             );
         }

@@ -23,6 +23,7 @@ use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SurveyAdminListMapper
 {
@@ -34,6 +35,7 @@ class SurveyAdminListMapper
         private FilterChipsMapper $filterChipsMapper,
         private SurveyStatusMapper $surveyStatusMapper,
         private CsrfTokenService $csrfTokenService,
+        private CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -44,6 +46,7 @@ class SurveyAdminListMapper
         $items = [];
         foreach ($entities as $entity) {
             $tokenId = $this->csrfTokenService->getTokenId($entity);
+            $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
 
             $items[] = new ListItemView(
                 labels: [
@@ -51,7 +54,7 @@ class SurveyAdminListMapper
                 ],
                 indicators: $this->getIndicators($entity),
                 status: $this->surveyStatusMapper->mapToView($entity, $tokenId),
-                action: $this->getAction($entity, $tokenId),
+                action: $this->getAction($entity, $tokenValue),
                 counter: new BadgeView(
                     (string) $entity->getRespondents()->count(),
                 ),
@@ -78,7 +81,7 @@ class SurveyAdminListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             addItem: new LinkView(
                 label: 'Ajouter un sondage',
@@ -117,11 +120,11 @@ class SurveyAdminListMapper
         return $indicators;
     }
 
-    private function getAction(Survey $entity, string $toggleStatusId): ListActionViewInterface
+    private function getAction(Survey $entity, string $csrfToken): ListActionViewInterface
     {
         return new ToggleStatusView(
             url: $this->urlGenerator->generate('admin_survey_toggle', ['survey' => $entity->getId()]),
-            tokenId: $toggleStatusId,
+            csrfToken: $csrfToken,
             isActive: !$entity->isDisabled(),
         );
     }

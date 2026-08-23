@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper;
 
 use App\Dto\Filter\AbstractFilter;
-use App\Dto\Filter\FilterChip;
-use App\Service\Filter\FilterConfigInterface;
+use App\Dto\View\FilterChipView;
 use App\Service\Filter\FilterFieldConfig;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -24,16 +23,16 @@ class FilterChipsMapper
     ) {
     }
 
-    public function mapToView(AbstractFilter $filter, FilterConfigInterface $filterConfig): array
+    public function mapToView(AbstractFilter $filter, string $routeName, array $fields, string $turboFrame = '_top'): array
     {
         $filterSchips = [];
+        $rangesChips = [];
         $queries = $filter->toQueryParams();
-        $routeName = $filterConfig->getRouteName();
         $preserdNullAttributes = $filter->getPreservedNullAttributes();
-        foreach ($filterConfig->getAdvancedFields() as $field) {
+        foreach ($fields as $field) {
             $name = $field->name;
             $rawValue = $filter->$name;
-            $isPreservdeNull = in_array($name, $preserdNullAttributes);
+            $isPreserdeNull = in_array($name, $preserdNullAttributes);
             if (null === $rawValue) {
                 continue;
             }
@@ -46,8 +45,28 @@ class FilterChipsMapper
                         $filterSchips,
                         $routeName,
                         $queries,
-                        $isPreservdeNull,
+                        $isPreserdeNull,
+                        $turboFrame,
                         $key
+                    );
+                }
+                continue;
+            }
+
+            if ($field->rangeChip) {
+                $rangeName = $field->rangeChip->name;
+                if (!array_key_exists($rangeName, $rangesChips)) {
+                    $field->rangeChip->queries = $queries;
+                    $rangesChips[$rangeName] = $field->rangeChip;
+                }
+                $rangeChip = $rangesChips[$rangeName];
+                $rangeChip->setValue($name, $this->formatRawValue($field, $rawValue));
+                $rangeChip->queries = $this->getRemoveFromQueries($rangeChip->queries, $name, $isPreserdeNull);
+                if ($rangeChip->isComplete()) {
+                    $filterSchips[] = new FilterChipView(
+                        sprintf($rangeChip->formatLabel, $rangeChip->startValue, $rangeChip->endValue),
+                        $rangeChip->required ? null : $this->urlGenerator->generate($routeName, $rangeChip->queries),
+                        $turboFrame,
                     );
                 }
                 continue;
@@ -60,7 +79,8 @@ class FilterChipsMapper
                 $filterSchips,
                 $routeName,
                 $queries,
-                $isPreservdeNull,
+                $isPreserdeNull,
+                $turboFrame,
             );
         }
 
@@ -75,25 +95,34 @@ class FilterChipsMapper
         string $routeName,
         array $queries,
         bool $isPreserdNull,
+        string $turboFrame,
         ?int $key = null,
     ): void {
-        $label = match ($field->type) {
+        $label = $this->formatRawValue($field, $rawValue);
+
+        if ($field->computedChip) {
+            $label = (CheckboxType::class === $field->type)
+                ? sprintf('%s', $field->options['label'] ?? $name)
+                : sprintf('%s: %s', $field->options['label'] ?? $name, $label);
+        }
+        
+        $cleanQueries = $this->getRemoveFromQueries($queries, $name, $isPreserdNull, $key);
+        $filterSchips[] = new FilterChipView(
+            $label,
+            $field->options['require'] ?? false ? null : $this->urlGenerator->generate($routeName, $cleanQueries),
+            $turboFrame,
+        );
+    }
+
+    private function formatRawValue(FilterFieldConfig $field, mixed $rawValue): string
+    {
+        return match ($field->type) {
             EnumType::class => $rawValue->trans($this->translator),
             EntityType::class => $rawValue->__toString(),
             ChoiceType::class => $this->resolveChoiceLabel($field->options['choices'], $rawValue),
             DateType::class => $rawValue?->format('d/m/Y'),
             default => (string) $rawValue
         };
-
-        if ($field->chipCcomputed) {
-            $label = (CheckboxType::class === $field->type)
-                ? sprintf('%s', $field->options['label'] ?? $name)
-                : sprintf('%s: %s', $field->options['label'] ?? $name, $label);
-        }
-        $filterSchips[] = new FilterChip(
-            $label,
-            $this->getRemoveUrl($routeName, $queries, $name, $isPreserdNull, $key),
-        );
     }
 
     private function resolveChoiceLabel(array $choices, mixed $searchedValue): string
@@ -112,7 +141,7 @@ class FilterChipsMapper
         return (string) $searchedValue;
     }
 
-    private function getRemoveUrl(string $routeName, array $queries, string $name, bool $isPreservedNull, ?int $key): string
+    private function getRemoveFromQueries(array $queries, string $name, bool $isPreservedNull, ?int $key = null): array
     {
         if (null !== $key) {
             if ($isPreservedNull) {
@@ -128,6 +157,6 @@ class FilterChipsMapper
             }
         }
 
-        return $this->urlGenerator->generate($routeName, $queries);
+        return $queries;
     }
 }

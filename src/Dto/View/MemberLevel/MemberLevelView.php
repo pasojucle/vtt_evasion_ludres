@@ -17,4 +17,9 @@ readonly class MemberLevelView implements TurboStreamViewInterface
         public LinkView $action,
     ) {
     }
+
+    public function getStreamTemplate(): string
+    {
+        return 'member_level/admin/update.lazy.html.twig';
+    }
 }

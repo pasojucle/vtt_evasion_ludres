@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Identity\Provider;
 
+use App\Dto\State\TurboStreamContext;
 use App\Dto\View\Identity\IdentitySheetView;
 use App\Dto\View\Identity\IdentityView;
 use App\Entity\Identity;
@@ -44,7 +45,7 @@ class IdentityReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, array $context = []): IdentityView
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): IdentityView
     {
         $address = $entity->getAddress();
 

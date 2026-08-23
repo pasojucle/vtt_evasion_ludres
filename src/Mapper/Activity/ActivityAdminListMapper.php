@@ -91,7 +91,7 @@ class ActivityAdminListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             addItem: new LinkView(
                 label: 'Ajouter une activité',
                 url: $this->urlContextService->generateUrl('admin_bike_ride_add', [], $referer),

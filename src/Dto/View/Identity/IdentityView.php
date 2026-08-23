@@ -28,4 +28,9 @@ readonly class IdentityView implements TurboStreamViewInterface
         public LinkView $action,
     ) {
     }
+
+    public function getStreamTemplate(): string
+    {
+        return 'identity/admin/update.lazy.html.twig';
+    }
 }

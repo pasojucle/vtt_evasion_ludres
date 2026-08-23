@@ -6,6 +6,7 @@ namespace App\State\MemberParticipation\Provider;
 
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\MemberParticipationFilter;
+use App\Dto\State\TurboStreamContext;
 use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\SheetView;
 use App\Mapper\MemberParticipation\MemberParticipationExportMapper;
@@ -15,17 +16,14 @@ use App\Repository\SessionRepository;
 use App\Service\Indemnity\ComputeParticipationIndemnity;
 use App\Service\PaginatorService;
 use App\State\FilterHydratorTrait;
+use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\Interface\StreamExportableInterface;
-use App\State\Interface\TurboStreamProviderInterface;
 use App\State\MemberParticipation\Enum\QueryScope;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 
-/**
- * @implements TurboStreamProviderInterface<MemberParticipationFilter>
- */
-class MemberParticipationReadProvider implements TurboStreamProviderInterface, StreamExportableInterface
+class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, StreamExportableInterface
 {
     use FilterHydratorTrait;
 
@@ -53,9 +51,16 @@ class MemberParticipationReadProvider implements TurboStreamProviderInterface, S
         return [];
     }
 
-    public function getStreamView(object $entity, array $context = []): MemberActivitiesView
+    /**
+     * @param MemberParticipationFilter $entity
+     */
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberActivitiesView
     {
-        $currentPage = $context['page'];
+        $currentPage = $context->page;
+        $member = $context->object;
+        $entity->member = $member;
+        $filterConfig = $this->getFilterConfig('admin_member_participation_filter');
+
 
         $qb = $this->getQueryBuilder($entity);
         $allPeriodSessions = $this->getQueryBuilder($entity, QueryScope::INDEMNITY)->getQuery()->getResult();
@@ -71,6 +76,7 @@ class MemberParticipationReadProvider implements TurboStreamProviderInterface, S
 
         return $this->memberParticipationReadMapper->mapToView(
             filter: $entity,
+            filterConfig: $filterConfig,
             totalIndemnity: $globalResult->hasIndemnity() ? $globalResult->totalAmount : null,
             sessionAmounts: $globalResult->amountsBySessionId,
             paginatedSessions: $this->paginator->paginate(
@@ -80,7 +86,7 @@ class MemberParticipationReadProvider implements TurboStreamProviderInterface, S
             ),
             lineChartParticipations: array_column($this->getParticipations($entity), 'total', 'month'),
             lineChartPeriod: $this->getPeriod($entity->startAt, $entity->endAt),
-            route: $context['route'],
+            route: $context->route,
             currentPage: $currentPage,
         );
     }

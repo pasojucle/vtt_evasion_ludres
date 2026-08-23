@@ -83,7 +83,7 @@ class OrderAdminListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             wiki:  $this->wikiMapper->mapToView('boutique', RoundedVariant::ROUNDED_START),
         );

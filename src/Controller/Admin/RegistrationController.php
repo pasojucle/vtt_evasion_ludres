@@ -22,7 +22,7 @@ class RegistrationController extends AbstractCrudController
         RegistrationListProvider $provider,
         Request $request,
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             RegistrationFilter::class,
             $provider,
             $request

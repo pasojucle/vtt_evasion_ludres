@@ -8,6 +8,7 @@ use App\Form\Filter\FilterAdvancedType;
 use App\State\Filter\FilterProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -20,7 +21,7 @@ class FilterController extends AbstractController
         Request $request,
         FilterProvider $provider,
         string $route,
-    ) {
+    ): Response {
         $filterConfig = $provider->getFilterConfig($route);
         if (!$filterConfig) {
             throw $this->createNotFoundException();

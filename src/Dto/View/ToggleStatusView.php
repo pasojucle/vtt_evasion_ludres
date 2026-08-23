@@ -13,7 +13,7 @@ readonly class ToggleStatusView implements ListActionViewInterface
      */
     public function __construct(
         public string $url,
-        public string $tokenId,
+        public string $csrfToken,
         public bool $isActive,
         public string $title = '',
     ) {

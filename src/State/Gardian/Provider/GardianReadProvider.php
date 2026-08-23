@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Gardian\Provider;
 
+use App\Dto\State\TurboStreamContext;
 use App\Dto\View\Gardian\GardianSheetView;
 use App\Dto\View\Gardian\GardianView;
 use App\Entity\MemberGardian;
@@ -45,7 +46,7 @@ class GardianReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, array $context = []): GardianView
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): GardianView
     {
         return $this->gardianReadMapper->mapToView($entity);
     }

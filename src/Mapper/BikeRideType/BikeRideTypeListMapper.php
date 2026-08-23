@@ -75,7 +75,7 @@ class BikeRideTypeListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             addItem: new LinkView(
                 label: 'Ajouter un type d\'activité',
                 url: $this->urlGenerator->generate('admin_bike_ride_type_add'),

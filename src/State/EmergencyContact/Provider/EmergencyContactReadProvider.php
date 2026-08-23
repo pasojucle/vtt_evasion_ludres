@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\EmergencyContact\Provider;
 
+use App\Dto\State\TurboStreamContext;
 use App\Dto\View\EmergencyContact\EmergencyContactView;
 use App\Dto\View\SheetView;
 use App\Entity\EmergencyContact;
@@ -38,7 +39,7 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, array $context = []): EmergencyContactView
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): EmergencyContactView
     {
         return $this->emergencyContactReadMapper->mapToView($entity);
     }

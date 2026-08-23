@@ -79,7 +79,7 @@ class LevelListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             addItem: new LinkView(
                 label: 'Ajouter un niveau',
                 url: $this->urlGenerator->generate('admin_level_edit'),

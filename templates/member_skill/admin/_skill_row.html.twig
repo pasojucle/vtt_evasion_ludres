@@ -1,0 +1,8 @@
+    <div class="flex flex-col gap-1">
+        <div>{{ skill.content|raw }}</div>
+    </div>
+    <div class="grid grid-cols-3 gap-1">
+        {% include skill.unacquired.template with {(skill.unacquired.name): skill.unacquired} %}
+        {% include skill.pending.template with {(skill.pending.name): skill.pending} %}
+        {% include skill.acquired.template with {(skill.acquired.name): skill.acquired} %}
+    </div>

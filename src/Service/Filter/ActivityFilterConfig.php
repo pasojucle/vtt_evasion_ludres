@@ -87,7 +87,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'block_prefix' => 'switch',
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4 flex gap-2 flex-row'],
                 ],
-                chipCcomputed: true,
+                computedChip: true,
             ),
             new FilterFieldConfig(
                 name: 'visibility',
@@ -113,7 +113,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'required' => false,
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
-                chipCcomputed: true,
+                computedChip: true,
             ),
             new FilterFieldConfig(
                 name: 'sort',

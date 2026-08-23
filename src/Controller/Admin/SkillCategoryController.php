@@ -28,7 +28,7 @@ class SkillCategoryController extends AbstractCrudController
         Request $request,
         SkillCategoryListProvider $provider
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             SkillCategoryFilter::class,
             $provider,
             $request

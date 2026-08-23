@@ -14,7 +14,9 @@ use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\MemberParticipation\MemberActivityView;
 use App\Entity\Session;
 use App\Mapper\BikeRide\BikeRidePeriodMapper;
+use App\Mapper\FilterChipsMapper;
 use App\Model\Currency;
+use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -28,6 +30,7 @@ class MemberParticipationReadMapper
         private BikeRidePeriodMapper $bikeRidePeriodMapper,
         private MemberParticipationLineChartMapper $memberParticipationLineChartMapper,
         private UrlGeneratorInterface $urlGenerator,
+        private FilterChipsMapper $filterChipsMapper,
     ) {
     }
 
@@ -36,6 +39,7 @@ class MemberParticipationReadMapper
      */
     public function mapToView(
         MemberParticipationFilter $filter,
+        FilterConfigInterface $filterConfig,
         ?float $totalIndemnity,
         array $sessionAmounts,
         Paginator $paginatedSessions,
@@ -47,7 +51,6 @@ class MemberParticipationReadMapper
         $member = $filter->member;
         $queriyParams = $filter->toArray();
 
-        dump($paginatedSessions->count());
         $hasMoreSessions = $currentPage * PaginatorService::PAGINATOR_PER_PAGE < $paginatedSessions->count();
 
         return new MemberActivitiesView(
@@ -55,6 +58,7 @@ class MemberParticipationReadMapper
             queries: $filter->toArray(),
             period: sprintf('Du %s au %s', $filter->startAt->format('d/m/Y'), $filter->endAt->format('d/m/Y')),
             type: $filter->type?->getName(),
+            filterChips: $this->filterChipsMapper->mapToView($filter, 'admin_member_participation_filter_delete', $filterConfig->getAdvancedFields()),
             filterAction: new LinkView(
                 url: $this->urlGenerator->generate('admin_member_participation_filter', $queriyParams),
                 icon: 'lucide:settings-2',

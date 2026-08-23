@@ -11,10 +11,10 @@ use App\State\Interface\FormTurboStreamProcessorInterface;
 /**
  * @implements FormTurboStreamProcessorInterface<Member>
  */
-class MemberParticipationProcessor implements FormTurboStreamProcessorInterface
+class MemberParticipationFilterProcessor implements FormTurboStreamProcessorInterface
 {
     public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
-        return new TurboStreamProcessorResult('member_participation/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult(true);
     }
 }

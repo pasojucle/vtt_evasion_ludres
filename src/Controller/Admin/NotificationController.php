@@ -29,7 +29,7 @@ class NotificationController extends AbstractCrudController
         Request $request,
         NotificationAdminListProvider $provider,
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             NotificationFilter::class,
             $provider,
             $request
@@ -85,7 +85,7 @@ class NotificationController extends AbstractCrudController
         Notification $notification
     ): Response {
         return $this->handleComponentProcessAction(
-            new NotificationToggleDto($notification, $request->request->get('token')),
+            new NotificationToggleDto($notification, $request->request->get('csrfToken')),
             $processor
         );
     }

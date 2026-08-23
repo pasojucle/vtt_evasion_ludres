@@ -39,7 +39,7 @@ class UserController extends AbstractCrudController
         UserListProvider $provider,
         Request $request,
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             UserFilter::class,
             $provider,
             $request
@@ -125,12 +125,13 @@ class UserController extends AbstractCrudController
         Member $member
     ): Response {
         $result = $processor->process($member);
+        $streamView = $result->flashMessages;
 
-        return $this->render($result->laziTemplate, [
-        'flashes' => [$result->flashMessage->type => [$result->flashMessage->message]],
-        ], new Response('', Response::HTTP_OK, [
-            'Content-Type' => 'text/vnd.turbo-stream.html',
-        ]));
+        return $this->render($streamView->getStreamTemplate(), [
+                'view' => $streamView,
+            ], new Response('', Response::HTTP_OK, [
+                'Content-Type' => 'text/vnd.turbo-stream.html',
+            ]));
     }
 
     #[Route('/adherent/autocomplete', name: 'member_autocomplete', methods: ['GET'])]

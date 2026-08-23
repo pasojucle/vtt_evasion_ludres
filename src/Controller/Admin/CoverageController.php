@@ -24,7 +24,7 @@ class CoverageController extends AbstractCrudController
         CoverageListProvider $provider,
         Request $request,
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             CoverageFilter::class,
             $provider,
             $request

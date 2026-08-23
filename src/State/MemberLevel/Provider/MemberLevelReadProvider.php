@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\MemberLevel\Provider;
 
+use App\Dto\State\TurboStreamContext;
 use App\Dto\View\MemberLevel\MemberLevelView;
 use App\Dto\View\SheetView;
 use App\Entity\Member;
@@ -34,7 +35,7 @@ class MemberLevelReadProvider implements TurboStreamProviderInterface
         return [];
     }
 
-    public function getStreamView(object $entity, array $context = []): MemberLevelView
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberLevelView
     {
         return $this->memberLevelReadMapper->mapToView($entity);
     }

@@ -26,4 +26,9 @@ readonly class GardianView implements TurboStreamViewInterface
         public LinkView $action,
     ) {
     }
+
+    public function getStreamTemplate(): string
+    {
+        return 'gardian/admin/update.lazy.html.twig';
+    }
 }

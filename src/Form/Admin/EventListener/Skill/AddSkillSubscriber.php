@@ -28,12 +28,20 @@ class AddSkillSubscriber implements EventSubscriberInterface
 
     public function preSetData(FormEvent $event): void
     {
-        $this->modify($event);
+        $data = $event->getData();
+        $this->modifier($event->getForm(), $data->category?->getId(), $data->level?->getId());
     }
 
     public function preSubmit(FormEvent $event): void
     {
-        $this->modify($event);
+        $data = $event->getData();
+        [$categoryId, $levelId] = ($data)
+            ? [
+                array_key_exists('category', $data) && "" !== $data['category'] ? $data['category'] : null,
+                array_key_exists('level', $data) && "" !== $data['level'] ? $data['level'] : null
+            ] : [null, null];
+    
+        $this->modifier($event->getForm(), $categoryId, $levelId);
     }
 
     private function modifier(FormInterface $form, ?string $categoryId, ?string $levelId): void
@@ -56,17 +64,5 @@ class AddSkillSubscriber implements EventSubscriberInterface
             ->add('skill', SkillAutocompleteField::class, [
                 'autocomplete_url' => $this->urlGenerator->generate('admin_skill_autocomplete', $params),
             ]);
-    }
-
-    private function modify(FormEvent $event): void
-    {
-        $data = $event->getData();
-        [$categoryId, $levelId] = ($data)
-            ? [
-                array_key_exists('skillCategory', $data) && "" !== $data['skillCategory'] ? $data['skillCategory'] : null,
-                array_key_exists('level', $data) && "" !== $data['level'] ? $data['level'] : null
-            ] : [null, null];
-    
-        $this->modifier($event->getForm(), $categoryId, $levelId);
     }
 }

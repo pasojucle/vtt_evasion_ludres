@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Filter;
 
 use App\Dto\Filter\MemberParticipationFilter;
+use App\Dto\Filter\RangeChip;
 use App\Entity\BikeRideType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,7 +16,7 @@ class MemberParticipationFilterConfig implements FilterConfigInterface
 {
     public function getRouteName(): string
     {
-        return 'admin_member_participation_list';
+        return 'admin_member_participation_filter';
     }
 
     public function supports(string $route): bool
@@ -30,38 +31,44 @@ class MemberParticipationFilterConfig implements FilterConfigInterface
 
     public function getFields(): array
     {
-        return [
-            new FilterFieldConfig(
-                name: 'type',
-                type: EntityType::class,
-                options: [
-                    'label' => 'Type d\'activité',
-                    'class' => BikeRideType::class,
-                    'required' => false,
-                    'attr' => [
-                        'data-action' => 'change->filter#submit'
-                    ],                ],
-            ),
-        ];
+        return [];
     }
 
     public function getAdvancedFields(): array
     {
+        $period = new RangeChip(
+            name: 'period',
+            formatLabel: 'Du %s au %s',
+            startField: 'startAt',
+            endField: 'EndAt',
+            required: true,
+        );
+
         return [
             new FilterFieldConfig(
                 name: 'startAt',
                 type: DateType::class,
                 options: [
-                    'label' => 'Type d\'activité',
-                    'class' => BikeRideType::class,
-                    'required' => false,
+                    'label' => 'Date de début',
+                    'required' => true,
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
+                rangeChip: $period,
             ),
             
             new FilterFieldConfig(
-                name: 'startAt',
+                name: 'endAt',
                 type: DateType::class,
+                options: [
+                    'label' => 'Date de fin',
+                    'required' => true,
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
+                ],
+                rangeChip: $period,
+            ),
+            new FilterFieldConfig(
+                name: 'type',
+                type: EntityType::class,
                 options: [
                     'label' => 'Type d\'activité',
                     'class' => BikeRideType::class,
@@ -83,7 +90,7 @@ class MemberParticipationFilterConfig implements FilterConfigInterface
                     'required' => false,
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
-                chipCcomputed: true,
+                computedChip: true,
             ),
             new FilterFieldConfig(
                 name: 'sort',

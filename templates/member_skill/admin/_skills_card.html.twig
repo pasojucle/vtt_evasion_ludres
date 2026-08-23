@@ -1,0 +1,34 @@
+<div 
+    class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 2xl:gap-12"
+>
+    <div class="size-max">
+        <div class="flex gap-4 items-center">
+            {% if not view.filterChips %}
+                <div class="text-muted font-semibold tracking-wider">Sélectionner un filtre</div>
+            {% endif %}
+            {% include 'components/_filter_chips.html.twig' with {chips: view.filterChips} %}
+
+            <div class="ml-auto">
+                {% include view.filterAction.template with {(view.filterAction.name): view.filterAction} %}
+            </div>
+        </div>
+    </div>
+    <div class="ml-auto">
+            {% include view.addAction.template with {(view.addAction.name): view.addAction} %}
+    </div>
+
+    <div class="rounded-md border border-border">
+        {% include "member_skill/admin/_skills.html.twig" %}
+    </div>
+    <div class="flex flex-col gap-4">
+        <div class="min-w-80 rounded-md border border-border bg-slate-100">
+            <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
+                <h2></h2>
+            </div>
+            <div class="p-3">
+            
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -27,4 +27,9 @@ readonly class LicenceView implements TurboStreamViewInterface
         public LinkView $editAction,
     ) {
     }
+
+    public function getStreamTemplate(): string
+    {
+        return 'licence/admin/update.lazy.html.twig';
+    }
 }

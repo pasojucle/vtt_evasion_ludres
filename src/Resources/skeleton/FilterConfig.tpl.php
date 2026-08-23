@@ -52,7 +52,7 @@ class <?= $entity_name ?>FilterConfig implements FilterConfigInterface
                     'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
                     'attr' => ['class' => 'form-control']
                 ],
-                chipCcomputed: true,
+                computedChip: true,
             ),
             new FilterFieldConfig(
                 name: 'sort',

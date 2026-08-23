@@ -469,6 +469,6 @@ class SessionRepository extends ServiceEntityRepository
     {
         $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
         $qb
-            ->orderBy('se.startAt', $direction);
+            ->orderBy('br.startAt', $direction);
     }
 }

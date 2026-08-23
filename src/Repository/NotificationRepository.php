@@ -59,7 +59,7 @@ class NotificationRepository extends ServiceEntityRepository
             ->andWhere(
                 (new Expr())->lte('n.startAt', ':today'),
                 (new Expr())->gte('n.endAt', ':today'),
-                (new Expr())->isNull('n.disabled_at'),
+                (new Expr())->isNull('n.disabledAt'),
                 (new Expr())->eq('n.public', ':public'),
                 (new Expr())->orX(
                     (new Expr())->lte('n.minAge', ':age'),
@@ -116,7 +116,7 @@ class NotificationRepository extends ServiceEntityRepository
     {
         $qb
         ->andWhere(
-            $qb->expr()->isNull('n.disabled_at')
+            $qb->expr()->isNull('n.disabledAt')
         );
     }
 

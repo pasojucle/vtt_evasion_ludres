@@ -46,7 +46,7 @@ class SurveyController extends AbstractCrudController
         Request $request,
         SurveyAdminListProvider $provider,
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             SurveyFilter::class,
             $provider,
             $request
@@ -206,7 +206,7 @@ class SurveyController extends AbstractCrudController
         Survey $survey
     ): Response {
         return $this->handleComponentProcessAction(
-            new SurveyToggleDto($survey, $request->request->get('token')),
+            new SurveyToggleDto($survey, $request->request->get('csrfToken')),
             $processor
         );
     }

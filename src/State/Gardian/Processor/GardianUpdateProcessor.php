@@ -23,6 +23,6 @@ class GardianUpdateProcessor implements FormTurboStreamProcessorInterface
     {
         $this->updateGardian->execute($entity);
 
-        return new TurboStreamProcessorResult('gardian/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult(true);
     }
 }

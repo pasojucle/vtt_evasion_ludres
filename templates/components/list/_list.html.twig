@@ -44,7 +44,9 @@
                         </div>
                     {% endif %}
                 </div>
-                {% include 'components/_filter_chips.html.twig' with {chips: list.filterChips} %}
+                <div class="mt-4">
+                    {% include 'components/_filter_chips.html.twig' with {chips: list.filterChipViews} %}
+                </div>
             </div>
             {% include('components/list/_frame_list.html.twig') %}
         </div>

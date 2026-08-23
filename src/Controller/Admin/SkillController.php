@@ -37,7 +37,7 @@ class SkillController extends AbstractCrudController
         Request $request,
         SkillListProvider $provider
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             SkillFilter::class,
             $provider,
             $request

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Filter;
+namespace App\Dto\View;
 
-readonly class FilterChip
+readonly class FilterChipView
 {
     /**
      * Summary of __construct
@@ -13,7 +13,8 @@ readonly class FilterChip
      */
     public function __construct(
         public string $label,
-        public string $url,
+        public ?string $url = null,
+        public ?string $turboFrame = null,
     ) {
     }
 }

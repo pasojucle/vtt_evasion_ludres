@@ -1,0 +1,26 @@
+<div class="px-4 bg-slate-300 flex items-center h-8">
+    <div class="text-xs font-semibold uppercase text-white flex gap-2">
+        <h2>Compétences - {{ view.counter }}</h2>
+    </div>
+</div>
+<div class="p-4 2xl:p-6">
+    {% if view.skills|length == 0 %}
+        <div 
+            class="border border-border rounded-sm p-4"
+            data-collection-target="empty"
+        >
+            {% include 'components/_empty.html.twig' with {icon: 'lucide:graduation-cap', message: 'Aucune compétence'} %}
+        </div>
+    {% endif %}
+    <ul 
+        class="flex flex-col text-sm divide-y divide-border"
+        id="member-skill-rows-{{ view.memberId }}"
+    >
+        {% include "member_skill/admin/_skill_rows.html.twig" with {skills: view.skills} %}
+    </ul>
+    <div id="member-participation-load-more-{{ view.memberId }}" class="mt-4 text-center">
+        {% if view.loadMoreAction %}
+            {% include view.loadMoreAction.template with {(view.loadMoreAction.name): view.loadMoreAction} %}
+        {% endif %}
+    </div>
+</div>

@@ -20,4 +20,9 @@ readonly class MemberStatusView implements TurboStreamViewInterface
         public LinkView $action,
     ) {
     }
+
+    public function getStreamTemplate(): string
+    {
+        return 'member_status/admin/update.lazy.html.twig';
+    }
 }

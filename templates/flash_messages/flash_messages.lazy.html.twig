@@ -1,5 +1,5 @@
 <turbo-stream action="replace" target="turbo_flash_messages">
     <template>
-        {% include 'components/_flashes_frame.html.twig' %}
+        {% include 'components/_flashes_frame.html.twig' with {flashes: view.flashes} %}
     </template>
 </turbo-stream>

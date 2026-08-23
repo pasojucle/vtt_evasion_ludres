@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\Filter\MemberParticipationFilter;
+use App\Dto\State\TurboStreamContext;
 use App\Entity\Member;
-use App\Form\Admin\MemberParticipationType;
-use App\State\MemberParticipation\Processor\MemberParticipationProcessor;
+use App\Form\Filter\MemberParticipationType;
+use App\State\MemberParticipation\Processor\MemberParticipationFilterProcessor;
 use App\State\MemberParticipation\Provider\MemberParticipationReadProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,28 +25,16 @@ class MemberParticipationController extends AbstractCrudController
         MemberParticipationReadProvider $provider,
         Member $member,
     ): Response {
-        $filter = $provider->getHydratedDto($request->query->all(), MemberParticipationFilter::class);
-        $filter->member = $member;
-        $currentPage = $request->query->getInt('page', 1);
-
-        if (1 < $currentPage) {
-            return $this->render('member_participation/admin/load_more.lazy.html.twig', [
-                'view' => $provider->getStreamView($filter, [
-                        'route' => $request->attributes->get('_route'),
-                        'page' => $currentPage,
-                    ]),
-                ], new Response('', Response::HTTP_OK, [
-                    'Content-Type' => 'text/vnd.turbo-stream.html',
-                ]));
-        }
-
-        return $this->render('member_participation/admin/show.html.twig', [
-            'view' => $provider->getStreamView($filter, [
-                'filter' => $filter,
-                'route' => $request->attributes->get('_route'),
-                'page' => $currentPage,
-            ]),
-        ]);
+        return $this->handleListLoadMoreAction(
+            $request,
+            MemberParticipationFilter::class,
+            $provider,
+            new TurboStreamContext(
+                $request->attributes->get('_route'),
+                $request->query->getInt('page', 1),
+                $member
+            )
+        );
     }
 
     #[Route('/filter/{member}', name: '_filter', methods: ['GET', 'POST'])]
@@ -53,22 +42,28 @@ class MemberParticipationController extends AbstractCrudController
     public function filter(
         Request $request,
         MemberParticipationReadProvider $provider,
-        MemberParticipationProcessor $processor,
         Member $member,
     ): Response {
-        $filter = $provider->getHydratedDto($request->query->all(), MemberParticipationFilter::class);
-        $filter->member = $member;
-
-        return $this->handleFormComponentAction(
+        return $this->handleStreamFilterAction(
             $request,
-            $filter,
+            $member,
             $provider,
-            $processor,
-            MemberParticipationType::class,
-            [
-                'route' => $request->attributes->get('_route'),
-                'page' => 1,
-            ]
+        );
+    }
+
+
+    #[Route('/delete/filter/{member}', name: '_filter_delete', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'member')]
+    public function deleteFilter(
+        Request $request,
+        MemberParticipationReadProvider $provider,
+        Member $member,
+    ): Response {
+        return $this->handleStreamFilterDeleteAction(
+            $request,
+            $member,
+            $provider,
+            'admin_member_participation_filter'
         );
     }
 

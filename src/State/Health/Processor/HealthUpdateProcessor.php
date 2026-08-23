@@ -23,6 +23,6 @@ class HealthUpdateProcessor implements FormTurboStreamProcessorInterface
     {
         $this->entityManager->flush();
 
-        return new TurboStreamProcessorResult('health/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult(true);
     }
 }

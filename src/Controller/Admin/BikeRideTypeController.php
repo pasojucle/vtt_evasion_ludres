@@ -32,7 +32,7 @@ class BikeRideTypeController extends AbstractCrudController
         Request $request,
         BikeRideTypeListProvider $provider,
     ): Response {
-        return $this->handleListAction(
+        return $this->handleListPaginedAction(
             BikeRideTypeFilter::class,
             $provider,
             $request

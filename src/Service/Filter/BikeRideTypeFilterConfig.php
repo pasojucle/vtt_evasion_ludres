@@ -60,7 +60,7 @@ class BikeRideTypeFilterConfig implements FilterConfigInterface
                         'class' => 'form-control',
                     ],
                 ],
-                chipCcomputed: true,
+                computedChip: true,
             ),
             new FilterFieldConfig(
                 name: 'sort',

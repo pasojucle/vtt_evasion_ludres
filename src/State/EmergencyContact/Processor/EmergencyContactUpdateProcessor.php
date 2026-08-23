@@ -23,6 +23,6 @@ class EmergencyContactUpdateProcessor implements FormTurboStreamProcessorInterfa
     {
         $this->entityManager->flush();
     
-        return new TurboStreamProcessorResult('emergency_contact/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult(true);
     }
 }

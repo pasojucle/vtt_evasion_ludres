@@ -27,6 +27,6 @@ class IdentityUpdateProcessor implements FormTurboStreamProcessorInterface
         $this->updateIdentity->execute($entity, $passportPhoto);
         $this->entityManager->flush();
 
-        return new TurboStreamProcessorResult('identity/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult(true);
     }
 }

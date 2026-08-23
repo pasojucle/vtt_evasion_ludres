@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-use App\Dto\Filter\FilterChip;
+use App\Dto\View\FilterChipView;
 
 readonly class ListView
 {
@@ -18,7 +18,7 @@ readonly class ListView
      * @param ?DropdownView $settings
      * @param ?LinkView $addItem
      * @param ?LinkView $advancedFilter
-     * @param FilterChip[] $filterChips
+     * @param FilterChipView[] $filterChipViews
      * @param ?LinkView $wiki
      */
     public function __construct(
@@ -31,7 +31,7 @@ readonly class ListView
         public ?DropdownView $settings = null,
         public ?LinkView $addItem = null,
         public ?LinkView $advancedFilter = null,
-        public array $filterChips = [],
+        public array $filterChipViews = [],
         public ?LinkView $wiki = null,
     ) {
     }

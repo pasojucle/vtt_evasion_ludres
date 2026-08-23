@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Dto\View\LicenceAuthorization;
 
 use App\Dto\View\BadgeView;
-use App\Dto\View\Interface\TurboStreamViewInterface;
 
-readonly class LicenceAuthorizationView implements TurboStreamViewInterface
+readonly class LicenceAuthorizationView
 {
     public function __construct(
         public int $id,

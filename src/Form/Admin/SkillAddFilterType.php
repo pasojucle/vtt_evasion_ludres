@@ -15,16 +15,15 @@ class SkillAddFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('skillCategory', EntityType::class, [
+            ->add('category', EntityType::class, [
                 'label' => 'Categorie',
                 'class' => SkillCategory::class,
                 'placeholder' => 'Séléctionner une catégorie',
                 'required' => false,
                 'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'form-group-inline',
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'skills-container',
+                    'data-container-id' => 'sheet-skills-container',
                 ],
             ])
             ->add('level', EntityType::class, [
@@ -34,9 +33,8 @@ class SkillAddFilterType extends AbstractType
                 'required' => false,
                 'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'form-group-inline',
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'skills-container',
+                    'data-container-id' => 'sheet-skills-container',
                 ],
             ])
         ;

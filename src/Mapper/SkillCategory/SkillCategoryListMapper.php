@@ -73,7 +73,7 @@ class SkillCategoryListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
-            filterChips: $this->filterChipsMapper->mapToView($filter, $filterConfig),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             addItem: new LinkView(
                 label: 'Ajouter une catégorie',
                 url: $this->urlGenerator->generate('admin_skill_category_add'),

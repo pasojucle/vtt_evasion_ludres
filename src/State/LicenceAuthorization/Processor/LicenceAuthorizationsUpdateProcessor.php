@@ -23,6 +23,6 @@ class LicenceAuthorizationsUpdateProcessor implements FormTurboStreamProcessorIn
     {
         $this->entityManager->flush();
 
-        return new TurboStreamProcessorResult('licence_authorization/admin/update.lazy.html.twig');
+        return new TurboStreamProcessorResult(true);
     }
 }
