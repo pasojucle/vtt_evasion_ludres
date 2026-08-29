@@ -25,13 +25,13 @@ class MemberSkillEvaluationProcessor implements FormTurboStreamProcessorInterfac
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
+    public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
-        $memberSkill = $entity->memberSkill;
-        $evaluation = $entity->evaluation;
+        $memberSkill = $payload->memberSkill;
+        $evaluation = $payload->evaluation;
 
         $tokenId = $this->csrfTokenService->getTokenId($memberSkill);
-        $csrfToken = new CsrfToken($tokenId, $entity->token);
+        $csrfToken = new CsrfToken($tokenId, $payload->token);
 
         if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
             return new TurboStreamProcessorResult(

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\Payload\MemberSkillEvaluationPayload;
@@ -18,7 +17,6 @@ use App\State\MemberSkill\Processor\MemberSkillEvaluationProcessor;
 use App\State\MemberSkill\Provider\MemberSkillCreateProvider;
 use App\State\MemberSkill\Provider\MemberSkillReadProvider;
 use App\State\MemberSkill\Provider\MemberSkillUpdateProvider;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,12 +25,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(path: '/admin/membre/competences', name: 'admin_member_skill')]
 class MemberSkillController extends AbstractCrudController
 {
-    public function __construct(
-        private SkillDtoTransformer $skillDtoTransformer,
-        private EntityManagerInterface $entityManager,
-    ) {
-    }
-
     #[Route('/list/{member}', name: '_list', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]
     public function show(
@@ -40,7 +32,6 @@ class MemberSkillController extends AbstractCrudController
         MemberSkillReadProvider $provider,
         Member $member,
     ): Response {
-
         return $this->handleListLoadMoreAction(
             $request,
             MemberSkillFilter::class,
@@ -101,8 +92,8 @@ class MemberSkillController extends AbstractCrudController
             ? $provider->getStreamView($memberSkill)
             : $result->flashMessages;
 
-        return $this->render($streamView->getStreamTemplate(),[ 
-                'view' => $streamView, 
+        return $this->render($streamView->getStreamTemplate(), [
+                'view' => $streamView,
             ], new Response('', Response::HTTP_OK, [
                 'Content-Type' => 'text/vnd.turbo-stream.html',
             ]));
@@ -116,13 +107,25 @@ class MemberSkillController extends AbstractCrudController
         MemberSkillCreateProcessor $processor,
         Member $member
     ): Response {
+        $queryParams = $request->query->all();
+        $filter = $provider->getHydratedDto($queryParams, MemberSkillFilter::class);
 
         return $this->handleFormComponentAction(
             $request,
-            new MemberSkillCreatePayload($member),
+            new MemberSkillCreatePayload(
+                $member,
+                null,
+                $filter->category,
+                $filter->level,
+            ),
             $provider,
             $processor,
-            MemberSkillAddType::class
+            MemberSkillAddType::class,
+            new TurboStreamContext(
+                $request->attributes->get('_route'),
+                $request->query->getInt('page', 1),
+                $filter,
+            ),
         );
     }
 }

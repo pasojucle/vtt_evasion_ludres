@@ -4,12 +4,43 @@ declare(strict_types=1);
 
 namespace App\State\MemberSkill\Provider;
 
-use App\Dto\View\MemberKill\MemberSkillSheetView;
-use App\Dto\View\SheetView;
+use App\Dto\Payload\MemberSkillCreatePayload;
+use App\Dto\State\TurboStreamContext;
+use App\Dto\View\MemberSkill\MemberSkillSheetView;
+use App\Dto\View\MemberSkill\MemberSkillsView;
+use App\Service\PaginatorService;
+use App\State\Interface\ListLoadMoreProviderInterface;
 
-class MemberSkillCreateProvider extends AbstractMemberSkillProvider
+class MemberSkillCreateProvider extends AbstractMemberSkillProvider implements ListLoadMoreProviderInterface
 {
-    public function getFormView(object $entity, ?string $fallback = null): SheetView
+    /**
+     * @param MemberSkillCreatePayload $entity
+     */
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberSkillsView
+    {
+        $currentPage = $context->page;
+        $filter = $context->object;
+        $member = $entity->member;
+        $filter->member = $member;
+        $filterConfig = $this->getFilterConfig('admin_member_skill_filter');
+
+        $qb = $this->getQueryBuilder($filter);
+
+        return $this->memberSkillReadMapper->mapToView(
+            filter: $filter,
+            filterConfig: $filterConfig,
+            paginatedSkills: $this->paginator->paginate(
+                $qb,
+                $currentPage,
+                PaginatorService::PAGINATOR_PER_PAGE
+            ),
+            memberSkillDevelopmentData: $this->getMemberSkillDevelopmentData($member),
+            route: $context->route,
+            currentPage: $currentPage,
+        );
+    }
+
+    public function getFormView(object $entity, ?string $fallback = null): MemberSkillSheetView
     {
         return new MemberSkillSheetView(
             title: 'Ajouter',
@@ -18,9 +49,13 @@ class MemberSkillCreateProvider extends AbstractMemberSkillProvider
         );
     }
 
+    /**
+     * @param MemberSkillCreatePayload $entity
+     */
     public function getFormOptions(object $entity): array
     {
-
-        return [];
+        return [
+            'memberId' => $entity->member->getId(),
+        ];
     }
 }

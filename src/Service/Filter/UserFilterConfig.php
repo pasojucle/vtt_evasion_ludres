@@ -69,7 +69,7 @@ class UserFilterConfig implements FilterConfigInterface
                     'multiple' => true,
                     'autocomplete' => true,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                     'attr' => [
                         'data-action' => 'change->filter#submit',
                     ],
@@ -83,7 +83,7 @@ class UserFilterConfig implements FilterConfigInterface
                     'choices' => $this->seasonChoiceProvider->getChoices(),
                     'autocomplete' => true,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
 
@@ -97,8 +97,7 @@ class UserFilterConfig implements FilterConfigInterface
                         'Non' => false,
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
                 computedChip: true,
             ),
@@ -110,7 +109,7 @@ class UserFilterConfig implements FilterConfigInterface
                     'multiple' => true,
                     'autocomplete' => true,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
             new FilterFieldConfig(
@@ -125,8 +124,7 @@ class UserFilterConfig implements FilterConfigInterface
                         '100' => 100,
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
                 computedChip: true,
             ),
@@ -140,8 +138,7 @@ class UserFilterConfig implements FilterConfigInterface
                         'Nom (de Z à A)' => 'DESC',
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
         ];

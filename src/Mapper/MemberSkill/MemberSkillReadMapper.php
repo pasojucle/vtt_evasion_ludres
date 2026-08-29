@@ -7,6 +7,7 @@ namespace App\Mapper\MemberSkill;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\MemberSkillFilter;
+use App\Dto\State\MemberSkillDevelopmentData;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LinkView;
 use App\Dto\View\MemberSkill\MemberSkillsView;
@@ -23,6 +24,7 @@ class MemberSkillReadMapper
         private UrlGeneratorInterface $urlGenerator,
         private MemberSkillMapper $memberSkillMapper,
         private FilterChipsMapper $filterChipsMapper,
+        private MemberSkillDevelopmentMapper $memberSkillDevelopmentMapper,
     ) {
     }
 
@@ -30,6 +32,7 @@ class MemberSkillReadMapper
         MemberSkillFilter $filter,
         FilterConfigInterface $filterConfig,
         Paginator $paginatedSkills,
+        array $memberSkillDevelopmentData,
         string $route,
         int $currentPage,
     ): MemberSkillsView {
@@ -78,6 +81,7 @@ class MemberSkillReadMapper
                 fn (MemberSkill $memberSkill) => $this->memberSkillMapper->mapToView($memberSkill),
                 iterator_to_array($paginatedSkills)
             ),
+            memberSkillDevelopment: $this->memberSkillDevelopmentMapper->mapToView($memberSkillDevelopmentData),
         );
     }
 }

@@ -1,5 +1,11 @@
-<turbo-stream action="update" target="member-skill-{{ view.memberId}}">
+<turbo-stream action="update" target="member-skill-{{ view.memberSkill.id}}">
     <template>
-        {% include 'member_skill/admin/_skill_row.html.twig' with {skill: view} %}
+        {% include 'member_skill/admin/_skill_row.html.twig' with {skill: view.memberSkill} %}
+    </template>
+</turbo-stream>
+
+<turbo-stream action="update" target="member-skill-development-{{ view.memberId}}">
+    <template>
+        {% include 'member_skill/admin/_member_skill_development.html.twig' with {skill: view.memberSkillDevelopment} %}
     </template>
 </turbo-stream>

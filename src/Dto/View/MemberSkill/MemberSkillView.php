@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\View\MemberSkill;
 
-use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 
-readonly class MemberSkillView implements TurboStreamViewInterface
+readonly class MemberSkillView
 {
     public function __construct(
         public int $id,
@@ -16,11 +15,5 @@ readonly class MemberSkillView implements TurboStreamViewInterface
         public LinkView $pending,
         public LinkView $acquired,
     ) {
-    }
-
-
-    public function getStreamTemplate(): string
-    {
-        return 'member_skill/admin/update.lazy.html.twig';
     }
 }

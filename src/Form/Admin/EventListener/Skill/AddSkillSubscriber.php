@@ -37,21 +37,22 @@ class AddSkillSubscriber implements EventSubscriberInterface
         $data = $event->getData();
         [$categoryId, $levelId] = ($data)
             ? [
-                array_key_exists('category', $data) && "" !== $data['category'] ? $data['category'] : null,
-                array_key_exists('level', $data) && "" !== $data['level'] ? $data['level'] : null
+                array_key_exists('category', $data) && "" !== $data['category'] ? (int) $data['category'] : null,
+                array_key_exists('level', $data) && "" !== $data['level'] ? (int) $data['level'] : null
             ] : [null, null];
     
         $this->modifier($event->getForm(), $categoryId, $levelId);
     }
 
-    private function modifier(FormInterface $form, ?string $categoryId, ?string $levelId): void
+    private function modifier(FormInterface $form, ?int $categoryId, ?int $levelId): void
     {
         $params = [];
-        if ($form->getConfig()->hasOption('clusterId')) {
-            $params['cluster'] = $form->getConfig()->getOption('clusterId');
+        $formConfig = $form->getConfig();
+        if ($formConfig->hasOption('clusterId')) {
+            $params['cluster'] = $formConfig->getOption('clusterId');
         }
-        if ($form->getConfig()->hasOption('memberId')) {
-            $params['member'] = $form->getConfig()->getOption('memberId');
+        if ($formConfig->hasOption('memberId')) {
+            $params['member'] = $formConfig->getOption('memberId');
         }
         if ($categoryId) {
             $params['category'] = $categoryId;

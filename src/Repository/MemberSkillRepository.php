@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Cluster;
+use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Level;
 use App\Entity\Log;
 use App\Entity\Member;
@@ -129,6 +130,14 @@ class MemberSkillRepository extends ServiceEntityRepository
             ->join('ms.skill', 'sk')->addSelect('sk');
     }
 
+    public function filterEvaluation(QueryBuilder $qb, EvaluationEnum $evaluation): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('ms.evaluation', ':evaluation')
+        )
+        ->setParameter('evaluation', $evaluation);
+    }
+
     public function filterCategory(QueryBuilder $qb, SkillCategory $category): void
     {
         $qb->andWhere(
@@ -158,5 +167,26 @@ class MemberSkillRepository extends ServiceEntityRepository
         $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
         $qb
             ->orderBy('sk.content', $direction);
+    }
+
+    public function getTotalByCategoryByMember(Member $member): array
+    {
+        return $this->createQueryBuilder('msk')
+            ->select(
+                'ca.id',
+                'ca.name',
+                'COUNT(msk.id) AS total',
+                'MAX(le.orderBy) AS maxLevel'
+            )
+            ->join('msk.skill', 'sk')
+            ->join('sk.category', 'ca')
+            ->join('sk.level', 'le')
+            ->andWhere('msk.member = :member')
+            ->andWhere('msk.evaluation = :acquired')
+            ->setParameter('member', $member)
+            ->setParameter('acquired', EvaluationEnum::ACQUIRED)
+            ->groupBy('ca.id', 'ca.name')
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -38,11 +38,12 @@
                 {% if form.vars.checked %} {{ form.vars.attr['data-switch-on'] }} {% else %} {{ form.vars.attr['data-switch-off'] }} {% endif %}
             </label>
         {% else %}
-            {{ form_label(form, null, {
-                'label_attr': {
-                    'class': 'text-sm font-medium select-none transition-colors ' ~ (form.vars.disabled ? 'text-slate-400' : 'text-foreground')
-                }
-            }) }}
+            <label 
+                for="{{ form.vars.id }}" 
+                class="text-sm font-medium select-none transition-colors {% if form.vars.disabled %}text-slate-400{% else %}text-foreground{% endif %}" 
+            >
+                {{ form.vars.label }}
+            </label>
         {% endif %}
     </div>
 {% endblock %}

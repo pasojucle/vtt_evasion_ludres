@@ -1,0 +1,16 @@
+<div 
+    data-controller="progress-bar"
+    data-progress-bar-percentage-value="{{ progress_bar.percentage }}"
+>
+    <div class="flex justify-between mb-1 text-sm font-semibold text-slate-700">
+        <span>{{ progress_bar.title }}</span>
+        <span class="text-primary">{{ progress_bar.percentage }} %</span>
+    </div>
+    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+        <div 
+            class="bg-primary h-full rounded-full transition-all duration-500 ease-out" 
+            style="width:0%;"
+            data-progress-bar-target="bar"
+        ></div>
+    </div>
+</div>

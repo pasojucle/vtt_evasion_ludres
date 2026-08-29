@@ -64,7 +64,7 @@ class CoverageFilterConfig implements FilterConfigInterface
                     'multiple' => true,
                     'autocomplete' => true,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                     'attr' => [
                         'data-action' => 'change@window->filter#update',
                     ],
@@ -82,8 +82,7 @@ class CoverageFilterConfig implements FilterConfigInterface
                         '100' => 100,
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
                 computedChip: true,
             ),
@@ -97,8 +96,7 @@ class CoverageFilterConfig implements FilterConfigInterface
                         'Nom (de Z à A)' => 'DESC',
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
         ];

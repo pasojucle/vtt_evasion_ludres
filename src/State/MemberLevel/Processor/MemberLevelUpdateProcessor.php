@@ -19,7 +19,7 @@ class MemberLevelUpdateProcessor implements FormTurboStreamProcessorInterface
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
+    public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
         $this->entityManager->flush();
     

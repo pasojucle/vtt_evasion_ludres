@@ -57,8 +57,7 @@ class SurveyFilterConfig implements FilterConfigInterface
                     'label' => 'Restriction',
                     'class' => SurveyRestriction::class,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
             new FilterFieldConfig(
@@ -73,8 +72,7 @@ class SurveyFilterConfig implements FilterConfigInterface
                         '100' => 100,
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
                 computedChip: true,
             ),
@@ -88,8 +86,7 @@ class SurveyFilterConfig implements FilterConfigInterface
                         'Date (du plus récent au plus ancien)' => 'DESC',
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
         ];

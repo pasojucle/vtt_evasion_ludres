@@ -13,8 +13,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 interface FormTurboStreamProcessorInterface extends FormProcessorInterface
 {
     /**
-     * @param T $entity
+     * @param T $payload
      * @param UploadedFile[] $uploadFiles
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult;
+    public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult;
 }

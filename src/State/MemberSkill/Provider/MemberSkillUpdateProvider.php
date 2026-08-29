@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace App\State\MemberSkill\Provider;
 
 use App\Dto\State\TurboStreamContext;
-use App\Dto\View\MemberSkill\MemberSkillView;
-use App\Mapper\MemberSkill\MemberSkillMapper;
+use App\Dto\View\MemberSkill\MemberSkillUpdateView;
+use App\Entity\MemberSkill;
 
-class MemberSkillUpdateProvider
+class MemberSkillUpdateProvider extends AbstractMemberSkillProvider
 {
-    public function __construct(
-        private MemberSkillMapper $memberSkillMapper
-    ) {
-    }
-
-
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberSkillView
+    /**
+     * @param MemberSkill $entity
+     */
+    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberSkillUpdateView
     {
-        return $this->memberSkillMapper->mapToView($entity);
+        $member = $entity->getMember();
+
+        return $this->memberSkillUpdateMapper->mapToView(
+            memberSkill: $entity,
+            memberSkillDevelopmentData: $this->getMemberSkillDevelopmentData($member),
+        );
     }
 }

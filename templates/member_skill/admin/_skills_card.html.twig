@@ -23,10 +23,10 @@
     <div class="flex flex-col gap-4">
         <div class="min-w-80 rounded-md border border-border bg-slate-100">
             <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
-                <h2></h2>
+                <h2>Progression</h2>
             </div>
-            <div class="p-3">
-            
+            <div id="member-skill-development-{{ view.memberId }}" class="p-3 flex flex-col gap-4">
+                {% include "member_skill/admin/_member_skill_development.html.twig" %}
             </div>
         </div>
     </div>

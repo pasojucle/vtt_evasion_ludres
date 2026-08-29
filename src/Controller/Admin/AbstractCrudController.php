@@ -86,7 +86,6 @@ abstract class AbstractCrudController extends AbstractController
         TurboStreamContext $context
     ): Response {
         $queryParams = $request->query->all();
-        $filter = new $filterClass();
         $filter = $provider->getHydratedDto($queryParams, $filterClass);
 
         $currentPage = $context->page;

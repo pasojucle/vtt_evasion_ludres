@@ -18,6 +18,9 @@ class SkillAutocompleteField extends AbstractType
             'placeholder' => 'Sélectionnez une compétence',
             'multiple' => false,
             'label' => 'Compétence',
+            'attr' => [
+                'data-controller' => 'html-autocomplete',
+            ],
         ]);
     }
 

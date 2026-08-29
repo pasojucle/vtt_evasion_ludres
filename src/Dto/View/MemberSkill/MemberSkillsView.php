@@ -8,12 +8,14 @@ use App\Dto\View\FilterChipView;
 use App\Dto\View\Interface\LoadMoreViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\MemberSkill\MemberSkillView;
+use App\Dto\View\ProgressBarView;
 
 readonly class MemberSkillsView implements LoadMoreViewInterface
 {
     /**
      * @param MemberSkillView[] $skills
      * @param FilterChipView[] $filterChips
+     * @param ProgressBarView[] $memberSkillDevelopment
      */
     public function __construct(
         public int $memberId,
@@ -26,6 +28,7 @@ readonly class MemberSkillsView implements LoadMoreViewInterface
         public ?LinkView $loadMoreAction,
         public int $counter,
         public array $skills,
+        public array $memberSkillDevelopment,
     ) {
     }
 

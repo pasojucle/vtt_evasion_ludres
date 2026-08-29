@@ -64,7 +64,7 @@ class RegistrationFilterConfig implements FilterConfigInterface
                     'label' => 'Adhérent',
                     'class' => Member::class,
                     'autocomplete_url' => 'admin_registration_autocomplete',
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                     'required' => false,
                 ],
                 allowedFilterNames: ['status'],
@@ -78,7 +78,7 @@ class RegistrationFilterConfig implements FilterConfigInterface
                     'multiple' => true,
                     'autocomplete' => true,
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                     'attr' => [
                         'data-action' => 'change@window->filter#update',
                     ],
@@ -96,10 +96,7 @@ class RegistrationFilterConfig implements FilterConfigInterface
                         '100' => 100,
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => [
-                        'class' => 'form-control',
-                    ]
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
                 computedChip: true,
             ),
@@ -113,8 +110,7 @@ class RegistrationFilterConfig implements FilterConfigInterface
                         'Nom (de Z à A)' => 'DESC',
                     ],
                     'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control']
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
         ];

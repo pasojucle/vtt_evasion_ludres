@@ -2,8 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\EvaluationEnum;
+use App\Entity\Level;
+use App\Entity\Member;
 use App\Entity\SkillCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -55,5 +59,24 @@ class SkillCategoryRepository extends ServiceEntityRepository
         $qb->andWhere(
             $qb->expr()->isNull('skc.deletedAt')
         );
+    }
+
+    public function getTotalSkillAcquiredByMemberAndCategory(Member $member): array
+    {
+        return $this->createQueryBuilder('ca')
+            ->select(
+                'ca.id',
+                'ca.name',
+                'SUM(CASE WHEN msk.member=:member AND msk.evaluation = :acquired THEN 1 ELSE 0 END) AS totalAcquired',
+                'SUM(CASE WHEN msk.member=:member THEN 1 ELSE 0 END) AS total'
+            )
+            ->leftJoin('ca.skills', 'sk')
+            ->leftJoin('sk.memberSkills', 'msk')
+            ->setParameter('member', $member)
+            ->setParameter('acquired', EvaluationEnum::ACQUIRED)
+            ->groupBy('ca.id', 'ca.name')
+            ->orderBy('ca.name')
+            ->getQuery()
+            ->getResult();
     }
 }

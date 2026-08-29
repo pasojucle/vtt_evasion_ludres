@@ -25,7 +25,7 @@ class MemberSkillAddType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-                        ->add('category', EntityType::class, [
+            ->add('category', EntityType::class, [
                 'label' => 'Categorie',
                 'class' => SkillCategory::class,
                 'placeholder' => 'Séléctionner une catégorie',
@@ -55,9 +55,10 @@ class MemberSkillAddType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => MemberSkillCreatePayload::class,
+            'memberId' => null,
+            'clusterId' => null,
             'attr' => [
                 'data-controller' => 'form-modifier',
-                // 'data-turbo-action' => 'replace',
             ]
         ]);
     }

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Service\Filter;
 
 use App\Dto\Filter\MemberSkillFilter;
+use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Level;
 use App\Entity\SkillCategory;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class MemberSkillFilterConfig implements FilterConfigInterface
 {
@@ -36,6 +38,16 @@ class MemberSkillFilterConfig implements FilterConfigInterface
     public function getAdvancedFields(): array
     {
         return [
+            new FilterFieldConfig(
+                name: 'evaluation',
+                type: EnumType::class,
+                options: [
+                    'label' => 'Évaluation',
+                    'class' => EvaluationEnum::class,
+                    'required' => false,
+                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
+                ],
+            ),
             new FilterFieldConfig(
                 name: 'category',
                 type: EntityType::class,

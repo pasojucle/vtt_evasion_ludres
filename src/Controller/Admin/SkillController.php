@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\SkillDtoTransformer;
+use App\Dto\Filter\SkillAutocompleteFilter;
 use App\Dto\Filter\SkillFilter;
 use App\Entity\Skill;
 use App\Form\Admin\SkillType;
@@ -12,6 +13,7 @@ use App\Repository\SkillRepository;
 use App\Service\ExportService;
 use App\State\Skill\Processor\SkillDeleteProcessor;
 use App\State\Skill\Processor\SkillRestoreProcessor;
+use App\State\Skill\Provider\SkillAutocompleteProvider;
 use App\State\Skill\Provider\SkillDeleteProvider;
 use App\State\Skill\Provider\SkillListProvider;
 use Doctrine\ORM\EntityManagerInterface;
@@ -67,20 +69,14 @@ class SkillController extends AbstractCrudController
     #[Route('/autocomplete', name: 'autocomplete', methods: ['GET', 'POST'])]
     #[IsGranted('IS_MEMBER')]
     public function adminSkillAutocomplete(
-        Request $request
+        Request $request,
+        SkillAutocompleteProvider $provider,
     ): JsonResponse {
-        $categoryId = $request->query->has('category') ? $request->query->getInt('category') : null;
-        $levelId = $request->query->has('level') ? $request->query->getInt('level') : null;
-        $clusterId = $request->query->has('cluster') ? $request->query->getInt('cluster') : null;
+        /**  @var SkillAutocompleteFilter $filter */
+        $filter = $provider->getHydratedDto($request->query->all(), SkillAutocompleteFilter::class);
+        $query = $request->query->get('query');
 
-        $skills = $this->skillRepository->findFiltered($categoryId, $levelId, $clusterId);
-
-        $results = array_map(fn (Skill $skill) => [
-            'value' => $skill->getId(),
-            'text' => $skill->getContent(),
-        ], $skills);
-
-        return new JsonResponse(['results' => $results]);
+        return new JsonResponse(['results' => $provider->getAutocompleteChoices($query, $filter)]);
     }
 
     #[Route(path: '/add', name: 'add', methods: ['GET', 'POST'])]

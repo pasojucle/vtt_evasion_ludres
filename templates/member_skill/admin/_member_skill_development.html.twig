@@ -1,0 +1,3 @@
+{% for progress_barre in view.memberSkillDevelopment %}
+    {% include progress_barre.template with {(progress_barre.name): progress_barre} %}
+{% endfor %}

@@ -13,7 +13,7 @@ use App\State\Interface\FormTurboStreamProcessorInterface;
  */
 class MemberParticipationFilterProcessor implements FormTurboStreamProcessorInterface
 {
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
+    public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
         return new TurboStreamProcessorResult(true);
     }

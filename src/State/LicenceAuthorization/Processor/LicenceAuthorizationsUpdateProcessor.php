@@ -17,9 +17,9 @@ class LicenceAuthorizationsUpdateProcessor implements FormTurboStreamProcessorIn
     }
 
     /**
-     * @param Identity $entity
+     * @param Identity $payload
      */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
+    public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
         $this->entityManager->flush();
 
