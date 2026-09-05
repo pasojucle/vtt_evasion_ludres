@@ -3,10 +3,6 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static targets = ["trigger", "chevron", "panel"];
 
-    connect() {
-        console.log("tabs_controller")
-    }
-
     switchTab(event) {
         const target = event.currentTarget.dataset.index;
         this.triggerTargets.forEach(trigger => {

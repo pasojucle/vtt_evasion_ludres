@@ -10,7 +10,11 @@ use App\Dto\View\TabView;
 use App\Dto\View\TabWrapperView;
 use App\Entity\Enum\LevelType;
 use App\Entity\User;
-use App\Mapper\User\UserReadMapper;
+use App\Mapper\User\Read\IdentityMapper;
+use App\Mapper\User\Read\LicenceMapper;
+use App\Mapper\User\Read\ParticipationMapper;
+use App\Mapper\User\Read\SkillsMapper;
+use App\Mapper\User\Read\TabHeaderMapper;
 use App\Service\SeasonService;
 use App\State\Interface\ComponentProviderInterface;
 
@@ -20,30 +24,50 @@ use App\State\Interface\ComponentProviderInterface;
 class UserReadProvider implements ComponentProviderInterface
 {
     public function __construct(
-        private UserReadMapper $mapper,
+        private TabHeaderMapper $tabHeaderMapper,
+        private IdentityMapper $identityMapper,
+        private LicenceMapper $licenceMapper,
+        private ParticipationMapper $participationMapper,
+        private SkillsMapper $skillsMapper,
         private SeasonService $seasonService,
     ) {
     }
 
-    public function getView(object $entity, ?string $fallback = null): TabWrapperView
+    public function getView(object $entity, ?string $fallback = null, ?string $referer = null): TabWrapperView
     {
         $tabs = [
-            new TabView('Identité & Contacts', 'lucide:user', 'user/admin/show/tab_identity.html.twig'),
-            new TabView('Licence & statut', 'lucide:id-card', 'user/admin/show/tab_licence.html.twig'),
-            new TabView('Participation', 'lucide:chart-line', 'user/admin/show/tab_participation.html.twig'),
+            new TabView(
+                title: 'Identité & Contacts', 
+                icon: 'lucide:user',
+                view: $this->identityMapper->mapToView($entity),
+            ),
+            new TabView(
+                title: 'Licence & statut', 
+                icon: 'lucide:id-card', 
+                view: $this->licenceMapper->mapToView($entity)
+            ),
+            new TabView(
+                title: 'Participation', 
+                icon: 'lucide:chart-line', 
+                view: $this->participationMapper->mapToView(
+                    $entity,
+                    $this->seasonService->getCurrentSeasonPeriod()
+                ),
+            ),
         ];
         if (LevelType::SCHOOL === $entity->getLevel()?->getType()) {
-            $tabs[] = new TabView('Compétences', 'lucide:graduation-cap', 'user/admin/show/tab_skill.html.twig');
+            $tabs[] = new TabView(
+                title: 'Compétences', 
+                icon: 'lucide:badge-check', 
+                view: $this->skillsMapper->mapToView($entity),
+            );
         }
 
         return new TabWrapperView(
             name: sprintf('user-%s', $entity->getId()),
-            header: 'user/admin/show/tab_header.html.twig',
+            title: $entity->getIdentity()->getFullName(),
+            header: $this->tabHeaderMapper->mapToView($entity),
             tabs: $tabs,
-            entity: $this->mapper->mapToView(
-                $entity,
-                $this->seasonService->getCurrentSeasonPeriod()
-            ),
             fallback: new LinkView(
                 url: $fallback,
                 icon: 'lucide:chevron-left',

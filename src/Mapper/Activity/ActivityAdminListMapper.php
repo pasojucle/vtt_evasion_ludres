@@ -68,7 +68,7 @@ class ActivityAdminListMapper
                 ),
                 dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $referer),
                 isDeleted: $entity->isDeleted(),
-                url: $this->urlGenerator->generate("admin_bike_ride_cluster_show", ['bikeRide' => $entity->getId()]),
+                url: $this->urlGenerator->generate("admin_cluster_list_activity", ['bikeRide' => $entity->getId()]),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateLabels: 'grid-cols-[80px_auto]',
                 gridTemplateBadges: 'grid-cols-[80px_auto_40px]',
@@ -102,7 +102,7 @@ class ActivityAdminListMapper
     }
 
     //     {% if bikeRide.bikeRideType.isRegistrable %}
-    //     <a class="" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.id}) }}" title="Voir les participants">
+    //     <a class="" href="{{ path('admin_cluster_list_activity', {'bikeRide' : bikeRide.id}) }}" title="Voir les participants">
     //         {{ bikeRide_content }}
     //     </a>
     // {% else %}

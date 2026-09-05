@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Activity;
 
-use App\Dto\View\TabEntityInterface;
+use App\Dto\View\Interface\TabEntityInterface;
 
 readonly class ActivityView implements TabEntityInterface
 {

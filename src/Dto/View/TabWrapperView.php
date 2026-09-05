@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\View;
 
 use App\Dto\View\Interface\ComponentViewInterface;
+use App\Dto\View\Interface\TabWrapperHeaderInterface;
 
 readonly class TabWrapperView implements ComponentViewInterface
 {
@@ -13,9 +14,9 @@ readonly class TabWrapperView implements ComponentViewInterface
      */
     public function __construct(
         public string $name,
-        public string $header,
+        public string $title,
+        public TabWrapperHeaderInterface $header,
         public array $tabs,
-        public TabEntityInterface $entity,
         public ?LinkView $fallback,
     ) {
     }

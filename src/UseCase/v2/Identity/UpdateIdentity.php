@@ -17,7 +17,7 @@ class UpdateIdentity
     ) {
     }
 
-    public function execute(Identity $identity, ?UploadedFile $passportPhoto): void
+    public function __invoke(Identity $identity, ?UploadedFile $passportPhoto): void
     {
         if ($passportPhoto) {
             $newFilename = $this->uploadService->uploadFile($passportPhoto, $identity);

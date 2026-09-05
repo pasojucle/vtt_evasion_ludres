@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\AgreementKindEnum;
 use App\Entity\LicenceAgreement;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -40,5 +41,23 @@ class LicenceAgreementRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException) {
             return null;
         }
+    }
+
+    public function findAuthorizationsByUsersAndAggrementId(array $userIds): array
+    {
+        return $this->createQueryBuilder('la')
+            ->join('la.agreement', 'a')
+            ->join('la.licence', 'l')
+            ->join('l.user', 'usr')
+            ->andWhere(
+                (new Expr())->eq('a.kind', ':kind'),
+                (new Expr())->in('usr.id', ':userIds')
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('userIds', $userIds),
+                new Parameter('kind', AgreementKindEnum::AUTHORIZATION)
+            ]))
+            ->getQuery()
+            ->getResult();
     }
 }

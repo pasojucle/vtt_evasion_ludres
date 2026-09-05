@@ -3,8 +3,8 @@
         <div class="flex flex-col gap-4">
             <div class="rounded-md border border-border flex-1">
                 <turbo-frame 
-                    id="licence-{{ view.entity.licenceId }}"
-                    src="{{ path('admin_licence_show', {user: view.entity.id}) }}"
+                    id="licence-{{ content.licenceId }}"
+                    src="{{ path('admin_licence_show', {user: content.id}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8">
                         <div class="text-xs font-semibold uppercase text-white">
@@ -41,8 +41,8 @@
             </div>
             <div class="rounded-md border border-border flex-1">
                 <turbo-frame 
-                    id="member-level-{{ view.entity.id }}"
-                    src="{{ path('admin_member_level_show', {member: view.entity.id}) }}"
+                    id="member-level-{{ content.id }}"
+                    src="{{ path('admin_member_level_show', {member: content.id}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
                         <h2>Niveau</h2>
@@ -61,8 +61,8 @@
         <div class="flex flex-col gap-4">
             <div class="rounded-md border border-border flex-1">
                 <turbo-frame 
-                    id="member-status-{{ view.entity.id }}"
-                    src="{{ path('admin_member_status_show', {member: view.entity.id}) }}"
+                    id="member-status-{{ content.id }}"
+                    src="{{ path('admin_member_status_show', {member: content.id}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
                         <h2>Statut au club</h2>
@@ -84,8 +84,8 @@
             </div>
             <div class="rounded-md border border-border flex-1">
                 <turbo-frame 
-                    id="licence-authorizations-{{ view.entity.licenceId }}"
-                    src="{{ path('admin_licence_authorizations_show', {licence: view.entity.licenceId}) }}"
+                    id="licence-authorizations-{{ content.licenceId }}"
+                    src="{{ path('admin_licence_authorizations_show', {licence: content.licenceId}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
                         <h2>Authorisations</h2>
@@ -107,8 +107,8 @@
             </div>
             <div class="rounded-md border border-border flex-1">
                 <turbo-frame 
-                    id="health-{{ view.entity.healthId }}"
-                    src="{{ path('admin_health_show', {health: view.entity.healthId}) }}"
+                    id="health-{{ content.healthId }}"
+                    src="{{ path('admin_health_show', {health: content.healthId}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
                         <h2>Informations sanitaires</h2>

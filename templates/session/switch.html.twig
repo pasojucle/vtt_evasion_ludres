@@ -17,7 +17,7 @@
                 {{ form_row(form.cluster) }}
             </div>
             <div class="block-footer">
-                <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour aux participants</a>
+                <a href="{{ path('admin_cluster_list_activity', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour aux participants</a>
                 {{ form_widget(form.save) }}
             </div>
             {{ form_end(form) }}

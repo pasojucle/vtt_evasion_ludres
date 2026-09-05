@@ -386,6 +386,23 @@ class SessionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findParticipationByUsers(Array $userIds): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select(sprintf('%s as count', (new Expr())->count('s.isPresent')), 'usr.id as userId')
+            ->join('s.user', 'usr')
+            ->andWhere(
+                (new Expr())->in('usr.id', ':userIds'),
+                (new Expr())->eq('s.isPresent', ':isPresent')
+            )
+            ->setParameter('userIds', $userIds)
+            ->setParameter('isPresent', true)
+            ->groupBy('usr.id')
+            ->getQuery()
+            ->getScalarResult()
+        ;
+    }
+
     public function findTotalByActivityIds(array $activityIds): array
     {
         return $this->createQueryBuilder('s')

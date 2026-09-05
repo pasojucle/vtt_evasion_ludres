@@ -13,7 +13,6 @@ readonly class FormTabWrapperView implements ComponentFormViewInterface
         public string $title,
         public string $description,
         public array $tabs,
-        public TabEntityInterface $entity,
         public ?LinkView $fallback,
         public ButtonView $submit
     ) {

@@ -221,9 +221,14 @@ abstract class AbstractCrudController extends AbstractController
         ComponentProviderInterface $provider,
         object $object,
     ): Response {
-        $fallback = $this->urlContextService->getRedirectUrl($request);
-
-        $view = $provider->getView($object, $fallback);
+        $view = $provider->getView(
+            $object,
+            $this->urlContextService->getRedirectUrl($request),
+            $this->urlContextService->generateTargetUrl(
+                $request->attributes->get('_route'),
+                $request->attributes->get('_route_params'),
+            )
+        );
         return $this->render($view->getTemplate(), [
             'view' => $view
         ]);

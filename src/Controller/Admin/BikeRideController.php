@@ -82,22 +82,6 @@ class BikeRideController extends AbstractCrudController
         );
     }
 
-    #[Route('/sortie/groupe/{bikeRide}', name: 'admin_bike_ride_cluster_show', methods: ['GET'])]
-    #[IsGranted('BIKE_RIDE_VIEW', 'bikeRide')]
-    public function adminClusterShow(
-        Request $request,
-        BikeRide $bikeRide,
-    ): Response {
-        $filters = $request->getSession()->get('admin_bike_ride_list_filters');
-        $request->getSession()->set("last_list_url", $request->getUri());
-
-        return $this->render('bike_ride/admin/show.html.twig', [
-            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $this->clusterDtoTransformer->headerFromBikeRide($bikeRide),
-            'bike_rides_filters' => ($filters) ? $filters : [],
-        ]);
-    }
-
     #[Route('/sortie/export/{bikeRide}', name: 'admin_bike_ride_export', methods: ['GET', 'POST'], defaults:[])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminBikeRideExport(

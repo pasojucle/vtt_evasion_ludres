@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\BikeRide;
+namespace App\Mapper\Activity;
 
 use App\Entity\BikeRide;
 use DateTimeImmutable;
 use IntlDateFormatter;
 
-class BikeRidePeriodMapper
+class ActivityPeriodMapper
 {
     public function mapToView(BikeRide $bikeRide): string
     {

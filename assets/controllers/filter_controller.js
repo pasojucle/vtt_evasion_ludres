@@ -3,12 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static targets = ['form'];
 
-    connect() {
-        console.log("filter_controller", this.hasFormTarget, this.formTarget)
-    }
-
     submit() {
-        console.log('filter_controller change')
         if (this.hasFormTarget) {
             // On désactive temporairement les champs vides avant la soumission
             // pour nettoyer l'ur des champs vides
@@ -19,7 +14,6 @@ export default class extends Controller {
                 }
             });
             const frame = this.element.closest('[data-with-skeleton="true"]');
-            console.log("frame", frame);
             if (frame) {
                 frame.setAttribute("busy", "");
             }

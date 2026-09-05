@@ -24,7 +24,7 @@ class IdentityUpdateProcessor implements FormTurboStreamProcessorInterface
     public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
         $passportPhoto = $uploadFiles['passportPhoto'] ?? null;
-        $this->updateIdentity->execute($payload, $passportPhoto);
+        ($this->updateIdentity)($payload, $passportPhoto);
         $this->entityManager->flush();
 
         return new TurboStreamProcessorResult(true);

@@ -29,13 +29,17 @@ class IdentityReadMapper
             ? sprintf('%s (%s - France)', $identity->getBirthCommune()->getName(), $identity->getBirthCommune()->getDepartment()->getName())
             : sprintf('%s (%s)', $identity->getBirthPlace(), $identity->getBirthCountry());
 
+        $commune = $address->getCommune();
+
         return new IdentityView(
             id: $identity->getId(),
             fullName: $identity->getFullName(),
             birthDate: $identity->getBirthDate()->format('d/m/Y'),
             birthPlace: $birthPlace,
             address: $address->getStreet(),
-            city: sprintf('%s %s', $address->getCommune()->getPostalCode(), $address->getCommune()->getName()),
+            city: ($commune) 
+                ? sprintf('%s %s', $address->getCommune()->getPostalCode(), $address->getCommune()->getName())
+                : $address->getTown(),
             email: new EmailView($identity->getEmail()),
             phones: array_map(
                 fn ($phone) => new PhoneView($phone),

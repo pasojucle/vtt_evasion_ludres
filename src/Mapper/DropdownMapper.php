@@ -48,7 +48,7 @@ class DropdownMapper
             $menuItems[] = new LinkView(
                 label: 'Compétences',
                 url: $this->urlGenerator->generate('admin_member_skill_edit', ['member' => $user->getId()]),
-                icon: 'lucide:graduation-cap',
+                icon: 'lucide:badge-check',
             );
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {

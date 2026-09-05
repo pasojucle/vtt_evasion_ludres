@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\Filter;
 
-use App\Entity\BikeRideType;
 use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -14,7 +13,7 @@ class MemberSkillFilter extends AbstractFilter
 {
     public function __construct(
         public ?Member $member = null,
-        public ?EvaluationEnum $evaluation,
+        public ?EvaluationEnum $evaluation = null,
         public ?SkillCategory $category = null,
         public ?Level $level = null,
         public ?int $itemsPerPage = null,

@@ -7,7 +7,9 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\Payload\SessionCreateAdminPayload;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
 use App\Entity\Member;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
@@ -141,7 +143,7 @@ class SessionController extends AbstractController
             $this->cacheService->deleteCacheIndex($oldCluster);
             $this->cacheService->deleteCacheIndex($session->getCluster());
 
-            return $this->redirectToRoute('admin_bike_ride_cluster_show', [
+            return $this->redirectToRoute('admin_cluster_list_activity', [
                 'bikeRide' => $bikeRide->getId(),
             ]);
         }
@@ -153,26 +155,26 @@ class SessionController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/rando/inscription/{bikeRide}', name: 'admin_session_add', methods: ['GET', 'POST'])]
+    #[Route('/admin/rando/inscription/{cluster}', name: 'admin_session_add', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminSessionAdd(
         Request $request,
         SeasonService $seasonService,
-        BikeRide $bikeRide
+        Cluster $cluster
     ): Response {
-        $clusters = $bikeRide->getClusters();
-        $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
+        $bikeRide = $cluster->getBikeRide();
+
         $data = [];
         $currentSeason = $seasonService->getCurrentSeason();
         $minSeasonToTakePart = $seasonService->getMinSeasonToTakePart();
-        $data['season'] = ($minSeasonToTakePart < $currentSeason) ? null : sprintf('SEASON_%s', $currentSeason);
-        if ($bikeRide->getSurvey()) {
-            $data['responses'] = ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)];
-        }
-        $form = $this->createForm(SessionType::class, $data, [
-            'filters' => ['bikeRide' => $bikeRide->getId(), 'is_yearly_licence' => false, ],
-            'bikeRide' => $bikeRide,
-        ]);
+        $payload = new SessionCreateAdminPayload(
+            season: ($minSeasonToTakePart < $currentSeason) ? null : $currentSeason,
+            cluster: $cluster,
+            surveyResponses: ($bikeRide->getSurvey())
+                ? ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)]
+                : null
+        );
+        $form = $this->createForm(SessionType::class, $payload);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -184,7 +186,7 @@ class SessionController extends AbstractController
                 
                 $this->addFlash('success', 'Le participant a bien été inscrit');
 
-                return $this->redirectToRoute('admin_bike_ride_cluster_show', [
+                return $this->redirectToRoute('admin_cluster_list_activity', [
                     'bikeRide' => $bikeRide->getId(),
                 ]);
             }
@@ -209,7 +211,7 @@ class SessionController extends AbstractController
 
         $this->addFlash('success', $userDto->member->fullName . ' à bien été désinscrit');
 
-        return $this->redirectToRoute('admin_bike_ride_cluster_show', [
+        return $this->redirectToRoute('admin_cluster_list_activity', [
             'bikeRide' => $bikeRide->getId(),
         ]);
     }

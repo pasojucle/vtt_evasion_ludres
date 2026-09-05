@@ -5,34 +5,47 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
 use App\Service\CacheService;
 use App\Service\LogService;
+use App\State\Cluster\Provider\ClusterReadProvider;
+use App\State\Cluster\Provider\ClustersActivityReadProvider;
 use App\UseCase\Cluster\ExportCluster;
 use App\UseCase\Cluster\GetUsersOffSite;
 use App\UseCase\Cluster\MailerSendUsersOffSite;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ClusterController extends AbstractController
+class ClusterController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private ClusterDtoTransformer $clusterDtoTransformer,
         private CacheService $cacheService,
     ) {
     }
 
-    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET', 'POST'])]
+    #[Route('/sortie/groupes/{bikeRide}', name: 'admin_cluster_list_activity', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_VIEW', 'bikeRide')]
+    public function adminClustersBikeRide(
+        Request $request,
+        ClustersActivityReadProvider $provider,
+        BikeRide $bikeRide,
+    ): Response {
+        return $this->handleComponentAction(
+            $request,
+            $provider,
+            $bikeRide
+        );
+    }
+
+    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function adminClusterComplete(
         Request $request,
@@ -83,7 +96,7 @@ class ClusterController extends AbstractController
 
             $this->cacheService->deleteCacheIndex($cluster);
 
-            return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
+            return $this->redirectToRoute('admin_cluster_list_activity', ['bikeRide' => $bikeRide->getId()]);
         }
 
         return $this->render('cluster/edit.html.twig', [
@@ -106,7 +119,7 @@ class ClusterController extends AbstractController
 
             $this->cacheService->deleteCacheIndex($cluster);
 
-            return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
+            return $this->redirectToRoute('admin_cluster_list_activity', ['bikeRide' => $bikeRide->getId()]);
         }
 
         return $this->render('cluster/edit.html.twig', [
@@ -115,16 +128,18 @@ class ClusterController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/groupe/show/{cluster}', name: 'admin_cluster_show', methods: ['GET'], options:['expose' => true])]
+    #[Route('/admin/groupe/show/{cluster}', name: 'admin_cluster_show', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_VIEW', 'cluster')]
     public function adminClusterShow(
+        Request $request,
+        ClusterReadProvider $provider,
         Cluster $cluster
     ): Response {
-        return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
-            'cluster' => $this->clusterDtoTransformer->detailFromEntity($cluster),
-            'cluster_entity' => $cluster,
-        ]);
+        return $this->handleComponentAction(
+            $request,
+            $provider,
+            $cluster
+        );
     }
 
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]
@@ -149,7 +164,7 @@ class ClusterController extends AbstractController
         $this->entityManager->remove($cluster);
         $this->entityManager->flush();
 
-        return $this->redirectToRoute('admin_bike_ride_cluster_show', [
+        return $this->redirectToRoute('admin_cluster_list_activity', [
             'bikeRide' => $bikeRide->getId(),
         ]);
     }

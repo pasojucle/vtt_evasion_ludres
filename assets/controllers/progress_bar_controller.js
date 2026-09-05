@@ -7,7 +7,6 @@ export default class extends Controller {
     };
 
     connect() {
-        console.log("progress barre");
         this.initialize();
         this.animateHandler = this.animateFromTab.bind(this);
         document.addEventListener("progress-bar:animateFromTab", this.animateHandler);
@@ -30,8 +29,6 @@ export default class extends Controller {
     }
 
     animate() {
-        console.log("amine ***");
-
         if (!this.hasBarTarget) return;
 
         const percentage = this.barTarget.dataset.percentage;

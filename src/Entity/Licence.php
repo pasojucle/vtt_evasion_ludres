@@ -293,6 +293,21 @@ class Licence
         return $this;
     }
 
+    public function isEndTesting(int $participations): bool
+    {
+        if (in_array($this->getState(), [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
+            
+            return 2 < $participations;
+        }
+
+        return false;
+    }
+
+    public function isPendingReceipt(int $currentSeason, int $licencesTotal): bool
+    {
+        return 1 === $licencesTotal && $this->getSeason() === $currentSeason && LicenceStateEnum::YEARLY_FILE_SUBMITTED === $this->getState();
+    }
+
     public function getState(): ?LicenceStateEnum
     {
         return $this->state;

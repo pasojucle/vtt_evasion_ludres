@@ -6,7 +6,7 @@ namespace App\Mapper\MemberParticipation;
 
 use App\Dto\Filter\MemberParticipationFilter;
 use App\Entity\Session;
-use App\Mapper\BikeRide\BikeRidePeriodMapper;
+use App\Mapper\Activity\ActivityPeriodMapper;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MemberParticipationExportMapper
@@ -14,7 +14,7 @@ class MemberParticipationExportMapper
     private const CSV_SEPARATOR = ",";
     
     public function __construct(
-        private BikeRidePeriodMapper $bikeRidePeriodMapper,
+        private ActivityPeriodMapper $activityPeriodMapper,
         private TranslatorInterface $translator,
     ) {
     }
@@ -61,7 +61,7 @@ class MemberParticipationExportMapper
         foreach ($sessions as $session) {
             $bikeRide = $session->getCluster()->getBikeRide();
             $row = [
-                $this->bikeRidePeriodMapper->mapToView($bikeRide),
+                $this->activityPeriodMapper->mapToView($bikeRide),
                 $bikeRide->getTitle(),
                 ($session->isPresent())
                     ? $session->getPractice()->trans($this->translator)

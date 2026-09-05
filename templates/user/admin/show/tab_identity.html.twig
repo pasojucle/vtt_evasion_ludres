@@ -2,8 +2,8 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 2xl:gap-12">
     <div class="rounded-md border border-border">
         <turbo-frame 
-            id="identity-{{ view.entity.identityId }}"
-            src="{{ path('admin_identity_show', {identity: view.entity.identityId}) }}"
+            id="identity-{{ content.identityId }}"
+            src="{{ path('admin_identity_show', {identity: content.identityId}) }}"
         >
             <div class="px-4 bg-slate-300 flex items-center h-8">
                 <div class="text-xs font-semibold uppercase text-white">
@@ -39,7 +39,7 @@
         </turbo-frame>
     </div>
     <div class="flex flex-col gap-4">
-        {% for gardian in view.entity.gardians %}
+        {% for gardian in content.gardians %}
             <div class="rounded-md border border-border">
                 <turbo-frame 
                     id="gardian-{{ gardian.id }}"
@@ -65,11 +65,11 @@
                 </turbo-frame>
             </div>
         {% endfor %}
-        {% if view.entity.emergencyContactId %}
+        {% if content.emergencyContactId %}
             <div class="rounded-md border border-border">
                 <turbo-frame 
-                    id="emergency-contact-{{ view.entity.emergencyContactId }}"
-                    src="{{ path('admin_emergency_contact_show', {emergencyContact: view.entity.emergencyContactId}) }}"
+                    id="emergency-contact-{{ content.emergencyContactId }}"
+                    src="{{ path('admin_emergency_contact_show', {emergencyContact: content.emergencyContactId}) }}"
                 >
                     <div class="px-4 bg-slate-300 flex items-center h-8 text-xs font-semibold uppercase text-white">
                         <h2>Contact d'urgence</h2>

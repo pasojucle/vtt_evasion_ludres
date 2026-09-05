@@ -31,6 +31,10 @@
   background-color: color-mix(in srgb, var(--badge-color, transparent) 15%, white);
 }
 
+.custom-background {
+  background-color: var(--badge-color);
+}
+
 .ts-wrapper.single .ts-control {
   border-radius: 0.125rem;
   border-color: rgb(226, 232, 240);

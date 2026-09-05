@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\Activity;
+namespace App\Mapper\Activity\Update;
 
-use App\Dto\View\Activity\ActivityDto;
-use App\Dto\View\Activity\ActivityView;
+use App\Dto\View\Activity\Tab\MediasView;
 use App\Entity\BikeRide;
 use App\Service\FileLocation\BikeRideFileLocation;
 use App\Service\FileLocation\DefaultFileLocation;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ActivityUpdateMapper
+class MediasMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
@@ -19,15 +18,14 @@ class ActivityUpdateMapper
         private DefaultFileLocation $defaultFileLocation,
     ) {
     }
-    public function mapToView(BikeRide $entity): ActivityView
+    public function mapToView(BikeRide $entity): MediasView
     {
         [$directoy, $filename] = $entity->getFilename()
             ? [$this->bikeRideFileLocation->getBaseDirectoryName(), $entity->getFilename()]
             : [$this->defaultFileLocation->getBaseDirectoryName(), 'camera.jpg'];
 
-        return new ActivityView(
-            id: $entity->getId(),
-            title: $entity->getTitle(),
+        return new MediasView(
+            alt: $entity->getTitle(),
             filename: $entity->getFilename(),
             filePath: $this->urlGenerator->generate('get_data_file', [
                 'directory' => $directoy,

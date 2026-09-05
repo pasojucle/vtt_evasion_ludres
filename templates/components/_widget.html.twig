@@ -1,0 +1,34 @@
+{% set color_classes = {
+    (enum('App\\Dto\\Enum\\ColorVariant').SUCCESS.value): 'text-success bg-success/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').WARNING.value): 'text-warning bg-warning/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').DESTRUCTIVE.value): 'text-destructive bg-destructive/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').ACCENT.value): 'text-accent bg-accent/20',
+    (enum('App\\Dto\\Enum\\ColorVariant').DEFAULT.value): 'text-foreground',
+    (enum('App\\Dto\\Enum\\ColorVariant').SKI.value): 'text-sky-700 bg-sky-200',
+    (enum('App\\Dto\\Enum\\ColorVariant').PINK.value): 'text-pink-700 bg-pink-200',
+    (enum('App\\Dto\\Enum\\ColorVariant').AMBER.value): 'text-amber-700 bg-amber-200',
+    (enum('App\\Dto\\Enum\\ColorVariant').INDIGO.value): 'text-indigo-700 bg-indigo-300',
+    (enum('App\\Dto\\Enum\\ColorVariant').YELLOW.value): 'text-yellow-400 bg-yellow-100',
+} %}
+
+<div class="border border-border rounded-lg p-2.5 bg-slate-50">
+    <div class="flex items-center justify-between mb-1">
+        <span class="text-xs font-semibold uppercase tracking-wider text-muted">{{ widget.title }}</span>
+        <span class="text-muted">{{ ux_icon(widget.icon, {class: 'size-4'}) }}</span>
+    </div>
+
+    <div class="flex items-center justify-between gap-2">
+        <div class="flex items-baseline gap-2 min-w-0">
+            <span class="text-2xl font-bold tracking-tight leading-none {{ color_classes[widget.variant.value] ?? 'text-foreground' }}">
+                {{ widget.value }}
+            </span>
+            <span class="text-xs text-muted truncate">{{ widget.content }}</span>
+        </div>
+
+        {% if widget.action %}
+            <div class="shrink-0">
+                {% include widget.action.template with {(widget.action.name): widget.action} %}
+            </div>
+        {% endif %}
+    </div>
+</div>

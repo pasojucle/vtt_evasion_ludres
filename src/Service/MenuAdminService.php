@@ -59,7 +59,7 @@ class MenuAdminService
             [
                 'label' => 'Programme',
                 'route' => 'admin_bike_ride_list',
-                'pattern' => '/^admin_bike_ride/',
+                'pattern' => '/^admin_(bike_ride|cluster)/',
                 'role' => 'BIKE_RIDE_LIST',
             ],
             [

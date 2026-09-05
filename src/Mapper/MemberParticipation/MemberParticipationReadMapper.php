@@ -13,7 +13,7 @@ use App\Dto\View\LinkView;
 use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\MemberParticipation\MemberActivityView;
 use App\Entity\Session;
-use App\Mapper\BikeRide\BikeRidePeriodMapper;
+use App\Mapper\Activity\ActivityPeriodMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Model\Currency;
 use App\Service\Filter\FilterConfigInterface;
@@ -27,7 +27,7 @@ class MemberParticipationReadMapper
 {
     public function __construct(
         private TranslatorInterface $translator,
-        private BikeRidePeriodMapper $bikeRidePeriodMapper,
+        private ActivityPeriodMapper $activityPeriodMapper,
         private MemberParticipationLineChartMapper $memberParticipationLineChartMapper,
         private UrlGeneratorInterface $urlGenerator,
         private FilterChipsMapper $filterChipsMapper,
@@ -88,7 +88,7 @@ class MemberParticipationReadMapper
                 $amount = $sessionAmounts[$session->getId()] ?? null;
 
                 return new MemberActivityView(
-                    period: $this->bikeRidePeriodMapper->mapToView($bikeRide),
+                    period: $this->activityPeriodMapper->mapToView($bikeRide),
                     title: $bikeRide->getTitle(),
                     practice: $session->isPresent()
                         ? new BadgeView(

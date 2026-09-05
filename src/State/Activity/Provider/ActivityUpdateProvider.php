@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\State\Activity\Provider;
 
 use App\Dto\Enum\Size;
+use App\Dto\View\Activity\Tab\MainView;
+use App\Dto\View\Activity\Tab\MediasView;
+use App\Dto\View\Activity\Tab\OptionsView;
+use App\Dto\View\Activity\Tab\ParticipantsView;
+use App\Dto\View\Activity\Tab\TracksView;
 use App\Dto\View\ButtonView;
 use App\Dto\View\FormTabWrapperView;
 use App\Dto\View\LinkView;
 use App\Dto\View\TabView;
 use App\Entity\BikeRide;
-use App\Mapper\Activity\ActivityUpdateMapper;
+use App\Mapper\Activity\Update\MediasMapper;
 use App\Service\MessageService;
 use App\State\Interface\FormAddComponentProviderInterface;
 use App\State\Interface\FormComponentProviderInterface;
@@ -21,7 +26,7 @@ use App\State\Interface\FormComponentProviderInterface;
 class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddComponentProviderInterface
 {
     public function __construct(
-        private ActivityUpdateMapper $mapper,
+        private MediasMapper $mediasMapper,
         private MessageService $messageService,
     ) {
     }
@@ -35,13 +40,32 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
             title: sprintf('%s une activité', $action),
             description: sprintf('%s une activité en définissant les paramètres généreaux, des participants, des médias, des parcours...', $action),
             tabs: [
-                new TabView('Général', 'lucide:info', 'bike_ride/admin/edit/tab_general.html.twig'),
-                new TabView('Options', 'lucide:settings-2', 'bike_ride/admin/edit/tab_option.html.twig'),
-                new TabView('Participants', 'lucide:users', 'bike_ride/admin/edit/tab_participant.html.twig', ),
-                new TabView('Médias', 'lucide:image', 'bike_ride/admin/edit/tab_media.html.twig'),
-                new TabView('Parcours GPX', 'lucide:map', 'bike_ride/admin/edit/tab_gpx.html.twig'),
+                new TabView(
+                    title: 'Général', 
+                    icon: 'lucide:info', 
+                    view: new MainView(),
+                ),
+                new TabView(
+                    title: 'Options', 
+                    icon: 'lucide:settings-2', 
+                    view: new OptionsView(),
+                ),
+                new TabView(
+                    title: 'Participants', 
+                    icon: 'lucide:users', 
+                    view: new ParticipantsView(),
+                ),
+                new TabView(
+                    title: 'Médias', 
+                    icon: 'lucide:image', 
+                    view: $this->mediasMapper->mapToView($entity),
+                ),
+                new TabView(
+                    title: 'Parcours GPX', 
+                    icon: 'lucide:map', 
+                    view: new TracksView(),
+                ),
             ],
-            entity: $this->mapper->mapToView($entity),
             fallback: new LinkView(
                 url: $fallback,
                 icon: 'lucide:chevron-left',

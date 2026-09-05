@@ -39,11 +39,11 @@ class PassportPhotoMapper
 
     private function fileLocation(?string $filename): array
     {
-        $directoy = $this->identityFileLocation->getBaseDirectoryName();
+        $directoy = $this->identityFileLocation->getDirectory();
         $path = $this->fileService->join($directoy, $filename);
 
         if ($this->filesystem->exists($path)) {
-            return [$directoy, $filename];
+            return [$this->identityFileLocation->getBaseDirectoryName(), $filename];
         }
 
         return $this->defaultFileLocation();

@@ -21,7 +21,7 @@
             {% for bikeRide in widgets.bikeRides %}
                 <div class="flex flex-1 min-w-80 bg-slate-100">
                     <a 
-                        href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id})}}" 
+                        href="{{ path('admin_cluster_list_activity', {'bikeRide': bikeRide.id})}}" 
                         class="w-full rounded-md border border-border"
                     >
                         <div class="bg-slate-300 flex items-center justify-center h-8 text-xs font-semibold uppercase">

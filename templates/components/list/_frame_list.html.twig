@@ -16,7 +16,7 @@
                 {% for item in list.items %}
                     <li 
                         class="grid {{ item.gridTemplateRow }} group relative lg:gap-4 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors"
-                        {% if item.action and  item.action.name == "toggle"%} 
+                        {% if item.action and item.action.name == "toggle"%} 
                             data-controller="toggle-status"
                             data-toggle-status-url-value="{{ item.action.url }}"
                             data-toggle-status-token-value="{{ csrf_token(item.action.csrfToken) }}"

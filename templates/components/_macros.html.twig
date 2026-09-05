@@ -13,6 +13,7 @@
         (enum('App\\Dto\\Enum\\ColorVariant').INDIGO.value): 'bg-indigo-700 hover:bg-indigo-700/60 text-white',
         (enum('App\\Dto\\Enum\\ColorVariant').YELLOW.value): 'bg-yellow-400 hover:bg-yellow-400/60 text-white',
         (enum('App\\Dto\\Enum\\ColorVariant').OUTLINE.value): 'bg-slate-50 text-foreground lg:text-muted lg:hover:text-foreground border border-border',
+        (enum('App\\Dto\\Enum\\ColorVariant').PRIMARY.value): 'bg-primary/20 lg:bg-primary/10 lg: hover:bg-primary/20 text-primary',
     } %}
     {{ classes[variant] ?? classes.default }}
 {% endmacro %}

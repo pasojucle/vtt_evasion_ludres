@@ -48,15 +48,15 @@ class AddSessionSubscriber implements EventSubscriberInterface
         $bikeRide = $form->getConfig()->getOption('bikeRide');
         if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
             $form
-                    ->add('cluster', EntityType::class, [
-                        'label' => 'Selectionnez le groupe',
-                        'class' => Cluster::class,
-                        'choices' => $bikeRide->getClusters(),
-                        'expanded' => true,
-                        'multiple' => false,
-                        'block_prefix' => 'checkgroup',
-                    ])
-                ;
+                ->add('cluster', EntityType::class, [
+                    'label' => 'Selectionnez le groupe',
+                    'class' => Cluster::class,
+                    'choices' => $bikeRide->getClusters(),
+                    'expanded' => true,
+                    'multiple' => false,
+                    'block_prefix' => 'checkgroup',
+                ])
+            ;
         } else {
             $form->add('cluster', HiddenEntityType::class, [
                         'class' => Cluster::class,
