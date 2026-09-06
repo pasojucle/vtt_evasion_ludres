@@ -33,7 +33,11 @@ class HealthReadProvider implements TurboStreamProviderInterface
 
     public function getFormOptions(object $entity): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+            ],
+        ];
     }
 
     public function getStreamView(object $entity, ?TurboStreamContext $context = null): HealthView

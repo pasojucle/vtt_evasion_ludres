@@ -32,6 +32,10 @@ export default class extends Controller {
 
     open() {
         console.log("open sheet", this.dialogTarget)
+        if (this.hasFrameTarget && this.frameTarget.innerHTML.trim() === "") {
+            return;
+        }
+
         if (!this.dialogTarget.open) {
             this.dialogTarget.showModal();
 

@@ -31,6 +31,7 @@ class MemberParticipationController extends AbstractCrudController
             $provider,
             new TurboStreamContext(
                 $request->attributes->get('_route'),
+                $request->attributes->get('_route_params'),
                 $request->query->getInt('page', 1),
                 $member
             )

@@ -41,6 +41,7 @@ class IdentityReadProvider implements TurboStreamProviderInterface
             'is_gardian' => false,
             'attr' => [
                 'data-controller' => 'form-modifier form-validator',
+                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }

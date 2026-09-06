@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\Filter\ActivityFilter;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
@@ -32,7 +31,6 @@ class BikeRideController extends AbstractCrudController
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private ClusterDtoTransformer $clusterDtoTransformer,
     ) {
     }
 

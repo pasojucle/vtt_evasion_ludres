@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Dto\View\Cluster;
 
 use App\Dto\View\BadgeView;
+use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\WidgetView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\Interface\TabContentInterface;
 use App\Dto\View\LinkView;
 
-readonly class ClusterView implements TabContentInterface
+readonly class ClusterView implements TabContentInterface, TurboStreamViewInterface
 {
     /**
      * @param WidgetView[] $widgets
@@ -37,5 +38,10 @@ readonly class ClusterView implements TabContentInterface
     public function getTemplate(): string
     {
         return 'cluster/admin/show/index.html.twig';
+    }
+
+    public function getStreamTemplate(): string
+    {
+        return 'cluster/admin/show/update.lazy.html.twig';
     }
 }

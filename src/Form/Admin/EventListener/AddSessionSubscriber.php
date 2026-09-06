@@ -45,7 +45,9 @@ class AddSessionSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $data = $event->getData();
 
-        $bikeRide = $form->getConfig()->getOption('bikeRide');
+        dump($data);
+
+        $bikeRide = $data->cluster->getBikeRide();
         if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
             $form
                 ->add('cluster', EntityType::class, [
@@ -81,34 +83,36 @@ class AddSessionSubscriber implements EventSubscriberInterface
                 ]);
         }
 
-        if (array_key_exists('responses', $data)) {
+        if ($data->surveyResponses) {
             $form
-                ->add('responses', SurveyResponsesType::class, [
+                ->add('surveyResponses', SurveyResponsesType::class, [
                     'label' => false,
                 ]);
         }
     
         
-        $this->modifier($form, $data['season'], PracticeEnum::NONE);
+        $this->modifier($form, $data->season, $data->level, PracticeEnum::NONE);
     }
 
     public function preSubmit(FormEvent $event): void
     {
         $data = $event->getData();
-        $season = array_key_exists('season', $data) ? $data['season'] : null;
+        $season = $data['season'] ?? null;
+        $level = $data['level'] ?? null;
         $practice = array_key_exists('practice', $data) ? PracticeEnum::tryFrom($data['practice']) : PracticeEnum::NONE;
 
-        $this->modifier($event->getForm(), $season, $practice);
+        $this->modifier($event->getForm(), $season, $level, $practice);
     }
 
-    private function modifier(FormInterface $form, null|int|string $season, ?PracticeEnum $practice): void
+    private function modifier(FormInterface $form, null|int|string $season, null|int|string $level, ?PracticeEnum $practice): void
     {
-        $filters = $form->getConfig()->getOption('filters');
-
-        $filters['season'] = $season;
         $form
             ->add('user', UserAutocompleteField::class, [
-                'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $filters),
+                'label' => 'Participant',
+                'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', [
+                    'season'=> $season,
+                    'levels' => [$level],
+                ]),
                 'constraints' => [
                     new NotBlank(),
                     new SessionUniqueMember(),
@@ -116,9 +120,9 @@ class AddSessionSubscriber implements EventSubscriberInterface
                 'required' => true,
             ]);
 
-        [$choices, $hidden] = (in_array($practice, self::ALLOWED_PRACTICES))
-            ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC, ], '']
-            : [[BikeTypeEnum::NONE], 'hidden'];
+        [$choices, $hidden, $required] = (in_array($practice, self::ALLOWED_PRACTICES))
+            ? [[BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC, ], '', true]
+            : [[BikeTypeEnum::NONE], 'hidden', false];
         $form
             ->add('bikeType', EnumType::class, [
                 'label' => 'Type de vélo',
@@ -127,6 +131,7 @@ class AddSessionSubscriber implements EventSubscriberInterface
                 'expanded' => true,
                 'multiple' => false,
                 'block_prefix' => 'checkgroup',
+                'required' => $required,
                 'row_attr' => [
                     'class' => $hidden
                 ]

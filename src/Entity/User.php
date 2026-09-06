@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\LevelType;
 use App\Entity\Licence;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -253,5 +254,15 @@ abstract class User implements UserInterface
         $this->level = $level;
 
         return $this;
+    }
+
+    public function isFramer(): bool
+    {
+        return LevelType::FRAME === $this->getLevel()?->getType();
+    }
+
+    public function isSchoolMember(): bool
+    {
+        return LevelType::SCHOOL === $this->getLevel()?->getType();
     }
 }

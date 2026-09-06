@@ -55,7 +55,7 @@ class UserReadProvider implements ComponentProviderInterface
                 ),
             ),
         ];
-        if (LevelType::SCHOOL === $entity->getLevel()?->getType()) {
+        if ($entity->isSchoolMember()) {
             $tabs[] = new TabView(
                 title: 'Compétences', 
                 icon: 'lucide:badge-check', 

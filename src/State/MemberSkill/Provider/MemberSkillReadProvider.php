@@ -8,11 +8,31 @@ use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\State\TurboStreamContext;
 use App\Dto\View\MemberSkill\MemberSkillsView;
 use App\Dto\View\SheetView;
+use App\Mapper\MemberSkill\MemberSkillReadMapper;
+use App\Mapper\MemberSkill\MemberSkillUpdateMapper;
+use App\Repository\MemberSkillRepository;
+use App\Repository\SkillCategoryRepository;
+use App\Repository\SkillRepository;
 use App\Service\PaginatorService;
+use App\State\FilterHydratorTrait;
 use App\State\Interface\ListLoadMoreProviderInterface;
+use App\State\MemberSkill\Trait\MemberSkillDataProviderTrait;
 
-class MemberSkillReadProvider extends AbstractMemberSkillProvider implements ListLoadMoreProviderInterface
+class MemberSkillReadProvider implements ListLoadMoreProviderInterface
 {
+        use FilterHydratorTrait;
+    use MemberSkillDataProviderTrait;
+
+    public function __construct(
+        protected MemberSkillReadMapper $memberSkillReadMapper,
+        protected MemberSkillRepository $memberSkillRepository,
+        protected SkillRepository $skillRepository,
+        protected SkillCategoryRepository $skillCategoryRepository,
+        protected MemberSkillUpdateMapper $memberSkillUpdateMapper,
+        protected PaginatorService $paginator,
+    ) {
+    }
+
     /**
      * @param MemberSkillFilter $entity
      */

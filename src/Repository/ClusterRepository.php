@@ -9,6 +9,7 @@ use App\Entity\Cluster;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\User;
+use App\Repository\Interface\ClusterRepositoryInterface;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,11 +23,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Cluster[]    findAll()
  * @method Cluster[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ClusterRepository extends ServiceEntityRepository
+class ClusterRepository extends ServiceEntityRepository implements ClusterRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Cluster::class);
+    }
+
+    public function save(Cluster $cluster, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($cluster);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Cluster $cluster, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($cluster);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

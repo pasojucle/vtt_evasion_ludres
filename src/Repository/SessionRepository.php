@@ -14,6 +14,7 @@ use App\Entity\Level;
 use App\Entity\Member;
 use App\Entity\Session;
 use App\Entity\User;
+use App\Repository\Interface\SessionRepositoryInterface;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -32,11 +33,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Session[]    findAll()
  * @method Session[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SessionRepository extends ServiceEntityRepository
+class SessionRepository extends ServiceEntityRepository implements SessionRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Session::class);
+    }
+
+    public function save(Session $session, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($session);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Session $session, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($session);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function findOneByUserAndClusters(Member $member, Collection $clusers): ?Session
@@ -51,6 +70,25 @@ class SessionRepository extends ServiceEntityRepository
             ->setParameter('member', $member)
             ->getQuery()
             ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
+    }
+
+    public function findOneByUserAndActivity(Member $member, BikeRide $activity): ?Session
+    {
+        try {
+            return $this->createQueryBuilder('s')
+                ->join('s.cluster', 'cl')
+                ->andWhere(
+                    (new Expr())->eq('cl.bikeRide', ':bikeRide'),
+                    (new Expr())->eq('s.user', ':member'),
+                )
+                ->setParameter('bikeRide', $activity)
+                ->setParameter('member', $member)
+                ->getQuery()
+                ->getOneOrNullResult()
             ;
         } catch (NonUniqueResultException) {
             return null;

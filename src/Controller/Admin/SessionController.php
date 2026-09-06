@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Payload\SessionCreateAdminPayload;
+use App\Dto\State\TurboStreamContext;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Member;
@@ -22,10 +23,11 @@ use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
 use App\Service\SessionService;
 use App\Service\SurveyService;
+use App\State\Session\Processor\SessionCreateProcessor;
+use App\State\Session\Provider\SessionCreateProvider;
 use App\UseCase\Session\SetSession;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -34,7 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class SessionController extends AbstractController
+class SessionController extends AbstractCrudController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -155,48 +157,27 @@ class SessionController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/rando/inscription/{cluster}', name: 'admin_session_add', methods: ['GET', 'POST'])]
-    #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
+    #[Route('/admin/rando/inscription/{cluster}/{isFramer}', name: 'admin_session_add', methods: ['GET', 'POST'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function adminSessionAdd(
         Request $request,
-        SeasonService $seasonService,
-        Cluster $cluster
+        SessionCreateProvider $provider,
+        SessionCreateProcessor $processor,
+        Cluster $cluster,
+        bool $isFramer,
     ): Response {
-        $bikeRide = $cluster->getBikeRide();
-
-        $data = [];
-        $currentSeason = $seasonService->getCurrentSeason();
-        $minSeasonToTakePart = $seasonService->getMinSeasonToTakePart();
-        $payload = new SessionCreateAdminPayload(
-            season: ($minSeasonToTakePart < $currentSeason) ? null : $currentSeason,
-            cluster: $cluster,
-            surveyResponses: ($bikeRide->getSurvey())
-                ? ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)]
-                : null
+        
+        return $this->handleFormComponentAction(
+            $request,
+            new SessionCreateAdminPayload($cluster, $isFramer),
+            $provider,
+            $processor,
+            SessionType::class,
+            new TurboStreamContext(
+                $request->attributes->get('_route'),
+                $request->attributes->get('_route_params'),
+                $request->query->getInt('page', 1))
         );
-        $form = $this->createForm(SessionType::class, $payload);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $user = $data['user'];
-
-            if (null === $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {
-                $this->setSession->addFromdmin($data, $user, $bikeRide);
-                
-                $this->addFlash('success', 'Le participant a bien été inscrit');
-
-                return $this->redirectToRoute('admin_cluster_list_activity', [
-                    'bikeRide' => $bikeRide->getId(),
-                ]);
-            }
-            $this->addFlash('danger', 'Le participant est déjà inscrit');
-        }
-
-        return $this->render('session/admin/add.html.twig', [
-            'form' => $form->createView(),
-            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-        ]);
     }
 
     #[Route('/admin/rando/supprime/{session}', name: 'admin_session_delete', methods: ['GET'])]

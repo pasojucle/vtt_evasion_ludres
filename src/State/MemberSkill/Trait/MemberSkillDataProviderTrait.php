@@ -2,38 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\State\MemberSkill\Provider;
+namespace App\State\MemberSkill\Trait;
 
 use App\Dto\Filter\MemberSkillFilter;
-use App\Dto\State\MemberSkillDevelopmentData;
 use App\Entity\Enum\LevelType;
 use App\Entity\Member;
-use App\Mapper\MemberSkill\MemberSkillReadMapper;
-use App\Mapper\MemberSkill\MemberSkillUpdateMapper;
-use App\Repository\MemberSkillRepository;
-use App\Repository\SkillCategoryRepository;
-use App\Repository\SkillRepository;
-use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\MemberParticipation\Enum\QueryScope;
 use Doctrine\ORM\QueryBuilder;
 
-abstract class AbstractMemberSkillProvider
+trait MemberSkillDataProviderTrait
 {
-    use FilterHydratorTrait;
-
-    public function __construct(
-        protected MemberSkillReadMapper $memberSkillReadMapper,
-        protected MemberSkillRepository $memberSkillRepository,
-        protected SkillRepository $skillRepository,
-        protected SkillCategoryRepository $skillCategoryRepository,
-        protected MemberSkillUpdateMapper $memberSkillUpdateMapper,
-        protected PaginatorService $paginator,
-    ) {
-    }
-
-    protected function getQueryBuilder(MemberSkillFilter $filter, QueryScope $scope = QueryScope::LIST): QueryBuilder
-    {
+    private function getQueryBuilder(
+        MemberSkillFilter $filter,
+        QueryScope $scope = QueryScope::LIST
+    ): QueryBuilder {
         $qb = $this->memberSkillRepository->getMemberSkillQuery();
 
         $this->memberSkillRepository->filterUser($qb, $filter->member);
@@ -60,9 +42,10 @@ abstract class AbstractMemberSkillProvider
     /**
      * @return array<int, array{id: int, name: string, total: int, totalAcquired: int}>|null
      */
-    protected function getMemberSkillDevelopmentData(Member $member): ?array
+    private function getMemberSkillDevelopmentData(Member $member): ?array
     {
         $level = $member->getLevel();
+
         return (LevelType::SCHOOL === $level?->getType())
             ? $this->skillCategoryRepository->getTotalSkillAcquiredByMemberAndCategory($member)
             : null;

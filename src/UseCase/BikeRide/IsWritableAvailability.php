@@ -40,7 +40,7 @@ class IsWritableAvailability
         $today = (new DateTimeImmutable())->setTime(0, 0, 0);
         $dateTimerPeriod = $this->bikeRideService->getDateTimePeriod($bikeRide);
         if ($bikeRideType->isNeedFramers()) {
-            return $this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) && LevelType::FRAME === $member->getLevel()?->getType() && $today <= $dateTimerPeriod['closingAt'];
+            return $this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) && $member->isFramer() && $today <= $dateTimerPeriod['closingAt'];
         }
 
         $users = $bikeRide->getMembers();

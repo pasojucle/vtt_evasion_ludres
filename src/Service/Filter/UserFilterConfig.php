@@ -70,9 +70,6 @@ class UserFilterConfig implements FilterConfigInterface
                     'autocomplete' => true,
                     'required' => false,
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => [
-                        'data-action' => 'change->filter#submit',
-                    ],
                 ],
             ),
             new FilterFieldConfig(

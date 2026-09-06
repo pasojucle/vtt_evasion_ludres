@@ -36,6 +36,7 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
         return [
             'attr' => [
                 'data-controller' => 'form-modifier',
+                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }

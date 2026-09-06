@@ -68,7 +68,7 @@ class ActivityAdminListMapper
                 ),
                 dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $referer),
                 isDeleted: $entity->isDeleted(),
-                url: $this->urlGenerator->generate("admin_cluster_list_activity", ['bikeRide' => $entity->getId()]),
+                url: $this->urlContextService->generateUrl("admin_cluster_list_activity", ['bikeRide' => $entity->getId()], $referer),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateLabels: 'grid-cols-[80px_auto]',
                 gridTemplateBadges: 'grid-cols-[80px_auto_40px]',

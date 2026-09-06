@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Interface\SoftDeletableInterface;
 use App\Entity\Interface\UploadableInterface;
 use App\Entity\Trait\SoftDeletableTrait;
@@ -528,5 +529,10 @@ class BikeRide implements UploadableInterface, SoftDeletableInterface
         }
 
         return $this;
+    }
+
+    public function isSchoolActivity(): bool
+    {
+        return RegistrationEnum::SCHOOL === $this->getBikeRideType()->getRegistration();
     }
 }

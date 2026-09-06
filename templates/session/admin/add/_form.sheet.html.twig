@@ -1,0 +1,26 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    <div class="mb-2 flex flex-col gap-4">
+        <div 
+            class="flex flex-col gap-4"
+            data-id="admin-session-add" 
+            data-form-modifier-target="container"
+        >
+            {{ form_row(form.season) }}
+            {{ form_row(form.level) }}
+            {{ form_row(form.user) }}
+            {% if form.practice is defined %}
+                {{ form_row(form.practice) }}
+            {% endif %}
+        </div>
+        <div 
+            data-id="session-bike-type" 
+            data-form-modifier-target="container" 
+            class="col-md-12 col-xs-12"
+        >
+            {{ form_row(form.bikeType) }}
+        </div>
+        {% include 'session/survey_responses.html.twig' %}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}

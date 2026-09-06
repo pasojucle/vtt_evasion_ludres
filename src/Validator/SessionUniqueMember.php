@@ -11,5 +11,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class SessionUniqueMember extends Constraint
 {
-    public $message = '{{ name }} {{ firstName }} est déjà inscrit';
+    public $message = '{{ fullName }} est déjà inscrit dans le groupe {{ cluster }}';
 }

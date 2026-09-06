@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Service;
 
-readonly class MailerResult
+final readonly class OperationResult
 {
     private function __construct(
         public bool $success,
@@ -14,11 +14,16 @@ readonly class MailerResult
 
     public static function success(): self
     {
-        return new self(true);
+        return new self(
+            success: true,
+        );
     }
 
     public static function failure(string $errorMessage): self
     {
-        return new self(false, $errorMessage);
+        return new self(
+            success: false, 
+            errorMessage: $errorMessage,
+        );
     }
 }

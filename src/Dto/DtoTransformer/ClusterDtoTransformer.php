@@ -64,6 +64,7 @@ class ClusterDtoTransformer
         $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
         $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
         $clusterDto->isEditable = $this->security->isGranted('CLUSTER_EDIT', $cluster);
+        
 
         return $clusterDto;
     }

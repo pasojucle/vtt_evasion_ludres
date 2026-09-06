@@ -35,6 +35,7 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
         return [
             'attr' => [
                 'data-controller' => 'form-validator',
+                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }

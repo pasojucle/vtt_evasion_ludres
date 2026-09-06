@@ -259,6 +259,7 @@ abstract class AbstractCrudController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $streamView = $provider->getStreamView($filter, new TurboStreamContext(
                 $request->attributes->get('_route'),
+                $request->attributes->get('_route_params'),
                 $request->query->getInt('page', 1),
                 $entity
             ));

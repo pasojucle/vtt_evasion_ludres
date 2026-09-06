@@ -1,6 +1,8 @@
 <turbo-frame id="sheet_content">
     {% if form is defined and form is not null %}
-        {{ form_start(form, {'attr': {'class':"flex flex-col h-full m-0"}})}}
+        {{ form_start(form, {'attr': {
+            'class':"flex flex-col h-full m-0"
+        }})}}
     {% endif %}
     <div class="p-4 border-b border-border bg-slate-200">
         <div class="flex gap-2">
@@ -33,7 +35,7 @@
         </button>
         <button 
             type="submit"
-            data-action="click->sheet#close" 
+            {% if form is not defined or form is null %} data-action="click->sheet#close"{% endif %}
             class="p-2 flex justify-center text-white bg-accent lg:bg-accent/80 lg:hover:bg-accent"
         >
             <div class="flex items-center gap-2">

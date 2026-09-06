@@ -42,6 +42,7 @@ class GardianReadProvider implements TurboStreamProviderInterface
             'is_yearly' => $licence->getState()->isYearly(),
             'attr' => [
                 'data-controller' => 'form-modifier form-validator',
+                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }
