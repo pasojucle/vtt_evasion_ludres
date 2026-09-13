@@ -43,7 +43,7 @@ class <?= $entity_name ?>ListMapper
         <?= $entity_name ?>Filter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
         /** @var <?= $entity_name ?> $entity */
@@ -107,9 +107,9 @@ class <?= $entity_name ?>ListMapper
     }
 
 
-    private function settings(string $referer): DropdownView
+    private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('MA_SECTION', $referer, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('MA_SECTION', $targetUrl, RoundedVariant::ROUNDED, [
             //TODO Ajouter d'autre boutons si besoins
             // Exemple
             // new LinkView(

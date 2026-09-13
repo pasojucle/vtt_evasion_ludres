@@ -34,7 +34,6 @@ class ProductController extends AbstractCrudController
         Request $request
     ): Response {
         return $this->handleListPaginedAction(
-            ProductFilter::class,
             $provider,
             $request
         );

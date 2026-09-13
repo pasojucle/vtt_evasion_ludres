@@ -29,6 +29,21 @@ class UrlContextService
     }
 
 
+    public function encodeUrl(string $route, array $params = []): string
+    {
+        return rawurlencode($this->urlGenerator->generate($route, $params));
+    }
+
+    
+    public function decodeUrl(?string $rawUrl, string $defaultFallback = 'admin_dashboard'): string
+    {
+        if ($rawUrl) {
+            return rawurldecode($rawUrl);
+        }
+        return $this->urlGenerator->generate($defaultFallback);
+    }
+
+
     public function getRedirectUrl(Request $request, string $fallbackRoute = 'admin_dashboard'): string
     {
         $redirectTo = $request->query->get('_redirect_to') ?? $request->request->get('_redirect_to');

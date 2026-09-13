@@ -39,7 +39,7 @@ class BoardRoleListMapper
         BoardRoleFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
 
@@ -51,7 +51,7 @@ class BoardRoleListMapper
                 ],
                 status: $this->getStatus($entity),
                 isDeleted: $entity->isDeleted(),
-                dropdown: $this->dropDown($entity, $referer),
+                dropdown: $this->dropDown($entity, $targetUrl),
                 gridTemplateContent: 'grid-cols-[1fr_80px]'
             );
         }
@@ -80,7 +80,7 @@ class BoardRoleListMapper
             ),
         );
     }
-    private function dropDown(BoardRole $entity, string $referer): DropdownView
+    private function dropDown(BoardRole $entity, string $targetUrl): DropdownView
     {
         if ($entity->isDeleted()) {
             return new DropdownView(
@@ -89,7 +89,7 @@ class BoardRoleListMapper
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_board_role_restore', [
                             'boardRole' => $entity->getId()
-                            ], $referer),
+                            ], $targetUrl),
                         icon: 'lucide:archive-restore',
                         variant: ColorVariant::DROPDOWN,
                     ),
@@ -100,13 +100,13 @@ class BoardRoleListMapper
             menuItems: [
                 new LinkView(
                     label: 'Modifier',
-                    url: $this->urlContextService->generateUrl('admin_board_role_edit', ['boardRole' => $entity->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('admin_board_role_edit', ['boardRole' => $entity->getId()], $targetUrl),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
                  new LinkView(
                      label: 'Supprimer',
-                     url: $this->urlContextService->generateUrl('admin_board_role_delete', ['boardRole' => $entity->getId()], $referer),
+                     url: $this->urlContextService->generateUrl('admin_board_role_delete', ['boardRole' => $entity->getId()], $targetUrl),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [

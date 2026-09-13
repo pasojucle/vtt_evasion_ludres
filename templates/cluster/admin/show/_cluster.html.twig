@@ -10,7 +10,7 @@
     <div class="border border-border rounded-md">
         <div class="bg-slate-300 pl-4 py-0.5 flex items-center min-h-8">
             <div class="uppercase text-white text-sm">
-                Participants
+                {{ view.cardTitle}}
             </div>
             <div class="ml-auto">
                 {% include 'components/_dropdown.html.twig' with {dropdown: view.dropdown} %}

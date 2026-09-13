@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\MemberStatus\Provider;
 
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\MemberStatus\MemberStatusSheetView;
 use App\Dto\View\MemberStatus\MemberStatusView;
 use App\Entity\Member;
@@ -34,12 +34,12 @@ class MemberStatusReadProvider implements TurboStreamProviderInterface
     {
         return [
             'attr' => [
-                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }
 
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberStatusView
+    public function getStreamView(object $entity, ?ViewContext $context = null): MemberStatusView
     {
         return $this->memberClubReadMapper->mapToView($entity);
     }

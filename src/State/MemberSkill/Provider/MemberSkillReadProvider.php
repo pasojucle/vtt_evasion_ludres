@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\State\MemberSkill\Provider;
 
 use App\Dto\Filter\MemberSkillFilter;
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\MemberSkill\MemberSkillsView;
 use App\Dto\View\SheetView;
 use App\Mapper\MemberSkill\MemberSkillReadMapper;
@@ -20,7 +20,7 @@ use App\State\MemberSkill\Trait\MemberSkillDataProviderTrait;
 
 class MemberSkillReadProvider implements ListLoadMoreProviderInterface
 {
-        use FilterHydratorTrait;
+    use FilterHydratorTrait;
     use MemberSkillDataProviderTrait;
 
     public function __construct(
@@ -36,10 +36,10 @@ class MemberSkillReadProvider implements ListLoadMoreProviderInterface
     /**
      * @param MemberSkillFilter $entity
      */
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberSkillsView
+    public function getStreamView(object $entity, ?ViewContext $context = null): MemberSkillsView
     {
         $currentPage = $context->page;
-        $member = $context->object;
+        $member = $context->parent;
         $entity->member = $member;
         $filterConfig = $this->getFilterConfig('admin_member_skill_filter');
 

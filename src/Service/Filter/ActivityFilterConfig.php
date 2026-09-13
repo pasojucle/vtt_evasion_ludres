@@ -32,6 +32,11 @@ class ActivityFilterConfig implements FilterConfigInterface
     {
         return new ActivityFilterSubscriber();
     }
+    
+    public function isPaginated(): bool
+    {
+        return true;
+    }
 
     public function getFields(): array
     {

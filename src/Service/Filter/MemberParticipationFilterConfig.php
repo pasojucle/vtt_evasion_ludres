@@ -7,6 +7,8 @@ namespace App\Service\Filter;
 use App\Dto\Filter\MemberParticipationFilter;
 use App\Dto\Filter\RangeChip;
 use App\Entity\BikeRideType;
+use App\Entity\Member;
+use App\Form\HiddenEntityType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -28,6 +30,11 @@ class MemberParticipationFilterConfig implements FilterConfigInterface
     {
         return null;
     }
+    
+    public function isPaginated(): bool
+    {
+        return true;
+    }
 
     public function getFields(): array
     {
@@ -44,7 +51,15 @@ class MemberParticipationFilterConfig implements FilterConfigInterface
             required: true,
         );
 
+
         return [
+            new FilterFieldConfig(
+                name: 'member',
+                type: HiddenEntityType::class,
+                options: [
+                    'class' => Member::class,
+                ],
+            ),
             new FilterFieldConfig(
                 name: 'startAt',
                 type: DateType::class,

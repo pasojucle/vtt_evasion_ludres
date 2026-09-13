@@ -45,8 +45,6 @@ class AddSessionSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $data = $event->getData();
 
-        dump($data);
-
         $bikeRide = $data->cluster->getBikeRide();
         if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
             $form
@@ -110,7 +108,7 @@ class AddSessionSubscriber implements EventSubscriberInterface
             ->add('user', UserAutocompleteField::class, [
                 'label' => 'Participant',
                 'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', [
-                    'season'=> $season,
+                    'season' => $season,
                     'levels' => [$level],
                 ]),
                 'constraints' => [

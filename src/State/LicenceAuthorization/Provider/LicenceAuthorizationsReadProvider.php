@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\LicenceAuthorization\Provider;
 
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsSheetView;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsView;
 use App\Entity\Licence;
@@ -36,12 +36,12 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
         return [
             'attr' => [
                 'data-controller' => 'form-modifier',
-                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }
 
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): LicenceAuthorizationsView
+    public function getStreamView(object $entity, ?ViewContext $context = null): LicenceAuthorizationsView
     {
         return $this->licenceAuthorizationsMapper->mapToView($entity);
     }

@@ -26,6 +26,11 @@ class BikeRideTypeFilterConfig implements FilterConfigInterface
     {
         return null;
     }
+    
+    public function isPaginated(): bool
+    {
+        return true;
+    }
 
     public function getFields(): array
     {

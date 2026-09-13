@@ -13,7 +13,7 @@ readonly class ParticipantsView implements TabContentInterface
         return 'content';
     }
 
-    public function getTemplate():string
+    public function getTemplate(): string
     {
         return 'activity/admin/edit/tab_participants.html.twig';
     }

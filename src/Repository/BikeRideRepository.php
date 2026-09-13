@@ -62,7 +62,7 @@ class BikeRideRepository extends ServiceEntityRepository
     }
 
 
-    public function findActivityQuery(): QueryBuilder
+    public function getActivityQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('a');
     }

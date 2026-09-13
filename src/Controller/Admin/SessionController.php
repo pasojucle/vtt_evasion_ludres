@@ -8,8 +8,7 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Payload\SessionCreateAdminPayload;
-use App\Dto\State\TurboStreamContext;
-use App\Entity\BikeRide;
+use App\Dto\State\ViewContext;
 use App\Entity\Cluster;
 use App\Entity\Member;
 use App\Entity\Session;
@@ -20,9 +19,7 @@ use App\Service\CacheService;
 use App\Service\LicenceService;
 use App\Service\MessageService;
 use App\Service\ReplaceKeywordsService;
-use App\Service\SeasonService;
 use App\Service\SessionService;
-use App\Service\SurveyService;
 use App\State\Session\Processor\SessionCreateProcessor;
 use App\State\Session\Provider\SessionCreateProvider;
 use App\UseCase\Session\SetSession;
@@ -42,8 +39,6 @@ class SessionController extends AbstractCrudController
         private readonly EntityManagerInterface $entityManager,
         private readonly CacheService $cacheService,
         private readonly SessionService $sessionService,
-        private readonly SurveyService $surveyService,
-        private readonly SessionRepository $sessionRepository,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
         private readonly SetSession $setSession,
     ) {
@@ -166,17 +161,18 @@ class SessionController extends AbstractCrudController
         Cluster $cluster,
         bool $isFramer,
     ): Response {
-        
         return $this->handleFormComponentAction(
             $request,
             new SessionCreateAdminPayload($cluster, $isFramer),
             $provider,
             $processor,
             SessionType::class,
-            new TurboStreamContext(
-                $request->attributes->get('_route'),
-                $request->attributes->get('_route_params'),
-                $request->query->getInt('page', 1))
+            new ViewContext(
+                route: $request->attributes->get('_route'),
+                routeParams: $request->attributes->get('_route_params'),
+                page: $request->query->getInt('page', 1),
+                fallback: $request->query->get('_redirect_to'),
+            ),
         );
     }
 

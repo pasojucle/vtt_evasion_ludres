@@ -47,7 +47,6 @@ class SurveyController extends AbstractCrudController
         SurveyAdminListProvider $provider,
     ): Response {
         return $this->handleListPaginedAction(
-            SurveyFilter::class,
             $provider,
             $request
         );

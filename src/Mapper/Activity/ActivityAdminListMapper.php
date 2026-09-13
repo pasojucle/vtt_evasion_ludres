@@ -45,7 +45,7 @@ class ActivityAdminListMapper
         ActivityFilter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
         /** @var BikeRide $entity */
@@ -66,9 +66,9 @@ class ActivityAdminListMapper
                     $participantsTotal,
                     $isComplete ? ColorVariant::SUCCESS : ColorVariant::DEFAULT,
                 ),
-                dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $referer),
+                dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $targetUrl),
                 isDeleted: $entity->isDeleted(),
-                url: $this->urlContextService->generateUrl("admin_cluster_list_activity", ['bikeRide' => $entity->getId()], $referer),
+                url: $this->urlContextService->generateUrl("admin_cluster_list_activity", ['bikeRide' => $entity->getId()], $targetUrl),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateLabels: 'grid-cols-[80px_auto]',
                 gridTemplateBadges: 'grid-cols-[80px_auto_40px]',
@@ -80,7 +80,7 @@ class ActivityAdminListMapper
             title: 'Programme des activités',
             description: 'Administration des activités : création, modification.',
             items: $items,
-            settings: $this->settings($referer),
+            settings: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -94,7 +94,7 @@ class ActivityAdminListMapper
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             addItem: new LinkView(
                 label: 'Ajouter une activité',
-                url: $this->urlContextService->generateUrl('admin_bike_ride_add', [], $referer),
+                url: $this->urlContextService->generateUrl('admin_bike_ride_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
             ),
@@ -112,9 +112,9 @@ class ActivityAdminListMapper
     //     {% include 'components/_dropdown.html.twig' with {'dropdown': bikeRide.dropdown} %}
     // {% endif %}
 
-    private function settings(string $referer): DropdownView
+    private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', $referer, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
                 label: 'Types de rando',
                 url: $this->urlGenerator->generate('admin_bike_ride_type_list'),

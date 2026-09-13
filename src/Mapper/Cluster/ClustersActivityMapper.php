@@ -12,7 +12,8 @@ class ClustersActivityMapper
 {
     public function __construct(
         private ActivityPeriodMapper $activityPeriodMapper,
-    ){}
+    ) {
+    }
     public function mapToView(BikeRide $bikeRide): ActivityView
     {
         return new ActivityView(

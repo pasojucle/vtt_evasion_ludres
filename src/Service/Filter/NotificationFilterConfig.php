@@ -28,6 +28,11 @@ class NotificationFilterConfig implements FilterConfigInterface
     {
         return NotificationFilter::class;
     }
+    
+    public function isPaginated(): bool
+    {
+        return true;
+    }
 
     public function getFields(): array
     {

@@ -36,7 +36,6 @@ class SecondHandController extends AbstractCrudController
         Request $request,
     ): Response {
         return $this->handleListPaginedAction(
-            SecondHandFilter::class,
             $provider,
             $request
         );

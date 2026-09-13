@@ -1,7 +1,7 @@
 <turbo-frame
     class="cluster-container"
     id="cluster-{{ content.id }}" 
-    src="{{ path('admin_cluster_show', {'cluster': content.id })}}"
+    src="{{ content.url }}"
     data-controller="cluster"
     data-cluster-refresh-interval-value="60000"
     data-cluster-complete-value="{{ path('admin_cluster_complete', {'cluster': content.id}) }}"

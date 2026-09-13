@@ -7,7 +7,7 @@ namespace App\Controller\Admin;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\Payload\MemberSkillEvaluationPayload;
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Member;
 use App\Entity\MemberSkill;
@@ -36,7 +36,7 @@ class MemberSkillController extends AbstractCrudController
             $request,
             MemberSkillFilter::class,
             $provider,
-            new TurboStreamContext(
+            new ViewContext(
                 $request->attributes->get('_route'),
                 $request->attributes->get('_route_params'),
                 $request->query->getInt('page', 1),
@@ -122,7 +122,7 @@ class MemberSkillController extends AbstractCrudController
             $provider,
             $processor,
             MemberSkillAddType::class,
-            new TurboStreamContext(
+            new ViewContext(
                 $request->attributes->get('_route'),
                 $request->attributes->get('_route_params'),
                 $request->query->getInt('page', 1),

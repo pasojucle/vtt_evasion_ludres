@@ -1,10 +1,35 @@
-<turbo-frame id="sheet_content">
-    {% if form is defined and form is not null %}
-        {{ form_start(form, {'attr': {
-            'class':"flex flex-col h-full m-0"
-        }})}}
+{% set footer %}
+    {% if view.action is defined %}
+        <button 
+            type="button"
+            data-action="click->sheet#close" 
+            class="p-2 bg-slate-300 lg:bg-slate-200 lg:hover:bg-slate-300"
+        >
+            Annuler
+        </button>
+        <button 
+            type="submit"
+            data-action="click->sheet#close"
+            class="p-2 flex justify-center text-white bg-accent lg:bg-accent/80 lg:hover:bg-accent"
+        >
+            <div class="flex items-center gap-2">
+                <div>{{ ux_icon('lucide:check')}}</div>
+                <div>{{ view.action }}</div>
+            </div>
+        </button>        
+    {% else %}
+        <button 
+            type="button"
+            data-action="click->sheet#close" 
+            class="col-start-2 p-2 f text-white bg-accent lg:bg-accent/80 lg:hover:bg-accent"
+        >
+            Fermer
+        </button>   
     {% endif %}
-    <div class="p-4 border-b border-border bg-slate-200">
+{% endset %}
+
+{% set content %}
+    <div class="shrink-0 p-4 border-b border-border bg-slate-200">
         <div class="flex gap-2">
             <div>
                 <h3 class="!mt-0 !mb-0 text-xl font-semibold text-slate-800">{{ view.title }}</h3>
@@ -25,26 +50,22 @@
     <div class="flex-1 overflow-y-auto p-4 space-y-4">
         {% block body %}{% endblock %}
     </div>
-    <div class="p-4 grid grid-cols-2 gap-3 border-t border-border bg-white">
-        <button 
-            type="button"
-            data-action="click->sheet#close" 
-            class="p-2 bg-slate-300 lg:bg-slate-200 lg:hover:bg-slate-300"
-        >
-            Annuler
-        </button>
-        <button 
-            type="submit"
-            {% if form is not defined or form is null %} data-action="click->sheet#close"{% endif %}
-            class="p-2 flex justify-center text-white bg-accent lg:bg-accent/80 lg:hover:bg-accent"
-        >
-            <div class="flex items-center gap-2">
-                <div>{{ ux_icon('lucide:check')}}</div>
-                <div>{{ view.action }}</div>
-            </div>
-        </button>        
+     <div class="shrink-0 p-4 grid grid-cols-2 gap-3 border-t border-border bg-white">
+        {{ footer }}
     </div>
+{% endset %}
+
+<turbo-frame id="sheet_content">
     {% if form is defined and form is not null %}
+        {% set formAttr = form.vars.attr|default({})|merge({
+            'class': (form.vars.attr.class|default('') ~ ' flex flex-col h-full m-0')|trim
+        }) %}
+        {{ form_start(form, {'attr': formAttr}) }}
+        {{ content }}
         {{ form_end(form)}}
+    {% else %}
+        <div class="flex flex-col h-full m-0">
+            {{ content }}
+        </div>
     {% endif %}
 </turbo-frame>

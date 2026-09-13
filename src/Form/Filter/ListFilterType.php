@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Form\Filter;
 
+use App\Service\Filter\FilterConfigInterface;
 use App\Service\Filter\FilterFieldConfig;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -38,7 +41,7 @@ class ListFilterType extends AbstractType
             }
         });
 
-        $builder ->setMethod('GET');
+        $builder->setMethod('GET');
         
         if ($options['event_subscriber']) {
             $builder->addEventSubscriber($options['event_subscriber']);
@@ -52,7 +55,10 @@ class ListFilterType extends AbstractType
                 $fieldConfig->hiddenOptions
             );
         }
-        $builder->add('page', HiddenType::class);
+        if ($options['isPaginated']) {
+            dump($options);
+            $builder->add('page', HiddenType::class);
+        }
     }
 
     private function generateAutocompleteUrl(array $options, array $filters): array
@@ -68,10 +74,12 @@ class ListFilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'filter_config' => null,
             'data_class' => null,
             'fields' => [],
             'advanced_fields' => [],
             'event_subscriber' => null,
+            'isPaginated' => true,
             'csrf_protection' => false,
             'attr' => [
                 'data-filter-target' => "form",
@@ -79,9 +87,49 @@ class ListFilterType extends AbstractType
             ],
         ]);
 
+        $resolver->setAllowedTypes('filter_config', ['null', FilterConfigInterface::class]);
         $resolver->setAllowedTypes('fields', 'array');
-
         $resolver->setAllowedTypes('advanced_fields', 'array');
+
+        $resolver->setNormalizer('data_class', function (Options $options, ?string $value): ?string {
+            if ($options['filter_config'] instanceof FilterConfigInterface) {
+                return $options['filter_config']->getDataClass() ?? $value;
+            }
+
+            return $value;
+        });
+                
+        $resolver->setNormalizer('isPaginated', function (Options $options, bool $value): bool {
+            if ($options['filter_config'] instanceof FilterConfigInterface) {
+                return $options['filter_config']->isPaginated();
+            }
+
+            return $value;
+        });
+
+        $resolver->setNormalizer('event_subscriber', function (Options $options, ?EventSubscriberInterface $value): ?EventSubscriberInterface {
+            if ($options['filter_config'] instanceof FilterConfigInterface && null === $value) {
+                return $options['filter_config']->getEventSubscriber();
+            }
+
+            return $value;
+        });
+
+        $resolver->setNormalizer('fields', function (Options $options, array $value): array {
+            if ($options['filter_config'] instanceof FilterConfigInterface && empty($value)) {
+                return $options['filter_config']->getFields();
+            }
+
+            return $value;
+        });
+
+        $resolver->setNormalizer('advanced_fields', function (Options $options, array $value): array {
+            if ($options['filter_config'] instanceof FilterConfigInterface && empty($value)) {
+                return $options['filter_config']->getAdvancedFields();
+            }
+
+            return $value;
+        });
     }
 
     public function getBlockPrefix(): string

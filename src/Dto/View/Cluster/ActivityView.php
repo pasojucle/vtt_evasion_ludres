@@ -12,14 +12,15 @@ readonly class ActivityView implements TabWrapperHeaderInterface
         public int $id,
         public string $title,
         public string $period,
-    ){}
+    ) {
+    }
 
     public function getName(): string
     {
         return 'header';
     }
 
-    public function getTemplate():string
+    public function getTemplate(): string
     {
         return 'cluster/admin/activity/tab_header.html.twig';
     }

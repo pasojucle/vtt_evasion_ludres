@@ -54,7 +54,7 @@ class RegistrationListMapper
         RegistrationFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams());
+        $fallback = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams());
 
         $items = [];
         /** @var Member $entity */
@@ -71,7 +71,7 @@ class RegistrationListMapper
                     value:$state->shortTrans($this->translator),
                     variant: $state->variant(),
                 ),
-                dropdown: $this->registrationDropdownMapper->mapToView($entity, $referer),
+                dropdown: $this->registrationDropdownMapper->mapToView($entity, $fallback),
                 url: $this->urlGenerator->generate("admin_user_show", ['user' => $entity->getId()]),
                 action: $this->getAction($licence, $currentPage, $filter),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
@@ -85,7 +85,7 @@ class RegistrationListMapper
             title: 'Inscriptions',
             description: sprintf('Administration des inscriptions pour la saison %s.', $this->seasonService->getCurrentSeason()),
             items: $items,
-            settings: $this->settings($referer),
+            settings: $this->settings($fallback),
             tools: $this->tools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(

@@ -37,7 +37,7 @@ class IdentityReadMapper
             birthDate: $identity->getBirthDate()->format('d/m/Y'),
             birthPlace: $birthPlace,
             address: $address->getStreet(),
-            city: ($commune) 
+            city: ($commune)
                 ? sprintf('%s %s', $address->getCommune()->getPostalCode(), $address->getCommune()->getName())
                 : $address->getTown(),
             email: new EmailView($identity->getEmail()),

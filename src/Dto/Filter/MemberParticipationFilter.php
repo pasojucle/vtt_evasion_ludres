@@ -20,4 +20,10 @@ class MemberParticipationFilter extends AbstractFilter
         public ?int $page = null,
     ) {
     }
+
+
+    public function setMember(Member $value): void
+    {
+        $this->member = $value;
+    }
 }

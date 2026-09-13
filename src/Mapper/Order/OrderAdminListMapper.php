@@ -45,7 +45,7 @@ class OrderAdminListMapper
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, OrderFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
         $items = [];
         /** @var OrderHeader $entity */
         foreach ($entities as $entity) {
@@ -57,7 +57,7 @@ class OrderAdminListMapper
                     new LabelView($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), LabelView::TYPE_NUMBER),
                 ],
                 status: new BadgeView($status->trans($this->translator), $status->variant()),
-                dropdown: $this->getDropdown($entity, $referer),
+                dropdown: $this->getDropdown($entity, $targetUrl),
                 url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
                 action: $this->getAction($entity, $currentPage, $filter),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
@@ -72,7 +72,7 @@ class OrderAdminListMapper
             title: 'Commandes',
             description: 'Administration des commandes de la boutique: état des stocks, validation.',
             items: $items,
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER', $referer, RoundedVariant::ROUNDED_END),
+            settings: $this->dropdownSettingsMapper->mapToView('ORDER', $targetUrl, RoundedVariant::ROUNDED_END),
             tools: $this->getTools($filter->toArray()),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -127,13 +127,13 @@ class OrderAdminListMapper
         return null;
     }
 
-    private function getDropdown(OrderHeader $order, string $referer): DropdownView
+    private function getDropdown(OrderHeader $order, string $targetUrl): DropdownView
     {
         return  new DropdownView(
             menuItems: [
                 new LinkView(
                     label: 'Supprimer',
-                    url: $this->urlContextService->generateUrl('order_delete', ['orderHeader' => $order->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('order_delete', ['orderHeader' => $order->getId()], $targetUrl),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

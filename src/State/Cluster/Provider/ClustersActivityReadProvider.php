@@ -8,10 +8,10 @@ use App\Dto\Enum\Size;
 use App\Dto\View\LinkView;
 use App\Dto\View\TabView;
 use App\Dto\View\TabWrapperView;
-use App\Entity\Cluster;
 use App\Entity\BikeRide;
-use App\Mapper\Cluster\ClusterTabMapper;
+use App\Entity\Cluster;
 use App\Mapper\Cluster\ClustersActivityMapper;
+use App\Mapper\Cluster\ClusterTabMapper;
 use App\State\Interface\ComponentProviderInterface;
 
 /**
@@ -31,7 +31,7 @@ class ClustersActivityReadProvider implements ComponentProviderInterface
             name: sprintf('bike-ride-%s', $entity->getId()),
             title: $entity->getTitle(),
             header: $this->clutersActivityMapper->mapToView($entity),
-            tabs: $entity->getClusters()->map(function(Cluster $cluster) {
+            tabs: $entity->getClusters()->map(function (Cluster $cluster) {
                 $level = $cluster->getLevel();
 
                 return new TabView(

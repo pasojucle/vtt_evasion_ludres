@@ -13,15 +13,14 @@ readonly class MediasView implements TabContentInterface
         public ?string $filename,
         public ?string $filePath,
         public bool $isPublic,
-    ){
-
+    ) {
     }
     public function getName(): string
     {
         return 'content';
     }
 
-    public function getTemplate():string
+    public function getTemplate(): string
     {
         return 'activity/admin/edit/tab_medias.html.twig';
     }

@@ -28,7 +28,7 @@ class SecondHandDetailMapper
 
     public function mapToView(SecondHand $secondHand, array $images, string $defaultImage, string $currentRoute, ?string $listRoute): SecondHandDetailView
     {
-        $referer = $this->urlContextService->generateTargetUrl($currentRoute, ['secondHand' => $secondHand->getId()]);
+        $targetUrl = $this->urlContextService->generateTargetUrl($currentRoute, ['secondHand' => $secondHand->getId()]);
 
         $identity = $secondHand->getMember()->getIdentity();
         $category = $secondHand->getCategory();
@@ -59,7 +59,7 @@ class SecondHandDetailMapper
             buttonEdit: new LinkView(
                 url: $this->urlContextService->generateUrl('admin_second_hand_edit', [
                     'secondHand' => $secondHand->getId(),
-                ], $referer),
+                ], $targetUrl),
                 label: 'Modifier',
                 icon: 'lucide:pencil'
             ),

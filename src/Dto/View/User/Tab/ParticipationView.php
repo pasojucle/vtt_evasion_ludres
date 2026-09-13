@@ -8,7 +8,6 @@ use App\Dto\View\Interface\TabContentInterface;
 
 readonly class ParticipationView implements TabContentInterface
 {
-
     public function __construct(
         public int $id,
         public array $participationParams,

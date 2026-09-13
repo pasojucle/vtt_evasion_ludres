@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\EmergencyContact\Provider;
 
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\EmergencyContact\EmergencyContactView;
 use App\Dto\View\SheetView;
 use App\Entity\EmergencyContact;
@@ -35,12 +35,12 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
         return [
             'attr' => [
                 'data-controller' => 'form-validator',
-                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }
 
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): EmergencyContactView
+    public function getStreamView(object $entity, ?ViewContext $context = null): EmergencyContactView
     {
         return $this->emergencyContactReadMapper->mapToView($entity);
     }

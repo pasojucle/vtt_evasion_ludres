@@ -27,6 +27,11 @@ class SurveyFilterConfig implements FilterConfigInterface
     {
         return SurveyFilter::class;
     }
+    
+    public function isPaginated(): bool
+    {
+        return true;
+    }
 
     public function getFields(): array
     {

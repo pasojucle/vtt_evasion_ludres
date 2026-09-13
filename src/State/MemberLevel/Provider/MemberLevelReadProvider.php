@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\MemberLevel\Provider;
 
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\MemberLevel\MemberLevelView;
 use App\Dto\View\SheetView;
 use App\Entity\Member;
@@ -32,14 +32,14 @@ class MemberLevelReadProvider implements TurboStreamProviderInterface
 
     public function getFormOptions(object $entity): array
     {
-        return [            
+        return [
             'attr' => [
-                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }
 
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberLevelView
+    public function getStreamView(object $entity, ?ViewContext $context = null): MemberLevelView
     {
         return $this->memberLevelReadMapper->mapToView($entity);
     }

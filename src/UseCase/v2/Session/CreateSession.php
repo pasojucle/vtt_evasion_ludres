@@ -24,7 +24,8 @@ class CreateSession
         private ClusterResolver $clusterResolver,
         private ClusterRepositoryInterface $clusterRepository,
         private SessionRepositoryInterface $sessionRepository,
-    ){}
+    ) {
+    }
 
     public function __invoke(
         BikeRide $bikeRide,
@@ -33,8 +34,7 @@ class CreateSession
         ?PracticeEnum $practice,
         ?BikeTypeEnum $bikeType,
         AvailabilityEnum $availability,
-    ): OperationResult
-    {
+    ): OperationResult {
         if (null === $cluster) {
             $result = ($this->clusterResolver)($bikeRide, $user);
             if ($result->status === ClusterResolverStatus::NO_CLUSTER_AVAILABLE) {
@@ -64,7 +64,7 @@ class CreateSession
     {
         $newCluster = new Cluster();
         $count = $bikeRide->getClusters()
-            ->filter(fn(Cluster $currentCluster) => $currentCluster->getLevel() === $level)
+            ->filter(fn (Cluster $currentCluster) => $currentCluster->getLevel() === $level)
             ->count() + 1;
         $newCluster->setTitle($level->getTitle() . ' ' . $count)
             ->setLevel($level)

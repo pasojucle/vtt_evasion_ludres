@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Gardian\Provider;
 
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\Gardian\GardianSheetView;
 use App\Dto\View\Gardian\GardianView;
 use App\Entity\MemberGardian;
@@ -42,12 +42,12 @@ class GardianReadProvider implements TurboStreamProviderInterface
             'is_yearly' => $licence->getState()->isYearly(),
             'attr' => [
                 'data-controller' => 'form-modifier form-validator',
-                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }
 
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): GardianView
+    public function getStreamView(object $entity, ?ViewContext $context = null): GardianView
     {
         return $this->gardianReadMapper->mapToView($entity);
     }

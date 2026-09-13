@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\Filter\MemberParticipationFilter;
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Entity\Member;
 use App\Form\Filter\MemberParticipationType;
 use App\State\MemberParticipation\Processor\MemberParticipationFilterProcessor;
@@ -29,7 +29,7 @@ class MemberParticipationController extends AbstractCrudController
             $request,
             MemberParticipationFilter::class,
             $provider,
-            new TurboStreamContext(
+            new ViewContext(
                 $request->attributes->get('_route'),
                 $request->attributes->get('_route_params'),
                 $request->query->getInt('page', 1),

@@ -23,4 +23,6 @@ interface FilterConfigInterface
     public function getDataClass(): ?string;
 
     public function getEventSubscriber(): ?EventSubscriberInterface;
+
+    public function isPaginated(): bool;
 }

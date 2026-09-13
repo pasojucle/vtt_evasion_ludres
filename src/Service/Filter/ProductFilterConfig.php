@@ -29,6 +29,11 @@ class ProductFilterConfig implements FilterConfigInterface
     {
         return ProductFilter::class;
     }
+    
+    public function isPaginated(): bool
+    {
+        return true;
+    }
 
     public function getFields(): array
     {

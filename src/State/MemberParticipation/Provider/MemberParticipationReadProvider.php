@@ -6,7 +6,7 @@ namespace App\State\MemberParticipation\Provider;
 
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\MemberParticipationFilter;
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\SheetView;
 use App\Mapper\MemberParticipation\MemberParticipationExportMapper;
@@ -48,19 +48,22 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
 
     public function getFormOptions(object $entity): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-controller' => 'form-modifier',
+            ],
+        ];
     }
 
     /**
      * @param MemberParticipationFilter $entity
      */
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberActivitiesView
+    public function getStreamView(object $entity, ?ViewContext $context = null): MemberActivitiesView
     {
         $currentPage = $context->page;
-        $member = $context->object;
+        $member = $context->parent;
         $entity->member = $member;
         $filterConfig = $this->getFilterConfig('admin_member_participation_filter');
-
 
         $qb = $this->getQueryBuilder($entity);
         $allPeriodSessions = $this->getQueryBuilder($entity, QueryScope::INDEMNITY)->getQuery()->getResult();

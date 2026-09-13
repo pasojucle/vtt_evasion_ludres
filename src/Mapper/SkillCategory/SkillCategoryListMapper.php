@@ -39,7 +39,7 @@ class SkillCategoryListMapper
         SkillCategoryFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
 
@@ -50,7 +50,7 @@ class SkillCategoryListMapper
                     new LabelView($entity->getName()),
                 ],
                 indicators: $this->getIndicators($entity),
-                dropdown: $this->dropDown($entity, $referer),
+                dropdown: $this->dropDown($entity, $targetUrl),
                 status: $this->getStatus($entity),
                 isDeleted: $entity->isDeleted(),
                 gridTemplateContent: 'grid-cols-[1fr_80px] lg:grid-cols-[1fr_150px]',
@@ -98,7 +98,7 @@ class SkillCategoryListMapper
         ];
     }
 
-    private function dropDown(SkillCategory $entity, string $referer): DropdownView
+    private function dropDown(SkillCategory $entity, string $targetUrl): DropdownView
     {
         if ($entity->isDeleted()) {
             return new DropdownView(
@@ -107,7 +107,7 @@ class SkillCategoryListMapper
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_skill_category_restore', [
                             'skillCategory' => $entity->getId()
-                            ], $referer),
+                            ], $targetUrl),
                         icon: 'lucide:archive-restore',
                         variant: ColorVariant::DROPDOWN,
                     ),
@@ -119,7 +119,7 @@ class SkillCategoryListMapper
             menuItems: [
                 new LinkView(
                     label: 'Modifier',
-                    url: $this->urlContextService->generateUrl('admin_skill_category_edit', ['skillCategory' => $entity->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('admin_skill_category_edit', ['skillCategory' => $entity->getId()], $targetUrl),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
@@ -129,7 +129,7 @@ class SkillCategoryListMapper
                 ),
                 new LinkView(
                     label: 'Supprimer',
-                    url: $this->urlContextService->generateUrl('admin_skill_category_delete', ['skillCategory' => $entity->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('admin_skill_category_delete', ['skillCategory' => $entity->getId()], $targetUrl),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

@@ -41,7 +41,7 @@ class ProductAdminListMapper
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, ProductFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
         $items = [];
         /** @var Product $entity */
         foreach ($entities as $entity) {
@@ -52,7 +52,7 @@ class ProductAdminListMapper
                 ],
                 indicators: $entity->getSizes()->map(fn ($size) => new BadgeView($size->getName()))->toArray(),
                 status: $this->productStatusMapper->mapToView($entity, $tokenId),
-                dropdown: $this->getDropdown($entity, $referer),
+                dropdown: $this->getDropdown($entity, $targetUrl),
                 isDeleted: $entity->isDeleted(),
                 action: $this->getAction($entity, $tokenId),
                 url: $this->urlGenerator->generate("admin_product", ['product' => $entity->getId()]),
@@ -87,7 +87,7 @@ class ProductAdminListMapper
         );
     }
 
-    private function getDropdown(Product $product, string $referer): DropdownView
+    private function getDropdown(Product $product, string $targetUrl): DropdownView
     {
         if ($product->isDeleted()) {
             return new DropdownView(
@@ -96,7 +96,7 @@ class ProductAdminListMapper
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_product_restore', [
                             'product' => $product->getId()
-                        ], $referer),
+                        ], $targetUrl),
                         icon: 'lucide:archive-restore',
                         variant: ColorVariant::DROPDOWN,
                     ),
@@ -108,7 +108,7 @@ class ProductAdminListMapper
             menuItems: [
                 new LinkView(
                     label: 'Supprimer',
-                    url: $this->urlContextService->generateUrl('admin_product_delete', ['product' => $product->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('admin_product_delete', ['product' => $product->getId()], $targetUrl),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

@@ -25,7 +25,6 @@ class CoverageController extends AbstractCrudController
         Request $request,
     ): Response {
         return $this->handleListPaginedAction(
-            CoverageFilter::class,
             $provider,
             $request
         );

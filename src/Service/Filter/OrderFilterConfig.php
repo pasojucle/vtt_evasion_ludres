@@ -28,6 +28,11 @@ class OrderFilterConfig implements FilterConfigInterface
     {
         return OrderFilter::class;
     }
+    
+    public function isPaginated(): bool
+    {
+        return true;
+    }
 
     public function getFields(): array
     {

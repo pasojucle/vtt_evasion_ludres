@@ -14,22 +14,24 @@ use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LinkView;
 use App\Dto\View\WidgetView;
 use App\Entity\Cluster;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
 use App\Mapper\Session\ParticipantMapper;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Service\UrlContextService;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ClusterReadMapper
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
+        private UrlContextService $urlContextService,
         private TranslatorInterface $translator,
         private ParticipantMapper $participantMapper,
-    ){}
+    ) {
+    }
     public function mapToView(
-        Cluster $cluster, 
+        Cluster $cluster,
         bool $isEditable,
-        array $authorizationsByUser, 
+        array $authorizationsByUser,
         array $participationsByUser,
         int $currentSeason,
         ?string $referer,
@@ -37,9 +39,11 @@ class ClusterReadMapper
         $pratice = $cluster->getPractice();
         $isSchoolActivity = $cluster->getBikeRide()->isSchoolActivity();
         $isComplete = $cluster->isComplete() ?? false;
+        $allowedAvailabilities = [AvailabilityEnum::REGISTERED, AvailabilityEnum::AVAILABLE];
 
         $totalFramers = 0;
         $presentFramers = 0;
+
         $totalParticipants = 0;
         $presentParticipants = 0;
 
@@ -56,7 +60,8 @@ class ClusterReadMapper
                 $referer,
             );
             $particpants[] = $participant;
-            if ($isSchoolActivity && $participant->isFramer) {
+
+            if ($isSchoolActivity && $participant->isFramer && in_array($session->getAvailability(), $allowedAvailabilities, true)) {
                 $totalFramers++;
                 $presentFramers += (int) $participant->isPresent;
             } else {
@@ -67,23 +72,23 @@ class ClusterReadMapper
         
         return new ClusterView(
             id: $cluster->getId(),
-            title: $cluster->getTitle(),
+            cardTitle: 'Participants',
             pratice: new BadgeView(
                 value: $pratice->trans($this->translator),
                 variant: $pratice->variant(),
             ),
             widgets: $this->getWidgets(
-                $cluster, 
+                $cluster,
                 $isComplete,
                 $isSchoolActivity,
                 $presentParticipants,
                 $totalParticipants,
                 $presentFramers,
                 $totalFramers,
+                $referer,
             ),
             isComplete: $isComplete,
             participants: $particpants,
-            hasSkills: !$cluster->getSkills()->isEmpty(),
             isEditable: $isEditable,
             actions: [
 
@@ -95,25 +100,21 @@ class ClusterReadMapper
     }
     
     private function getWidgets(
-        Cluster $cluster, 
+        Cluster $cluster,
         bool $isComplete,
         bool $isSchoolActivity,
         int $presentParticipants,
         int $totalParticipants,
         int $presentFramers,
-        int $totalFramers
-
+        int $totalFramers,
+        string $referer,
     ): array {
-        if ($cluster->getRole() === 'ROLE_FRAME') {
-            return [];
-        }
-
         $widgets = [new WidgetView(
             title: 'Participants',
             value: (string) $presentParticipants,
-            content: sprintf('Sur %d inscrits',  $totalParticipants),
+            content: sprintf('Sur %d inscrits', $totalParticipants),
             icon: ($isSchoolActivity) ? LevelType::SCHOOL->getIcon() : LevelType::ADULT->getIcon(),
-            action: $this->addParticipantAction($cluster, $isComplete, false),
+            action: $this->addParticipantAction($cluster, $isComplete, false, $referer),
         )];
         
         if ($isSchoolActivity) {
@@ -122,44 +123,42 @@ class ClusterReadMapper
                 value: (string) $presentFramers,
                 content: sprintf('Sur %d inscrits', $totalFramers),
                 icon: LevelType::FRAME->getIcon(),
-                action: $this->addParticipantAction($cluster, $isComplete, true),
+                action: $this->addParticipantAction($cluster, $isComplete, true, $referer),
             );
-            if ($cluster->getRole() !== 'ROLE_FRAME') {
-                $widgets[] = new WidgetView(
-                    title: 'Compétences',
-                    value: (string) $cluster->getSkills()->count(),
-                    icon: 'lucide:badge-check',
-                    content: 'À évaluer',
-                    action: (!$isComplete)
-                        ? new LinkView(
-                            url: $this->urlGenerator->generate('admin_cluster_skills', ['cluster' => $cluster->getId()]),
-                            variant: ColorVariant::PRIMARY,
-                            size: Size::SM,
-                            label: 'Evaluer',
-                            icon: 'lucide:square-check-big',
-                            htmlAttributes: [
-                                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                            ],
-                        )
-                        : null,
-                );
-            }
+            $widgets[] = new WidgetView(
+                title: 'Compétences',
+                value: (string) $cluster->getSkills()->count(),
+                icon: 'lucide:badge-check',
+                content: 'À évaluer',
+                action: (!$isComplete)
+                    ? new LinkView(
+                        url: $this->urlContextService->generateUrl('admin_cluster_skills', ['cluster' => $cluster->getId()], $referer),
+                        variant: ColorVariant::PRIMARY,
+                        size: Size::SM,
+                        label: 'Evaluer',
+                        icon: 'lucide:square-check-big',
+                        htmlAttributes: [
+                            new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                        ],
+                    )
+                    : null,
+            );
         }
 
         return $widgets;
     }
 
-    private function addParticipantAction(Cluster $cluster, bool $isComplete, bool $isFramer):  ?LinkView
+    private function addParticipantAction(Cluster $cluster, bool $isComplete, bool $isFramer, string $referer): ?LinkView
     {
-        if ($isComplete) return null;
-
-        dump($isFramer);
+        if ($isComplete) {
+            return null;
+        }
 
         return new LinkView(
-            url: $this->urlGenerator->generate('admin_session_add', [
+            url: $this->urlContextService->generateUrl('admin_session_add', [
                     'cluster' => $cluster->getId(),
                     'isFramer' => (int) $isFramer,
-                ]),
+                ], $referer),
             variant: ColorVariant::PRIMARY,
             size: Size::SM,
             label: 'Ajouter',

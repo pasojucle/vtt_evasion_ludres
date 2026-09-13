@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\State\MemberSkill\Provider;
 
 use App\Dto\Payload\MemberSkillCreatePayload;
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\MemberSkill\MemberSkillSheetView;
 use App\Dto\View\MemberSkill\MemberSkillsView;
 use App\Mapper\MemberSkill\MemberSkillReadMapper;
@@ -36,10 +36,10 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
     /**
      * @param MemberSkillCreatePayload $entity
      */
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberSkillsView
+    public function getStreamView(object $entity, ?ViewContext $context = null): MemberSkillsView
     {
         $currentPage = $context->page;
-        $filter = $context->object;
+        $filter = $context->parent;
         $member = $entity->member;
         $filter->member = $member;
         $filterConfig = $this->getFilterConfig('admin_member_skill_filter');

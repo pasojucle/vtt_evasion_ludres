@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\Licence\LicenceView;
 use App\Dto\View\SheetView;
 use App\Entity\User;
@@ -35,12 +35,12 @@ class LicenceReadProvider implements TurboStreamProviderInterface
         return [
             'attr' => [
                 'data-controller' => 'form-validator',
-                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
             ],
         ];
     }
 
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): LicenceView
+    public function getStreamView(object $entity, ?ViewContext $context = null): LicenceView
     {
         return $this->licenceReadMapper->mapToView($entity);
     }

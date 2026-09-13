@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\State\Session\Provider;
 
 use App\Dto\Payload\SessionCreateAdminPayload;
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\Cluster\ClusterView;
 use App\Dto\View\Session\SessionAddSheetView;
 use App\Entity\Enum\LevelType;
@@ -15,16 +15,15 @@ use App\Repository\LicenceAgreementRepository;
 use App\Repository\SessionRepository;
 use App\Service\SeasonService;
 use App\Service\SurveyService;
-use App\Service\UrlContextService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
-use App\State\Interface\FormAddComponentProviderInterface;
+use App\State\Interface\InputInitializerInterface;
 use App\State\Interface\TurboStreamProviderInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @implements TurboStreamProviderInterface<SessionCreateAdminPayload>
  */
-class SessionCreateProvider implements TurboStreamProviderInterface, FormAddComponentProviderInterface
+class SessionCreateProvider implements TurboStreamProviderInterface, InputInitializerInterface
 {
     use ClusterDataProviderTrait;
 
@@ -33,7 +32,6 @@ class SessionCreateProvider implements TurboStreamProviderInterface, FormAddComp
         protected readonly SessionRepository $sessionRepository,
         private SeasonService $seasonService,
         private SurveyService $surveyService,
-        private UrlContextService $urlContextService,
         private ClusterReadMapper $clusterReadMapper,
         private Security $security,
     ) {
@@ -46,7 +44,6 @@ class SessionCreateProvider implements TurboStreamProviderInterface, FormAddComp
             description: sprintf('Ajouter un nouveau participant au groupe %s', $entity->cluster->getTitle()),
             action: 'Ajouter',
         );
-        
     }
 
     public function getFormOptions(object $entity): array
@@ -54,7 +51,7 @@ class SessionCreateProvider implements TurboStreamProviderInterface, FormAddComp
         return [
             'attr' => [
                 'data-controller' => 'form-modifier',
-                'data-action'=> 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
             ]
         ];
     }
@@ -68,19 +65,18 @@ class SessionCreateProvider implements TurboStreamProviderInterface, FormAddComp
         $entity->season = ($minSeasonToTakePart < $currentSeason) ? null : $currentSeason;
 
         $entity->level = ($entity->isFramer) ? LevelType::FRAME->value : $entity->cluster->getLevel()?->getId();
-        $entity->surveyResponses=  ($bikeRide->getSurvey())
+        $entity->surveyResponses = ($bikeRide->getSurvey())
                 ? ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)]
                 : null;
 
         return $entity;
     }
 
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): ClusterView
+    public function getStreamView(object $entity, ?ViewContext $context = null): ClusterView
     {
         $cluster = $entity->cluster;
-        $userIds = $cluster->getSessions()->map(fn(Session $session) => $session->getUser()->getId())->toArray();
-        $referer = $this->urlContextService->generateTargetUrl($context->route, $context->routeParam);
-
+        $userIds = $cluster->getSessions()->map(fn (Session $session) => $session->getUser()->getId())->toArray();
+        $targetUrl = $context->fallback;
 
         return $this->clusterReadMapper->mapToView(
             $cluster,
@@ -88,7 +84,7 @@ class SessionCreateProvider implements TurboStreamProviderInterface, FormAddComp
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),
             $this->seasonService->getCurrentSeason(),
-            $referer,
+            $targetUrl,
         );
     }
 }

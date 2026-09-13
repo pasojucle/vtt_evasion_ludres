@@ -6,7 +6,6 @@ namespace App\State\Activity\Provider;
 
 use App\Dto\Enum\Size;
 use App\Dto\View\Activity\Tab\MainView;
-use App\Dto\View\Activity\Tab\MediasView;
 use App\Dto\View\Activity\Tab\OptionsView;
 use App\Dto\View\Activity\Tab\ParticipantsView;
 use App\Dto\View\Activity\Tab\TracksView;
@@ -17,13 +16,13 @@ use App\Dto\View\TabView;
 use App\Entity\BikeRide;
 use App\Mapper\Activity\Update\MediasMapper;
 use App\Service\MessageService;
-use App\State\Interface\FormAddComponentProviderInterface;
 use App\State\Interface\FormComponentProviderInterface;
+use App\State\Interface\InputInitializerInterface;
 
 /**
  * @implements FormComponentProviderInterface<BikeRide>
  */
-class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddComponentProviderInterface
+class ActivityUpdateProvider implements FormComponentProviderInterface, InputInitializerInterface
 {
     public function __construct(
         private MediasMapper $mediasMapper,
@@ -41,28 +40,28 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
             description: sprintf('%s une activité en définissant les paramètres généreaux, des participants, des médias, des parcours...', $action),
             tabs: [
                 new TabView(
-                    title: 'Général', 
-                    icon: 'lucide:info', 
+                    title: 'Général',
+                    icon: 'lucide:info',
                     view: new MainView(),
                 ),
                 new TabView(
-                    title: 'Options', 
-                    icon: 'lucide:settings-2', 
+                    title: 'Options',
+                    icon: 'lucide:settings-2',
                     view: new OptionsView(),
                 ),
                 new TabView(
-                    title: 'Participants', 
-                    icon: 'lucide:users', 
+                    title: 'Participants',
+                    icon: 'lucide:users',
                     view: new ParticipantsView(),
                 ),
                 new TabView(
-                    title: 'Médias', 
-                    icon: 'lucide:image', 
+                    title: 'Médias',
+                    icon: 'lucide:image',
                     view: $this->mediasMapper->mapToView($entity),
                 ),
                 new TabView(
-                    title: 'Parcours GPX', 
-                    icon: 'lucide:map', 
+                    title: 'Parcours GPX',
+                    icon: 'lucide:map',
                     view: new TracksView(),
                 ),
             ],
@@ -80,11 +79,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, FormAddC
 
     public function getFormOptions(object $entity): array
     {
-        return [
-            'attr' => [
-                'data-controller' => 'form-modifier'
-            ]
-        ];
+        return [];
     }
 
     /**

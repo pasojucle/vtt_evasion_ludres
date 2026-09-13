@@ -20,7 +20,6 @@ use App\Mapper\Notification\NotificationStatusMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\CsrfTokenService;
 use App\Service\Filter\FilterConfigInterface;
-use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -32,7 +31,6 @@ class NotificationAdminListMapper
         private PaginatorMapper $paginatorMapper,
         private NotificationStatusMapper $notificationStatusMapper,
         private FilterChipsMapper $filterChipsMapper,
-        private UrlContextService $urlContextService,
         private CsrfTokenService $csrfTokenService,
         private CsrfTokenManagerInterface $csrfTokenManager,
     ) {
@@ -40,7 +38,6 @@ class NotificationAdminListMapper
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, NotificationFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
         $items = [];
         /** @var Notification $entity */
         foreach ($entities as $entity) {

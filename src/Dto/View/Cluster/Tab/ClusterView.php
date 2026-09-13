@@ -15,7 +15,8 @@ readonly class ClusterView implements TabContentInterface
         public string $title,
         public BadgeView $pratice,
         public int $total,
-    ){}
+    ) {
+    }
 
     public function getName(): string
     {

@@ -40,7 +40,6 @@ class UserController extends AbstractCrudController
         Request $request,
     ): Response {
         return $this->handleListPaginedAction(
-            UserFilter::class,
             $provider,
             $request
         );

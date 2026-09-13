@@ -14,7 +14,6 @@ class MemberSkillDevelopmentMapper
      */
     public function mapToView(array $memberSkillDevelopmentData): array
     {
-        
         return array_map(function (array $totalSkillsByCategory) {
             $totalSkill = $totalSkillsByCategory['total'];
             $totalAcquired = (int) ($totalSkillsByCategory['totalAcquired'] ?? 0);

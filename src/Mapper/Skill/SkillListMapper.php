@@ -42,7 +42,7 @@ class SkillListMapper
         SkillFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
 
@@ -55,7 +55,7 @@ class SkillListMapper
                 indicators: $this->getIndicators($entity),
                 status: $this->getStatus($entity),
                 isDeleted: $entity->isDeleted(),
-                dropdown: $this->dropDown($entity, $referer),
+                dropdown: $this->dropDown($entity, $targetUrl),
                 gridTemplateContent: 'grid-cols-[1fr_80px] lg:grid-cols-[1fr_150px]',
                 gridTemplateBadges: 'grid-cols-1 lg:grid-cols-[1fr_2fr] gap-2 justify-items-center',
             );
@@ -66,7 +66,7 @@ class SkillListMapper
             title: 'Compétences',
             description: 'Administration de la liste des compétences.',
             items: $items,
-            settings: $this->settings($referer),
+            settings: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -87,9 +87,9 @@ class SkillListMapper
         );
     }
 
-    private function settings(string $referer): DropdownView
+    private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView(null, $referer, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView(null, $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
                 label: 'Catégories',
                 url: $this->urlGenerator->generate('admin_skill_category_list'),
@@ -98,7 +98,7 @@ class SkillListMapper
         ]);
     }
 
-    private function dropDown(Skill $entity, string $referer): DropdownView
+    private function dropDown(Skill $entity, string $targetUrl): DropdownView
     {
         if ($entity->isDeleted()) {
             return new DropdownView(
@@ -107,7 +107,7 @@ class SkillListMapper
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_skill_restore', [
                             'skill' => $entity->getId()
-                            ], $referer),
+                            ], $targetUrl),
                         icon: 'lucide:archive-restore',
                         variant: ColorVariant::DROPDOWN,
                     ),
@@ -118,13 +118,13 @@ class SkillListMapper
             menuItems: [
                 new LinkView(
                     label: 'Modifier',
-                    url: $this->urlContextService->generateUrl('admin_skill_edit', ['skill' => $entity->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('admin_skill_edit', ['skill' => $entity->getId()], $targetUrl),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
                  new LinkView(
                      label: 'Supprimer',
-                     url: $this->urlContextService->generateUrl('admin_skill_delete', ['skill' => $entity->getId()], $referer),
+                     url: $this->urlContextService->generateUrl('admin_skill_delete', ['skill' => $entity->getId()], $targetUrl),
                      icon: 'lucide:delete',
                      variant: ColorVariant::DROPDOWN,
                      htmlAttributes: [

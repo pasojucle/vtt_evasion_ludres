@@ -36,7 +36,6 @@ class LevelController extends AbstractCrudController
         LevelListProvider $provider,
     ): Response {
         return $this->handleListPaginedAction(
-            LevelFilter::class,
             $provider,
             $request
         );

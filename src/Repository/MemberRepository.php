@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\BikeRide;
 use App\Entity\BoardRole;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
@@ -961,7 +963,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             ->orderBy('i.name', $direction);
     }
 
-    public function filterTestinInProgress(QueryBuilder &$qb, int $season): void
+    public function filterTestinInProgress(QueryBuilder $qb, int $season): void
     {
         $usersWithSessionsPresent = $this->getEntityManager()->createQueryBuilder()
             ->select('sessionsinprogresspresent.id')
@@ -1002,7 +1004,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterTestinComplete(QueryBuilder &$qb, int $season): void
+    public function filterTestinComplete(QueryBuilder $qb, int $season): void
     {
         $qb
             ->andWhere(
@@ -1015,7 +1017,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
     }
 
 
-    public function filterNew(QueryBuilder &$qb, int $season): void
+    public function filterNew(QueryBuilder $qb, int $season): void
     {
         $usersWhithOnlyOneLicence = $this->getEntityManager()->createQueryBuilder()
             ->select('user')
@@ -1038,7 +1040,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterRenew(QueryBuilder &$qb, int $season): void
+    public function filterRenew(QueryBuilder $qb, int $season): void
     {
         $usersWhithMoreThanLicence = $this->getEntityManager()->createQueryBuilder()
             ->select('user')
@@ -1061,7 +1063,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterWaitingRenew(QueryBuilder &$qb, int $currentSeason): void
+    public function filterWaitingRenew(QueryBuilder $qb, int $currentSeason): void
     {
         $usersWhithCurrentSeasonLicence = $this->getEntityManager()->createQueryBuilder()
             ->select('user')
@@ -1096,7 +1098,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterInProcessing(QueryBuilder &$qb, int $season): void
+    public function filterInProcessing(QueryBuilder $qb, int $season): void
     {
         $qb
             ->leftjoin('m.sessions', 's')
@@ -1113,7 +1115,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterToRegister(QueryBuilder &$qb, int $season): void
+    public function filterToRegister(QueryBuilder $qb, int $season): void
     {
         $qb
             ->andWhere(
@@ -1125,7 +1127,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterRegistrationBySeason(QueryBuilder &$qb, int $season): void
+    public function filterRegistrationBySeason(QueryBuilder $qb, int $season): void
     {
         $qb
             ->orWhere(
@@ -1148,7 +1150,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterNotValidate(QueryBuilder &$qb): void
+    public function filterNotValidate(QueryBuilder $qb): void
     {
         $qb->andWhere(
             $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
@@ -1157,7 +1159,7 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ;
     }
 
-    public function filterTerm(QueryBuilder &$qb, string $term): void
+    public function filterTerm(QueryBuilder $qb, string $term): void
     {
         $qb->andWhere(
             $qb->expr()->orX(
@@ -1168,18 +1170,109 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ->setParameter('term', sprintf('%%%s%%', strtolower($term)));
     }
 
+    public function filterActivity(QueryBuilder $qb, BikeRide $activity): void
+    {
+        $qb
+            ->select(['m as member', 'se.availability as availability'])
+            ->leftJoin('m.sessions', 'se', 'WITH', (new Expr())->in('se.id', $this->getSubQueryActivitySessions()->getDQL()))
+            ->setParameter('activity', $activity)
+        ;
+    }
+
+    public function filterActivityAndAvailability(QueryBuilder $qb, BikeRide $activity, AvailabilityEnum $availability): void
+    {
+        $qb
+            ->select(['m as member', 'se.availability as availability'])
+            ->leftJoin('m.sessions', 'se')
+            ->leftJoin('se.cluster', 'cl')
+            ->leftJoin('cl.bikeRide', 'br')
+            ->andWhere(
+                (new Expr())->eq('se.availability', ':availability'),
+                (new Expr())->eq('cl.bikeRide', ':activity'),
+            )
+            ->setParameter('activity', $activity)
+            ->setParameter('availability', $availability)
+        ;
+    }
+
+    public function filterActivityAndUnavailability(QueryBuilder $qb, BikeRide $activity): void
+    {
+        $availability = AvailabilityEnum::UNAVAILABLE;
+        $qb
+            ->select(['m as member', 'se.availability as availability'])
+            ->leftJoin('m.sessions', 'se', 'WITH', (new Expr())->in('se.id', $this->getSubQueryActivitySessionsByAvailability()->getDQL()))
+            ->setParameter('activity', $activity)
+            ->setParameter('availability', $availability)
+        ;
+    }
+
+    private function getSubQueryActivitySessionsByAvailability(): QueryBuilder
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('brse.id')
+            ->from(Session::class, 'brse')
+            ->leftJoin('brse.cluster', 'cl')
+            ->leftJoin('cl.bikeRide', 'br')
+            ->andWhere(
+                (new Expr())->eq('br.id', ':activity'),
+                (new Expr())->eq('brse.availability', ':availability'),
+            );
+    }
+
+    private function getSubQueryActivitySessions(): QueryBuilder
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('brse.id')
+            ->from(Session::class, 'brse')
+            ->leftJoin('brse.cluster', 'cl')
+            ->leftJoin('cl.bikeRide', 'br')
+            ->andWhere(
+                (new Expr())->eq('br.id', ':activity'),
+            );
+    }
+
+    public function filterLevelType(QueryBuilder $qb, LevelType $levelType): void
+    {
+        $qb
+            ->andWhere(
+                (new Expr())->eq('le.type', ':levelType'),
+            )
+            ->setParameter('levelType', $levelType)
+        ;
+    }
+
     public function countByLevelAndSeason(Level $level, int $season): int
     {
         return $this->createQueryBuilder('m')
-        ->select((new Expr())->count('m'))
-        ->join('m.licences', 'li')
-        ->andWhere(
-            (new Expr())->eq('m.level', ':level'),
-            (new Expr())->eq('li.season', ':season')
-        )
-        ->setParameter('level', $level)
-        ->setParameter('season', $season)
-        ->getQuery()
-        ->getSingleScalarResult();
+            ->select((new Expr())->count('m'))
+            ->join('m.licences', 'li')
+            ->andWhere(
+                (new Expr())->eq('m.level', ':level'),
+                (new Expr())->eq('li.season', ':season')
+            )
+            ->setParameter('level', $level)
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findFramersByBikeRide(BikeRide $activity): array
+    {
+        return $this->createQueryBuilder('mbr')
+            ->select(
+                sprintf('%s as count', (new Expr())->count('mbr')),
+                'SUM(CASE WHEN se.availability = \'registered\' THEN 1 ELSE 0 END) as registered',
+                'SUM(CASE WHEN se.availability = \'available\' THEN 1 ELSE 0 END) as available'
+            )
+            ->leftJoin('mbr.sessions', 'se', 'WITH', (new Expr())->in('se.id', $this->getSubQueryActivitySessions()->getDQL()))
+            ->join('mbr.level', 'le')
+            ->andWhere(
+                (new Expr())->eq('le.type', ':levelType'),
+            )
+            ->setParameter('activity', $activity)
+            ->setParameter('levelType', LevelType::FRAME)
+            ->getQuery()
+            ->getSingleResult();
+        ;
     }
 }

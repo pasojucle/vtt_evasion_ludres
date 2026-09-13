@@ -41,7 +41,7 @@ class SurveyAdminListMapper
 
     public function mapToView(Paginator $entities, string $route, int $currentPage, SurveyFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
         foreach ($entities as $entity) {
@@ -58,7 +58,7 @@ class SurveyAdminListMapper
                 counter: new BadgeView(
                     (string) $entity->getRespondents()->count(),
                 ),
-                dropdown: $this->surveyAdminDropdownMapper->mapToView($entity, $referer),
+                dropdown: $this->surveyAdminDropdownMapper->mapToView($entity, $targetUrl),
                 url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey_response_list', [
                     'survey' => $entity->getId()
                 ]),

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\MemberSkill\Provider;
 
-use App\Dto\State\TurboStreamContext;
+use App\Dto\State\ViewContext;
 use App\Dto\View\MemberSkill\MemberSkillUpdateView;
 use App\Entity\MemberSkill;
 use App\Mapper\MemberSkill\MemberSkillReadMapper;
@@ -29,7 +29,7 @@ class MemberSkillUpdateProvider
     /**
      * @param MemberSkill $entity
      */
-    public function getStreamView(object $entity, ?TurboStreamContext $context = null): MemberSkillUpdateView
+    public function getStreamView(object $entity, ?ViewContext $context = null): MemberSkillUpdateView
     {
         $member = $entity->getMember();
 

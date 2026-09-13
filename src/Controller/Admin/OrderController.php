@@ -34,7 +34,6 @@ class OrderController extends AbstractCrudController
         OrderAdminListProvider $provider,
     ): Response {
         return $this->handleListPaginedAction(
-            OrderFilter::class,
             $provider,
             $request
         );

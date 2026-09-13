@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Mapper\User\Read;
 
-
 use App\Dto\View\User\Tab\LicenceView;
 use App\Entity\Member;
 use App\Entity\User;

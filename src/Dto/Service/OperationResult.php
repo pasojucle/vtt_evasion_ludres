@@ -22,7 +22,7 @@ final readonly class OperationResult
     public static function failure(string $errorMessage): self
     {
         return new self(
-            success: false, 
+            success: false,
             errorMessage: $errorMessage,
         );
     }

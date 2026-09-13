@@ -5,20 +5,25 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\Filter\ActivityFilter;
+use App\Dto\Filter\ActivityFramersFilter;
+use App\Dto\State\ViewContext;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
+use App\Form\Filter\ListFilterType;
+use App\Http\Handler\ListDrawerHandler;
+use App\Http\Handler\ListPaginedHandler;
 use App\Repository\BikeRideRepository;
 use App\State\Activity\Processor\ActivityDeleteProcessor;
 use App\State\Activity\Processor\ActivityRestoreProcessor;
 use App\State\Activity\Processor\ActivityUpdateProcessor;
 use App\State\Activity\Provider\ActivityAdminListProvider;
 use App\State\Activity\Provider\ActivityDeleteProvider;
+use App\State\Activity\Provider\ActivityFramersReadProvider;
 use App\State\Activity\Provider\ActivityUpdateProvider;
+use App\State\Interface\FilterInitializerInterface;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
-use App\UseCase\User\GetFramersFiltered;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,11 +44,11 @@ class BikeRideController extends AbstractCrudController
     public function adminList(
         Request $request,
         ActivityAdminListProvider $provider,
+        ListPaginedHandler $listPaginedHandler,
     ): Response {
-        return $this->handleListPaginedAction(
-            ActivityFilter::class,
+        return $listPaginedHandler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 
@@ -107,26 +112,6 @@ class BikeRideController extends AbstractCrudController
         }
 
         return new JsonResponse($response);
-    }
-
-    #[Route('/sortie/encadrement/{bikeRide}/{filtered}', name: 'admin_bike_ride_framer_list', methods: ['GET', 'POST'], defaults:['filtered' => false])]
-    #[IsGranted('BIKE_RIDE_VIEW', 'bikeRide')]
-    public function adminBikeRideFramerList(
-        GetFramersFiltered $getFramersFiltered,
-        Request $request,
-        BikeRide $bikeRide,
-        bool $filtered
-    ) {
-        $params = $getFramersFiltered->list($request, $bikeRide, $filtered);
-        if ($params['redirect']) {
-            return $this->redirectToRoute('admin_bike_ride_framer_list', [
-                'bikeRide' => $bikeRide->getId(),
-                'filtered' => true,
-            ]);
-        }
-        $params['bike_ride'] = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
-
-        return $this->render('bike_ride/admin/framer_list.html.twig', $params);
     }
 
     #[Route('/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
@@ -206,5 +191,16 @@ class BikeRideController extends AbstractCrudController
         GetBikeRideFile $getBikeRideFile
     ): Response {
         return $getBikeRideFile->execute($filename, $mimeType);
+    }
+
+    #[Route('/admin/activity/framers/{bikeRide}', name: 'admin_bike_ride_framer_list', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_VIEW', 'bikeRide')]
+    public function adminFramers(
+        Request $request,
+        ActivityFramersReadProvider $provider,
+        BikeRide $bikeRide,
+        ListDrawerHandler $handler,
+    ): Response {
+        return $handler->handle($request, $provider, $bikeRide);
     }
 }

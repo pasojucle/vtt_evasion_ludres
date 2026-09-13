@@ -45,7 +45,7 @@ class LevelListMapper
         FilterConfigInterface $filterConfig,
     ): ListView {
         $currentSeason = $this->seasonService->getCurrentSeason();
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
 
@@ -59,7 +59,7 @@ class LevelListMapper
                 status: $this->getStatus($entity),
                 counter: $this->counter($entity, $currentSeason),
                 isDeleted: $entity->isDeleted(),
-                dropdown: $this->dropDown($entity, $referer),
+                dropdown: $this->dropDown($entity, $targetUrl),
                 gridTemplateBadges: 'grid-cols-[1fr_70px]'
             );
         }
@@ -116,7 +116,7 @@ class LevelListMapper
         );
     }
 
-    private function dropDown(Level $entity, ?string $referer): DropdownView
+    private function dropDown(Level $entity, ?string $targetUrl): DropdownView
     {
         if ($entity->isDeleted()) {
             return new DropdownView(
@@ -125,7 +125,7 @@ class LevelListMapper
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_level_restore', [
                             'level' => $entity->getId()
-                            ], $referer),
+                            ], $targetUrl),
                         icon: 'lucide:archive-restore',
                         variant: ColorVariant::DROPDOWN,
                     ),
@@ -136,14 +136,14 @@ class LevelListMapper
         $menusItems = [];
         $menusItems[] = new LinkView(
             label: 'Modifier',
-            url: $this->urlContextService->generateUrl('admin_level_edit', ['level' => $entity->getId()], $referer),
+            url: $this->urlContextService->generateUrl('admin_level_edit', ['level' => $entity->getId()], $targetUrl),
             icon: 'lucide:pencil',
             variant: ColorVariant::DROPDOWN,
         );
         if (!$entity->isProtected()) {
             $menusItems[] = new LinkView(
                 label: 'Supprimer',
-                url: $this->urlContextService->generateUrl('admin_level_delete', ['level' => $entity->getId()], $referer),
+                url: $this->urlContextService->generateUrl('admin_level_delete', ['level' => $entity->getId()], $targetUrl),
                 icon: 'lucide:delete',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [

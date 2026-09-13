@@ -7,9 +7,15 @@ namespace App\State\MemberSkill\Trait;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Entity\Enum\LevelType;
 use App\Entity\Member;
+use App\Repository\MemberSkillRepository;
+use App\Repository\SkillCategoryRepository;
 use App\State\MemberParticipation\Enum\QueryScope;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * @property-read MemberSkillRepository $memberSkillRepository
+ * @property-read SkillCategoryRepository $skillCategoryRepository
+ */
 trait MemberSkillDataProviderTrait
 {
     private function getQueryBuilder(

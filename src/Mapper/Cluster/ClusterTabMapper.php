@@ -17,7 +17,8 @@ class ClusterTabMapper
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
-    ){}
+    ) {
+    }
     public function mapToView(Cluster $cluster): ClusterView
     {
         $pratice = $cluster->getPractice();
@@ -25,13 +26,15 @@ class ClusterTabMapper
 
         return new ClusterView(
             id: $cluster->getId(),
-            url: $this->urlGenerator->generate('admin_cluster_show', ['cluster' => $cluster->getId()]),
+            url: ($cluster->getRole() === 'ROLE_FRAME')
+                ? $this->urlGenerator->generate('admin_cluster_frame_show', ['cluster' => $cluster->getId()])
+                : $this->urlGenerator->generate('admin_cluster_show', ['cluster' => $cluster->getId()]),
             title: $cluster->getTitle(),
             pratice: new BadgeView(
                 value: $pratice->trans($this->translator),
                 variant: $pratice->variant(),
             ),
-            total: $cluster->getSessions()->map(function(Session $session) use ($isNeedFramers) {
+            total: $cluster->getSessions()->map(function (Session $session) use ($isNeedFramers) {
                 if ($isNeedFramers) {
                     return $session->isPresent()
                     && LevelType::SCHOOL === $session->getUser()->getLevel()?->getType();

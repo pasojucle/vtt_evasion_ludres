@@ -50,7 +50,7 @@ class UserListMapper
         UserFilter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
         /** @var Member $entity */
@@ -63,8 +63,8 @@ class UserListMapper
                 ],
                 indicators: $this->getIndicators($entity),
                 status: $this->levelBadgeMapper->mapToView($level),
-                dropdown: $this->userDropdownMapper->mapToView($entity, $referer),
-                url: $this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $referer),
+                dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
+                url: $this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateBadges: 'grid-cols-[auto_160px]',
             );
@@ -75,7 +75,7 @@ class UserListMapper
             title: 'Adhérents ',
             description: 'Administration des adhérents du club',
             items: $items,
-            settings: $this->settings($referer),
+            settings: $this->settings($targetUrl),
             tools: $this->getTools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
@@ -93,9 +93,9 @@ class UserListMapper
     }
 
 
-    private function settings(string $referer): DropdownView
+    private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('USER', $referer, RoundedVariant::ROUNDED_END, [
+        return $this->dropdownSettingsMapper->mapToView('USER', $targetUrl, RoundedVariant::ROUNDED_END, [
             new LinkView(
                 label: 'Niveaux',
                 url: $this->urlGenerator->generate('admin_level_list'),

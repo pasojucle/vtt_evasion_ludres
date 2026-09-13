@@ -1,0 +1,46 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    <div 
+        data-id="activity-framers-drawer" 
+        data-filter-target="container"
+        class="mb-2 flex flex-col gap-4"
+    >
+        {% for child in form.children %}
+            {{ form_row(child)}}
+        {% endfor %}
+        <ul class="flex flex-col gap-2">
+            {% for item in view.items %}
+                <li class="group relative 
+                    lg:gap-4 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 
+                    lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
+                    <a 
+                        href="{{ item.url }}" 
+                        class="absolute inset-0 z-10 mr-10 
+                        title="Voir l'élément" 
+                        data-turbo-frame="_top"
+                    >
+                        <span class="sr-only">Voir l'élément</span>
+                    </a>
+                    <div 
+                        class="grid grid-cols-[1fr_40px] gap-2 items-center"
+                    >
+                        <div class="flex flex-col gap-1">
+                            <div>{{ item.label }}</div>
+                            <div>
+                                {% for indicator in item.indicators %}
+                                    {% include indicator.template with {(indicator.name): indicator} %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div>
+                            {% include item.status.template with {(item.status.name): item.status} %}
+                        </div>
+                    </div>                    
+                </li>
+            {% endfor %}
+            {% if 0 == view.items|length %}
+                {% include "components/_empty.html.twig" with {message: view.empty.message, icon: view.empty.icon} %}
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}

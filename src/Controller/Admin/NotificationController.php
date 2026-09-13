@@ -30,7 +30,6 @@ class NotificationController extends AbstractCrudController
         NotificationAdminListProvider $provider,
     ): Response {
         return $this->handleListPaginedAction(
-            NotificationFilter::class,
             $provider,
             $request
         );

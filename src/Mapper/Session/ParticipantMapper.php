@@ -34,28 +34,26 @@ class ParticipantMapper
         private TranslatorInterface $translator,
         private Security $security,
         private UrlContextService $urlContextService,
-    ){
-
+    ) {
     }
 
     public function mapToView(
-        Session $session, 
-        array $authorizations, 
+        Session $session,
+        array $authorizations,
         int $participations,
         bool $isClusterComplete,
         bool $isEditable,
         int $currentSeason,
-        ?string $referer
+        ?string $fallback
     ): ParticipantView {
         $user = $session->getUser();
         $identity = $user->getIdentity();
         $level = $user->getLevel();
         $licences = $user->getLicences();
-        $lastLicence = $licences->findFirst(function(int $key, Licence $licence) use ($currentSeason) {
-            dump(sprintf('%s -%s', $licence->getSeason(), $currentSeason));
+        $lastLicence = $licences->findFirst(function (int $key, Licence $licence) use ($currentSeason) {
             return $licence->getSeason() === $currentSeason;
         });
-        $lastLicence = $licences->findFirst(fn(int $key, Licence $licence) => $licence->getSeason() === $currentSeason);
+        $lastLicence = $licences->findFirst(fn (int $key, Licence $licence) => $licence->getSeason() === $currentSeason);
         $availability = $session->getAvailability();
         $isPresent = $session->isPresent();
 
@@ -92,7 +90,7 @@ class ParticipantMapper
 
         return new ParticipantView(
             sessionId: $session->getId(),
-            url: $this->urlContextService->generateUrl('admin_user_show', ['user' => $user->getId()], $referer),
+            url: $this->urlContextService->generateUrl('admin_user_show', ['user' => $user->getId()], $fallback),
             isPresent: $isPresent,
             isFramer: $level->getType() === LevelType::FRAME,
             userId: $user->getId(),
@@ -103,18 +101,18 @@ class ParticipantMapper
                 size: Size::ICON,
             ) : null,
             dropdown: $this->dropdown(
-                $session, 
-                $authorizations['BACK_HOME_ALONE'] ?? null, 
-                $isClusterComplete, 
+                $session,
+                $authorizations['BACK_HOME_ALONE'] ?? null,
+                $isClusterComplete,
                 $isEditable,
-                $referer
+                $fallback
             ),
             indicators: $indicators,
             action: null,
             status: ($isClusterComplete)
-                ? ($isPresent)  
+                ? ($isPresent)
                     ? new BadgeView(
-                        value: 'Présent' ,
+                        value: 'Présent',
                         variant: ColorVariant::SUCCESS,
                     )
                     : new BadgeView(
@@ -123,11 +121,11 @@ class ParticipantMapper
                     )
                 : null,
         );
-    } 
+    }
 
     private function dropdown(
-        Session $session, 
-        ?LicenceAgreement $backHomeAuthorization, 
+        Session $session,
+        ?LicenceAgreement $backHomeAuthorization,
         bool $isClusterComplete,
         bool $isEditable,
         ?string $referer,

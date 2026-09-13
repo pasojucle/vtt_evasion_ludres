@@ -10,6 +10,7 @@ use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
 use App\Service\CacheService;
 use App\Service\LogService;
+use App\State\Cluster\Provider\ClusterFrameReadProvider;
 use App\State\Cluster\Provider\ClusterReadProvider;
 use App\State\Cluster\Provider\ClustersActivityReadProvider;
 use App\UseCase\Cluster\ExportCluster;
@@ -31,7 +32,7 @@ class ClusterController extends AbstractCrudController
     ) {
     }
 
-    #[Route('/sortie/groupes/{bikeRide}', name: 'admin_cluster_list_activity', methods: ['GET'])]
+    #[Route('/admin/groupes/{bikeRide}', name: 'admin_cluster_list_activity', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_VIEW', 'bikeRide')]
     public function adminClustersBikeRide(
         Request $request,
@@ -133,6 +134,20 @@ class ClusterController extends AbstractCrudController
     public function adminClusterShow(
         Request $request,
         ClusterReadProvider $provider,
+        Cluster $cluster
+    ): Response {
+        return $this->handleComponentAction(
+            $request,
+            $provider,
+            $cluster
+        );
+    }
+
+    #[Route('/admin/groupe/encadrants/{cluster}', name: 'admin_cluster_frame_show', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_VIEW', 'cluster')]
+    public function adminClusterFramerShow(
+        Request $request,
+        ClusterFrameReadProvider $provider,
         Cluster $cluster
     ): Response {
         return $this->handleComponentAction(

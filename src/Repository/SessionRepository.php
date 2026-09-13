@@ -424,7 +424,7 @@ class SessionRepository extends ServiceEntityRepository implements SessionReposi
         ;
     }
 
-    public function findParticipationByUsers(Array $userIds): array
+    public function findParticipationByUsers(array $userIds): array
     {
         return $this->createQueryBuilder('s')
             ->select(sprintf('%s as count', (new Expr())->count('s.isPresent')), 'usr.id as userId')

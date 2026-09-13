@@ -47,7 +47,7 @@ class CoverageListMapper
         CoverageFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
 
@@ -61,9 +61,9 @@ class CoverageListMapper
                     new LabelView($identity->getFullName()),
                 ],
                 indicators: $this->getIndicators($entity->getLevel()),
-                dropdown: $this->userDropdownMapper->mapToView($entity, $referer),
+                dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
                 url: $this->urlGenerator->generate("admin_user_show", ['user' => $entity->getId()]),
-                action: $this->getAction($licence, $referer),
+                action: $this->getAction($licence, $targetUrl),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_200px_100px]',
             );
@@ -136,11 +136,11 @@ class CoverageListMapper
         );
     }
 
-    private function getAction(Licence $licence, ?string $referer): LinkView
+    private function getAction(Licence $licence, ?string $targetUrl): LinkView
     {
         return new LinkView(
             label: 'Valider',
-            url: $this->urlContextService->generateUrl('admin_coverage_validate', ['licence' => $licence->getId(), ], $referer),
+            url: $this->urlContextService->generateUrl('admin_coverage_validate', ['licence' => $licence->getId(), ], $targetUrl),
             icon: 'lucide:square-check-big',
             variant: ColorVariant::SUCCESS,
             size: Size::SM,

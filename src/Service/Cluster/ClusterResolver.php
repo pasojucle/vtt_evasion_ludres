@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Cluster;
 
-use App\Dto\Service\ClusterResolverResult;
 use App\Dto\Enum\ClusterResolverStatus;
+use App\Dto\Service\ClusterResolverResult;
 use App\Entity\BikeRide;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
@@ -35,7 +35,7 @@ class ClusterResolver
             foreach ($bikeRide->getClusters() as $cluster) {
                 if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
                     $participants = ($isSchoolActivity)
-                        ? $cluster->getSessions()->map(fn(Session $session) => !$session->getMember()->isFramer())
+                        ? $cluster->getSessions()->map(fn (Session $session) => !$session->getMember()->isFramer())
                         : $cluster->getSessions();
                     if ($cluster->getMaxUsers() < $participants->count()) {
                         return ClusterResolverResult::failure(ClusterResolverStatus::CAPACITY_EXCEEDED, $cluster);

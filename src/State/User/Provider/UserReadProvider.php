@@ -37,18 +37,18 @@ class UserReadProvider implements ComponentProviderInterface
     {
         $tabs = [
             new TabView(
-                title: 'Identité & Contacts', 
+                title: 'Identité & Contacts',
                 icon: 'lucide:user',
                 view: $this->identityMapper->mapToView($entity),
             ),
             new TabView(
-                title: 'Licence & statut', 
-                icon: 'lucide:id-card', 
+                title: 'Licence & statut',
+                icon: 'lucide:id-card',
                 view: $this->licenceMapper->mapToView($entity)
             ),
             new TabView(
-                title: 'Participation', 
-                icon: 'lucide:chart-line', 
+                title: 'Participation',
+                icon: 'lucide:chart-line',
                 view: $this->participationMapper->mapToView(
                     $entity,
                     $this->seasonService->getCurrentSeasonPeriod()
@@ -57,8 +57,8 @@ class UserReadProvider implements ComponentProviderInterface
         ];
         if ($entity->isSchoolMember()) {
             $tabs[] = new TabView(
-                title: 'Compétences', 
-                icon: 'lucide:badge-check', 
+                title: 'Compétences',
+                icon: 'lucide:badge-check',
                 view: $this->skillsMapper->mapToView($entity),
             );
         }

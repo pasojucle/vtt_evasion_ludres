@@ -31,7 +31,6 @@ class BoardRoleController extends AbstractCrudController
         Request $request
     ): Response {
         return $this->handleListPaginedAction(
-            BoardRoleFilter::class,
             $provider,
             $request
         );

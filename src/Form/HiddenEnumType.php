@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Enum\PracticeEnum;
 use App\Form\Transformer\HiddenEnumMultipleTransformer;
 use App\Form\Transformer\HiddenEnumTransformer;
 use Symfony\Component\Form\AbstractType;

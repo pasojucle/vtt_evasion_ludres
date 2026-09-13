@@ -26,5 +26,6 @@ readonly class ParticipantView
         public array $indicators,
         public ?LinkView $action,
         public ?BadgeView $status,
-    ){}
+    ) {
+    }
 }

@@ -42,7 +42,7 @@ class BikeRideTypeListMapper
         BikeRideTypeFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
 
@@ -53,7 +53,7 @@ class BikeRideTypeListMapper
                     new LabelView($entity->getName()),
                 ],
                 status: $this->getStatus($entity),
-                dropdown: $this->dropDown($entity, $referer),
+                dropdown: $this->dropDown($entity, $targetUrl),
                 isDeleted: $entity->isDeleted(),
                 gridTemplateContent: 'grid-cols-1 grid-cols-[1fr_100px]'
             );
@@ -64,7 +64,7 @@ class BikeRideTypeListMapper
             title: 'Type d\'activité',
             description: 'Administration des types d\'activité.',
             items: $items,
-            settings: $this->settings($referer),
+            settings: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -85,21 +85,21 @@ class BikeRideTypeListMapper
         );
     }
 
-    private function settings(string $referer): DropdownView
+    private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', $referer, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
                 label: 'Ajouter un message',
                 url: $this->urlContextService->generateUrl('admin_message_add', [
                     'sectionName' => 'BIKE_RIDE_TYPE'
-                ], $referer),
+                ], $targetUrl),
                 icon: 'lucide:message-circle-plus',
                 variant: ColorVariant::DROPDOWN,
             ),
         ]);
     }
 
-    private function dropDown(BikeRideType $entity, string $referer): DropdownView
+    private function dropDown(BikeRideType $entity, string $targetUrl): DropdownView
     {
         if ($entity->isDeleted()) {
             return new DropdownView(
@@ -108,7 +108,7 @@ class BikeRideTypeListMapper
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_bike_ride_type_restore', [
                             'bikeRideType' => $entity->getId()
-                            ], $referer),
+                            ], $targetUrl),
                         icon: 'lucide:archive-restore',
                         variant: ColorVariant::DROPDOWN,
                     ),
@@ -122,7 +122,7 @@ class BikeRideTypeListMapper
                     label: 'Modifier',
                     url: $this->urlContextService->generateUrl('admin_bike_ride_type_edit', [
                         'bikeRideType' => $entity->getId()
-                        ], $referer),
+                        ], $targetUrl),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
@@ -130,7 +130,7 @@ class BikeRideTypeListMapper
                     label: 'Supprimer',
                     url: $this->urlContextService->generateUrl('admin_bike_ride_type_delete', [
                         'bikeRideType' => $entity->getId()
-                        ], $referer),
+                        ], $targetUrl),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

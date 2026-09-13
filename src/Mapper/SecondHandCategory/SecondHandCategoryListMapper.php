@@ -39,7 +39,7 @@ class SecondHandCategoryListMapper
         SecondHandCategoryFilter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
-        $referer = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $fallback = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
         /** @var SecondHandCategory $entity */
@@ -51,7 +51,7 @@ class SecondHandCategoryListMapper
                 status: $this->getStatus($entity),
                 isDeleted: $entity->isDeleted(),
                 indicators: $this->getIndicators($entity),
-                dropdown: $this->dropDown($entity, $referer),
+                dropdown: $this->dropDown($entity, $fallback),
                 gridTemplateContent: 'grid-cols-[1fr_80px] lg:grid-cols-[1fr_150px]',
                 gridTemplateBadges: 'grid-cols-1 lg:grid-cols-[1fr_2fr] gap-2 justify-items-center',
             );
@@ -75,7 +75,7 @@ class SecondHandCategoryListMapper
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
             addItem: new LinkView(
                 label: 'Ajouter une catégorie',
-                url: $this->urlContextService->generateUrl('admin_second_hand_category_add', [], $referer),
+                url: $this->urlContextService->generateUrl('admin_second_hand_category_add', [], $fallback),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
                 htmlAttributes: [

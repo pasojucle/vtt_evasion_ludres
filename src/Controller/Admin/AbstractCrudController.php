@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\Filter\AbstractFilter;
 use App\Dto\State\RedirectProcessorResult;
-use App\Dto\State\TurboStreamContext;
 use App\Dto\State\TurboStreamProcessorResult;
+use App\Dto\State\ViewContext;
 use App\Form\Filter\FilterAdvancedType;
 use App\Form\Filter\ListFilterType;
 use App\Service\UrlContextService;
 use App\State\Interface\ComponentProcessorInterface;
 use App\State\Interface\ComponentProviderInterface;
 use App\State\Interface\FilterInitializerInterface;
-use App\State\Interface\FormAddComponentProviderInterface;
 use App\State\Interface\FormComponentProviderInterface;
 use App\State\Interface\FormProcessorInterface;
 use App\State\Interface\FormRedirectProcessorInterface;
+use App\State\Interface\InputInitializerInterface;
 use App\State\Interface\JsonProcessorInterface;
 use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\Interface\ListProviderInterface;
@@ -42,28 +41,25 @@ abstract class AbstractCrudController extends AbstractController
     }
 
     protected function handleListPaginedAction(
-        string $filterClass,
         ListProviderInterface $provider,
         Request $request,
     ): Response {
         $route = $request->attributes->get('_route');
         $queryParams = $request->query->all();
 
-        $filter = $provider->getHydratedDto($queryParams, $filterClass);
-        if ($provider instanceof FilterInitializerInterface) {
-            $provider->initializeFilters($filter, $queryParams);
-        }
-
         $filterConfig = $provider->getFilterConfig($route);
         if (!$filterConfig) {
             throw $this->createNotFoundException();
         }
 
+        $dataClass = $filterConfig->getDataClass();
+        $filter = $provider->getHydratedDto($queryParams, $dataClass);
+        if ($provider instanceof FilterInitializerInterface) {
+            $provider->initializeFilters($filter, $queryParams);
+        }
+
         $form = $this->createForm(ListFilterType::class, $filter, [
-            'data_class' => $filterConfig->getDataClass(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'event_subscriber' => $filterConfig->getEventSubscriber(),
+            'filter_config' => $filterConfig,
         ]);
 
         $form->handleRequest($request);
@@ -83,10 +79,13 @@ abstract class AbstractCrudController extends AbstractController
         Request $request,
         string $filterClass,
         ListLoadMoreProviderInterface $provider,
-        TurboStreamContext $context
+        ViewContext $context
     ): Response {
         $queryParams = $request->query->all();
         $filter = $provider->getHydratedDto($queryParams, $filterClass);
+        if ($provider instanceof FilterInitializerInterface) {
+            $provider->initializeFilters($filter, $queryParams);
+        }
 
         $currentPage = $context->page;
         $view = $provider->getStreamView($filter, $context);
@@ -109,10 +108,10 @@ abstract class AbstractCrudController extends AbstractController
         FormComponentProviderInterface $provider,
         FormProcessorInterface $processor,
         string $formClass = FormType::class,
-        ?TurboStreamContext $context = null,
+        ?ViewContext $context = null,
     ): Response {
         $fallback = $this->urlContextService->getRedirectUrl($request);
-        if ($provider instanceof FormAddComponentProviderInterface) {
+        if ($provider instanceof InputInitializerInterface) {
             $provider->setDefaultValues($object);
         }
 
@@ -151,7 +150,7 @@ abstract class AbstractCrudController extends AbstractController
         $formView = $form->createView();
         $formView->vars['attr'] = array_merge($formView->vars['attr'] ?? [], $view->getFormAttr());
         return $this->render($view->getTemplate(), [
-            'form' => $form->createView(),
+            'form' => $formView,
             'view' => $view
         ], $response);
     }
@@ -251,13 +250,11 @@ abstract class AbstractCrudController extends AbstractController
 
         $form = $this->createForm(FilterAdvancedType::class, $filter, [
             'action' => $request->getPathInfo(),
-            'fields' => $filterConfig->getFields(),
-            'advanced_fields' => $filterConfig->getAdvancedFields(),
-            'data_class' => $dataClass,
+            'filter_config' => $filterConfig,
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $streamView = $provider->getStreamView($filter, new TurboStreamContext(
+            $streamView = $provider->getStreamView($filter, new ViewContext(
                 $request->attributes->get('_route'),
                 $request->attributes->get('_route_params'),
                 $request->query->getInt('page', 1),
@@ -292,8 +289,9 @@ abstract class AbstractCrudController extends AbstractController
         $dataClass = $filterConfig->getDataClass();
         $filter = $provider->getHydratedDto($queryParams, $dataClass);
 
-        $streamView = $provider->getStreamView($filter, new TurboStreamContext(
+        $streamView = $provider->getStreamView($filter, new ViewContext(
             $filterRoute,
+            [],
             1,
             $entity
         ));
