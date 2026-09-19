@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ListDrawerHandler;
+use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\Filter\ActivityFramersFilter;
-use App\Dto\State\ViewContext;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
-use App\Form\Filter\ListFilterType;
-use App\Http\Handler\ListDrawerHandler;
-use App\Http\Handler\ListPaginedHandler;
 use App\Repository\BikeRideRepository;
 use App\State\Activity\Processor\ActivityDeleteProcessor;
 use App\State\Activity\Processor\ActivityRestoreProcessor;
@@ -20,7 +17,6 @@ use App\State\Activity\Provider\ActivityAdminListProvider;
 use App\State\Activity\Provider\ActivityDeleteProvider;
 use App\State\Activity\Provider\ActivityFramersReadProvider;
 use App\State\Activity\Provider\ActivityUpdateProvider;
-use App\State\Interface\FilterInitializerInterface;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
@@ -44,7 +40,7 @@ class BikeRideController extends AbstractCrudController
     public function adminList(
         Request $request,
         ActivityAdminListProvider $provider,
-        ListPaginedHandler $listPaginedHandler,
+        ListPaginatedHandler $listPaginedHandler,
     ): Response {
         return $listPaginedHandler->handle(
             $request,

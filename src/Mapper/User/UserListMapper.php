@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\User;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
@@ -24,7 +25,6 @@ use App\Mapper\FilterChipsMapper;
 use App\Mapper\Level\LevelBadgeMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\WikiMapper;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

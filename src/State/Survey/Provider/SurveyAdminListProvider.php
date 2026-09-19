@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Enum\SurveyRestriction;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SurveyFilter;
@@ -12,9 +14,7 @@ use App\Entity\Enum\SurveyStatusEnum;
 use App\Mapper\EmailClipboardMapper;
 use App\Mapper\Survey\SurveyAdminListMapper;
 use App\Repository\SurveyRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;

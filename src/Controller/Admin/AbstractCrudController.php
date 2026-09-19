@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Contract\Provider\FilterInitializerInterface;
 use App\Dto\State\RedirectProcessorResult;
 use App\Dto\State\TurboStreamProcessorResult;
 use App\Dto\State\ViewContext;
@@ -11,8 +12,6 @@ use App\Form\Filter\FilterAdvancedType;
 use App\Form\Filter\ListFilterType;
 use App\Service\UrlContextService;
 use App\State\Interface\ComponentProcessorInterface;
-use App\State\Interface\ComponentProviderInterface;
-use App\State\Interface\FilterInitializerInterface;
 use App\State\Interface\FormComponentProviderInterface;
 use App\State\Interface\FormProcessorInterface;
 use App\State\Interface\FormRedirectProcessorInterface;
@@ -110,7 +109,10 @@ abstract class AbstractCrudController extends AbstractController
         string $formClass = FormType::class,
         ?ViewContext $context = null,
     ): Response {
-        $fallback = $this->urlContextService->getRedirectUrl($request);
+        $context = new ViewContext(
+            route: $request->attributes->get('_route'),
+            fallback:$this->urlContextService->decodeUrl($request->query->get('_redirect_to')),
+        );
         if ($provider instanceof InputInitializerInterface) {
             $provider->setDefaultValues($object);
         }
@@ -126,7 +128,7 @@ abstract class AbstractCrudController extends AbstractController
                 $result = $processor->process(
                     $object,
                     $request->files->get($form->getName()),
-                    $fallback,
+                    $this->urlContextService->decodeUrl($context->encodedFallback),
                 );
                 if ($result instanceof RedirectProcessorResult) {
                     $this->addFlash($result->flashType, $result->messageKey);
@@ -146,7 +148,7 @@ abstract class AbstractCrudController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $view = $provider->getFormView($object, $fallback);
+        $view = $provider->getFormView($object, $context);
         $formView = $form->createView();
         $formView->vars['attr'] = array_merge($formView->vars['attr'] ?? [], $view->getFormAttr());
         return $this->render($view->getTemplate(), [
@@ -163,7 +165,7 @@ abstract class AbstractCrudController extends AbstractController
         $result = $processor->process(
             $object,
             null,
-            $this->urlContextService->getRedirectUrl($request)
+            $this->urlContextService->decodeUrl($request)
         );
         
         $this->addFlash($result->flashType, $result->messageKey);
@@ -215,24 +217,6 @@ abstract class AbstractCrudController extends AbstractController
         return $response;
     }
 
-    protected function handleComponentAction(
-        Request $request,
-        ComponentProviderInterface $provider,
-        object $object,
-    ): Response {
-        $view = $provider->getView(
-            $object,
-            $this->urlContextService->getRedirectUrl($request),
-            $this->urlContextService->generateTargetUrl(
-                $request->attributes->get('_route'),
-                $request->attributes->get('_route_params'),
-            )
-        );
-        return $this->render($view->getTemplate(), [
-            'view' => $view
-        ]);
-    }
-
     protected function handleStreamFilterAction(
         Request $request,
         object $entity,
@@ -255,10 +239,10 @@ abstract class AbstractCrudController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $streamView = $provider->getStreamView($filter, new ViewContext(
-                $request->attributes->get('_route'),
-                $request->attributes->get('_route_params'),
-                $request->query->getInt('page', 1),
-                $entity
+                route: $request->attributes->get('_route'),
+                routeParams: $request->attributes->get('_route_params'),
+                page: $request->query->getInt('page', 1),
+                parent: $entity
             ));
 
             return $this->render($streamView->getStreamTemplate(), [
@@ -290,10 +274,8 @@ abstract class AbstractCrudController extends AbstractController
         $filter = $provider->getHydratedDto($queryParams, $dataClass);
 
         $streamView = $provider->getStreamView($filter, new ViewContext(
-            $filterRoute,
-            [],
-            1,
-            $entity
+            route: $filterRoute,
+            parent: $entity
         ));
 
         return $this->render($streamView->getStreamTemplate(), [

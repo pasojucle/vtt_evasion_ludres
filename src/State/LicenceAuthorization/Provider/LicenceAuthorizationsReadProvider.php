@@ -22,7 +22,7 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): LicenceAuthorizationsSheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): LicenceAuthorizationsSheetView
     {
         return new LicenceAuthorizationsSheetView(
             title: 'Modifier',

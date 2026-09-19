@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Mapper\Registration;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\View\ListActionViewInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
@@ -13,7 +15,6 @@ use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributView;
-use App\Dto\View\Interface\ListActionViewInterface;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
 use App\Dto\View\ListItemView;
@@ -24,7 +25,6 @@ use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\Registration\RegistrationDropdownMapper;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use App\Service\UserService;

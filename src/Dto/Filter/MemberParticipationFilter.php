@@ -26,4 +26,9 @@ class MemberParticipationFilter extends AbstractFilter
     {
         $this->member = $value;
     }
+
+    public function getChipsExcludeAttributes(): array
+    {
+        return ['member'];
+    }
 }

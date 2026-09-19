@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\State\Product\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\ProductFilter;
 use App\Dto\View\ListView;
 use App\Mapper\Product\ProductAdminListMapper;
 use App\Repository\ProductRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 

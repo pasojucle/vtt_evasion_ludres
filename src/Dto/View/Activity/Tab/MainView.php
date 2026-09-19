@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Activity\Tab;
 
-use App\Dto\View\Interface\TabContentInterface;
+use App\Core\Contract\View\TabContentInterface;
 
 readonly class MainView implements TabContentInterface
 {

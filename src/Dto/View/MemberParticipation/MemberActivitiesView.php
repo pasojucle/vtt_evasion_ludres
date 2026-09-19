@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\View\MemberParticipation;
 
+use App\Core\Contract\View\LoadMoreViewInterface;
 use App\Dto\View\BadgeView;
 use App\Dto\View\FilterChipView;
-use App\Dto\View\Interface\LoadMoreViewInterface;
 use App\Dto\View\LinkView;
 
 readonly class MemberActivitiesView implements LoadMoreViewInterface

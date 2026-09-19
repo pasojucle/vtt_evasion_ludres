@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\SkillFilter;
 use App\Entity\Level;
 use App\Entity\SkillCategory;

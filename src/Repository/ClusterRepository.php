@@ -8,7 +8,6 @@ use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Log;
 use App\Entity\Member;
-use App\Entity\User;
 use App\Repository\Interface\ClusterRepositoryInterface;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

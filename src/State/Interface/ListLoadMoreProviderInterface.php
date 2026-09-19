@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Interface;
 
+use App\Core\Contract\View\LoadMoreViewInterface;
 use App\Dto\State\ViewContext;
-use App\Dto\View\Interface\LoadMoreViewInterface;
 
 interface ListLoadMoreProviderInterface extends ListFilteredProviderInterface, TurboStreamProviderInterface, FormComponentProviderInterface
 {

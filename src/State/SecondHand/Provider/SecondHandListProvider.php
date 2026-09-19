@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\State\SecondHand\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\FilterInitializerInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SecondHandFilter;
 use App\Dto\View\ListView;
 use App\Mapper\SecondHand\SecondHandListMapper;
 use App\Repository\SecondHandRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
-use App\State\Interface\FilterInitializerInterface;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Documentation\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Documentation;
 use App\Mapper\DestructiveModalMapper;
@@ -19,7 +20,7 @@ class DocumentationDeleteProvider implements FormComponentProviderInterface
     /**
      * @implements FormComponentProviderInterface<Documentation>
      */
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la documentation %s', $entity->getName()));
     }

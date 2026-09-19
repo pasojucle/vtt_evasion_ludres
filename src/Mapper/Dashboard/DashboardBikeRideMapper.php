@@ -38,7 +38,7 @@ class DashboardBikeRideMapper
                     ? 'framers'
                     : $cluster->getId();
             $sessions = (array_key_exists($clusterId, $sessionsByClusters))
-                ? $sessionsByClusters[$cluster->getId()]
+                ? $sessionsByClusters[$clusterId]
                 : [];
             $clusters[] = new DashboardClusterView(
                 $cluster->getTitle(),

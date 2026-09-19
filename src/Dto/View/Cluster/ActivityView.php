@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Cluster;
 
-use App\Dto\View\Interface\TabWrapperHeaderInterface;
+use App\Core\Contract\View\TabWrapperHeaderInterface;
 
 readonly class ActivityView implements TabWrapperHeaderInterface
 {

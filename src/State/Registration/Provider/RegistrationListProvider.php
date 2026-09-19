@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Registration\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Enum\RegistrationStatus;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\RegistrationFilter;
@@ -14,10 +16,8 @@ use App\Mapper\Registration\RegistrationListMapper;
 use App\Mapper\User\UserAutocompleteMapper;
 use App\Mapper\User\UserListExportMapper;
 use App\Repository\MemberRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use App\State\Interface\StreamExportableInterface;
 use Doctrine\ORM\QueryBuilder;

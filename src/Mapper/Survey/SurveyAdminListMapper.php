@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mapper\Survey;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\View\ListActionViewInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SurveyFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\HtmlAttributView;
-use App\Dto\View\Interface\ListActionViewInterface;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
 use App\Dto\View\ListItemView;
@@ -19,7 +20,6 @@ use App\Entity\Survey;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\CsrfTokenService;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

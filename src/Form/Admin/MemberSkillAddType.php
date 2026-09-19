@@ -6,10 +6,8 @@ namespace App\Form\Admin;
 
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Entity\Level;
-use App\Entity\MemberSkill;
 use App\Entity\SkillCategory;
 use App\Form\Admin\EventListener\Skill\AddSkillSubscriber;
-use App\Form\Admin\SkillAddFilterType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

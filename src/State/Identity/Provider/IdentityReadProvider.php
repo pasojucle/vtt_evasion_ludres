@@ -22,7 +22,7 @@ class IdentityReadProvider implements TurboStreamProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): IdentitySheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): IdentitySheetView
     {
         return new IdentitySheetView(
             title: 'Modifier',

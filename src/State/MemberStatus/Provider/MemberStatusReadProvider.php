@@ -21,7 +21,7 @@ class MemberStatusReadProvider implements TurboStreamProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): MemberStatusSheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): MemberStatusSheetView
     {
         return new MemberStatusSheetView(
             title: 'Modifier',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Level\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Level;
 use App\Mapper\DestructiveModalMapper;
@@ -15,7 +16,7 @@ class LevelDeleteProvider implements FormComponentProviderInterface
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le niveau %s', $entity->getTitle()));
     }

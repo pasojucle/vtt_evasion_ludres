@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View\User\Tab;
 
+use App\Core\Contract\View\TabWrapperHeaderInterface;
 use App\Dto\View\BadgeView;
-use App\Dto\View\Interface\TabWrapperHeaderInterface;
 
 readonly class WrapperHeaderView implements TabWrapperHeaderInterface
 {

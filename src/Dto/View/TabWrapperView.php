@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-use App\Dto\View\Interface\ComponentViewInterface;
-use App\Dto\View\Interface\TabWrapperHeaderInterface;
+use App\Core\Contract\View\ComponentViewInterface;
+use App\Core\Contract\View\TabWrapperHeaderInterface;
 
 readonly class TabWrapperView implements ComponentViewInterface
 {

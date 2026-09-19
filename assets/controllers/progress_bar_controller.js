@@ -9,11 +9,11 @@ export default class extends Controller {
     connect() {
         this.initialize();
         this.animateHandler = this.animateFromTab.bind(this);
-        document.addEventListener("progress-bar:animateFromTab", this.animateHandler);
+        document.addEventListener("progress-bar:animate-from-tab", this.animateHandler);
     }
 
     disconnect() {
-        document.removeEventListener("progress-bar:animateFromTab", this.animateHandler);
+        document.removeEventListener("progress-bar:animate-from-tab", this.animateHandler);
     }
 
     init() {

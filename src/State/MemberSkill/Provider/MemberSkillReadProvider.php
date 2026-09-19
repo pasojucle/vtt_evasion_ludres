@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\MemberSkill\Provider;
 
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\State\ViewContext;
 use App\Dto\View\MemberSkill\MemberSkillsView;
@@ -14,7 +15,6 @@ use App\Repository\MemberSkillRepository;
 use App\Repository\SkillCategoryRepository;
 use App\Repository\SkillRepository;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\MemberSkill\Trait\MemberSkillDataProviderTrait;
 
@@ -40,12 +40,12 @@ class MemberSkillReadProvider implements ListLoadMoreProviderInterface
     {
         $currentPage = $context->page;
         $member = $context->parent;
-        $entity->member = $member;
         $filterConfig = $this->getFilterConfig('admin_member_skill_filter');
 
-        $qb = $this->getQueryBuilder($entity);
+        $qb = $this->getQueryBuilder($member, $entity);
 
         return $this->memberSkillReadMapper->mapToView(
+            member: $member,
             filter: $entity,
             filterConfig: $filterConfig,
             paginatedSkills: $this->paginator->paginate(
@@ -59,7 +59,7 @@ class MemberSkillReadProvider implements ListLoadMoreProviderInterface
         );
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): SheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',

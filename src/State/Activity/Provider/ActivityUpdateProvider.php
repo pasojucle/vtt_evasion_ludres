@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\Activity\Provider;
 
 use App\Dto\Enum\Size;
+use App\Dto\State\ViewContext;
 use App\Dto\View\Activity\Tab\MainView;
 use App\Dto\View\Activity\Tab\OptionsView;
 use App\Dto\View\Activity\Tab\ParticipantsView;
@@ -30,7 +31,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): FormTabWrapperView
+    public function getFormView(object $entity, ?ViewContext $context = null): FormTabWrapperView
     {
         $action = ($entity->getId()) ? 'Modifier' : 'Ajouter';
 
@@ -66,7 +67,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
                 ),
             ],
             fallback: new LinkView(
-                url: $fallback,
+                url: $context->fallback,
                 icon: 'lucide:chevron-left',
                 size: Size::ICON
             ),

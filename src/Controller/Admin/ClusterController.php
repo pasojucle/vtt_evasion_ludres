@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\DetailHandler;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
@@ -38,12 +39,9 @@ class ClusterController extends AbstractCrudController
         Request $request,
         ClustersActivityReadProvider $provider,
         BikeRide $bikeRide,
+        DetailHandler $handler,
     ): Response {
-        return $this->handleComponentAction(
-            $request,
-            $provider,
-            $bikeRide
-        );
+        return $handler->handle($request, $provider, $bikeRide);
     }
 
     #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', methods: ['GET', 'POST'])]
@@ -134,13 +132,10 @@ class ClusterController extends AbstractCrudController
     public function adminClusterShow(
         Request $request,
         ClusterReadProvider $provider,
-        Cluster $cluster
+        Cluster $cluster,
+        DetailHandler $handler,
     ): Response {
-        return $this->handleComponentAction(
-            $request,
-            $provider,
-            $cluster
-        );
+        return $handler->handle($request, $provider, $cluster);
     }
 
     #[Route('/admin/groupe/encadrants/{cluster}', name: 'admin_cluster_frame_show', methods: ['GET'])]
@@ -148,13 +143,10 @@ class ClusterController extends AbstractCrudController
     public function adminClusterFramerShow(
         Request $request,
         ClusterFrameReadProvider $provider,
-        Cluster $cluster
+        Cluster $cluster,
+        DetailHandler $handler,
     ): Response {
-        return $this->handleComponentAction(
-            $request,
-            $provider,
-            $cluster
-        );
+        return $handler->handle($request, $provider, $cluster);
     }
 
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]

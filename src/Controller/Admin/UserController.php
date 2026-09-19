@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\DetailHandler;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Filter\UserFilter;
 use App\Entity\Member;
@@ -80,12 +81,9 @@ class UserController extends AbstractCrudController
         User $user,
         Request $request,
         UserReadProvider $provider,
+        DetailHandler $handler,
     ): Response {
-        return $this->handleComponentAction(
-            $request,
-            $provider,
-            $user
-        );
+        return $handler->handle($request, $provider, $user);
     }
 
     #[Route('/adherent/edit/{user}', name: 'user_edit', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]

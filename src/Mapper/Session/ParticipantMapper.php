@@ -11,6 +11,7 @@ use App\Dto\View\BadgeView;
 use App\Dto\View\Cluster\ParticipantView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
+use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LinkView;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
@@ -20,9 +21,11 @@ use App\Entity\Member;
 use App\Entity\Session;
 use App\Mapper\Level\LevelBadgeMapper;
 use App\Mapper\LicenceAuthorization\LicenceAuthorizationBadgeMapper;
+use App\Service\CsrfTokenService;
 use App\Service\UrlContextService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ParticipantMapper
@@ -34,6 +37,8 @@ class ParticipantMapper
         private TranslatorInterface $translator,
         private Security $security,
         private UrlContextService $urlContextService,
+        private CsrfTokenManagerInterface $csrfTokenManager,
+        private CsrfTokenService $csrfTokenService,
     ) {
     }
 
@@ -50,6 +55,7 @@ class ParticipantMapper
         $identity = $user->getIdentity();
         $level = $user->getLevel();
         $licences = $user->getLicences();
+        $isPendingReceipt = false;
         $lastLicence = $licences->findFirst(function (int $key, Licence $licence) use ($currentSeason) {
             return $licence->getSeason() === $currentSeason;
         });
@@ -84,7 +90,7 @@ class ParticipantMapper
                     size: Size::ICON,
                 );
             }
-            $isPendingReceipt = $lastLicence?->isPendingReceipt($currentSeason, $licences->count);
+            $isPendingReceipt = $lastLicence?->isPendingReceipt($currentSeason, $licences->count()) ?? false;
         }
 
 
@@ -108,7 +114,7 @@ class ParticipantMapper
                 $fallback
             ),
             indicators: $indicators,
-            action: null,
+            action: $this->getAction($session, $isPresent, $isClusterComplete, $isPendingReceipt),
             status: ($isClusterComplete)
                 ? ($isPresent)
                     ? new BadgeView(
@@ -184,6 +190,50 @@ class ParticipantMapper
             title: $user->getIdentity()->getFullName(),
             infoItems: $infoItems,
             menuItems: $menuItems,
+        );
+    }
+
+    private function getAction(Session $session, bool $isPresent, bool $isClusterComplete, bool $isPendingReceipt): ?LinkView
+    {
+        if ($isClusterComplete) {
+            return null;
+        }
+
+        $tokenId = $this->csrfTokenService->getTokenId($session);
+        $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
+
+        $url = $this->urlGenerator->generate('admin_session_toggle_present', [
+            'session' => $session->getId(),
+            'csrfToken' => $tokenValue,
+        ]);
+        if ($isPresent) {
+            return new LinkView(
+                url: $url,
+                variant: ColorVariant::SUCCESS,
+                size: Size::ICON,
+                icon: 'lucide:square-check-big'
+            );
+        }
+        if ($isPendingReceipt) {
+            return new LinkView(
+                url: $this->urlGenerator->generate('admin_session_message', [
+                    'session' => $session->getId(),
+                    'csrfToken' => $tokenValue,
+                ]),
+                variant: ColorVariant::WARNING,
+                size: Size::ICON,
+                icon: 'lucide:message-circle-question-mark',
+                htmlAttributes: [
+                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
+                ],
+            );
+        }
+
+        return new LinkView(
+            url: $url,
+            variant: ColorVariant::OUTLINE,
+            size: Size::ICON,
+            icon: 'lucide:check'
         );
     }
 }

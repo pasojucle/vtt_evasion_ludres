@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-use App\Dto\View\Interface\ComponentFormViewInterface;
+use App\Core\Contract\View\ComponentFormViewInterface;
 
 readonly class SheetView implements ComponentFormViewInterface
 {

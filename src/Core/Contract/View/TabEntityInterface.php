@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\View\Interface;
+namespace App\Core\Contract\View;
 
 interface TabEntityInterface
 {

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\State\Interface;
 
+use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\State\ViewContext;
-use App\Dto\View\Interface\TurboStreamViewInterface;
 
 /**
  * @template T of object
  */
-interface TurboStreamProviderInterface extends FormComponentProviderInterface
+interface TurboStreamProviderInterface
 {
     /**
-     * @param T $entity
+     * @param T $data
      */
-    public function getStreamView(object $entity, ?ViewContext $context = null): TurboStreamViewInterface;
+    public function getStreamView(object $data, ?ViewContext $context = null): TurboStreamViewInterface;
 }

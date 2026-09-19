@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Gardian;
 
+use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\BadgeView;
 use App\Dto\View\EmailView;
-use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 

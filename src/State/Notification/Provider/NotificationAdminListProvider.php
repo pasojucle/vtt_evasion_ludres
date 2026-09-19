@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Notification\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Enum\NotificationVisibility;
 use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\AbstractFilter;
@@ -11,9 +13,7 @@ use App\Dto\Filter\NotificationFilter;
 use App\Dto\View\ListView;
 use App\Mapper\Notification\NotificationAdminListMapper;
 use App\Repository\NotificationRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 

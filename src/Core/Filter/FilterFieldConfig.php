@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Filter;
+namespace App\Core\Filter;
 
 use App\Dto\Filter\RangeChip;
 use App\Form\HiddenChoiceType;

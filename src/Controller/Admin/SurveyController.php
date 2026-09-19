@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDialogHandler;
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
-use App\Dto\Filter\SurveyFilter;
 use App\Dto\Payload\SurveyToggleDto;
 use App\Entity\History;
 use App\Entity\Survey;
@@ -233,9 +233,10 @@ class SurveyController extends AbstractCrudController
         Request $request,
         SurveyDeleteProcessor $processor,
         SurveyDeleteProvider $provider,
-        Survey $survey
+        Survey $survey,
+        ActionDialogHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $survey,
             $provider,

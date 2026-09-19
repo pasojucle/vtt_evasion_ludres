@@ -37,7 +37,7 @@ class SessionCreateProvider implements TurboStreamProviderInterface, InputInitia
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): SessionAddSheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): SessionAddSheetView
     {
         return new SessionAddSheetView(
             title: 'Ajouter un participant',

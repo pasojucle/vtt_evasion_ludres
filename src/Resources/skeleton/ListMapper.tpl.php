@@ -20,7 +20,7 @@ use App\Entity\<?= $entity_name ?>;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
-use App\Service\Filter\FilterConfigInterface;
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

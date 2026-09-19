@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\RegistrationStep\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\RegistrationStep;
 use App\Mapper\DestructiveModalMapper;
@@ -15,7 +16,7 @@ class RegistrationStepDeleteProvider implements FormComponentProviderInterface
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         /** @var RegistrationStep $entity */
         return $this->destructiveModalMapper->mapToView(sprintf(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\SlideshowImage\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\SlideshowImage;
 use App\Mapper\DestructiveModalMapper;
@@ -19,7 +20,7 @@ class SlideshowImageDeleteProvider implements FormComponentProviderInterface
     /**
      * @implements FormComponentProviderInterface<SlideshowImage>
      */
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'image <b>%s</b> ?',

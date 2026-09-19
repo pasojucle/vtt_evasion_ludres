@@ -15,6 +15,9 @@ class MemberParticipationFilterProcessor implements FormTurboStreamProcessorInte
 {
     public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
-        return new TurboStreamProcessorResult(true);
+        return new TurboStreamProcessorResult(
+            success: true,
+            messageKey: 'member.flash.success.update',
+        );
     }
 }

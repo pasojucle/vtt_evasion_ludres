@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-use App\Dto\View\Interface\ListActionViewInterface;
+use App\Core\Contract\View\ListActionViewInterface;
 
 readonly class ListItemView
 {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\Mapper\DestructiveModalMapper;
@@ -19,7 +20,7 @@ class LicenceDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf(

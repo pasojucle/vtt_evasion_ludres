@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\MemberParticipation;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\MemberParticipationFilter;
@@ -16,7 +17,6 @@ use App\Entity\Session;
 use App\Mapper\Activity\ActivityPeriodMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Model\Currency;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use DateTimeImmutable;
 use Doctrine\ORM\Tools\Pagination\Paginator;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\View\Interface;
+namespace App\Core\Contract\View;
 
-interface ComponentViewInterface
+interface ListActionViewInterface
 {
     public function getName(): string;
     public function getTemplate(): string;

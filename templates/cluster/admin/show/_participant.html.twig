@@ -3,7 +3,7 @@
     lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
     <a 
         href="{{ participant.url }}" 
-        class="absolute inset-0 z-10 mr-10 lg:w-[calc(100%-60px)]" 
+        class="absolute inset-0 z-10 mr-10 lg:w-[calc(100%-100px)]" 
         title="Voir l'élément" 
         data-turbo-frame="_top"
     >
@@ -30,6 +30,7 @@
             {% include participant.status.template with {(participant.status.name): participant.status} %}
         </div>
     {% endif %}
+    {% include participant.action.template with {(participant.action.name): participant.action} %}
     
     {% include 'components/_dropdown.html.twig' with {dropdown: participant.dropdown} %}
 </li>

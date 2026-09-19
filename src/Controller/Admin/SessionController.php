@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Core\Handler\ActionDirectHandler;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Payload\SessionCreateAdminPayload;
 use App\Dto\State\ViewContext;
@@ -14,18 +13,15 @@ use App\Entity\Member;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
-use App\Repository\SessionRepository;
 use App\Service\CacheService;
-use App\Service\LicenceService;
 use App\Service\MessageService;
 use App\Service\ReplaceKeywordsService;
-use App\Service\SessionService;
+use App\State\Cluster\Provider\ClusterUpdateProvider;
 use App\State\Session\Processor\SessionCreateProcessor;
+use App\State\Session\Processor\SessionToggleProcessor;
 use App\State\Session\Provider\SessionCreateProvider;
 use App\UseCase\Session\SetSession;
 use Doctrine\ORM\EntityManagerInterface;
-use Error;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,55 +34,30 @@ class SessionController extends AbstractCrudController
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly CacheService $cacheService,
-        private readonly SessionService $sessionService,
-        private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
         private readonly SetSession $setSession,
     ) {
     }
 
-    #[Route('/admin/seance', name: 'admin_session_present', methods: ['POST'])]
+    #[Route('/admin/session/toggle/present/{session}', name: 'admin_session_toggle_present', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminPresent(
         Request $request,
-        SessionRepository $sessionRepository,
-        LicenceService $licenceService,
-        ClusterDtoTransformer $clusterDtoTransformer,
-        UserDtoTransformer $userDtoTransformer,
+        ClusterUpdateProvider $provider,
+        SessionToggleProcessor $processor,
+        session $session,
+        ActionDirectHandler $handler,
     ): Response {
-        $sessionId = $request->request->get('sessionId');
-        $session = ($sessionId) ? $sessionRepository->find($sessionId) : null;
+        return $handler->handle($request, $session, $provider, $processor);
 
-        if ($session) {
-            $cachePool = new FilesystemAdapter();
-            $cachePool->deleteItem(sprintf('cluster.%s', $session->getCluster()->getId()));
+        // $session->setIsPresent($isPresent);
+            // $this->entityManager->flush();
 
-            $isPresent = !$session->isPresent();
-            $session->setIsPresent($isPresent);
-            $this->entityManager->flush();
-
-            $user = $session->getUser();
-            $licenceService->applyCompleteTrial($user);
+            // $user = $session->getUser();
+            // $licenceService->applyCompleteTrial($user);
             
-            if ($user instanceof Member && !$user->getLastLicence()->getState()->isYearly()) {
-                $this->sessionService->checkEndTesting($user);
-            }
-
-            $this->cacheService->deleteCacheIndex($session->getCluster());
-            $cluster = $session->getCluster();
-
-            return $this->render('session/admin/_present.stream.html.twig', [
-                'cluster' => $clusterDtoTransformer->fromEntity($cluster),
-                'session' => [
-                    'id' => $session->getId(),
-                    'availability' => $session->getAvailability(),
-                    'userIsOnSite' => $session->isPresent(),
-                ],
-                'user' => $userDtoTransformer->fromEntity($session->getUser()),
-                'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
-            ]);
-        }
-
-        throw new Error('session manquante');
+            // if ($user instanceof Member && !$user->getLastLicence()->getState()->isYearly()) {
+            //     $this->sessionService->checkEndTesting($user);
+            // }
     }
 
     #[Route('/admin/session/message/{session}', name: 'admin_session_message', methods: ['GET'], options:['expose' => true])]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\SkillCategory;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SkillCategoryFilter;
@@ -17,7 +18,6 @@ use App\Dto\View\ListView;
 use App\Entity\SkillCategory;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

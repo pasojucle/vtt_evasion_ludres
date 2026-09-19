@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\State\Interface;
+namespace App\Core\Contract\Provider;
 
 use App\Dto\Filter\AbstractFilter;
 

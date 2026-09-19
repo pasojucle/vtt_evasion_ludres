@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Filter;
+namespace App\Core\Contract\Filter;
 
+use App\Core\Filter\FilterFieldConfig;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

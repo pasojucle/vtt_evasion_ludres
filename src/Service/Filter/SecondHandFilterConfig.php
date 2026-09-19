@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\SecondHandFilter;
 use App\Entity\Enum\SecondHandStateEnum;
 use App\Entity\Member;

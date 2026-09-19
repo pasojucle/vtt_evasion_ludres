@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
+use App\Core\Contract\View\ListActionViewInterface;
 use App\Dto\Enum\ButtonType;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
-use App\Dto\View\Interface\ListActionViewInterface;
 
 readonly class ButtonView implements ListActionViewInterface
 {

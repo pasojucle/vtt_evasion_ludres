@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Mapper\MemberSkill;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\MemberSkillFilter;
-use App\Dto\State\MemberSkillDevelopmentData;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LinkView;
 use App\Dto\View\MemberSkill\MemberSkillsView;
+use App\Entity\Member;
 use App\Entity\MemberSkill;
 use App\Mapper\FilterChipsMapper;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,6 +29,7 @@ class MemberSkillReadMapper
     }
 
     public function mapToView(
+        Member $member,
         MemberSkillFilter $filter,
         FilterConfigInterface $filterConfig,
         Paginator $paginatedSkills,
@@ -36,8 +37,8 @@ class MemberSkillReadMapper
         string $route,
         int $currentPage,
     ): MemberSkillsView {
-        $member = $filter->member;
         $queriyParams = $filter->toArray();
+        $queriyParams['member'] = $member->getId();
 
         $hasMoreSkills = $currentPage * PaginatorService::PAGINATOR_PER_PAGE < $paginatedSkills->count();
 

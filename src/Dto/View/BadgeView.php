@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
+use App\Core\Contract\View\ComponentViewInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
-use App\Dto\View\Interface\ComponentViewInterface;
 
 readonly class BadgeView implements ComponentViewInterface
 {

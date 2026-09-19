@@ -14,11 +14,33 @@ export default class extends Controller {
     connect() {
         this.refreshCluster();
         this.confirmHandler = this.confirmComplete.bind(this);
-        window.addEventListener("cluster:confirm-complete", this.confirmHandler);
+        document.addEventListener("cluster:confirm-complete", this.confirmHandler);
+
+        this.activeHandler = this.activeFromTab.bind(this);
+        document.addEventListener("cluster:active-from-tab", this.activeHandler);
+    }
+
+    disconnect() {
+        clearInterval(this.interval);
+        document.removeEventListener("cluster:confirm-complete", this.confirmHandler);
+        document.removeEventListener("cluster:active-from-tab", this.activeHandler);
+    }
+
+    activeFromTab(event) {
+        const { clusterId, isActive } = event.detail;
+        if (Number(clusterId) === this.clusterIdValue) {
+            if (isActive) {
+                this.reloadCluster();
+            } else {
+                console.log("clearInterval cluster", this.clusterIdValue);
+                clearInterval(this.interval);
+            }
+        }
     }
 
     reloadCluster() {
         this.element.reload();
+        console.log("reload cluster", this.clusterIdValue);
         this.refreshCluster();
     }
 
@@ -29,11 +51,6 @@ export default class extends Controller {
                 this.element.reload()
             }, this.refreshIntervalValue);
         }
-    }
-
-    disconnect() {
-        clearInterval(this.interval);
-        window.removeEventListener("cluster:confirm-complete", this.confirmHandler);
     }
 
     complete(event) {

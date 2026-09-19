@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Cluster\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\Cluster\ClusterView;
 use App\Entity\Cluster;
 use App\Entity\Session;
@@ -33,7 +34,7 @@ class ClusterReadProvider implements ComponentProviderInterface
     /**
      * @param Cluster $entity
      */
-    public function getView(object $entity, ?string $fallback = null, ?string $referer = null): ClusterView
+    public function getView(object $entity, ?ViewContext $context = null): ClusterView
     {
         $userIds = $entity->getSessions()->map(fn (Session $session) => $session->getUser()->getId())->toArray();
         $bikeRide = $entity->getBikeRide();

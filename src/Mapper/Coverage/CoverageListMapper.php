@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\Coverage;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\Size;
@@ -22,7 +23,6 @@ use App\Entity\Member;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\User\UserDropdownMapper;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;

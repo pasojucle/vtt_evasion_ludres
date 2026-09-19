@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mapper;
 
+use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\View\FilterChipView;
-use App\Service\Filter\FilterFieldConfig;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -28,11 +28,15 @@ class FilterChipsMapper
         $filterSchips = [];
         $rangesChips = [];
         $queries = $filter->toQueryParams();
-        $preserdNullAttributes = $filter->getPreservedNullAttributes();
+        $preserdveNullAttributes = $filter->getPreservedNullAttributes();
+        $excludeAttributes = $filter->getChipsExcludeAttributes();
         foreach ($fields as $field) {
             $name = $field->name;
+            if (in_array($name, $excludeAttributes)) {
+                continue;
+            }
             $rawValue = $filter->$name;
-            $isPreserdeNull = in_array($name, $preserdNullAttributes);
+            $isPreservedNull = in_array($name, $preserdveNullAttributes);
             if (null === $rawValue) {
                 continue;
             }
@@ -45,7 +49,7 @@ class FilterChipsMapper
                         $filterSchips,
                         $routeName,
                         $queries,
-                        $isPreserdeNull,
+                        $isPreservedNull,
                         $turboFrame,
                         $key
                     );
@@ -61,7 +65,7 @@ class FilterChipsMapper
                 }
                 $rangeChip = $rangesChips[$rangeName];
                 $rangeChip->setValue($name, $this->formatRawValue($field, $rawValue));
-                $rangeChip->queries = $this->getRemoveFromQueries($rangeChip->queries, $name, $isPreserdeNull);
+                $rangeChip->queries = $this->getRemoveFromQueries($rangeChip->queries, $name, $isPreservedNull);
                 if ($rangeChip->isComplete()) {
                     $filterSchips[] = new FilterChipView(
                         sprintf($rangeChip->formatLabel, $rangeChip->startValue, $rangeChip->endValue),
@@ -79,7 +83,7 @@ class FilterChipsMapper
                 $filterSchips,
                 $routeName,
                 $queries,
-                $isPreserdeNull,
+                $isPreservedNull,
                 $turboFrame,
             );
         }
@@ -94,7 +98,7 @@ class FilterChipsMapper
         array &$filterSchips,
         string $routeName,
         array $queries,
-        bool $isPreserdNull,
+        bool $isPreservedNull,
         string $turboFrame,
         ?int $key = null,
     ): void {
@@ -105,8 +109,7 @@ class FilterChipsMapper
                 ? sprintf('%s', $field->options['label'] ?? $name)
                 : sprintf('%s: %s', $field->options['label'] ?? $name, $label);
         }
-        
-        $cleanQueries = $this->getRemoveFromQueries($queries, $name, $isPreserdNull, $key);
+        $cleanQueries = $this->getRemoveFromQueries($queries, $name, $isPreservedNull, $key);
         $filterSchips[] = new FilterChipView(
             $label,
             $field->options['require'] ?? false ? null : $this->urlGenerator->generate($routeName, $cleanQueries),

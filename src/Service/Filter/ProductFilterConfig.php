@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Dto\Enum\PublishStatus;
+use App\Core\Contract\Filter\FilterConfigInterface;
 
+use App\Core\Filter\FilterFieldConfig;
+use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\ProductFilter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

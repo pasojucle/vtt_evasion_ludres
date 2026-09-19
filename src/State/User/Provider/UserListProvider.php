@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\State\User\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\FilterInitializerInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\UserFilter;
 use App\Dto\View\ListView;
@@ -13,11 +16,8 @@ use App\Mapper\User\UserAutocompleteMapper;
 use App\Mapper\User\UserListExportMapper;
 use App\Mapper\User\UserListMapper;
 use App\Repository\MemberRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
-use App\State\FilterHydratorTrait;
-use App\State\Interface\FilterInitializerInterface;
 use App\State\Interface\ListProviderInterface;
 use App\State\Interface\StreamExportableInterface;
 use Doctrine\ORM\QueryBuilder;

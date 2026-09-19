@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\State\Interface;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\View\ListView;
-use App\Service\Filter\FilterConfigInterface;
 
 /**
  * @template T of object

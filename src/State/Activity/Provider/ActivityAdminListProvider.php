@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
+use App\Core\Filter\FilterHydratorTrait;
+
 use App\Dto\Enum\ActivityPeriod;
 use App\Dto\Enum\ActivityRestriction;
 use App\Dto\Enum\ActivityVisibility;
-
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\ActivityFilter;
 use App\Dto\View\ListView;
 use App\Mapper\Activity\ActivityAdminListMapper;
 use App\Repository\BikeRideRepository;
 use App\Repository\SessionRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
-use App\State\Interface\ListProviderInterface;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\QueryBuilder;
@@ -38,8 +39,9 @@ class ActivityAdminListProvider implements ListProviderInterface
     /**
      * @param ActivityFilter $filter
      */
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, HandlerContext $context): ListView
     {
+        $currentPage = $context->page;
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
@@ -51,7 +53,7 @@ class ActivityAdminListProvider implements ListProviderInterface
         return $this->mapper->mapToView(
             $entities,
             $this->getParticipantTotalByActivity($entities),
-            $route,
+            $context->route,
             $currentPage,
             $filter,
             $filterConfig

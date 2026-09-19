@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\State\User\Provider;
 
 use App\Dto\Enum\Size;
+use App\Dto\State\ViewContext;
 use App\Dto\View\LinkView;
 use App\Dto\View\TabView;
 use App\Dto\View\TabWrapperView;
-use App\Entity\Enum\LevelType;
 use App\Entity\User;
 use App\Mapper\User\Read\IdentityMapper;
 use App\Mapper\User\Read\LicenceMapper;
@@ -16,6 +16,7 @@ use App\Mapper\User\Read\ParticipationMapper;
 use App\Mapper\User\Read\SkillsMapper;
 use App\Mapper\User\Read\TabHeaderMapper;
 use App\Service\SeasonService;
+use App\Service\UrlContextService;
 use App\State\Interface\ComponentProviderInterface;
 
 /**
@@ -30,10 +31,11 @@ class UserReadProvider implements ComponentProviderInterface
         private ParticipationMapper $participationMapper,
         private SkillsMapper $skillsMapper,
         private SeasonService $seasonService,
+        private UrlContextService $urlContext,
     ) {
     }
 
-    public function getView(object $entity, ?string $fallback = null, ?string $referer = null): TabWrapperView
+    public function getView(object $entity, ?ViewContext $context = null): TabWrapperView
     {
         $tabs = [
             new TabView(
@@ -69,7 +71,7 @@ class UserReadProvider implements ComponentProviderInterface
             header: $this->tabHeaderMapper->mapToView($entity),
             tabs: $tabs,
             fallback: new LinkView(
-                url: $fallback,
+                url: $this->urlContext->decodeUrl($context->encodedFallback),
                 icon: 'lucide:chevron-left',
                 size: Size::ICON
             ),

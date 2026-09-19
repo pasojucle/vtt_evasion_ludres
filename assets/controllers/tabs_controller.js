@@ -21,13 +21,25 @@ export default class extends Controller {
             const panelIndex = panel.dataset.index;
             const isActive = panel.dataset.index === target;
             panel.classList.toggle('hidden', !isActive);
-            this.dispatch("animateFromTab", { 
+            this.dispatch("animate-from-tab", {
+                target: panel,
                 prefix: "progress-bar",
                 detail: { 
                     wrapper: panel,
                     isActive: isActive,
                 }
             });
+
+            const cluster = panel.querySelector("[data-controller=\"cluster\"]");
+            if (cluster) {
+                this.dispatch("active-from-tab", {
+                    prefix: "cluster",
+                    detail: { 
+                        clusterId: cluster.id.replace("cluster-", ""),
+                        isActive: isActive,
+                    }
+                });
+            }
         })
     }
 }

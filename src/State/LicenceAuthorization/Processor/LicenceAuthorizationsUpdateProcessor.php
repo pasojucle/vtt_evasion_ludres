@@ -23,6 +23,9 @@ class LicenceAuthorizationsUpdateProcessor implements FormTurboStreamProcessorIn
     {
         $this->entityManager->flush();
 
-        return new TurboStreamProcessorResult(true);
+        return new TurboStreamProcessorResult(
+            success: true,
+            messageKey: 'member.flash.success.update',
+        );
     }
 }

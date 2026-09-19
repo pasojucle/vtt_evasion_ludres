@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Interface;
 
-use App\Dto\View\Interface\ComponentViewInterface;
+use App\Core\Contract\View\ComponentViewInterface;
+use App\Dto\State\ViewContext;
 
 /**
  * @template T of object
@@ -14,5 +15,5 @@ interface ComponentProviderInterface
     /**
      * @param T $entity
      */
-    public function getView(object $entity, ?string $fallback = null, ?string $referer = null): ComponentViewInterface;
+    public function getView(object $entity, ?ViewContext $context = null): ComponentViewInterface;
 }

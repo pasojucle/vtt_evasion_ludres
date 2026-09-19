@@ -30,10 +30,10 @@ class MemberParticipationController extends AbstractCrudController
             MemberParticipationFilter::class,
             $provider,
             new ViewContext(
-                $request->attributes->get('_route'),
-                $request->attributes->get('_route_params'),
-                $request->query->getInt('page', 1),
-                $member
+                route: $request->attributes->get('_route'),
+                routeParams: $request->attributes->get('_route_params'),
+                page: $request->query->getInt('page', 1),
+                parent: $member
             )
         );
     }

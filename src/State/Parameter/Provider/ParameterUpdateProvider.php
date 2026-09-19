@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Parameter\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\SheetView;
 use App\Entity\Parameter;
 use App\Service\ReplaceKeywordsService;
@@ -18,7 +19,7 @@ class ParameterUpdateProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): SheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
     {
         /** @var Parameter $entity */
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\Cluster\Provider;
 
 use App\Dto\Enum\Size;
+use App\Dto\State\ViewContext;
 use App\Dto\View\LinkView;
 use App\Dto\View\TabView;
 use App\Dto\View\TabWrapperView;
@@ -12,6 +13,7 @@ use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Mapper\Cluster\ClustersActivityMapper;
 use App\Mapper\Cluster\ClusterTabMapper;
+use App\Service\UrlContextService;
 use App\State\Interface\ComponentProviderInterface;
 
 /**
@@ -22,10 +24,11 @@ class ClustersActivityReadProvider implements ComponentProviderInterface
     public function __construct(
         private ClustersActivityMapper $clutersActivityMapper,
         private ClusterTabMapper $clusterMapper,
+        private UrlContextService $urlContext,
     ) {
     }
 
-    public function getView(object $entity, ?string $fallback = null, ?string $referer = null): TabWrapperView
+    public function getView(object $entity, ?ViewContext $context = null): TabWrapperView
     {
         return new TabWrapperView(
             name: sprintf('bike-ride-%s', $entity->getId()),
@@ -41,7 +44,7 @@ class ClustersActivityReadProvider implements ComponentProviderInterface
                 );
             })->toArray(),
             fallback: new LinkView(
-                url: $fallback,
+                url: $this->urlContext->decodeUrl($context->encodedFallback),
                 icon: 'lucide:chevron-left',
                 size: Size::ICON
             ),

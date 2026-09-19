@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\CoverageFilter;
 use App\Entity\Member;
 use App\Form\Admin\UserAutocompleteField;

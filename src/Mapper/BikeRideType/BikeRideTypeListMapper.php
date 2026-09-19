@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\BikeRideType;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
@@ -19,7 +20,6 @@ use App\Entity\BikeRideType;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

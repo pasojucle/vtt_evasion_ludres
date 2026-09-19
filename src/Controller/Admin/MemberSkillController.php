@@ -37,10 +37,10 @@ class MemberSkillController extends AbstractCrudController
             MemberSkillFilter::class,
             $provider,
             new ViewContext(
-                $request->attributes->get('_route'),
-                $request->attributes->get('_route_params'),
-                $request->query->getInt('page', 1),
-                $member
+                route: $request->attributes->get('_route'),
+                routeParams: $request->attributes->get('_route_params'),
+                page: $request->query->getInt('page', 1),
+                parent: $member,
             )
         );
     }
@@ -123,10 +123,11 @@ class MemberSkillController extends AbstractCrudController
             $processor,
             MemberSkillAddType::class,
             new ViewContext(
-                $request->attributes->get('_route'),
-                $request->attributes->get('_route_params'),
-                $request->query->getInt('page', 1),
-                $filter,
+                route: $request->attributes->get('_route'),
+                routeParams: $request->attributes->get('_route_params'),
+                page: $request->query->getInt('page', 1),
+                filters: $filter,
+                parent: $member,
             ),
         );
     }

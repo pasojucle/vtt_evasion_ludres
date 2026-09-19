@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\State;
+namespace App\Core\Filter;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Filter\AbstractFilter;
 use App\Mapper\FilterMapper;
-use App\Service\Filter\FilterConfigInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Contracts\Service\Attribute\Required;
 

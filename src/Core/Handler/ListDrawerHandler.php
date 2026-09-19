@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Handler;
+namespace App\Core\Handler;
 
+use App\Core\Contract\Provider\FilterInitializerInterface;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\State\ViewContext;
 use App\Form\Filter\ListFilterType;
-use App\State\Interface\FilterInitializerInterface;
 use App\State\Interface\ListDrawerProviderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -42,11 +42,10 @@ readonly class ListDrawerHandler
         }
 
         $context = new ViewContext(
-            $request->attributes->get('_route'),
-            $request->attributes->get('_route_params'),
-            1,
-            $entity,
-            $request->query->get('_redirect_to'),
+            route: $request->attributes->get('_route'),
+            routeParams: $request->attributes->get('_route_params'),
+            parent: $entity,
+            encodedFallback: $request->query->get('_redirect_to'),
         );
         $form = $this->formFactory->create(ListFilterType::class, $filter, [
             'action' => $request->getUri(),

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\BikeRideType\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\BikeRideTypeFilter;
 use App\Dto\View\ListView;
 use App\Mapper\BikeRideType\BikeRideTypeListMapper;
 use App\Repository\BikeRideTypeRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 

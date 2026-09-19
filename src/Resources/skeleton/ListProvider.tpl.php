@@ -9,9 +9,9 @@ use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\<?= $entity_name ?>Filter;
 use App\Mapper\<?= $entity_name ?>\<?= $entity_name ?>ListMapper;
 use App\Repository\<?= $entity_name ?>Repository;
-use App\Service\Filter\FilterConfigInterface;
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
+use App\Core\Filter\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 

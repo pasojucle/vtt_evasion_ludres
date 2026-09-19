@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\MemberSkill\Provider;
 
+use App\Core\Filter\FilterHydratorTrait;
+use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\State\ViewContext;
 use App\Dto\View\MemberSkill\MemberSkillSheetView;
@@ -14,7 +16,6 @@ use App\Repository\MemberSkillRepository;
 use App\Repository\SkillCategoryRepository;
 use App\Repository\SkillRepository;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\MemberSkill\Trait\MemberSkillDataProviderTrait;
 
@@ -39,14 +40,15 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
     public function getStreamView(object $entity, ?ViewContext $context = null): MemberSkillsView
     {
         $currentPage = $context->page;
-        $filter = $context->parent;
-        $member = $entity->member;
-        $filter->member = $member;
+        /**  @var MemberSkillFilter $filter */
+        $filter = $context->filters;
+        $member = $context->parent;
         $filterConfig = $this->getFilterConfig('admin_member_skill_filter');
 
-        $qb = $this->getQueryBuilder($filter);
+        $qb = $this->getQueryBuilder($member, $filter);
 
         return $this->memberSkillReadMapper->mapToView(
+            member: $member,
             filter: $filter,
             filterConfig: $filterConfig,
             paginatedSkills: $this->paginator->paginate(
@@ -60,7 +62,7 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
         );
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): MemberSkillSheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): MemberSkillSheetView
     {
         return new MemberSkillSheetView(
             title: 'Ajouter',
@@ -72,10 +74,10 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
     /**
      * @param MemberSkillCreatePayload $entity
      */
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $entity, ?ViewContext $context = null): array
     {
         return [
-            'memberId' => $entity->member->getId(),
+            'memberId' => $context->parent->getId(),
         ];
     }
 }

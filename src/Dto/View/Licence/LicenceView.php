@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Licence;
 
+use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\BadgeView;
-use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 
 readonly class LicenceView implements TurboStreamViewInterface

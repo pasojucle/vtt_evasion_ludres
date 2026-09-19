@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\State\Order\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\OrderFilter;
 use App\Dto\View\ListView;
 use App\Mapper\Order\OrderAdminListExportMapper;
 use App\Mapper\Order\OrderAdminListMapper;
 use App\Repository\OrderHeaderRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use App\State\Interface\StreamExportableInterface;
 use Doctrine\ORM\QueryBuilder;

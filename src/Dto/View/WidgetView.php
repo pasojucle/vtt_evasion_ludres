@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
+use App\Core\Contract\View\ComponentViewInterface;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\Interface\ComponentViewInterface;
 
 readonly class WidgetView implements ComponentViewInterface
 {

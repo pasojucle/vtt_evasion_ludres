@@ -6,6 +6,7 @@ namespace App\State\Licence\Provider;
 
 use App\Dto\Enum\DialogType;
 use App\Dto\Payload\LicenceReject;
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\State\Interface\FormComponentProviderInterface;
@@ -20,7 +21,7 @@ class LicenceRejectProvider implements FormComponentProviderInterface
         private MessageProvider $messageProvider,
     ) {
     }
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         $licence = $entity->licence;
         return new DialogModalView(

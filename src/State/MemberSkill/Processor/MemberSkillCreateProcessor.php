@@ -23,6 +23,7 @@ class MemberSkillCreateProcessor implements FormTurboStreamProcessorInterface
 
     public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
     {
+        //TODO Ajouter une unicité member + skill
         $newEntity = ($this->createMemberSkill)(
             member: $payload->member,
             skill: $payload->skill,
@@ -31,6 +32,9 @@ class MemberSkillCreateProcessor implements FormTurboStreamProcessorInterface
         $this->entityManager->persist($newEntity);
         $this->entityManager->flush();
 
-        return new TurboStreamProcessorResult(true);
+        return new TurboStreamProcessorResult(
+            success: true,
+            messageKey: 'member_skill.flash.success.create',
+        );
     }
 }

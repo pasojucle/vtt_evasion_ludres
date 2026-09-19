@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\State\Filter;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\View\SheetView;
 use App\Mapper\FilterMapper;
-use App\Service\Filter\FilterConfigInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
 class FilterProvider

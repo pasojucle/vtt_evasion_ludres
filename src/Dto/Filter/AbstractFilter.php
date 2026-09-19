@@ -14,6 +14,11 @@ abstract class AbstractFilter
         return [];
     }
 
+    public function getChipsExcludeAttributes(): array
+    {
+        return [];
+    }
+
     public function toArray(): array
     {
         $properties = [];

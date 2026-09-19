@@ -27,6 +27,9 @@ class IdentityUpdateProcessor implements FormTurboStreamProcessorInterface
         ($this->updateIdentity)($payload, $passportPhoto);
         $this->entityManager->flush();
 
-        return new TurboStreamProcessorResult(true);
+        return new TurboStreamProcessorResult(
+            success: true,
+            messageKey: 'member.flash.success.update',
+        );
     }
 }

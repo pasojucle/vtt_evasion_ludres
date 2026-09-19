@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View\User;
 
+use App\Core\Contract\View\TabEntityInterface;
 use App\Dto\View\BadgeView;
-use App\Dto\View\Interface\TabEntityInterface;
 use Doctrine\Common\Collections\Collection;
 
 readonly class UserReadView implements TabEntityInterface

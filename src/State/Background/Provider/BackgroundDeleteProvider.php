@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Background\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Background;
 use App\Mapper\DestructiveModalMapper;
@@ -19,7 +20,7 @@ class BackgroundDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         /** @var Background $entity */
         return $this->destructiveModalMapper->mapToView(

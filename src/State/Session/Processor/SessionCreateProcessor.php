@@ -38,6 +38,9 @@ class SessionCreateProcessor implements FormTurboStreamProcessorInterface
         // }
 
     
-        return new TurboStreamProcessorResult(true);
+        return new TurboStreamProcessorResult(
+            success: true,
+            messageKey: 'session.flash.success.create',
+        );
     }
 }

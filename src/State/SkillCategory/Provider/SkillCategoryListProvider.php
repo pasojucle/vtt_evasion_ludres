@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\SkillCategory\Provider;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SkillCategoryFilter;
 use App\Dto\View\ListView;
 use App\Mapper\SkillCategory\SkillCategoryListMapper;
 use App\Repository\SkillCategoryRepository;
-use App\Service\Filter\FilterConfigInterface;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 

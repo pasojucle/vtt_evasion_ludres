@@ -34,7 +34,7 @@ class ClusterReadMapper
         array $authorizationsByUser,
         array $participationsByUser,
         int $currentSeason,
-        ?string $referer,
+        ?string $fallback,
     ): ClusterView {
         $pratice = $cluster->getPractice();
         $isSchoolActivity = $cluster->getBikeRide()->isSchoolActivity();
@@ -57,7 +57,7 @@ class ClusterReadMapper
                 $isComplete,
                 $isEditable,
                 $currentSeason,
-                $referer,
+                $fallback,
             );
             $particpants[] = $participant;
 
@@ -85,7 +85,7 @@ class ClusterReadMapper
                 $totalParticipants,
                 $presentFramers,
                 $totalFramers,
-                $referer,
+                $fallback,
             ),
             isComplete: $isComplete,
             participants: $particpants,
@@ -107,14 +107,14 @@ class ClusterReadMapper
         int $totalParticipants,
         int $presentFramers,
         int $totalFramers,
-        string $referer,
+        string $fallback,
     ): array {
         $widgets = [new WidgetView(
             title: 'Participants',
             value: (string) $presentParticipants,
             content: sprintf('Sur %d inscrits', $totalParticipants),
             icon: ($isSchoolActivity) ? LevelType::SCHOOL->getIcon() : LevelType::ADULT->getIcon(),
-            action: $this->addParticipantAction($cluster, $isComplete, false, $referer),
+            action: $this->addParticipantAction($cluster, $isComplete, false, $fallback),
         )];
         
         if ($isSchoolActivity) {
@@ -123,7 +123,7 @@ class ClusterReadMapper
                 value: (string) $presentFramers,
                 content: sprintf('Sur %d inscrits', $totalFramers),
                 icon: LevelType::FRAME->getIcon(),
-                action: $this->addParticipantAction($cluster, $isComplete, true, $referer),
+                action: $this->addParticipantAction($cluster, $isComplete, true, $fallback),
             );
             $widgets[] = new WidgetView(
                 title: 'Compétences',
@@ -132,7 +132,7 @@ class ClusterReadMapper
                 content: 'À évaluer',
                 action: (!$isComplete)
                     ? new LinkView(
-                        url: $this->urlContextService->generateUrl('admin_cluster_skills', ['cluster' => $cluster->getId()], $referer),
+                        url: $this->urlContextService->generateUrl('admin_cluster_skills', ['cluster' => $cluster->getId()], $fallback),
                         variant: ColorVariant::PRIMARY,
                         size: Size::SM,
                         label: 'Evaluer',
@@ -148,7 +148,7 @@ class ClusterReadMapper
         return $widgets;
     }
 
-    private function addParticipantAction(Cluster $cluster, bool $isComplete, bool $isFramer, string $referer): ?LinkView
+    private function addParticipantAction(Cluster $cluster, bool $isComplete, bool $isFramer, string $fallback): ?LinkView
     {
         if ($isComplete) {
             return null;
@@ -158,7 +158,7 @@ class ClusterReadMapper
             url: $this->urlContextService->generateUrl('admin_session_add', [
                     'cluster' => $cluster->getId(),
                     'isFramer' => (int) $isFramer,
-                ], $referer),
+                ], $fallback),
             variant: ColorVariant::PRIMARY,
             size: Size::SM,
             label: 'Ajouter',

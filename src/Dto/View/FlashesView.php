@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-use App\Dto\View\Interface\TurboStreamViewInterface;
+use App\Core\Contract\View\TurboStreamViewInterface;
 
 readonly class FlashesView implements TurboStreamViewInterface
 {

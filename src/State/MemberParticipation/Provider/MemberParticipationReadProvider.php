@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\MemberParticipation\Provider;
 
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\MemberParticipationFilter;
 use App\Dto\State\ViewContext;
@@ -15,7 +16,6 @@ use App\Repository\IndemnityRepository;
 use App\Repository\SessionRepository;
 use App\Service\Indemnity\ComputeParticipationIndemnity;
 use App\Service\PaginatorService;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\Interface\StreamExportableInterface;
 use App\State\MemberParticipation\Enum\QueryScope;
@@ -37,7 +37,7 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
     }
 
 
-    public function getFormView(object $entity, ?string $fallback = null): SheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',

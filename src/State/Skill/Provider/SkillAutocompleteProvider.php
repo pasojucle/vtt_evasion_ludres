@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\Skill\Provider;
 
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\SkillAutocompleteFilter;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
 use App\Mapper\Skill\SkillAutocompleteMapper;
 use App\Repository\SkillRepository;
-use App\State\FilterHydratorTrait;
 use Doctrine\ORM\QueryBuilder;
 
 class SkillAutocompleteProvider

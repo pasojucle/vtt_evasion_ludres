@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form\Filter;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\AbstractFilter;
-use App\Service\Filter\FilterConfigInterface;
-use App\Service\Filter\FilterFieldConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -50,7 +50,6 @@ class FilterAdvancedType extends AbstractType
         }
 
         if ($options['isPaginated']) {
-            dump($options['isPaginated']);
             $builder->add('page', HiddenType::class);
         }
     }

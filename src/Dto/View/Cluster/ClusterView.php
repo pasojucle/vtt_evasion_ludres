@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Cluster;
 
+use App\Core\Contract\View\TabContentInterface;
+use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\Interface\TabContentInterface;
-use App\Dto\View\Interface\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\WidgetView;
 

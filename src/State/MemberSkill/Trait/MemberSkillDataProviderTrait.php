@@ -19,12 +19,13 @@ use Doctrine\ORM\QueryBuilder;
 trait MemberSkillDataProviderTrait
 {
     private function getQueryBuilder(
+        Member $member,
         MemberSkillFilter $filter,
         QueryScope $scope = QueryScope::LIST
     ): QueryBuilder {
         $qb = $this->memberSkillRepository->getMemberSkillQuery();
 
-        $this->memberSkillRepository->filterUser($qb, $filter->member);
+        $this->memberSkillRepository->filterUser($qb, $member);
 
         if ($filter->evaluation) {
             $this->memberSkillRepository->filterEvaluation($qb, $filter->evaluation);

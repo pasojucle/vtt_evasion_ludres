@@ -36,7 +36,8 @@ class MemberSkillEvaluationProcessor implements FormTurboStreamProcessorInterfac
         if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
             return new TurboStreamProcessorResult(
                 success: false,
-                flashMessages: FlashesView::create('danger', 'Jeton CSRF invalide.'),
+                messageKey: 'Jeton CSRF invalide.',
+                flashType: 'danger',
             );
         }
 
@@ -45,6 +46,9 @@ class MemberSkillEvaluationProcessor implements FormTurboStreamProcessorInterfac
         $this->entityManager->flush();
 
         
-        return new TurboStreamProcessorResult(true);
+        return new TurboStreamProcessorResult(
+            success: true,
+            messageKey: 'member_skill.flash.success.evaluate',
+        );
     }
 }

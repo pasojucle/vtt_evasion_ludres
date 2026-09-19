@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\View\EmergencyContact;
 
-use App\Dto\View\Interface\TurboStreamViewInterface;
+use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\Coverage\Provider;
 
 use App\Dto\Enum\DialogType;
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Licence;
 use App\State\Interface\FormComponentProviderInterface;
@@ -14,7 +15,7 @@ use App\State\Interface\FormComponentProviderInterface;
  */
 class CoverageValidateProvider implements FormComponentProviderInterface
 {
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         return new DialogModalView(
             type: DialogType::SUCCESS,

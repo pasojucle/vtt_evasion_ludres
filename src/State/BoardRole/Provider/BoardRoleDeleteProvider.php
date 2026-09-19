@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\BoardRole\Provider;
 
+use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\BoardRole;
 use App\Mapper\DestructiveModalMapper;
@@ -19,7 +20,7 @@ class BoardRoleDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): DialogModalView
+    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer le role %s', $entity->getName()));
     }

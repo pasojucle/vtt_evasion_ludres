@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View\MemberSkill;
 
+use App\Core\Contract\View\LoadMoreViewInterface;
 use App\Dto\View\FilterChipView;
-use App\Dto\View\Interface\LoadMoreViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\MemberSkill\MemberSkillView;
 use App\Dto\View\ProgressBarView;

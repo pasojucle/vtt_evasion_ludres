@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Cluster\Tab;
 
+use App\Core\Contract\View\TabContentInterface;
 use App\Dto\View\BadgeView;
-use App\Dto\View\Interface\TabContentInterface;
 
 readonly class ClusterView implements TabContentInterface
 {

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\State\EmergencyContact\Provider;
 
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\State\ViewContext;
 use App\Dto\View\EmergencyContact\EmergencyContactView;
 use App\Dto\View\SheetView;
 use App\Entity\EmergencyContact;
 use App\Mapper\EmergencyContact\EmergencyContactReadMapper;
-use App\State\Interface\TurboStreamProviderInterface;
 
 /**
  * @implements TurboStreamProviderInterface<EmergencyContact>
@@ -21,7 +22,7 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): SheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',
@@ -40,8 +41,8 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): EmergencyContactView
+    public function getStreamView(object $data, ?HandlerContext $context = null): EmergencyContactView
     {
-        return $this->emergencyContactReadMapper->mapToView($entity);
+        return $this->emergencyContactReadMapper->mapToView($data);
     }
 }

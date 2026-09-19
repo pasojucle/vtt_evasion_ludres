@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Provider;
 
+use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\ActivityFramersFilter;
 use App\Dto\State\ViewContext;
 use App\Dto\View\ListDrawerView;
@@ -11,7 +12,6 @@ use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Mapper\Activity\Framers\ActivityFramersReadMapper;
 use App\Repository\MemberRepository;
-use App\State\FilterHydratorTrait;
 use App\State\Interface\ListDrawerProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 

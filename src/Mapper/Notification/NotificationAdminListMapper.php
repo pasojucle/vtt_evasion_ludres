@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Mapper\Notification;
 
+use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\View\ListActionViewInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\NotificationFilter;
 use App\Dto\View\HtmlAttributView;
-use App\Dto\View\Interface\ListActionViewInterface;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
 use App\Dto\View\ListItemView;
@@ -19,7 +20,6 @@ use App\Mapper\FilterChipsMapper;
 use App\Mapper\Notification\NotificationStatusMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\CsrfTokenService;
-use App\Service\Filter\FilterConfigInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;

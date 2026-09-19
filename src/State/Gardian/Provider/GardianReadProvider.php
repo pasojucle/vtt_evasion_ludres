@@ -23,7 +23,7 @@ class GardianReadProvider implements TurboStreamProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?string $fallback = null): GardianSheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): GardianSheetView
     {
         return new GardianSheetView(
             title: 'Modifier',
