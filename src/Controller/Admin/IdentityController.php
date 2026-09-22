@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\Identity;
 use App\Form\IdentityType;
 use App\State\Identity\Processor\IdentityUpdateProcessor;
@@ -34,8 +35,9 @@ class IdentityController extends AbstractCrudController
         IdentityReadProvider $provider,
         IdentityUpdateProcessor $processor,
         Identity $identity,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $identity,
             $provider,

@@ -14,6 +14,7 @@ use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\RedirectProcessorResult;
 use App\Core\Dto\TurboStreamProcessorResult;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;

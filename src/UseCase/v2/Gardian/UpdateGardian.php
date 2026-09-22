@@ -14,7 +14,7 @@ class UpdateGardian
     ) {
     }
 
-    public function execute(?MemberGardian $gardian)
+    public function __invoke(?MemberGardian $gardian): void
     {
         $gardianIdentity = $gardian->getIdentity();
         $gardianAddress = $gardianIdentity->getAddress();

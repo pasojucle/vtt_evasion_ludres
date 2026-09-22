@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\Health;
 use App\Form\Admin\HealthType;
 use App\State\Health\Processor\HealthUpdateProcessor;
@@ -34,8 +35,9 @@ class HealthController extends AbstractCrudController
         HealthReadProvider $provider,
         HealthUpdateProcessor $processor,
         Health $health,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $health,
             $provider,

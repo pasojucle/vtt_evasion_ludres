@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace App\State\Health\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\Health\HealthView;
 use App\Dto\View\SheetView;
 use App\Entity\Health;
 use App\Mapper\Health\HealthReadMapper;
 
-use App\State\Interface\TurboStreamProviderInterface;
 
 /**
  * @implements TurboStreamProviderInterface<Health>
  */
-class HealthReadProvider implements TurboStreamProviderInterface
+class HealthReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     public function __construct(
         private HealthReadMapper $identityReadMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',
@@ -31,7 +33,7 @@ class HealthReadProvider implements TurboStreamProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
         return [
             'attr' => [
@@ -40,7 +42,7 @@ class HealthReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): HealthView
+    public function getStreamView(object $entity, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): HealthView
     {
         return $this->identityReadMapper->mapToView($entity);
     }

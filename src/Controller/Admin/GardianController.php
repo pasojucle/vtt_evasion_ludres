@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\MemberGardian;
 use App\Form\GardianType;
 use App\State\Gardian\Processor\GardianUpdateProcessor;
@@ -34,8 +35,9 @@ class GardianController extends AbstractCrudController
         GardianReadProvider $provider,
         GardianUpdateProcessor $processor,
         MemberGardian $gardian,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $gardian,
             $provider,

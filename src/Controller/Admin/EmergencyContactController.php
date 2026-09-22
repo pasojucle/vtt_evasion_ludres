@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\EmergencyContact;
 use App\Form\EmergencyContactType;
 use App\State\EmergencyContact\Processor\EmergencyContactUpdateProcessor;
@@ -34,8 +35,9 @@ class EmergencyContactController extends AbstractCrudController
         EmergencyContactReadProvider $provider,
         EmergencyContactUpdateProcessor $processor,
         EmergencyContact $emergencyContact,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $emergencyContact,
             $provider,

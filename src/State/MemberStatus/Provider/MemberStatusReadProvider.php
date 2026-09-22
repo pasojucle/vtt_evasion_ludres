@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace App\State\MemberStatus\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\MemberStatus\MemberStatusSheetView;
 use App\Dto\View\MemberStatus\MemberStatusView;
 use App\Entity\Member;
 use App\Mapper\MemberStatus\MemberStatusReadMapper;
-use App\State\Interface\TurboStreamProviderInterface;
 
 /**
- * @implements TurboStreamProviderInterface<Member>
+ * @implements FormComponentProviderInterface<Member>
  */
-class MemberStatusReadProvider implements TurboStreamProviderInterface
+class MemberStatusReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     public function __construct(
         private MemberStatusReadMapper $memberClubReadMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): MemberStatusSheetView
+    public function getView(object $data, ?HandlerContext $context = null): MemberStatusSheetView
     {
         return new MemberStatusSheetView(
             title: 'Modifier',
@@ -30,7 +32,7 @@ class MemberStatusReadProvider implements TurboStreamProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
         return [
             'attr' => [
@@ -39,8 +41,8 @@ class MemberStatusReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): MemberStatusView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): MemberStatusView
     {
-        return $this->memberClubReadMapper->mapToView($entity);
+        return $this->memberClubReadMapper->mapToView($data);
     }
 }

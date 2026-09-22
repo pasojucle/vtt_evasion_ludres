@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\State\EmergencyContact\Provider;
 
+use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
-use App\Dto\State\ViewContext;
 use App\Dto\View\EmergencyContact\EmergencyContactView;
 use App\Dto\View\SheetView;
 use App\Entity\EmergencyContact;
 use App\Mapper\EmergencyContact\EmergencyContactReadMapper;
 
 /**
- * @implements TurboStreamProviderInterface<EmergencyContact>
+ * @implements FormComponentProviderInterface<EmergencyContact>
  */
-class EmergencyContactReadProvider implements TurboStreamProviderInterface
+class EmergencyContactReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     public function __construct(
         private EmergencyContactReadMapper $emergencyContactReadMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',
@@ -32,7 +32,7 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
         return [
             'attr' => [
@@ -43,7 +43,6 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
     }
 
     public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): EmergencyContactView
-    
     {
         return $this->emergencyContactReadMapper->mapToView($data);
     }

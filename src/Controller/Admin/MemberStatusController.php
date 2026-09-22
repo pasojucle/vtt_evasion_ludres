@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\Member;
 use App\Form\Admin\MemberStatusType;
 use App\State\MemberStatus\Processor\MemberStatusUpdateProcessor;
@@ -34,8 +35,9 @@ class MemberStatusController extends AbstractCrudController
         MemberStatusReadProvider $provider,
         MemberStatusUpdateProcessor $processor,
         Member $member,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $member,
             $provider,

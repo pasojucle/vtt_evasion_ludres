@@ -165,7 +165,7 @@ abstract class AbstractCrudController extends AbstractController
         $result = $processor->process(
             $object,
             null,
-            $this->urlContextService->decodeUrl($request)
+            $this->urlContextService->decodeUrl($request->request->get('_redirect_to'))
         );
         
         $this->addFlash($result->flashType, $result->messageKey);

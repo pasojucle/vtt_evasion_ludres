@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace App\State\Identity\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\Identity\IdentitySheetView;
 use App\Dto\View\Identity\IdentityView;
 use App\Entity\Identity;
 use App\Mapper\Identity\IdentityReadMapper;
 
-use App\State\Interface\TurboStreamProviderInterface;
 
 /**
  * @implements TurboStreamProviderInterface<Identity>
  */
-class IdentityReadProvider implements TurboStreamProviderInterface
+class IdentityReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     public function __construct(
         private IdentityReadMapper $identityReadMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): IdentitySheetView
+    public function getView(object $data, ?HandlerContext $context = null): IdentitySheetView
     {
         return new IdentitySheetView(
             title: 'Modifier',
@@ -31,9 +33,9 @@ class IdentityReadProvider implements TurboStreamProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
-        $user = $entity->getMember();
+        $user = $data->getMember();
         $licence = $user->getLastLicence();
         return [
             'category' => $licence->getCategory(),
@@ -46,7 +48,7 @@ class IdentityReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): IdentityView
+    public function getStreamView(object $entity, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): IdentityView
     {
         $address = $entity->getAddress();
 
