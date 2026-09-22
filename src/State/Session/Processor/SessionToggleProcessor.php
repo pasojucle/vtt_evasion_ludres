@@ -10,7 +10,7 @@ use App\Core\Dto\ActionDirectPayload;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\TurboStreamProcessorResult;
 use App\Service\CsrfTokenService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\UseCase\v2\Session\TogglePresenceSession;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -20,9 +20,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 class SessionToggleProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private CsrfTokenManagerInterface $csrfTokenManager,
         private CsrfTokenService $csrfTokenService,
+        private TogglePresenceSession $togglePresenceSession,
     ) {
     }
     
@@ -41,19 +41,11 @@ class SessionToggleProcessor implements TurboStreamProcessorInterface
             );
         }
 
-        $session->setIsPresent(!$session->isPresent());
-        // $user = $session->getUser();
-        // $licenceService->applyCompleteTrial($user);
-        
-        // if ($user instanceof Member && !$user->getLastLicence()->getState()->isYearly()) {
-        //     $this->sessionService->checkEndTesting($user);
-        // }
-
-        $this->entityManager->flush();
+        ($this->togglePresenceSession)($session);
 
         return new TurboStreamProcessorResult(
             success: true,
-            messageKey: 'session.flash.success.toogle',
+            messageKey: $session->isPresent() ? 'session.flash.success.toogle.present' : 'session.flash.success.missing',
             flashType: 'success',
             data: $session->getCluster(),
         );

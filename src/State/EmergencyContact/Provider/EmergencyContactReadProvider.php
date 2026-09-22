@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\EmergencyContact\Provider;
 
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
 use App\Dto\State\ViewContext;
 use App\Dto\View\EmergencyContact\EmergencyContactView;
@@ -41,7 +42,8 @@ class EmergencyContactReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $data, ?HandlerContext $context = null): EmergencyContactView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): EmergencyContactView
+    
     {
         return $this->emergencyContactReadMapper->mapToView($data);
     }

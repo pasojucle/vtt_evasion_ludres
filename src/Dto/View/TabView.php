@@ -10,6 +10,8 @@ readonly class TabView
 {
     public function __construct(
         public string $title,
+        public int $index,
+        public bool $isActive,
         public ?TabContentInterface $view = null,
         public ?string $icon = null,
         public ?string $color = null,

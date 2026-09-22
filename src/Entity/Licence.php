@@ -23,6 +23,8 @@ use LogicException;
 #[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
 {
+    public const int MAX_TRIAL_SESSIONS = 3;
+
     //TODO convertir coverage et bikeType en enum
     public const COVERAGE_MINI_GEAR = 1;
 

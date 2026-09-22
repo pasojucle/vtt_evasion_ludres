@@ -34,6 +34,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
     public function getFormView(object $entity, ?ViewContext $context = null): FormTabWrapperView
     {
         $action = ($entity->getId()) ? 'Modifier' : 'Ajouter';
+        $currentTab = $context->tab;
 
         return new FormTabWrapperView(
             name: 'activityEdit',
@@ -42,26 +43,36 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
             tabs: [
                 new TabView(
                     title: 'Général',
+                    index: 1,
+                    isActive: 1 === $currentTab,
                     icon: 'lucide:info',
                     view: new MainView(),
                 ),
                 new TabView(
                     title: 'Options',
+                    index: 2,
+                    isActive: 2 === $currentTab,
                     icon: 'lucide:settings-2',
                     view: new OptionsView(),
                 ),
                 new TabView(
                     title: 'Participants',
+                    index: 3,
+                    isActive: 3 === $currentTab,
                     icon: 'lucide:users',
                     view: new ParticipantsView(),
                 ),
                 new TabView(
                     title: 'Médias',
+                    index: 4,
+                    isActive: 4 === $currentTab,
                     icon: 'lucide:image',
                     view: $this->mediasMapper->mapToView($entity),
                 ),
                 new TabView(
                     title: 'Parcours GPX',
+                    index: 5,
+                    isActive: 5 === $currentTab,
                     icon: 'lucide:map',
                     view: new TracksView(),
                 ),

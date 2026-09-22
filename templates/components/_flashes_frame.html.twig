@@ -1,8 +1,8 @@
 <turbo-frame id="turbo_flash_messages">
     <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full px-4 sm:px-0">
+
         {% for label, messages in flashes %}
             {% for message in messages %}
-                
                 {% set color_classes = (label == 'success') 
                     ? 'bg-white border-l-4 border-emerald-500 text-slate-800 dark:bg-slate-900 dark:text-slate-100' 
                     : 'bg-white border-l-4 border-rose-500 text-slate-800 dark:bg-slate-900 dark:text-slate-100' 
@@ -27,8 +27,8 @@
                         {{ ux_icon('lucide:x', {class: 'size-4'}) }}
                     </button>
                 </div>
-
             {% endfor %}
         {% endfor %}
+        
     </div>
 </turbo-frame>

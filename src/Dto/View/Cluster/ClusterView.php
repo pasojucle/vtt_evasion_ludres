@@ -8,6 +8,7 @@ use App\Core\Contract\View\TabContentInterface;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
+use App\Dto\View\FlashesView;
 use App\Dto\View\LinkView;
 use App\Dto\View\WidgetView;
 
@@ -27,6 +28,7 @@ readonly class ClusterView implements TabContentInterface, TurboStreamViewInterf
         public bool $isEditable,
         public array $actions,
         public DropdownView $dropdown,
+        public ?FlashesView $flashes = null,
     ) {
     }
 

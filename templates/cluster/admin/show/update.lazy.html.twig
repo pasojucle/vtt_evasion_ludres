@@ -4,6 +4,10 @@
     </template>
 </turbo-stream>
 
+{% if view.flashes %}
+    {% include "flash_messages/flash_messages.lazy.html.twig" with {view: view.flashes} %}
+{% endif %}
+
 <turbo-stream action="update" target="sheet_content">
     <template></template>
 </turbo-stream>

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Handler;
 
+use App\Core\Contract\Provider\ComponentProviderInterface;
 use App\Core\Contract\View\ComponentViewInterface;
-use App\Dto\State\ViewContext;
-use App\State\Interface\ComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,12 +27,7 @@ readonly class DetailHandler
     ): Response {
         $view = $provider->getView(
             $object,
-            new ViewContext(
-                route: $request->attributes->get('_route'),
-                routeParams: $request->attributes->get('_route_params'),
-                encodedFallback: $request->query->get('_redirect_to'),
-                tab: $request->query->getInt('tab', 1),
-            ),
+            HandlerContext::fromRequest($request),
         );
 
         return new Response($this->renderView($view));

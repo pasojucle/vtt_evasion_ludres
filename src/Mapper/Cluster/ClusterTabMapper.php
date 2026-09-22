@@ -19,16 +19,20 @@ class ClusterTabMapper
         private TranslatorInterface $translator,
     ) {
     }
-    public function mapToView(Cluster $cluster): ClusterView
+    public function mapToView(Cluster $cluster, ?string $fallback): ClusterView
     {
         $pratice = $cluster->getPractice();
         $isNeedFramers = $cluster->getBikeRide()->getBikeRideType()->isNeedFramers();
+        $routeParams = ['cluster' => $cluster->getId()];
+        if ($fallback) {
+            $routeParams['_redirect_to'] = $fallback;
+        }
 
         return new ClusterView(
             id: $cluster->getId(),
             url: ($cluster->getRole() === 'ROLE_FRAME')
-                ? $this->urlGenerator->generate('admin_cluster_frame_show', ['cluster' => $cluster->getId()])
-                : $this->urlGenerator->generate('admin_cluster_show', ['cluster' => $cluster->getId()]),
+                ? $this->urlGenerator->generate('admin_cluster_frame_show', $routeParams)
+                : $this->urlGenerator->generate('admin_cluster_show', $routeParams),
             title: $cluster->getTitle(),
             pratice: new BadgeView(
                 value: $pratice->trans($this->translator),

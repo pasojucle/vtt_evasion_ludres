@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use App\Entity\Member;
+use App\Repository\Interface\LicenceRepositoryInterface;
 use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,12 +23,31 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Licence[]    findAll()
  * @method Licence[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LicenceRepository extends ServiceEntityRepository
+class LicenceRepository extends ServiceEntityRepository implements LicenceRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry, private SeasonService $seasonService)
     {
         parent::__construct($registry, Licence::class);
     }
+
+    public function save(Licence $licence, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($licence);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Licence $licence, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($licence);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
 
     public function findOneByUserAndLastSeason(Member $member): ?Licence
     {

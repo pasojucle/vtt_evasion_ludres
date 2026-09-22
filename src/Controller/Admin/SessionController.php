@@ -5,23 +5,24 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Payload\SessionCreateAdminPayload;
+use App\Dto\Payload\SessionSwitch;
 use App\Dto\State\ViewContext;
 use App\Entity\Cluster;
-use App\Entity\Member;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
-use App\Service\CacheService;
 use App\Service\MessageService;
 use App\Service\ReplaceKeywordsService;
 use App\State\Cluster\Provider\ClusterUpdateProvider;
 use App\State\Session\Processor\SessionCreateProcessor;
+use App\State\Session\Processor\SessionSwitchProcessor;
 use App\State\Session\Processor\SessionToggleProcessor;
 use App\State\Session\Provider\SessionCreateProvider;
+use App\State\Session\Provider\SessionSwitchProvider;
 use App\UseCase\Session\SetSession;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,8 +33,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SessionController extends AbstractCrudController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly CacheService $cacheService,
         private readonly SetSession $setSession,
     ) {
     }
@@ -94,33 +93,23 @@ class SessionController extends AbstractCrudController
         ]);
     }
 
-    #[Route('/admin/groupe/change/{session}', name: 'admin_bike_ride_switch_cluster', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/change/{cluster}/{session}', name: 'admin_bike_ride_switch_cluster', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterSwitch(
         Request $request,
-        Session $session
+        SessionSwitchProvider $provider,
+        SessionSwitchProcessor $processor,
+        Cluster $cluster,
+        Session $session,
+        ActionFormHandler $handler,
     ): Response {
-        $bikeRide = $session->getCluster()->getBikeRide();
-        $form = $this->createForm(SessionSwitchType::class, $session);
-        $oldCluster = $session->getCluster();
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $session = $form->getData();
-            $this->entityManager->flush();
-            $this->cacheService->deleteCacheIndex($oldCluster);
-            $this->cacheService->deleteCacheIndex($session->getCluster());
-
-            return $this->redirectToRoute('admin_cluster_list_activity', [
-                'bikeRide' => $bikeRide->getId(),
-            ]);
-        }
-
-        return $this->render('session/switch.html.twig', [
-            'bikeRide' => $bikeRide,
-            'session' => $session,
-            'form' => $form->createView(),
-        ]);
+        return $handler->handle(
+            $request,
+            new SessionSwitch($session, $cluster),
+            $provider,
+            $processor,
+            SessionSwitchType::class,
+        );
     }
 
     #[Route('/admin/rando/inscription/{cluster}/{isFramer}', name: 'admin_session_add', methods: ['GET', 'POST'])]

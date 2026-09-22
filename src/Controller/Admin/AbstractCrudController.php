@@ -127,7 +127,7 @@ abstract class AbstractCrudController extends AbstractController
             if ($form->isValid()) {
                 $result = $processor->process(
                     $object,
-                    $request->files->get($form->getName()),
+                    $request->files->get($form->getName(), []),
                     $this->urlContextService->decodeUrl($context->encodedFallback),
                 );
                 if ($result instanceof RedirectProcessorResult) {

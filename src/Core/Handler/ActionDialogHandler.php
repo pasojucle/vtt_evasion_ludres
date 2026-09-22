@@ -9,18 +9,17 @@ use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Contract\View\ComponentFormViewInterface;
 use App\Core\Dto\ActionPayload;
+use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\RedirectProcessorResult;
 use App\Core\Dto\TurboStreamProcessorResult;
 use App\Dto\State\ViewContext;
-use App\Service\UrlContextService;
 use App\State\Interface\InputInitializerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Twig\Environment;
@@ -29,7 +28,6 @@ readonly class ActionDialogHandler
 {
     public function __construct(
         private Environment $twig,
-        private RequestStack $requestStack,
         private FormFactoryInterface $formFactory,
     ) {
     }
@@ -58,19 +56,20 @@ readonly class ActionDialogHandler
                 $result = $processor->process(
                     new ActionPayload(
                         $data,
-                        $request->files->get($form->getName())
+                        $request->files->get($form->getName(), [])
                     ),
                     $context,
                 );
 
                 if ($result instanceof RedirectProcessorResult) {
-                    $this->addFlash($result->flashType, $result->messageKey);
+                    $this->addFlash($request, $result->flashType, $result->messageKey);
                 
                     return new RedirectResponse($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
 
                 if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
-                    $streamView = $provider->getStreamView($data, $context);
+                    $flash = $result->messageKey ? new FlashMessage($result->flashType, $result->messageKey) : null;
+                    $streamView = $provider->getStreamView($data, $flash, $context);
 
                     return new Response(
                         $this->twig->render($streamView->getStreamTemplate(), [
@@ -101,9 +100,9 @@ readonly class ActionDialogHandler
         ]);
     }
 
-    private function addFlash(string $type, string $message): void
+    private function addFlash(Request $request, string $type, string $message): void
     {
-        $session = $this->requestStack->getSession();
+        $session = $request->getSession();
 
         if ($session instanceof FlashBagAwareSessionInterface) {
             $session->getFlashBag()->add($type, $message);

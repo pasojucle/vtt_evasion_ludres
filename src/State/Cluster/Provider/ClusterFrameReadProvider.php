@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Cluster\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\Cluster\ClusterView;
 use App\Entity\Cluster;
 use App\Entity\Session;
@@ -15,7 +15,7 @@ use App\Repository\SessionRepository;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
-use App\State\Interface\ComponentProviderInterface;
+use App\Core\Contract\Provider\ComponentProviderInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class ClusterFrameReadProvider implements ComponentProviderInterface
@@ -34,15 +34,15 @@ class ClusterFrameReadProvider implements ComponentProviderInterface
     }
 
     /**
-     * @param Cluster $entity
+     * @param Cluster $data
      */
-    public function getView(object $entity, ?ViewContext $context = null): ClusterView
+    public function getView(object $data, ?HandlerContext $context = null): ClusterView
     {
-        $userIds = $entity->getSessions()->map(fn (Session $session) => $session->getUser()->getId())->toArray();
-        $bikeRide = $entity->getBikeRide();
+        $userIds = $data->getSessions()->map(fn (Session $session) => $session->getUser()->getId())->toArray();
+        $bikeRide = $data->getBikeRide();
 
         return $this->clusterFrameReadMapper->mapToView(
-            $entity,
+            $data,
             $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide),
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),

@@ -20,6 +20,7 @@ twig:
         - 'form/month_filter.html.twig'
         - 'form/ux_icon_choices.html.twig'
         - 'form/tailwind_theme.html.twig'
+        - 'form/ballot_radio_widget.html.twig'
 
     globals:
         menu_service: '@App\Service\MenuService'

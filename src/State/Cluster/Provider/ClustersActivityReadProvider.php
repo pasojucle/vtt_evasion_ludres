@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\State\Cluster\Provider;
 
+use App\Core\Contract\Provider\ComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\Size;
-use App\Dto\State\ViewContext;
 use App\Dto\View\LinkView;
 use App\Dto\View\TabView;
 use App\Dto\View\TabWrapperView;
 use App\Entity\BikeRide;
-use App\Entity\Cluster;
 use App\Mapper\Cluster\ClustersActivityMapper;
 use App\Mapper\Cluster\ClusterTabMapper;
 use App\Service\UrlContextService;
-use App\State\Interface\ComponentProviderInterface;
 
 /**
  * @implements ComponentProviderInterface<BikeRide>
@@ -28,26 +27,41 @@ class ClustersActivityReadProvider implements ComponentProviderInterface
     ) {
     }
 
-    public function getView(object $entity, ?ViewContext $context = null): TabWrapperView
+    public function getView(object $data, ?HandlerContext $context = null): TabWrapperView
     {
-        return new TabWrapperView(
-            name: sprintf('bike-ride-%s', $entity->getId()),
-            title: $entity->getTitle(),
-            header: $this->clutersActivityMapper->mapToView($entity),
-            tabs: $entity->getClusters()->map(function (Cluster $cluster) {
-                $level = $cluster->getLevel();
+        $fallback = $context->encodedFallback;
+        $currentTab = $context->tab;
 
-                return new TabView(
-                    title: $cluster->getTitle(),
-                    view: $this->clusterMapper->mapToView($cluster),
-                    color: $level?->getColor(),
-                );
-            })->toArray(),
+        return new TabWrapperView(
+            name: sprintf('bike-ride-%s', $data->getId()),
+            title: $data->getTitle(),
+            header: $this->clutersActivityMapper->mapToView($data),
+            tabs: $this->tabs($data, $fallback, $currentTab),
             fallback: new LinkView(
                 url: $this->urlContext->decodeUrl($context->encodedFallback),
                 icon: 'lucide:chevron-left',
                 size: Size::ICON
             ),
         );
+    }
+
+    private function tabs(BikeRide $data, ?string $fallback, int $currentTab): array
+    {
+        $tabs = [];
+        $index = 0;
+
+        foreach ($data->getClusters() as $cluster) {
+            $level = $cluster->getLevel();
+
+            $tabs[] = new TabView(
+                title: $cluster->getTitle(),
+                view: $this->clusterMapper->mapToView($cluster, $fallback),
+                color: $level?->getColor(),
+                index: $index++,
+                isActive: $index === $currentTab,
+            );
+        }
+
+        return $tabs;
     }
 }

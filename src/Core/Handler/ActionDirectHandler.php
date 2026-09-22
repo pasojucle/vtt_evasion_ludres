@@ -8,6 +8,7 @@ use App\Core\Contract\Processor\TurboStreamProcessorInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Core\Dto\ActionDirectPayload;
+use App\Core\Dto\FlashMessage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
@@ -30,9 +31,9 @@ readonly class ActionDirectHandler
             data: $data,
             token: $request->query->get('csrfToken')
         ));
-        $this->addFlash($request, $result->flashType, $result->messageKey);
+        $flash = $result->messageKey ? new FlashMessage($result->flashType, $result->messageKey) : null;
 
-        $streamView = $provider->getStreamView($result->data);
+        $streamView = $provider->getStreamView(data: $result->data, flashMessage: $flash);
         return new Response(
             $this->renderView($streamView),
             Response::HTTP_OK,
@@ -45,14 +46,5 @@ readonly class ActionDirectHandler
         return $this->twig->render($view->getStreamTemplate(), [
             'view' => $view
         ]);
-    }
-
-    private function addFlash(Request $request, string $type, string $message): void
-    {
-        $session = $request->getSession();
-
-        if ($session instanceof FlashBagAwareSessionInterface) {
-            $session->getFlashBag()->add($type, $message);
-        }
     }
 }

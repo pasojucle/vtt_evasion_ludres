@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Core\Handler;
 
 use App\Core\Contract\Processor\ProcessorInterface;
-use App\Core\Contract\Processor\TurboStreamProviderInterface;
 use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\InputInitializerInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Contract\View\ComponentFormViewInterface;
 use App\Core\Dto\ActionPayload;
+use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\RedirectProcessorResult;
 use App\Core\Dto\TurboStreamProcessorResult;
@@ -37,7 +38,6 @@ readonly class ActionFormHandler
         FormComponentProviderInterface $provider,
         ProcessorInterface $processor,
         string $formClass = FormType::class,
-        ?HandlerContext $context = null,
     ): Response {
         $context = HandlerContext::fromRequest($request);
         if ($provider instanceof InputInitializerInterface) {
@@ -54,7 +54,7 @@ readonly class ActionFormHandler
                 $result = $processor->process(
                     new ActionPayload(
                         $data,
-                        $request->files->get($form->getName())
+                        $request->files->get($form->getName(), [])
                     ),
                     $context,
                 );
@@ -64,7 +64,8 @@ readonly class ActionFormHandler
                     return new RedirectResponse($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
                 if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
-                    $streamView = $provider->getStreamView($data, $context);
+                    $flash = $result->messageKey ? new FlashMessage($result->flashType, $result->messageKey) : null;
+                    $streamView = $provider->getStreamView($result->data, $flash, $context);
 
                     return new Response(
                         $this->twig->render($streamView->getStreamTemplate(), [

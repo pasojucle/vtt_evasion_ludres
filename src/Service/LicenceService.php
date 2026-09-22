@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Enum\LicenceCategoryEnum;
-use App\Entity\Guest;
 use App\Entity\Licence;
 use App\Entity\Member;
-use App\Entity\User;
-use App\Repository\SessionRepository;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class LicenceService
@@ -20,8 +16,6 @@ class LicenceService
     public function __construct(
         private readonly SeasonService $seasonService,
         private WorkflowInterface $licenceStateMachine,
-        private SessionRepository $sessionRepository,
-        private EntityManagerInterface $entityManager,
     ) {
     }
     public function getCategory(Member $member): LicenceCategoryEnum
@@ -58,22 +52,5 @@ class LicenceService
         }
         
         return $this->applyTransition($licence, 'receive_trial_file');
-    }
-
-    public function applyCompleteTrial(User $user): void
-    {
-        if ($user instanceof Guest) {
-            return;
-        }
-        $licence = $user->getLastLicence();
-        if ($licence->getState()->isYearly()) {
-            return;
-        }
-        if (2 < $this->sessionRepository->findParticipationByUser($licence->getMember())) {
-            $this->applyTransition($licence, 'complete_trial_file');
-        } else {
-            $this->applyTransition($licence, 'uncomplete_trial_file');
-        }
-        $this->entityManager->flush();
     }
 }

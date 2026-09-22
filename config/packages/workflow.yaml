@@ -42,11 +42,11 @@ framework:
           from: trial_file_submitted
           to: trial_file_pending
         
-        complete_trial_file:
+        complete_trial:
           from: [trial_file_submitted, trial_file_received]
           to: trial_completed
         
-        uncomplete_trial_file:
+        uncomplete_trial:
           from: trial_completed
           to: trial_file_received
 

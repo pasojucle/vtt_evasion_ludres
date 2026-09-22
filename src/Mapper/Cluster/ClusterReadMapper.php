@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Mapper\Cluster;
 
+use App\Core\Dto\FlashMessage;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
 use App\Dto\View\Cluster\ClusterView;
 use App\Dto\View\DropdownView;
+use App\Dto\View\FlashesView;
 use App\Dto\View\HtmlAttributView;
 use App\Dto\View\LinkView;
 use App\Dto\View\WidgetView;
@@ -35,6 +37,7 @@ class ClusterReadMapper
         array $participationsByUser,
         int $currentSeason,
         ?string $fallback,
+        ?FlashMessage $flashMessage = null,
     ): ClusterView {
         $pratice = $cluster->getPractice();
         $isSchoolActivity = $cluster->getBikeRide()->isSchoolActivity();
@@ -96,6 +99,7 @@ class ClusterReadMapper
             dropdown: new DropdownView(
                 variant: DropdownVariant::GOST,
             ),
+            flashes: ($flashMessage) ? FlashesView::create($flashMessage->type, $flashMessage->messageKey) : null,
         );
     }
     

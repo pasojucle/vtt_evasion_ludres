@@ -1,9 +1,9 @@
-<li class="grid grid-cols-[1fr_60px] group relative 
-    lg:gap-4 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 
+<li class="grid grid-cols-[1fr_60px] group relative
+    lg:gap-4 items-center gap-x-4 gap-y-2 p-3 pr-8 text-foreground lg:text-foreground/60 
     lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors">
     <a 
         href="{{ participant.url }}" 
-        class="absolute inset-0 z-10 mr-10 lg:w-[calc(100%-100px)]" 
+        class="absolute inset-0 z-10 mr-10 w-[calc(100%-100px)]" 
         title="Voir l'élément" 
         data-turbo-frame="_top"
     >
@@ -31,6 +31,5 @@
         </div>
     {% endif %}
     {% include participant.action.template with {(participant.action.name): participant.action} %}
-    
     {% include 'components/_dropdown.html.twig' with {dropdown: participant.dropdown} %}
 </li>

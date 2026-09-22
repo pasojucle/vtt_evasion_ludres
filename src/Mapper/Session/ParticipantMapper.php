@@ -163,17 +163,26 @@ class ParticipantMapper
         $menuItems = [];
         if ($isEditable && !$isClusterComplete) {
             if (in_array($session->getAvailability(), [AvailabilityEnum::NONE, AvailabilityEnum::AVAILABLE, AvailabilityEnum::REGISTERED])) {
+                $cluster = $session->getCluster();
                 $menuItems[] = new LinkView(
                     label: 'Changer de groupe',
-                    url: $this->urlGenerator->generate('admin_bike_ride_switch_cluster', ['session' => $session->getId()]),
+                    variant: ColorVariant::DROPDOWN,
+                    url: $this->urlGenerator->generate('admin_bike_ride_switch_cluster', ['cluster' => $cluster->getId(), 'session' => $session->getId()]),
                     icon: 'lucide:refresh-cw',
+                    htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    ],
                 );
             }
-            $menuItems[] = new LinkView(
-                label: 'Supprimer',
-                url: $this->urlGenerator->generate('admin_session_delete', ['session' => $session->getId()]),
-                icon: 'lucide:delete',
-            );
+            if (!$session->isPresent()) {
+                $menuItems[] = new LinkView(
+                    label: 'Supprimer',
+                    variant: ColorVariant::DROPDOWN,
+                    url: $this->urlGenerator->generate('admin_session_delete', ['session' => $session->getId()]),
+                    icon: 'lucide:delete',
+                );
+            }
         }
             
         if ($this->security->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
@@ -237,33 +246,3 @@ class ParticipantMapper
         );
     }
 }
-// Dropdown accompanyingCertificat
-
-    // warnings $isEndTesting, $mustProvideRegistration
-    // 'id' => $session->getId(),
-    //                 'availability' => $this->sessionService->getAvailability($session->getAvailability()),
-    //                 'user' => [
-    //                     'id' => $user->getId(),
-    //                     'member' => [
-    //                         'fullName' => $identity->getName() . ' ' . $identity->getFirstName(),
-    //                     ],
-    //                     'level' => [
-    //                         'colors' => $this->levelService->getColors($level?->getColor()),
-    //                         'title' => $level?->getTitle(),
-    //                         'type' => $level?->getType(),
-    //                         'accompanyingCertificat' => $level?->isAccompanyingCertificat(),
-    //                     ],
-    //                     'lastLicence' => [
-    //                         'authorizations' => $licencesAgreements
-    //                     ],
-    //                     'health' => [
-    //                         'content' => $health,
-    //                     ],
-    //                     'isEndTesting' => $isEndTesting,
-    //                     'mustProvideRegistration' => $mustProvideRegistration,
-    //                     'licenceNumber' => $user->getLicenceNumber(),
-    //                     'dropdown' => $this->dropdownMapper->fromSession($session),
-    //                 ],
-    //                 'userIsOnSite' => $session->isPresent(),
-    //                 'practice' => $bikeRideType->isDisplayBikeKind() ? $session->getPractice()->toBadge($this->translator) : null,
-    //                 'bikeType' => $session->getBikeType()->toBadge($this->translator),

@@ -3,10 +3,10 @@
         <div class="hidden md:flex bg-slate-100 divide-x divide-border border-b border-border">
             {% for tab in tabs %}
                 <div 
-                    class="flex-1 gap-2 p-2 relative flex items-center {% if loop.index == 1 %}bg-slate-300 {% else %}bg-slate-200{% endif %}"
+                    class="flex-1 gap-2 p-2 relative flex items-center {% if tab.isActive %}bg-slate-300 {% else %}bg-slate-200{% endif %}"
                     data-tabs-target="trigger"
                     data-action="click->tabs#switchTab"
-                    data-index="{{loop.index}}"
+                    data-index="{{tab.index}}"
                 >
                     {% if tab.color %}
                         <div 
@@ -24,10 +24,10 @@
         <div>
             {% for tab in tabs %}
                 <div 
-                    class="flex items-center gap-2 p-2 border-b border-border lg:mb-4 {% if loop.index == 1 %}bg-slate-300 {% else %}bg-slate-200{% endif %} md:hidden"
+                    class="flex items-center gap-2 p-2 border-b border-border lg:mb-4 md:hidden"
                     data-tabs-target="trigger"
                     data-action="click->tabs#switchTab"
-                    data-index="{{loop.index}}"
+                    data-index="{{tab.index}}"
                 >
                     {% if tab.color %}
                         <div 
@@ -40,16 +40,16 @@
                     {% endif %}
                     <div>{{ tab.title }}</div>
                     <div 
-                        class="ml-auto mr-2{% if loop.index == 1 %} rotate-90{% endif %}"
+                        class="ml-auto mr-2{% if tab.isActive %} rotate-90{% endif %}"
                         data-tabs-target="chevron"
-                        data-index="{{loop.index}}"
+                        data-index="{{tab.index}}"
                     >
                         {{ ux_icon('lucide:chevron-down')}}
                     </div>
                 </div>
                 <div  
-                    class="flex flex-col gap-4 p-4 lg:p-6 2xl:p-10 2xl:gap-10{% if loop.index != 1 %} hidden{% endif %}"
-                    data-index="{{loop.index}}"
+                    class="flex flex-col gap-4 p-4 lg:p-6 2xl:p-10 2xl:gap-10{% if not tab.isActive %} hidden{% endif %}"
+                    data-index="{{tab.index}}"
                     data-tabs-target="panel"
                 >
                     {% include tab.view.template with {(tab.view.name): tab.view} %}
