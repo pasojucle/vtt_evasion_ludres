@@ -59,12 +59,15 @@ readonly class ActionFormHandler
                     ),
                     $context,
                 );
+                dump($result);
                 if ($result instanceof RedirectProcessorResult) {
+                    dump($result);
                     $this->addFlash($result->flashType, $result->messageKey);
                 
                     return new RedirectResponse($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
                 if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
+                    dump($result);
                     $flash = $result->messageKey ? new FlashMessage($result->flashType, $result->messageKey) : null;
                     $streamView = $provider->getStreamView($result->data, $flash, $context);
 

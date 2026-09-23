@@ -8,6 +8,7 @@ use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Payload\SessionCreateAdminPayload;
+use App\Dto\Payload\SessionDelete;
 use App\Dto\Payload\SessionSwitch;
 use App\Dto\State\ViewContext;
 use App\Entity\Cluster;
@@ -18,11 +19,12 @@ use App\Service\MessageService;
 use App\Service\ReplaceKeywordsService;
 use App\State\Cluster\Provider\ClusterUpdateProvider;
 use App\State\Session\Processor\SessionCreateProcessor;
+use App\State\Session\Processor\SessionDeleteProcessor;
 use App\State\Session\Processor\SessionSwitchProcessor;
 use App\State\Session\Processor\SessionToggleProcessor;
 use App\State\Session\Provider\SessionCreateProvider;
+use App\State\Session\Provider\SessionDeleteProvider;
 use App\State\Session\Provider\SessionSwitchProvider;
-use App\UseCase\Session\SetSession;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,11 +34,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SessionController extends AbstractCrudController
 {
-    public function __construct(
-        private readonly SetSession $setSession,
-    ) {
-    }
-
     #[Route('/admin/session/toggle/present/{session}', name: 'admin_session_toggle_present', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminPresent(
@@ -47,16 +44,6 @@ class SessionController extends AbstractCrudController
         ActionDirectHandler $handler,
     ): Response {
         return $handler->handle($request, $session, $provider, $processor);
-
-        // $session->setIsPresent($isPresent);
-            // $this->entityManager->flush();
-
-            // $user = $session->getUser();
-            // $licenceService->applyCompleteTrial($user);
-            
-            // if ($user instanceof Member && !$user->getLastLicence()->getState()->isYearly()) {
-            //     $this->sessionService->checkEndTesting($user);
-            // }
     }
 
     #[Route('/admin/session/message/{session}', name: 'admin_session_message', methods: ['GET'], options:['expose' => true])]
@@ -136,20 +123,20 @@ class SessionController extends AbstractCrudController
         );
     }
 
-    #[Route('/admin/rando/supprime/{session}', name: 'admin_session_delete', methods: ['GET'])]
+    #[Route('/admin/rando/supprime/{session}', name: 'admin_session_delete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_VIEW', 'session')]
     public function adminSessionDelete(
-        UserDtoTransformer $userDtoTransformer,
-        Session $session,
-    ) {
-        $userDto = $userDtoTransformer->fromEntity($session->getMember());
-        $bikeRide = $session->getCluster()->getBikeRide();
-        $this->setSession->delete($session);
-
-        $this->addFlash('success', $userDto->member->fullName . ' à bien été désinscrit');
-
-        return $this->redirectToRoute('admin_cluster_list_activity', [
-            'bikeRide' => $bikeRide->getId(),
-        ]);
+        Request $request,
+        SessionDeleteProvider $provider,
+        SessionDeleteProcessor $processor,
+        session $session,
+        ActionFormHandler $handler,
+    ): Response {
+        return $handler->handle(
+            $request,
+            new SessionDelete($session, $session->getCluster()),
+            $provider,
+            $processor
+        );
     }
 }

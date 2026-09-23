@@ -181,6 +181,10 @@ class ParticipantMapper
                     variant: ColorVariant::DROPDOWN,
                     url: $this->urlGenerator->generate('admin_session_delete', ['session' => $session->getId()]),
                     icon: 'lucide:delete',
+                    htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    ],
                 );
             }
         }

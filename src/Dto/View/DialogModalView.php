@@ -33,8 +33,8 @@ readonly class DialogModalView implements ComponentFormViewInterface
     public function getFormAttr(): array
     {
         return [
-            'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
-            'data-turbo-frame' => '_top'
+            // 'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            // 'data-turbo-frame' => '_top'
         ];
     }
 }
