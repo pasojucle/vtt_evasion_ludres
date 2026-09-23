@@ -13,7 +13,6 @@ use App\Dto\View\Identity\IdentityView;
 use App\Entity\Identity;
 use App\Mapper\Identity\IdentityReadMapper;
 
-
 /**
  * @implements TurboStreamProviderInterface<Identity>
  */

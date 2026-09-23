@@ -13,7 +13,6 @@ use App\Dto\View\SheetView;
 use App\Entity\Health;
 use App\Mapper\Health\HealthReadMapper;
 
-
 /**
  * @implements TurboStreamProviderInterface<Health>
  */

@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\LicenceAgreementDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\Licence;
 use App\Form\Admin\LicenceAuthorizationsType;
 use App\State\LicenceAuthorization\Processor\LicenceAuthorizationsUpdateProcessor;
 use App\State\LicenceAuthorization\Provider\LicenceAuthorizationsReadProvider;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -37,8 +35,9 @@ class LicenceAuthorizationController extends AbstractCrudController
         LicenceAuthorizationsReadProvider $provider,
         LicenceAuthorizationsUpdateProcessor $processor,
         Licence $licence,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $licence,
             $provider,

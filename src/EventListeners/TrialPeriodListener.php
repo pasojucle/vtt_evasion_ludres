@@ -14,7 +14,6 @@ use App\Service\MailerService;
 use App\Service\MessageService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-
 #[AsEventListener()]
 class TrialPeriodListener
 {
@@ -45,14 +44,14 @@ class TrialPeriodListener
         $participations = $this->sessionRepository->findParticipationByUser($licence->getMember());
         if (Licence::MAX_TRIAL_SESSIONS <= $participations) {
             if ($this->licenceService->applyTransition($licence, 'complete_trial')) {
-            $identity = $user->getIdentity();
-            $this->mailerService->sendMailToMember(
-                $identity->getEmail(),
-                $identity->getFullName(),
-                'Fin de la période d\'essai',
-                $this->messageService->getMessageById('EMAIL_END_TESTING')
-            );
-        }
+                $identity = $user->getIdentity();
+                $this->mailerService->sendMailToMember(
+                    $identity->getEmail(),
+                    $identity->getFullName(),
+                    'Fin de la période d\'essai',
+                    $this->messageService->getMessageById('EMAIL_END_TESTING')
+                );
+            }
         } else {
             $this->licenceService->applyTransition($licence, 'uncomplete_trial');
         }

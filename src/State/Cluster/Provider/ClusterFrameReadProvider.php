@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\State\Cluster\Provider;
 
+use App\Core\Contract\Provider\ComponentProviderInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\View\Cluster\ClusterView;
 use App\Entity\Cluster;
@@ -15,7 +16,6 @@ use App\Repository\SessionRepository;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
-use App\Core\Contract\Provider\ComponentProviderInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class ClusterFrameReadProvider implements ComponentProviderInterface

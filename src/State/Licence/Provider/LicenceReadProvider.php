@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\Licence\LicenceView;
 use App\Dto\View\SheetView;
 use App\Entity\User;
 use App\Mapper\Licence\LicenceReadMapper;
-use App\State\Interface\TurboStreamProviderInterface;
 
 /**
- * @implements TurboStreamProviderInterface<User>
+ * @implements FormComponentProviderInterface<User>
  */
-class LicenceReadProvider implements TurboStreamProviderInterface
+class LicenceReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     public function __construct(
         private LicenceReadMapper $licenceReadMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',
@@ -30,7 +32,7 @@ class LicenceReadProvider implements TurboStreamProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
         return [
             'attr' => [
@@ -40,8 +42,8 @@ class LicenceReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): LicenceView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): LicenceView
     {
-        return $this->licenceReadMapper->mapToView($entity);
+        return $this->licenceReadMapper->mapToView($data);
     }
 }

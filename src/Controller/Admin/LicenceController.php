@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\Admin\LicenceMemberType;
@@ -44,8 +45,9 @@ class LicenceController extends AbstractCrudController
         LicenceReadProvider $provider,
         LicenceUpdateProcessor $processor,
         User $user,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $user,
             $provider,

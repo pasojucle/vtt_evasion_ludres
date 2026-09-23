@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace App\State\LicenceAuthorization\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsSheetView;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsView;
 use App\Entity\Licence;
 
 use App\Mapper\LicenceAuthorization\LicenceAuthorizationsReadMapper;
-use App\State\Interface\TurboStreamProviderInterface;
 
 /**
  * @implements TurboStreamProviderInterface<Licence>
  */
-class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
+class LicenceAuthorizationsReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     public function __construct(
         private LicenceAuthorizationsReadMapper $licenceAuthorizationsMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): LicenceAuthorizationsSheetView
+    public function getView(object $data, ?HandlerContext $context = null): LicenceAuthorizationsSheetView
     {
         return new LicenceAuthorizationsSheetView(
             title: 'Modifier',
@@ -31,7 +33,7 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
         return [
             'attr' => [
@@ -41,7 +43,7 @@ class LicenceAuthorizationsReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): LicenceAuthorizationsView
+    public function getStreamView(object $entity, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): LicenceAuthorizationsView
     {
         return $this->licenceAuthorizationsMapper->mapToView($entity);
     }

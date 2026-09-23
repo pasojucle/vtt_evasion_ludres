@@ -21,7 +21,6 @@ class TogglePresenceSession
     public function __invoke(
         Session $session,
     ): OperationResult {
-
         $session->setIsPresent(!$session->isPresent());
         $this->sessionRepository->save($session);
 

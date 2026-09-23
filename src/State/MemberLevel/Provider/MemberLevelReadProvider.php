@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace App\State\MemberLevel\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\MemberLevel\MemberLevelView;
 use App\Dto\View\SheetView;
 use App\Entity\Member;
 use App\Mapper\MemberLevel\MemberLevelReadMapper;
-use App\State\Interface\TurboStreamProviderInterface;
 
 /**
- * @implements TurboStreamProviderInterface<Member>
+ * @implements FormComponentProviderInterface<Member>
  */
-class MemberLevelReadProvider implements TurboStreamProviderInterface
+class MemberLevelReadProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     public function __construct(
         private MemberLevelReadMapper $memberLevelReadMapper,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',
@@ -30,7 +32,7 @@ class MemberLevelReadProvider implements TurboStreamProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
         return [
             'attr' => [
@@ -39,7 +41,7 @@ class MemberLevelReadProvider implements TurboStreamProviderInterface
         ];
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): MemberLevelView
+    public function getStreamView(object $entity, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): MemberLevelView
     {
         return $this->memberLevelReadMapper->mapToView($entity);
     }

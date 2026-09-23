@@ -18,7 +18,6 @@ class SwitchSession
     public function __invoke(
         Session $session,
     ): OperationResult {
-
         $this->sessionRepository->save($session);
 
         return OperationResult::success();

@@ -18,8 +18,7 @@ class SessionSwitchClusterType extends AbstractType
 {
     public function __construct(
         private ClusterRepository $clusterRepository
-    )
-    {
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
