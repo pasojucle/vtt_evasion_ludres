@@ -7,8 +7,8 @@ namespace App\Controller\Admin;
 use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\Payload\AssociateResourcePayload;
 use App\Dto\Payload\SessionCreateAdminPayload;
-use App\Dto\Payload\SessionDelete;
 use App\Dto\Payload\SessionSwitch;
 use App\Dto\State\ViewContext;
 use App\Entity\Cluster;
@@ -134,7 +134,7 @@ class SessionController extends AbstractCrudController
     ): Response {
         return $handler->handle(
             $request,
-            new SessionDelete($session, $session->getCluster()),
+            new AssociateResourcePayload($session, $session->getCluster()),
             $provider,
             $processor
         );

@@ -8,7 +8,7 @@ use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\State\ViewContext;
-use App\Dto\View\MemberSkill\MemberSkillSheetView;
+use App\Dto\View\AssociateResourceSkillSheetView;
 use App\Dto\View\MemberSkill\MemberSkillsView;
 use App\Mapper\MemberSkill\MemberSkillReadMapper;
 use App\Mapper\MemberSkill\MemberSkillUpdateMapper;
@@ -62,9 +62,9 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
         );
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): MemberSkillSheetView
+    public function getFormView(object $entity, ?ViewContext $context = null): AssociateResourceSkillSheetView
     {
-        return new MemberSkillSheetView(
+        return new AssociateResourceSkillSheetView(
             title: 'Ajouter',
             description: 'Ajouter une compétence',
             action: 'Ajouter'

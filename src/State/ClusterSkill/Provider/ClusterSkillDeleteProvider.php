@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\State\Cluster\Provider;
+namespace App\State\ClusterSkill\Provider;
 
-use App\Dto\Payload\ClusterSkillDto;
+use App\Dto\Payload\AssociateResourcePayload;
 use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Mapper\DestructiveModalMapper;
@@ -18,13 +18,13 @@ class ClusterSkillDeleteProvider implements FormComponentProviderInterface
     }
 
     /**
-     * @implements FormComponentProviderInterface<ClusterSkillDto>
+     * @implements FormComponentProviderInterface<AssociateResourcePayload>
      */
     public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'évaluation <b>%s</b> ?',
-            $entity->skill->getContent()
+            $entity->data->getContent()
         ));
     }
 

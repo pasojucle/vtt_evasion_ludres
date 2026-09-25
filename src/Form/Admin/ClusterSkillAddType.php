@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Dto\Payload\ClusterSkillAddPayload;
 use App\Entity\Level;
 use App\Entity\SkillCategory;
 use App\Form\Admin\EventListener\Skill\AddClusterSkillSubscriber;
+use App\Form\Admin\EventListener\Skill\AddSkillSubscriber;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,16 +24,15 @@ class ClusterSkillAddType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('skillCategory', EntityType::class, [
+            ->add('category', EntityType::class, [
                 'label' => 'Categorie',
                 'class' => SkillCategory::class,
                 'placeholder' => 'Séléctionner une catégorie',
                 'required' => false,
                 'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'form-group-inline',
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'skills-container',
+                    'data-container-id' => 'sheet-skills-container',
                 ],
             ])
             ->add('level', EntityType::class, [
@@ -41,23 +42,20 @@ class ClusterSkillAddType extends AbstractType
                 'required' => false,
                 'autocomplete' => true,
                 'row_attr' => [
-                    'class' => 'form-group-inline',
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'skills-container',
+                    'data-container-id' => 'sheet-skills-container',
                 ],
             ])
-            ->addEventSubscriber(new AddClusterSkillSubscriber($this->urlGenerator))
+            ->addEventSubscriber(new AddSkillSubscriber($this->urlGenerator))
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'data_class' => ClusterSkillAddPayload::class,
+            'memberId' => null,
             'clusterId' => null,
-            'attr' => [
-                'data-controller' => 'form-modifier',
-                'data-turbo-action' => 'replace',
-            ]
         ]);
     }
 }

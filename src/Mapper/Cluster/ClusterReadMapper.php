@@ -118,7 +118,7 @@ class ClusterReadMapper
             value: (string) $presentParticipants,
             content: sprintf('Sur %d inscrits', $totalParticipants),
             icon: ($isSchoolActivity) ? LevelType::SCHOOL->getIcon() : LevelType::ADULT->getIcon(),
-            action: $this->addParticipantAction($cluster, $isComplete, false, $fallback),
+            actions: [$this->addParticipantAction($cluster, $isComplete, false, $fallback)],
         )];
         
         if ($isSchoolActivity) {
@@ -127,25 +127,36 @@ class ClusterReadMapper
                 value: (string) $presentFramers,
                 content: sprintf('Sur %d inscrits', $totalFramers),
                 icon: LevelType::FRAME->getIcon(),
-                action: $this->addParticipantAction($cluster, $isComplete, true, $fallback),
+                actions: [$this->addParticipantAction($cluster, $isComplete, true, $fallback)],
             );
             $widgets[] = new WidgetView(
                 title: 'Compétences',
                 value: (string) $cluster->getSkills()->count(),
                 icon: 'lucide:badge-check',
                 content: 'À évaluer',
-                action: (!$isComplete)
-                    ? new LinkView(
-                        url: $this->urlContextService->generateUrl('admin_cluster_skills', ['cluster' => $cluster->getId()], $fallback),
-                        variant: ColorVariant::PRIMARY,
-                        size: Size::SM,
-                        label: 'Evaluer',
-                        icon: 'lucide:square-check-big',
-                        htmlAttributes: [
-                            new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                        ],
-                    )
-                    : null,
+                actions: (!$isComplete)
+                    ? [
+                        new LinkView(
+                            url: $this->urlContextService->generateUrl('admin_cluster_skill_add', ['cluster' => $cluster->getId()], $fallback),
+                            variant: ColorVariant::OUTLINE,
+                            size: Size::SM,
+                            label: 'Ajouter',
+                            icon: 'lucide:plus',
+                            htmlAttributes: [
+                                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                            ],
+                        ),
+                        new LinkView(
+                            url: $this->urlContextService->generateUrl('admin_cluster_skills', ['cluster' => $cluster->getId()], $fallback),
+                            variant: ColorVariant::PRIMARY,
+                            size: Size::SM,
+                            label: 'Evaluer',
+                            icon: 'lucide:square-check-big',
+                            htmlAttributes: [
+                                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                            ],
+                        ),
+                    ] : [],
             );
         }
 

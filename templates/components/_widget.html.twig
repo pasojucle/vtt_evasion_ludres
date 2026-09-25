@@ -24,11 +24,10 @@
             </span>
             <span class="text-xs text-muted truncate">{{ widget.content }}</span>
         </div>
-
-        {% if widget.action %}
-            <div class="shrink-0">
-                {% include widget.action.template with {(widget.action.name): widget.action} %}
-            </div>
-        {% endif %}
+        <div class="shrink-0 flex gap-2">
+            {% for action in widget.actions %}
+                {% include action.template with {(action.name): action} %}
+            {% endfor %}
+        </div>
     </div>
 </div>

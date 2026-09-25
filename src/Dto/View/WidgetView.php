@@ -9,13 +9,16 @@ use App\Dto\Enum\ColorVariant;
 
 readonly class WidgetView implements ComponentViewInterface
 {
+    /**
+     * @param LinkView[] $actions
+     */
     public function __construct(
         public string $title,
         public string $value,
         public string $content,
         public string $icon,
         public ColorVariant $variant = ColorVariant::DEFAULT,
-        public ?LinkView $action = null,
+        public array $actions = [],
     ) {
     }
 

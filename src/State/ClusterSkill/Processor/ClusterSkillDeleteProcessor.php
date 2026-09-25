@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\State\Cluster\Processor;
+namespace App\State\ClusterSkill\Processor;
 
-use App\Dto\Payload\ClusterSkillDto;
+use App\Dto\Payload\AssociateResourcePayload;
 use App\Dto\State\RedirectProcessorResult;
 use App\State\Interface\FormRedirectProcessorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,9 +18,9 @@ class ClusterSkillDeleteProcessor implements FormRedirectProcessorInterface
 
     public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
     {
-        /** @var ClusterSkillDto $entity */
-        $cluster = $entity->cluster;
-        $skill = $entity->skill;
+        /** @var AssociateResourcePayload $entity */
+        $cluster = $entity->parent;
+        $skill = $entity->data;
 
         $cluster->removeSkill($skill);
         $this->entityManager->flush();

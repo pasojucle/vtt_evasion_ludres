@@ -100,20 +100,22 @@ class ClusterFrameReadMapper
                 value: (string) $availability['total'],
                 icon: $availability['enum']->getIcon(),
                 content: $content,
-                action: new LinkView(
-                    url: $this->urlContextService->generateUrl('admin_bike_ride_framer_list', [
-                        'bikeRide' => $bikeRide->getId(),
-                        'availability' => $availability['enum']->value,
-                        'levelType' => LevelType::FRAME->value,
-                    ], $referer),
-                    variant: ColorVariant::PRIMARY,
-                    size: Size::SM,
-                    label: 'Afficher',
-                    icon: 'lucide:eye',
-                    htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    ],
-                ),
+                actions: [
+                    new LinkView(
+                        url: $this->urlContextService->generateUrl('admin_bike_ride_framer_list', [
+                            'bikeRide' => $bikeRide->getId(),
+                            'availability' => $availability['enum']->value,
+                            'levelType' => LevelType::FRAME->value,
+                        ], $referer),
+                        variant: ColorVariant::PRIMARY,
+                        size: Size::SM,
+                        label: 'Afficher',
+                        icon: 'lucide:eye',
+                        htmlAttributes: [
+                            new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                        ],
+                    ),
+                ],
             );
         }
         

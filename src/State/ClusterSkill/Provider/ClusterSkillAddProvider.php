@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\State\Session\Provider;
+namespace App\State\ClusterSkill\Provider;
 
 use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
-use App\Dto\Payload\AssociateResourcePayload;
+use App\Dto\Payload\ClusterSkillAddPayload;
+use App\Dto\View\AssociateResourceSkillSheetView;
 use App\Dto\View\Cluster\ClusterView;
-use App\Dto\View\DialogModalView;
+use App\Entity\Cluster;
 use App\Entity\Session;
 use App\Mapper\Cluster\ClusterReadMapper;
-use App\Mapper\DestructiveModalMapper;
 use App\Repository\LicenceAgreementRepository;
 use App\Repository\SessionRepository;
 use App\Service\SeasonService;
@@ -22,9 +22,9 @@ use App\State\Cluster\Trait\ClusterDataProviderTrait;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
- * @implements FormComponentProviderInterface<AssociateResourcePayload>
+ * @implements FormComponentProviderInterface<ClusterSkillAddPayload>
  */
-class SessionDeleteProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
+class ClusterSkillAddProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     use ClusterDataProviderTrait;
 
@@ -34,31 +34,35 @@ class SessionDeleteProvider implements FormComponentProviderInterface, TurboStre
         private SeasonService $seasonService,
         private UrlContextService $urlContextService,
         private ClusterReadMapper $clusterReadMapper,
-        private DestructiveModalMapper $destructiveModalMapper,
         private Security $security,
     ) {
     }
 
-    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): AssociateResourceSkillSheetView
     {
-        return $this->destructiveModalMapper->mapToView(
-            sprintf(
-                '<p>Etes vous certain de supprimer<br> %s',
-                $data->parent->getUser()->getIdentity()->getFullName(),
-            )
+        return new AssociateResourceSkillSheetView(
+            title: 'Ajouter une compétence',
+            description: sprintf('Ajouter une compétence au groupe %s', $data->cluster->getTitle()),
+            action: 'Ajouter',
         );
     }
 
+    /**
+     * @param ClusterSkillAddPayload $data
+     */
     public function getFormOptions(object $data): array
     {
         return [
+            'clusterId' => $data->cluster->getId(),
             'attr' => [
-                'data-action' => 'turbo:submit-end->modal#close',
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-controller' => 'form-modifier',
+                // 'data-turbo-action' => 'replace',
             ],
         ];
     }
 
-    /** @param object $data  */
+    /** @param Cluster $data  */
     public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): ClusterView
     {
         $userIds = $data->getSessions()->map(fn (Session $session) => $session->getUser()->getId())->toArray();

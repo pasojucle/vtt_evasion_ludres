@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\SkillDtoTransformer;
-use App\Dto\Payload\ClusterSkillDto;
+use App\Dto\Payload\AssociateResourcePayload;
+use App\Dto\Payload\ClusterSkillAddPayload;
 use App\Entity\Cluster;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
 use App\Form\Admin\ClusterSkillAddType;
 use App\Form\Admin\MemberSkillCollectionType;
 use App\Form\Admin\MemberSkillType;
-use App\State\Cluster\Processor\ClusterSkillDeleteProcessor;
-use App\State\Cluster\Provider\ClusterSkillDeleteProvider;
+use App\State\ClusterSkill\Processor\ClusterSkillAddProcessor;
+use App\State\ClusterSkill\Processor\ClusterSkillDeleteProcessor;
+use App\State\ClusterSkill\Provider\ClusterSkillAddProvider;
+use App\State\ClusterSkill\Provider\ClusterSkillDeleteProvider;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,41 +51,19 @@ class ClusterSkillController extends AbstractCrudController
     #[Route('/admin/groupe/evaluation/add/{cluster}', name: 'admin_cluster_skill_add', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluationAdd(
-        Cluster $cluster,
         Request $request,
+        ClusterSkillAddProvider $provider,
+        ClusterSkillAddProcessor $processor,
+        Cluster $cluster,
+        ActionFormHandler $handler,
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(ClusterSkillAddType::class, null, [
-            'action' => $request->getUri(),
-            'clusterId' => $cluster->getId(),
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $skill = $form->get('skill')->getData();
-                $cluster->addSkill($skill);
-                $this->entityManager->flush();
-
-                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                    $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-                    
-                    return $this->render('cluster/admin/skill_added.stream.html.twig', [
-                        'skill' => $this->skillDtoTransformer->fromEntity($skill),
-                        'cluster' => $cluster,
-                        'canEdit' => $this->isGranted('BIKE_RIDE_EDIT', $cluster),
-                    ]);
-                }
-
-                return $this->redirectToRoute('admin_cluster_skills', ['cluster' => $cluster->getId()]);
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('cluster/admin/skill_add.modal.html.twig', [
-            'form' => $form->createView(),
-            'cluster' => $cluster,
-        ], $response);
+        return $handler->handle(
+            $request,
+            new ClusterSkillAddPayload($cluster),
+            $provider,
+            $processor,
+            ClusterSkillAddType::class,
+        );
     }
 
     #[Route('/admin/groupe/evaluation/delete/{cluster}/{skill}', name: 'admin_cluster_skill_delete', methods: ['GET', 'POST'])]
@@ -95,7 +77,7 @@ class ClusterSkillController extends AbstractCrudController
     ): Response {
         return $this->handleFormComponentAction(
             $request,
-            new ClusterSkillDto($cluster, $skill),
+            new AssociateResourcePayload($cluster, $skill),
             $provider,
             $processor
         );
