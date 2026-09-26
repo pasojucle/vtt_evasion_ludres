@@ -6,13 +6,16 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\BoardRole;
+use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Member;
+use App\Entity\MemberSkill;
 use App\Entity\Session;
+use App\Entity\Skill;
 use App\Entity\User;
 use App\Service\SeasonService;
 use DateInterval;
@@ -1274,5 +1277,39 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
             ->getQuery()
             ->getSingleResult();
         ;
+    }
+
+
+
+    public function findEvaluablesByCluster(Cluster $cluster): array
+    {
+        return $this->createQueryBuilder('mbr')
+        ->select('DISTINCT mbr', 'le', 'mbrsk', 'sk')
+        ->innerJoin('mbr.level', 'le')
+        ->innerJoin(
+            Session::class,
+            'usrse',
+            'WITH',
+            (new  Expr())->andX(
+                (new Expr())->eq('usrse.user', 'mbr'),
+                (new Expr())->eq('usrse.cluster', ':cluster'),
+                (new Expr())->eq('usrse.isPresent', ':isPresent'),
+            )
+        )
+        ->leftJoin('mbr.memberSkills', 'mbrsk')
+        ->leftJoin('mbrsk.skill', 'sk')
+        ->leftJoin('sk.clusters', 'skcl', 'WITH', 'skcl = :cluster')
+        ->andWhere(
+            (new Expr())->eq('le.type', ':levelType'),
+            (new Expr())->orX(
+                (new Expr())->isNotNull('skcl.id'),
+                (new Expr())->isNull('mbrsk.id'),
+            )
+        )
+        ->setParameter('cluster', $cluster)
+        ->setParameter('levelType', LevelType::SCHOOL)
+        ->setParameter('isPresent', true)
+        ->getQuery()
+        ->getResult();
     }
 }

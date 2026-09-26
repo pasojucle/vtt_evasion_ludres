@@ -1,0 +1,32 @@
+{% extends 'base_sheet.html.twig' %}
+{% block body %}
+    <div class="mb-2 flex flex-col gap-4">
+        {% for clusterSkill in view.items %}
+            {% set isActive = loop.index == 1 %}
+            <div 
+                class="flex items-center gap-2 p-2 border-b border-border lg:mb-4 md:hidden"
+                data-tabs-target="trigger"
+                data-action="click->tabs#switchTab"
+                data-index="{{ loop.index }}"
+            >
+                <div>{{ clusterSkill.content }}</div>
+                <div 
+                    class="ml-auto mr-2{% if isActive %} rotate-90{% endif %}"
+                    data-tabs-target="chevron"
+                    data-index="{{ loop.index }}"
+                >
+                    {{ ux_icon('lucide:chevron-down')}}
+                </div>
+            </div>
+            <div  
+                class="flex flex-col gap-4 p-4 lg:p-6 2xl:p-10 2xl:gap-10{% if not isActive %} hidden{% endif %}"
+                data-index="{{loop.index}}"
+                data-tabs-target="panel"
+            >
+                {% for memberSkill in clusterSkill.memberSkills %}
+                    {% include "cluster_skill/admin/_member_skill.html.twig" with { member_skill: memberSkill} %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionFormHandler;
-use App\Dto\DtoTransformer\SkillDtoTransformer;
+use App\Core\Handler\DetailHandler;
 use App\Dto\Payload\AssociateResourcePayload;
 use App\Dto\Payload\ClusterSkillAddPayload;
 use App\Entity\Cluster;
+use App\Entity\Enum\EvaluationEnum;
+use App\Entity\Member;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
 use App\Form\Admin\ClusterSkillAddType;
@@ -18,6 +20,7 @@ use App\State\ClusterSkill\Processor\ClusterSkillAddProcessor;
 use App\State\ClusterSkill\Processor\ClusterSkillDeleteProcessor;
 use App\State\ClusterSkill\Provider\ClusterSkillAddProvider;
 use App\State\ClusterSkill\Provider\ClusterSkillDeleteProvider;
+use App\State\ClusterSkill\Provider\ClusterSkillReadProvider;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,12 +28,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\UX\Turbo\TurboBundle;
 
 class ClusterSkillController extends AbstractCrudController
 {
     public function __construct(
-        private SkillDtoTransformer $skillDtoTransformer,
         private EntityManagerInterface $entityManager,
         private readonly GetUserSkillCluster $getUserSkillCluster,
     ) {
@@ -39,13 +40,12 @@ class ClusterSkillController extends AbstractCrudController
     #[Route('/admin/groupe/evaluations/{cluster}', name: 'admin_cluster_skills', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluations(
+        Request $request,
+        ClusterSkillReadProvider $provider,
         Cluster $cluster,
+        DetailHandler $handler,
     ): Response {
-        return $this->render('cluster/admin/skill_list.html.twig', [
-            'cluster' => $cluster,
-            'clusterSkills' => $this->skillDtoTransformer->fromEntities($cluster->getSkills()),
-            'canEdit' => $this->isGranted('BIKE_RIDE_EDIT', $cluster),
-        ]);
+        return $handler->handle($request, $provider, $cluster);
     }
 
     #[Route('/admin/groupe/evaluation/add/{cluster}', name: 'admin_cluster_skill_add', methods: ['GET', 'POST'])]
@@ -109,5 +109,22 @@ class ClusterSkillController extends AbstractCrudController
             'content' => $skill->getContent(),
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/admin/cluster/member/skill/{member}/{skill}/{evaluation}', name: 'admin_cluster_member_skill_add', methods: ['GET', 'POST'])]
+    #[IsGranted('BIKE_RIDE_LIST')]
+    public function adminClusterMemberSkillAdd(
+        Member $member,
+        Skill $skill,
+        EvaluationEnum $evaluation,
+    ) {
+    }
+
+    #[Route('/admin/cluster/member_skill/{memberSkill}/{evaluation}', name: 'admin_cluster_member_skill_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('BIKE_RIDE_LIST')]
+    public function adminClusterMemberSkillEdit(
+        MemberSkill $memberSkill,
+        EvaluationEnum $evaluation,
+    ) {
     }
 }

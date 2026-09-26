@@ -62,9 +62,10 @@ class ActivityAdminListProvider implements ListProviderInterface
 
     private function getQueryBuilder(ActivityFilter $filter): QueryBuilder
     {
+        $today = new DateTime();
         $qb = $this->bikeRideRepository->getActivityQuery();
         match ($filter->period) {
-            ActivityPeriod::UPCOMING => $this->bikeRideRepository->filterUpcoming($qb, new DateTime()),
+            ActivityPeriod::UPCOMING => $this->bikeRideRepository->filterUpcoming($qb, $today->setTime(0, 0, 0)),
             ActivityPeriod::MONTH => $this->bikeRideRepository->filterByMonth($qb, ...$this->getInterval($filter->month)),
             default => null,
         };

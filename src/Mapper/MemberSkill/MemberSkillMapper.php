@@ -26,7 +26,7 @@ class MemberSkillMapper
     public function mapToView(MemberSkill $memberSkill): MemberSkillView
     {
         $skill = $memberSkill->getSkill();
-        $eveluation = $memberSkill->getEvaluation();
+        $evaluation = $memberSkill->getEvaluation();
         $tokenId = $this->csrfTokenService->getTokenId($memberSkill);
         $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
 
@@ -39,7 +39,7 @@ class MemberSkillMapper
                     'evaluation' => EvaluationEnum::UNACQUIRED->value,
                     'csrfToken' => $tokenValue,
                 ]),
-                variant: EvaluationEnum::UNACQUIRED === $eveluation
+                variant: EvaluationEnum::UNACQUIRED === $evaluation
                     ? EvaluationEnum::UNACQUIRED->variant()
                     : ColorVariant::OUTLINE,
                 label: ucfirst(EvaluationEnum::UNACQUIRED->trans($this->translator)),
@@ -50,7 +50,7 @@ class MemberSkillMapper
                     'evaluation' => EvaluationEnum::PENDING->value,
                     'csrfToken' => $tokenValue,
                 ]),
-                variant: EvaluationEnum::PENDING === $eveluation
+                variant: EvaluationEnum::PENDING === $evaluation
                     ? EvaluationEnum::PENDING->variant()
                     : ColorVariant::OUTLINE,
                 label: ucfirst(EvaluationEnum::PENDING->trans($this->translator)),
@@ -61,7 +61,7 @@ class MemberSkillMapper
                     'evaluation' => EvaluationEnum::ACQUIRED->value,
                     'csrfToken' => $tokenValue,
                 ]),
-                variant: EvaluationEnum::ACQUIRED === $eveluation
+                variant: EvaluationEnum::ACQUIRED === $evaluation
                     ? EvaluationEnum::ACQUIRED->variant()
                     : ColorVariant::OUTLINE,
                 label: ucfirst(EvaluationEnum::ACQUIRED->trans($this->translator)),

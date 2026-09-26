@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\State\Interface;
+namespace App\Core\Contract\Provider;
 
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\State\ViewContext;
@@ -14,12 +14,8 @@ use App\Dto\View\ListDrawerView;
 interface ListDrawerProviderInterface extends ListFilteredProviderInterface
 {
     /**
-     * Summary of getCollection
-     * @param AbstractFilter $filter
+     * @param T $filter
      * @param ViewContext $context,
      */
-    public function getCollection(
-        AbstractFilter $filter,
-        ViewContext $context,
-    ): ListDrawerView;
+    public function getCollection(AbstractFilter $filter, ViewContext $context): ListDrawerView;
 }

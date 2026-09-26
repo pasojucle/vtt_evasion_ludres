@@ -7,7 +7,6 @@ namespace App\Core\Handler;
 use App\Core\Contract\Provider\ComponentProviderInterface;
 use App\Core\Contract\View\ComponentViewInterface;
 use App\Core\Dto\HandlerContext;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -15,7 +14,6 @@ use Twig\Environment;
 readonly class DetailHandler
 {
     public function __construct(
-        private FormFactoryInterface $formFactory,
         private Environment $twig,
     ) {
     }

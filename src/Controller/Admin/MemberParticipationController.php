@@ -7,8 +7,6 @@ namespace App\Controller\Admin;
 use App\Dto\Filter\MemberParticipationFilter;
 use App\Dto\State\ViewContext;
 use App\Entity\Member;
-use App\Form\Filter\MemberParticipationType;
-use App\State\MemberParticipation\Processor\MemberParticipationFilterProcessor;
 use App\State\MemberParticipation\Provider\MemberParticipationReadProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

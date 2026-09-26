@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
@@ -73,6 +74,16 @@ class SkillRepository extends ServiceEntityRepository
             $qb->expr()->eq('sk.category', ':category')
         )
         ->setParameter('category', $category);
+    }
+
+    public function filterCluster(QueryBuilder $qb, Cluster $cluster): void
+    {
+        $qb
+            ->join('s.clusters', 'c')
+            ->andWhere(
+                (new Expr())->eq('c.id', ':cluster')
+            )
+            ->setParameter('cluster', $cluster);
     }
 
     public function filterContent(QueryBuilder $qb, string $term): void
