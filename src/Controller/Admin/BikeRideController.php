@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\ListDrawerHandler;
 use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
@@ -54,8 +55,9 @@ class BikeRideController extends AbstractCrudController
         Request $request,
         ActivityUpdateProvider $provider,
         ActivityUpdateProcessor $processor,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             new BikeRide(),
             $provider,
@@ -70,9 +72,10 @@ class BikeRideController extends AbstractCrudController
         Request $request,
         ActivityUpdateProvider $provider,
         ActivityUpdateProcessor $processor,
-        ?BikeRide $bikeRide
+        ?BikeRide $bikeRide,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $bikeRide,
             $provider,

@@ -66,7 +66,9 @@ class ParticipantMapper
         $indicators = [];
         if ($user instanceof Member) {
             foreach ($user->getLastLicence()->getLicenceAuthorizations() as $licenceAgreement) {
-                $indicators[] = $this->licenceAuthorizationBadgeMapper->mapToView($licenceAgreement);
+                if ($licenceAgreement->getAgreement()->getCategory() === $user->getLastLicence()->getCategory()) {
+                    $indicators[] = $this->licenceAuthorizationBadgeMapper->mapToView($licenceAgreement);
+                }
             }
             if ($user->getHealth()->getContent()) {
                 $indicators[] = new BadgeView(

@@ -15,10 +15,11 @@ readonly class HandlerContext
         public int $page,
         public int $tab,
         public ?string $encodedFallback,
+        public ?object $parent,
     ) {
     }
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(Request $request, ?object $parent = null): self
     {
         return new self(
             route: $request->attributes->get('_route'),
@@ -27,6 +28,7 @@ readonly class HandlerContext
             page: $request->query->getInt('page', 1),
             tab: $request->query->getInt('tab', 1),
             encodedFallback: $request->query->get('_redirect_to') ?? $request->request->get('_redirect_to'),
+            parent: $parent,
         );
     }
 }

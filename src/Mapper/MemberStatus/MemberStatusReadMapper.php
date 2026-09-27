@@ -14,6 +14,7 @@ use App\Entity\Enum\PermissionEnum;
 use App\Entity\Member;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MemberStatusReadMapper
@@ -21,13 +22,15 @@ class MemberStatusReadMapper
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
-        private Security $security,
+        private RoleHierarchyInterface $roleHierarchy,
     ) {
     }
 
     public function mapToView(Member $entity): MemberStatusView
     {
         $permissions = $entity->getPermissions();
+        $reachableRoles = $this->roleHierarchy->getReachableRoleNames($entity->getRoles());
+        $isAdmin = in_array('ROLE_ADMIN', $reachableRoles, true);
 
         return new MemberStatusView(
             id: $entity->getId(),
@@ -37,7 +40,7 @@ class MemberStatusReadMapper
                     $permision->trans($this->translator),
                 ), $permissions)
                 : [new BadgeView(
-                    $this->security->isGranted('ROLE_ADMIN') ? 'Administrateur' : 'Aucun',
+                    $isAdmin ? 'Administrateur' : 'Aucun',
                 )],
             action: new LinkView(
                 url: $this->urlGenerator->generate('admin_member_status_edit', ['member' => $entity->getId()]),

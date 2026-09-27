@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Provider;
 
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\InputInitializerInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\Size;
-use App\Dto\State\ViewContext;
 use App\Dto\View\Activity\Tab\MainView;
 use App\Dto\View\Activity\Tab\OptionsView;
 use App\Dto\View\Activity\Tab\ParticipantsView;
@@ -17,8 +19,7 @@ use App\Dto\View\TabView;
 use App\Entity\BikeRide;
 use App\Mapper\Activity\Update\MediasMapper;
 use App\Service\MessageService;
-use App\State\Interface\FormComponentProviderInterface;
-use App\State\Interface\InputInitializerInterface;
+use App\Service\UrlContextService;
 
 /**
  * @implements FormComponentProviderInterface<BikeRide>
@@ -28,10 +29,11 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
     public function __construct(
         private MediasMapper $mediasMapper,
         private MessageService $messageService,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): FormTabWrapperView
+    public function getView(object $entity, ?HandlerContext $context = null): FormTabWrapperView
     {
         $action = ($entity->getId()) ? 'Modifier' : 'Ajouter';
         $currentTab = $context->tab;
@@ -78,7 +80,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
                 ),
             ],
             fallback: new LinkView(
-                url: $context->fallback,
+                url: $this->urlContextService->decodeUrl($context->encodedFallback),
                 icon: 'lucide:chevron-left',
                 size: Size::ICON
             ),

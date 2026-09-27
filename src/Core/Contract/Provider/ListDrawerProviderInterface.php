@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Contract\Provider;
 
+use App\Core\Dto\HandlerContext;
 use App\Dto\Filter\AbstractFilter;
-use App\Dto\State\ViewContext;
 use App\Dto\View\ListDrawerView;
 
 /**
@@ -15,7 +15,7 @@ interface ListDrawerProviderInterface extends ListFilteredProviderInterface
 {
     /**
      * @param T $filter
-     * @param ViewContext $context,
+     * @param HandlerContext $context,
      */
-    public function getCollection(AbstractFilter $filter, ViewContext $context): ListDrawerView;
+    public function getCollection(AbstractFilter $filter, HandlerContext $context): ListDrawerView;
 }

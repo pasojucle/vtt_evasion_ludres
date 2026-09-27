@@ -6,8 +6,8 @@ namespace App\Core\Handler;
 
 use App\Core\Contract\Provider\FilterInitializerInterface;
 use App\Core\Contract\Provider\ListDrawerProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Filter\AbstractFilter;
-use App\Dto\State\ViewContext;
 use App\Form\Filter\ListFilterType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -29,24 +29,18 @@ readonly class ListDrawerHandler
         ListDrawerProviderInterface $provider,
         object $entity
     ): Response {
-        $route = $request->attributes->get('_route');
-        $filterConfig = $provider->getFilterConfig($route);
+        $context = HandlerContext::fromRequest($request, $entity);
+
+        $filterConfig = $provider->getFilterConfig($context->route);
         if (!$filterConfig) {
             throw new NotFoundHttpException();
         }
 
-        $queryParams = $request->query->all();
-        $filter = $provider->getHydratedDto($queryParams, $filterConfig->getDataClass());
+        $filter = $provider->getHydratedDto($context->queryParams, $filterConfig->getDataClass());
         if ($provider instanceof FilterInitializerInterface) {
-            $provider->initializeFilters($filter, $queryParams);
+            $provider->initializeFilters($filter, $context->queryParams);
         }
 
-        $context = new ViewContext(
-            route: $request->attributes->get('_route'),
-            routeParams: $request->attributes->get('_route_params'),
-            parent: $entity,
-            encodedFallback: $request->query->get('_redirect_to'),
-        );
         $form = $this->formFactory->create(ListFilterType::class, $filter, [
             'action' => $request->getUri(),
             'filter_config' => $filterConfig,
@@ -61,7 +55,7 @@ readonly class ListDrawerHandler
         ListDrawerProviderInterface $provider,
         FormInterface $form,
         AbstractFilter $filter,
-        ViewContext $context
+        HandlerContext $context
     ): string {
         $view = $provider->getCollection($filter, $context);
         $formView = $form->createView();
