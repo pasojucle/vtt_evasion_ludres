@@ -8,6 +8,7 @@ use App\Core\Contract\Processor\ProcessorInterface;
 use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\InputInitializerInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Contract\Provider\TurboStreamUpdateProviderInterface;
 use App\Core\Contract\View\ComponentFormViewInterface;
 use App\Core\Dto\ActionPayload;
 use App\Core\Dto\FlashMessage;
@@ -77,6 +78,18 @@ readonly class ActionFormHandler
                     );
                 }
             }
+            if ($provider instanceof TurboStreamUpdateProviderInterface) {
+                $streamView = $provider->getUpdateStreamView($data, $context);
+                return new Response(
+                        $this->twig->render($streamView->getStreamTemplate(), [
+                            'view' => $streamView,
+                            'form' => $form->createView(),
+                        ]),
+                        Response::HTTP_UNPROCESSABLE_ENTITY,
+                        ['Content-Type' => 'text/vnd.turbo-stream.html'],
+                    );
+            }
+
             return new Response(
                 $this->renderView($provider->getView($data, $context), $form),
                 Response::HTTP_UNPROCESSABLE_ENTITY

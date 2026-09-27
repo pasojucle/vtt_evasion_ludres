@@ -4,29 +4,36 @@ declare(strict_types=1);
 
 namespace App\State\Session\Processor;
 
-use App\Dto\State\TurboStreamProcessorResult;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\TurboStreamProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\TurboStreamProcessorResult;
 use App\Entity\Enum\AvailabilityEnum;
-use App\State\Interface\FormTurboStreamProcessorInterface;
 use App\UseCase\v2\Session\CreateSession;
-use Doctrine\ORM\EntityManagerInterface;
 
-class SessionCreateProcessor implements FormTurboStreamProcessorInterface
+class SessionCreateProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
         private CreateSession $createSession,
     ) {
     }
 
-    public function process(object $payload, ?array $uploadFiles, ?string $targetUrl = null): TurboStreamProcessorResult
+    /**
+     * Summary of process
+     * @param ActionPayload $payload
+     */
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
-        $bikeRide = $payload->cluster->getBikeRide();
-        $user = $payload->user;
+        $data = $payload->data;
+        $bikeRide = $data->cluster->getBikeRide();
+        $user = $data->user;
         ($this->createSession)(
             $bikeRide,
-            $payload->cluster,
+            $data->cluster,
             $user,
-            $payload->practice,
-            $payload->bikeType,
+            $data->practice,
+            $data->bikeType,
             ($bikeRide->getBikeRideType()->isNeedFramers() && $user->isFramer())
                 ? AvailabilityEnum::REGISTERED
                 : AvailabilityEnum::NONE,
@@ -41,6 +48,7 @@ class SessionCreateProcessor implements FormTurboStreamProcessorInterface
         return new TurboStreamProcessorResult(
             success: true,
             messageKey: 'session.flash.success.create',
+            data: $data
         );
     }
 }

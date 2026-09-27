@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace App\State\Session\Provider;
 
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\InputInitializerInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Contract\Provider\TurboStreamUpdateProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Payload\SessionCreateAdminPayload;
-use App\Dto\State\ViewContext;
 use App\Dto\View\Cluster\ClusterView;
-use App\Dto\View\Session\SessionAddSheetView;
+use App\Dto\View\Session\SessionAddFormView;
+use App\Dto\View\SheetFormUpdateView;
+use App\Dto\View\SheetFormWrapperView;
 use App\Entity\Enum\LevelType;
 use App\Entity\Session;
 use App\Mapper\Cluster\ClusterReadMapper;
@@ -16,16 +23,16 @@ use App\Repository\SessionRepository;
 use App\Service\SeasonService;
 use App\Service\SurveyService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
-use App\State\Interface\InputInitializerInterface;
-use App\State\Interface\TurboStreamProviderInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @implements TurboStreamProviderInterface<SessionCreateAdminPayload>
  */
-class SessionCreateProvider implements TurboStreamProviderInterface, InputInitializerInterface
+class SessionCreateProvider implements FormComponentProviderInterface, TurboStreamProviderInterface, InputInitializerInterface, TurboStreamUpdateProviderInterface
 {
     use ClusterDataProviderTrait;
+
+    private const string FRAME_ID = 'cluster-participant-add';
 
     public function __construct(
         protected readonly LicenceAgreementRepository $licenceAgreementRepository,
@@ -37,16 +44,18 @@ class SessionCreateProvider implements TurboStreamProviderInterface, InputInitia
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SessionAddSheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetFormWrapperView
     {
-        return new SessionAddSheetView(
+        return new SheetFormWrapperView(
             title: 'Ajouter un participant',
-            description: sprintf('Ajouter un nouveau participant au groupe %s', $entity->cluster->getTitle()),
+            description: sprintf('Ajouter un nouveau participant au groupe %s', $data->cluster->getTitle()),
             action: 'Ajouter',
+            frameId: self::FRAME_ID,
+            formView: new SessionAddFormView(),
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data): array
     {
         return [
             'attr' => [
@@ -56,27 +65,26 @@ class SessionCreateProvider implements TurboStreamProviderInterface, InputInitia
         ];
     }
 
-    public function setDefaultValues(object $entity): object
+    public function setDefaultValues(object $data): object
     {
-        $bikeRide = $entity->cluster->getBikeRide();
+        $bikeRide = $data->cluster->getBikeRide();
 
         $currentSeason = $this->seasonService->getCurrentSeason();
         $minSeasonToTakePart = $this->seasonService->getMinSeasonToTakePart();
-        $entity->season = ($minSeasonToTakePart < $currentSeason) ? null : $currentSeason;
+        $data->season = ($minSeasonToTakePart < $currentSeason) ? null : $currentSeason;
 
-        $entity->level = ($entity->isFramer) ? LevelType::FRAME->value : $entity->cluster->getLevel()?->getId();
-        $entity->surveyResponses = ($bikeRide->getSurvey())
+        $data->level = ($data->isFramer) ? LevelType::FRAME->value : $data->cluster->getLevel()?->getId();
+        $data->surveyResponses = ($bikeRide->getSurvey())
                 ? ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)]
                 : null;
 
-        return $entity;
+        return $data;
     }
 
-    public function getStreamView(object $entity, ?ViewContext $context = null): ClusterView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): ClusterView
     {
-        $cluster = $entity->cluster;
+        $cluster = $data->cluster;
         $userIds = $cluster->getSessions()->map(fn (Session $session) => $session->getUser()->getId())->toArray();
-        $targetUrl = $context->fallback;
 
         return $this->clusterReadMapper->mapToView(
             $cluster,
@@ -84,7 +92,16 @@ class SessionCreateProvider implements TurboStreamProviderInterface, InputInitia
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),
             $this->seasonService->getCurrentSeason(),
-            $targetUrl,
+            $context->encodedFallback,
+        );
+    }
+
+    
+    public function getUpdateStreamView(object $data, ?HandlerContext $context = null): SheetFormUpdateView
+    {
+        return new SheetFormUpdateView(
+            frameId: self::FRAME_ID,
+            formView: new SessionAddFormView(),
         );
     }
 }

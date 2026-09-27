@@ -107,19 +107,14 @@ class SessionController extends AbstractCrudController
         SessionCreateProcessor $processor,
         Cluster $cluster,
         bool $isFramer,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             new SessionCreateAdminPayload($cluster, $isFramer),
             $provider,
             $processor,
             SessionType::class,
-            new ViewContext(
-                route: $request->attributes->get('_route'),
-                routeParams: $request->attributes->get('_route_params'),
-                page: $request->query->getInt('page', 1),
-                fallback: $request->query->get('_redirect_to'),
-            ),
         );
     }
 

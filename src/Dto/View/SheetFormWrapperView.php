@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace App\Dto\View;
 
 use App\Core\Contract\View\ComponentFormViewInterface;
+use App\Core\Contract\View\ComponentViewInterface;
 
-readonly class SheetView implements ComponentFormViewInterface
+readonly class SheetFormWrapperView implements ComponentFormViewInterface
 {
     public function __construct(
         public string $title,
         public string $description,
         public string $action,
-        public string $frame = 'form-drawer',
+        public string $frameId,
+        public ComponentViewInterface $formView,
     ) {
     }
 
@@ -23,7 +25,7 @@ readonly class SheetView implements ComponentFormViewInterface
 
     public function getTemplate(): string
     {
-        return 'components/_form.sheet.html.twig';
+        return 'components/sheet/_form_wrapper.sheet.html.twig';
     }
 
     public function getFormAttr(): array
