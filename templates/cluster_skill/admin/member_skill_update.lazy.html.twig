@@ -1,0 +1,5 @@
+<turbo-stream action="replace" target="member-skill-{{ view.id }}">
+    <template>
+        {% include 'cluster_skill/admin/_member_skill.html.twig' with {member_skill: view} %}
+    </template>
+</turbo-stream>

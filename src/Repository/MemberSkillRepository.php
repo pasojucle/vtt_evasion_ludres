@@ -10,6 +10,7 @@ use App\Entity\Member;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
+use App\Repository\Interface\MemberSkillRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -20,11 +21,29 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<MemberSkill>
  */
-class MemberSkillRepository extends ServiceEntityRepository
+class MemberSkillRepository extends ServiceEntityRepository implements MemberSkillRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, MemberSkill::class);
+    }
+
+        public function save(MemberSkill $memberSkill, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($memberSkill);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(MemberSkill $memberSkill, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($memberSkill);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

@@ -14,7 +14,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -47,7 +46,6 @@ class LicenceRepository extends ServiceEntityRepository implements LicenceReposi
             $this->getEntityManager()->flush();
         }
     }
-
 
     public function findOneByUserAndLastSeason(Member $member): ?Licence
     {

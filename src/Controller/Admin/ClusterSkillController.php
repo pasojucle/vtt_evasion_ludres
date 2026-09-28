@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\DetailHandler;
 use App\Dto\Payload\AssociateResourcePayload;
 use App\Dto\Payload\ClusterSkillAddPayload;
+use App\Dto\Payload\MemberSkillAddEvaluationPayload;
 use App\Entity\Cluster;
 use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Member;
@@ -20,7 +22,9 @@ use App\State\ClusterSkill\Processor\ClusterSkillAddProcessor;
 use App\State\ClusterSkill\Processor\ClusterSkillDeleteProcessor;
 use App\State\ClusterSkill\Provider\ClusterSkillAddProvider;
 use App\State\ClusterSkill\Provider\ClusterSkillDeleteProvider;
+use App\State\ClusterSkill\Provider\ClusterSkillEvaluateProvider;
 use App\State\ClusterSkill\Provider\ClusterSkillReadProvider;
+use App\State\ClusterSkill\Processor\ClusterSkillEvaluateProcessor;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -114,10 +118,44 @@ class ClusterSkillController extends AbstractCrudController
     #[Route('/admin/cluster/member/skill/{member}/{skill}/{evaluation}', name: 'admin_cluster_member_skill_add', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterMemberSkillAdd(
+        Request $request,
+        ClusterSkillEvaluateProvider $provider,
+        ClusterSkillEvaluateProcessor $processor,
         Member $member,
         Skill $skill,
         EvaluationEnum $evaluation,
+        ActionDirectHandler $handler,
     ) {
+        return $handler->handle(
+            $request,
+            new MemberSkillAddEvaluationPayload($member, $skill, $evaluation),
+            $provider,
+            $processor,
+        );
+    }
+
+    public function edit(
+        Request $request,
+        MemberSkillUpdateProvider $provider,
+        MemberSkillEvaluationProcessor $processor,
+        MemberSkill $memberSkill,
+        EvaluationEnum $evaluation
+    ): Response {
+        $token = $request->query->get('csrfToken');
+        $result = $processor->process(
+            new MemberSkillEvaluationPayload($memberSkill, $evaluation, $token),
+            null,
+        );
+
+        $streamView = ($result->success)
+            ? $provider->getStreamView($memberSkill)
+            : $result->flashMessages;
+
+        return $this->render($streamView->getStreamTemplate(), [
+                'view' => $streamView,
+            ], new Response('', Response::HTTP_OK, [
+                'Content-Type' => 'text/vnd.turbo-stream.html',
+            ]));
     }
 
     #[Route('/admin/cluster/member_skill/{memberSkill}/{evaluation}', name: 'admin_cluster_member_skill_edit', methods: ['GET', 'POST'])]
