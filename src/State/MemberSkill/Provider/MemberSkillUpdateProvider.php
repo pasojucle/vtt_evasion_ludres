@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\State\MemberSkill\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\MemberSkill\MemberSkillUpdateView;
 use App\Entity\MemberSkill;
 use App\Mapper\MemberSkill\MemberSkillReadMapper;
@@ -14,7 +16,7 @@ use App\Repository\SkillCategoryRepository;
 use App\Repository\SkillRepository;
 use App\State\MemberSkill\Trait\MemberSkillDataProviderTrait;
 
-class MemberSkillUpdateProvider
+class MemberSkillUpdateProvider implements TurboStreamProviderInterface
 {
     use MemberSkillDataProviderTrait;
 
@@ -27,14 +29,14 @@ class MemberSkillUpdateProvider
     ) {
     }
     /**
-     * @param MemberSkill $entity
+     * @param MemberSkill $data
      */
-    public function getStreamView(object $entity, ?ViewContext $context = null): MemberSkillUpdateView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): MemberSkillUpdateView
     {
-        $member = $entity->getMember();
+        $member = $data->getMember();
 
         return $this->memberSkillUpdateMapper->mapToView(
-            memberSkill: $entity,
+            memberSkill: $data,
             memberSkillDevelopmentData: $this->getMemberSkillDevelopmentData($member),
         );
     }

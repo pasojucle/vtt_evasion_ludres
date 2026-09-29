@@ -9,9 +9,9 @@ use App\Core\Contract\Processor\TurboStreamProcessorInterface;
 use App\Core\Dto\ActionDirectPayload;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\TurboStreamProcessorResult;
-use App\Dto\Payload\MemberSkillAddEvaluationPayload;
+use App\Dto\Payload\MemberSkillEvaluationPayload;
 use App\Service\CsrfTokenService;
-use App\UseCase\v2\MemberSkill\CreateMemberSkill;
+use App\UseCase\v2\MemberSkill\EvaluateMemberSkill;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -23,7 +23,7 @@ class ClusterSkillEvaluateProcessor implements TurboStreamProcessorInterface
     public function __construct(
         private CsrfTokenManagerInterface $csrfTokenManager,
         private CsrfTokenService $csrfTokenService,
-        private CreateMemberSkill $createMemberSkill,
+        private EvaluateMemberSkill $evaluateMemberSkill,
     ) {
     }
     
@@ -31,11 +31,11 @@ class ClusterSkillEvaluateProcessor implements TurboStreamProcessorInterface
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
         /**
-         * @var MemberSkillAddEvaluationPayload $data
+         * @var MemberSkillEvaluationPayload $data
          */
         $data = $payload->data;
-        $member = $data->member;
-        $tokenId = $this->csrfTokenService->getTokenId($member);
+        $memberSkill = $data->memberSkill;
+        $tokenId = $this->csrfTokenService->getTokenId($memberSkill);
         $csrfToken = new CsrfToken($tokenId, $payload->token);
 
         if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
@@ -46,11 +46,11 @@ class ClusterSkillEvaluateProcessor implements TurboStreamProcessorInterface
             );
         }
 
-        $memberSkill = ($this->createMemberSkill)($member, $data->skill, $data->evaluation);
+        $memberSkill = ($this->evaluateMemberSkill)($memberSkill, $data->evaluation);
 
         return new TurboStreamProcessorResult(
             success: true,
-            messageKey: 'cluster_skill.flash.success.eveluate',
+            messageKey: 'cluster_skill.flash.success.evaluate',
             flashType: 'success',
             data: $memberSkill,
         );

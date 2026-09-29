@@ -9,6 +9,7 @@ use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Core\Dto\ActionDirectPayload;
 use App\Core\Dto\FlashMessage;
+use App\Dto\View\FlashesView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
@@ -31,9 +32,15 @@ readonly class ActionDirectHandler
             data: $data,
             token: $request->query->get('csrfToken')
         ));
-        $flash = $result->messageKey ? new FlashMessage($result->flashType, $result->messageKey) : null;
 
-        $streamView = $provider->getStreamView(data: $result->data, flashMessage: $flash);
+        $streamView = ($result->success)
+            ? $provider->getStreamView(
+                data: $result->data, 
+                flashMessage: $result->messageKey 
+                    ? new FlashMessage($result->flashType, $result->messageKey) 
+                    : null
+            ) : FlashesView::create($result->flashType, $result->messageKey);
+
         return new Response(
             $this->renderView($streamView),
             Response::HTTP_OK,

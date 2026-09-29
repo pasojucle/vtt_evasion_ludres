@@ -12,7 +12,6 @@ readonly class MemberSkillEvaluationPayload
     public function __construct(
         public MemberSkill $memberSkill,
         public EvaluationEnum $evaluation,
-        public string $token,
     ) {
     }
 }

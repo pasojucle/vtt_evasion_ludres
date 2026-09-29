@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDirectHandler;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\Payload\MemberSkillEvaluationPayload;
@@ -81,23 +82,15 @@ class MemberSkillController extends AbstractCrudController
         MemberSkillUpdateProvider $provider,
         MemberSkillEvaluationProcessor $processor,
         MemberSkill $memberSkill,
-        EvaluationEnum $evaluation
+        EvaluationEnum $evaluation,
+        ActionDirectHandler $handler,
     ): Response {
-        $token = $request->query->get('csrfToken');
-        $result = $processor->process(
-            new MemberSkillEvaluationPayload($memberSkill, $evaluation, $token),
-            null,
+         return $handler->handle(
+            $request,
+            new MemberSkillEvaluationPayload($memberSkill, $evaluation),
+            $provider,
+            $processor,
         );
-
-        $streamView = ($result->success)
-            ? $provider->getStreamView($memberSkill)
-            : $result->flashMessages;
-
-        return $this->render($streamView->getStreamTemplate(), [
-                'view' => $streamView,
-            ], new Response('', Response::HTTP_OK, [
-                'Content-Type' => 'text/vnd.turbo-stream.html',
-            ]));
     }
 
     #[Route(path: '/add/{member}', name: '_add', methods: ['GET', 'POST'])]
