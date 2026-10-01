@@ -32,7 +32,7 @@ class IdentityReadProvider implements FormComponentProviderInterface, TurboStrea
         );
     }
 
-    public function getFormOptions(object $data): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         $user = $data->getMember();
         $licence = $user->getLastLicence();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\View\MemberSkill;
 
 use App\Core\Contract\View\TurboStreamViewInterface;
+use App\Dto\View\FlashesView;
 
 readonly class MemberSkillUpdateView implements TurboStreamViewInterface
 {
@@ -12,6 +13,7 @@ readonly class MemberSkillUpdateView implements TurboStreamViewInterface
         public int $memberId,
         public MemberSkillView $memberSkill,
         public array $memberSkillDevelopment,
+        public ?FlashesView $flashesView,
     ) {
     }
 

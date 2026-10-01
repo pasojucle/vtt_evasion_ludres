@@ -40,15 +40,16 @@ readonly class ActionFormHandler
         FormComponentProviderInterface $provider,
         ProcessorInterface $processor,
         string $formClass = FormType::class,
+        ?object $parent = null,
     ): Response {
-        $context = HandlerContext::fromRequest($request);
+        $context = HandlerContext::fromRequest($request, $parent);
         if ($provider instanceof InputInitializerInterface) {
             $provider->setDefaultValues($data);
         }
 
         $form = $this->formFactory->create($formClass, $data, array_merge([
             'action' => $request->getUri(),
-        ], $provider->getFormOptions($data)));
+        ], $provider->getFormOptions($data, $context)));
         
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {

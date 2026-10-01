@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\State\MemberSkill\Provider;
 
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\ListFilteredProviderInterface;
+use App\Core\Contract\Provider\TurboStreamProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
-use App\Dto\State\ViewContext;
 use App\Dto\View\AssociateResourceSkillSheetView;
 use App\Dto\View\MemberSkill\MemberSkillsView;
 use App\Mapper\MemberSkill\MemberSkillReadMapper;
@@ -16,10 +20,9 @@ use App\Repository\MemberSkillRepository;
 use App\Repository\SkillCategoryRepository;
 use App\Repository\SkillRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\MemberSkill\Trait\MemberSkillDataProviderTrait;
 
-class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
+class MemberSkillCreateProvider implements FormComponentProviderInterface, ListFilteredProviderInterface, TurboStreamProviderInterface
 {
     use FilterHydratorTrait;
     use MemberSkillDataProviderTrait;
@@ -35,13 +38,15 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
     }
 
     /**
-     * @param MemberSkillCreatePayload $entity
+     * @param MemberSkillCreatePayload $data
      */
-    public function getStreamView(object $entity, ?ViewContext $context = null): MemberSkillsView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): MemberSkillsView
     {
         $currentPage = $context->page;
-        /**  @var MemberSkillFilter $filter */
-        $filter = $context->filters;
+        $filter = new MemberSkillFilter(
+            category: $data->category,
+            level: $data->level,
+        );
         $member = $context->parent;
         $filterConfig = $this->getFilterConfig('admin_member_skill_filter');
 
@@ -57,12 +62,11 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
                 PaginatorService::PAGINATOR_PER_PAGE
             ),
             memberSkillDevelopmentData: $this->getMemberSkillDevelopmentData($member),
-            route: $context->route,
             currentPage: $currentPage,
         );
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): AssociateResourceSkillSheetView
+    public function getView(object $data, ?HandlerContext $context = null): AssociateResourceSkillSheetView
     {
         return new AssociateResourceSkillSheetView(
             title: 'Ajouter',
@@ -72,9 +76,9 @@ class MemberSkillCreateProvider implements ListLoadMoreProviderInterface
     }
 
     /**
-     * @param MemberSkillCreatePayload $entity
+     * @param MemberSkillCreatePayload $data
      */
-    public function getFormOptions(object $entity, ?ViewContext $context = null): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [
             'memberId' => $context->parent->getId(),

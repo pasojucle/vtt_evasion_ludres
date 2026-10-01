@@ -91,7 +91,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $entity, ?HandlerContext $context = null): array
     {
         return [];
     }

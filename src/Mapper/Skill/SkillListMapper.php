@@ -77,7 +77,8 @@ class SkillListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close'),
                 ],
             ),
-            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
+
             addItem: new LinkView(
                 label: 'Ajouter une compétence',
                 url: $this->urlGenerator->generate('admin_skill_add'),

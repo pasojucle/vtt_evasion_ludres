@@ -81,7 +81,8 @@ class SurveyAdminListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
+
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             addItem: new LinkView(
                 label: 'Ajouter un sondage',

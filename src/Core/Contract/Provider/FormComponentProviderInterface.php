@@ -20,5 +20,5 @@ interface FormComponentProviderInterface
     /**
      * @param T $data
      */
-    public function getFormOptions(object $data): array;
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array;
 }

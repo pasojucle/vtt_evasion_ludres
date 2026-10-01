@@ -54,7 +54,6 @@ class MemberSkillReadProvider implements ListLoadMoreProviderInterface
                 PaginatorService::PAGINATOR_PER_PAGE
             ),
             memberSkillDevelopmentData: $this->getMemberSkillDevelopmentData($member),
-            route: $context->route,
             currentPage: $currentPage,
         );
     }

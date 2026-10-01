@@ -34,7 +34,7 @@ class GardianReadProvider implements FormComponentProviderInterface, TurboStream
         );
     }
 
-    public function getFormOptions(object $data): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         $member = $data->getMember();
         $licence = $member->getLastLicence();

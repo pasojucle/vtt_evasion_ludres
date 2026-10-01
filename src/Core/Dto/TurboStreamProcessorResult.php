@@ -8,7 +8,7 @@ readonly class TurboStreamProcessorResult implements HtmlProcessorResultInterfac
 {
     public function __construct(
         public bool $success,
-        public string $messageKey,
+        public ?string $messageKey = null,
         public string $flashType = 'success',
         public ?object $data = null,
     ) {

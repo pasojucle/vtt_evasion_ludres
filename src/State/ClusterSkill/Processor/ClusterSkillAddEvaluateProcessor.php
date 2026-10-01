@@ -10,6 +10,7 @@ use App\Core\Dto\ActionDirectPayload;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\TurboStreamProcessorResult;
 use App\Dto\Payload\MemberSkillAddEvaluationPayload;
+use App\Entity\MemberSkill;
 use App\Service\CsrfTokenService;
 use App\UseCase\v2\MemberSkill\CreateMemberSkill;
 use Symfony\Component\Security\Csrf\CsrfToken;
@@ -43,6 +44,7 @@ class ClusterSkillAddEvaluateProcessor implements TurboStreamProcessorInterface
                 success: false,
                 messageKey: 'Jeton CSRF invalide.',
                 flashType: 'danger',
+                data: $data
             );
         }
 
@@ -50,8 +52,6 @@ class ClusterSkillAddEvaluateProcessor implements TurboStreamProcessorInterface
 
         return new TurboStreamProcessorResult(
             success: true,
-            messageKey: 'cluster_skill.flash.success.evaluate',
-            flashType: 'success',
             data: $memberSkill,
         );
     }

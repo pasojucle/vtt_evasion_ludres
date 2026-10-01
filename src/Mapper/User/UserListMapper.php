@@ -87,7 +87,8 @@ class UserListMapper
                     new HtmlAttributView('data-action', 'click->dropdown#close')
                 ],
             ),
-            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getRouteName(), $filterConfig->getAdvancedFields()),
+            filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
+
             wiki: $this->wikiMapper->mapToView('adhérents', RoundedVariant::ROUNDED_START),
         );
     }

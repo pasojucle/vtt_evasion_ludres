@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\View\ClusterSkill;
 
 use App\Core\Contract\View\TurboStreamViewInterface;
+use App\Core\Dto\FlashMessage;
 use App\Dto\View\LinkView;
 
 readonly class ClusterSkillMembersView implements TurboStreamViewInterface
@@ -15,6 +16,7 @@ readonly class ClusterSkillMembersView implements TurboStreamViewInterface
         public LinkView $unacquired,
         public LinkView $pending,
         public LinkView $acquired,
+        public ?FlashMessage $flashMessage = null,
     ) {
     }
 

@@ -43,6 +43,7 @@ class MemberSkillEvaluationProcessor implements TurboStreamProcessorInterface
                 success: false,
                 messageKey: 'Jeton CSRF invalide.',
                 flashType: 'danger',
+                data: $memberSkill,
             );
         }
 
@@ -50,7 +51,6 @@ class MemberSkillEvaluationProcessor implements TurboStreamProcessorInterface
 
         return new TurboStreamProcessorResult(
             success: true,
-            messageKey: 'member_skill.flash.success.evaluate',
             data: $memberSkill,
         );
     }

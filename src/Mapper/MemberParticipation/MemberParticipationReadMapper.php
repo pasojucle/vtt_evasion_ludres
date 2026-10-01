@@ -58,7 +58,12 @@ class MemberParticipationReadMapper
             queries: $filter->toArray(),
             period: sprintf('Du %s au %s', $filter->startAt->format('d/m/Y'), $filter->endAt->format('d/m/Y')),
             type: $filter->type?->getName(),
-            filterChips: $this->filterChipsMapper->mapToView($filter, 'admin_member_participation_filter_delete', $filterConfig->getAdvancedFields()),
+            filterChips: $this->filterChipsMapper->mapToView(
+                $filter, 
+                $filterConfig->getAdvancedFields(),
+                'admin_member_participation_filter_delete',
+                ['member' => $member],
+            ),
             filterAction: new LinkView(
                 url: $this->urlGenerator->generate('admin_member_participation_filter', $queriyParams),
                 icon: 'lucide:settings-2',

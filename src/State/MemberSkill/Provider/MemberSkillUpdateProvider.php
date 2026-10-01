@@ -38,6 +38,7 @@ class MemberSkillUpdateProvider implements TurboStreamProviderInterface
         return $this->memberSkillUpdateMapper->mapToView(
             memberSkill: $data,
             memberSkillDevelopmentData: $this->getMemberSkillDevelopmentData($member),
+            flashMessage: $flashMessage,
         );
     }
 }

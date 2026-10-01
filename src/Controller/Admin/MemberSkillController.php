@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\Payload\MemberSkillEvaluationPayload;
@@ -99,12 +100,13 @@ class MemberSkillController extends AbstractCrudController
         Request $request,
         MemberSkillCreateProvider $provider,
         MemberSkillCreateProcessor $processor,
-        Member $member
+        Member $member,
+        ActionFormHandler $handler,
     ): Response {
         $queryParams = $request->query->all();
         $filter = $provider->getHydratedDto($queryParams, MemberSkillFilter::class);
 
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             new MemberSkillCreatePayload(
                 $member,
@@ -115,13 +117,7 @@ class MemberSkillController extends AbstractCrudController
             $provider,
             $processor,
             MemberSkillAddType::class,
-            new ViewContext(
-                route: $request->attributes->get('_route'),
-                routeParams: $request->attributes->get('_route_params'),
-                page: $request->query->getInt('page', 1),
-                filters: $filter,
-                parent: $member,
-            ),
+            $member,
         );
     }
 }

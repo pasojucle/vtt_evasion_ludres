@@ -50,7 +50,7 @@ class ClusterSkillAddProvider implements FormComponentProviderInterface, TurboSt
     /**
      * @param ClusterSkillAddPayload $data
      */
-    public function getFormOptions(object $data): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [
             'clusterId' => $data->cluster->getId(),

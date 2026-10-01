@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\ClusterSkill;
 
+use App\Core\Dto\FlashMessage;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\View\ClusterSkill\ClusterSkillMembersView;
 use App\Dto\View\LinkView;
@@ -26,8 +27,12 @@ class ClusterSkillMemberMapper
     ) {
     }
 
-    public function mapToView(Member $participant, Skill $skill, ?MemberSkill $memberSkill): ClusterSkillMembersView
-    {
+    public function mapToView(
+        Member $participant, 
+        Skill $skill, 
+        ?MemberSkill $memberSkill, 
+        ?FlashMessage $flashMessage = null
+    ): ClusterSkillMembersView {
         $identity = $participant->getIdentity();
         
         return new ClusterSkillMembersView(
@@ -36,6 +41,7 @@ class ClusterSkillMemberMapper
             unacquired: $this->evaluationButton($skill, $participant, $memberSkill, EvaluationEnum::UNACQUIRED),
             pending: $this->evaluationButton($skill, $participant, $memberSkill, EvaluationEnum::PENDING),
             acquired: $this->evaluationButton($skill, $participant, $memberSkill, EvaluationEnum::ACQUIRED),
+            flashMessage: $flashMessage,
         );
     }
 

@@ -33,7 +33,7 @@ class LicenceAuthorizationsReadProvider implements FormComponentProviderInterfac
         );
     }
 
-    public function getFormOptions(object $data): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [
             'attr' => [

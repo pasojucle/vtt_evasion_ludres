@@ -23,11 +23,16 @@ class FilterChipsMapper
     ) {
     }
 
-    public function mapToView(AbstractFilter $filter, string $routeName, array $fields, string $turboFrame = '_top'): array
-    {
+    public function mapToView(
+        AbstractFilter $filter, 
+        array $fields, 
+        string $routeName,  
+        array $routeParams = [],
+        string $turboFrame = '_top'
+    ): array {
         $filterSchips = [];
         $rangesChips = [];
-        $queries = $filter->toQueryParams();
+        $queries = array_merge($filter->toQueryParams(), $routeParams);
         $preserdveNullAttributes = $filter->getPreservedNullAttributes();
         $excludeAttributes = $filter->getChipsExcludeAttributes();
         foreach ($fields as $field) {

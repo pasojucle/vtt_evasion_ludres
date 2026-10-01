@@ -48,7 +48,7 @@ readonly class ActionDialogHandler
 
         $form = $this->formFactory->create($formClass, $data, array_merge([
             'action' => $request->getUri(),
-        ], $provider->getFormOptions($data)));
+        ], $provider->getFormOptions($data, $context)));
         
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {

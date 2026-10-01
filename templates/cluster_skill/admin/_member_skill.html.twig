@@ -5,4 +5,9 @@
         {% include member_skill.pending.template with {(member_skill.pending.name): member_skill.pending} %}
         {% include member_skill.acquired.template with {(member_skill.acquired.name): member_skill.acquired} %}
     </div>
+    {% if member_skill.flashMessage %}
+        <div class="{% if member_skill.flashMessage.type == 'success' %}text-emerald-500{% else %}text-destructive{% endif %}">
+            {{  member_skill.flashMessage.messageKey }}
+        </div>
+    {% endif %}
 </div>

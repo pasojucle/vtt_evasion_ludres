@@ -34,7 +34,6 @@ class MemberSkillReadMapper
         FilterConfigInterface $filterConfig,
         Paginator $paginatedSkills,
         array $memberSkillDevelopmentData,
-        string $route,
         int $currentPage,
     ): MemberSkillsView {
         $queriyParams = $filter->toArray();
@@ -49,8 +48,9 @@ class MemberSkillReadMapper
             level: $filter->level?->getTitle() ?? 'Tous les niveaux',
             filterChips: $this->filterChipsMapper->mapToView(
                 $filter,
-                'admin_member_skill_filter_delete',
                 $filterConfig->getAdvancedFields(),
+                'admin_member_skill_filter_delete',
+                ['member' => $member],
                 sprintf('member-skills-%s', $member->getId())
             ),
             filterAction: new LinkView(
