@@ -74,7 +74,6 @@ class SkillCategoryListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             addItem: new LinkView(
                 label: 'Ajouter une catégorie',
                 url: $this->urlGenerator->generate('admin_skill_category_add'),

@@ -12,7 +12,8 @@ readonly class SheetFormUpdateView implements TurboStreamViewInterface
     public function __construct(
         public string $frameId,
         public ComponentViewInterface $formView,
-    ){}
+    ) {
+    }
 
 
     public function getName(): string

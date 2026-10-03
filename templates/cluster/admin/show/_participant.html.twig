@@ -30,6 +30,9 @@
             {% include participant.status.template with {(participant.status.name): participant.status} %}
         </div>
     {% endif %}
-    {% include participant.action.template with {(participant.action.name): participant.action} %}
+    {% if participant.action %}
+        {% include participant.action.template with {(participant.action.name): participant.action} %}
+    {% endif %}
+    
     {% include 'components/_dropdown.html.twig' with {dropdown: participant.dropdown} %}
 </li>

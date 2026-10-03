@@ -14,7 +14,6 @@ use App\Mapper\ClusterSkill\ClusterSkillMemberMapper;
 
 class ClusterSkillEvaluateProvider implements TurboStreamProviderInterface
 {
-
     public function __construct(
         private ClusterSkillMemberMapper $clusterSkillMemberMapper,
     ) {
@@ -27,16 +26,16 @@ class ClusterSkillEvaluateProvider implements TurboStreamProviderInterface
     {
         if ($data instanceof MemberSkill) {
             return $this->clusterSkillMemberMapper->mapToView(
-                $data->getMember(), 
-                $data->getSkill(), 
+                $data->getMember(),
+                $data->getSkill(),
                 $data,
                 $flashMessage
             );
         }
         
         return $this->clusterSkillMemberMapper->mapToView(
-            $data->member, 
-            $data->skill, 
+            $data->member,
+            $data->skill,
             null,
             $flashMessage
         );

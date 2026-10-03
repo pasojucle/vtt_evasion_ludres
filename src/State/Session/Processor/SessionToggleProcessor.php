@@ -6,22 +6,18 @@ namespace App\State\Session\Processor;
 
 use App\Core\Contract\PayloadInterface;
 use App\Core\Contract\Processor\TurboStreamProcessorInterface;
-use App\Core\Dto\ActionDirectPayload;
+use App\Core\Dto\ActionPayload;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\TurboStreamProcessorResult;
-use App\Service\CsrfTokenService;
+use App\Dto\Payload\SessionWarningToggle;
 use App\UseCase\v2\Session\TogglePresenceSession;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
- * @implements TurboStreamProcessorInterface<ActionDirectPayload>
+ * @implements TurboStreamProcessorInterface<ActionPayload>
  */
 class SessionToggleProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
-        private CsrfTokenManagerInterface $csrfTokenManager,
-        private CsrfTokenService $csrfTokenService,
         private TogglePresenceSession $togglePresenceSession,
     ) {
     }
@@ -29,23 +25,18 @@ class SessionToggleProcessor implements TurboStreamProcessorInterface
 
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
-        $session = $payload->data;
-        $tokenId = $this->csrfTokenService->getTokenId($session);
-        $csrfToken = new CsrfToken($tokenId, $payload->token);
-
-        if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
-            return new TurboStreamProcessorResult(
-                success: false,
-                messageKey: 'Jeton CSRF invalide.',
-                flashType: 'danger',
-            );
-        }
+        /**
+         * @var SessionWarningToggle $data
+         */
+        
+        $data = $payload->data;
+        $session = $data->session;
 
         ($this->togglePresenceSession)($session);
 
         return new TurboStreamProcessorResult(
             success: true,
-            messageKey: $session->isPresent() ? 'session.flash.success.toogle.present' : 'session.flash.success.missing',
+            messageKey: 'session.flash.success.toogle.present',
             flashType: 'success',
             data: $session->getCluster(),
         );

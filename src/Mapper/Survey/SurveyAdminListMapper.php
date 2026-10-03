@@ -82,7 +82,6 @@ class SurveyAdminListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             addItem: new LinkView(
                 label: 'Ajouter un sondage',

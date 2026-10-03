@@ -73,7 +73,6 @@ class SecondHandCategoryListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             addItem: new LinkView(
                 label: 'Ajouter une catégorie',
                 url: $this->urlContextService->generateUrl('admin_second_hand_category_add', [], $fallback),

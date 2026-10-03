@@ -9,6 +9,8 @@ doctrine:
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
         types:
+            money: App\Doctrine\DBAL\Type\MoneyType
+            
             Registration: App\Doctrine\DBAL\Type\RegistrationEnumType
             IdentityKind: App\Doctrine\DBAL\Type\IdentityKindEnumType
             RegistrationForm: App\Doctrine\DBAL\Type\RegistrationFormEnumType

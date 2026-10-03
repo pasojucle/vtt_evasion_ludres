@@ -88,7 +88,6 @@ class UserListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             wiki: $this->wikiMapper->mapToView('adhérents', RoundedVariant::ROUNDED_START),
         );
     }

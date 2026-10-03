@@ -28,7 +28,7 @@ class MemberSkillRepository extends ServiceEntityRepository implements MemberSki
         parent::__construct($registry, MemberSkill::class);
     }
 
-        public function save(MemberSkill $memberSkill, bool $flush = true): void
+    public function save(MemberSkill $memberSkill, bool $flush = true): void
     {
         $this->getEntityManager()->persist($memberSkill);
 

@@ -12,7 +12,8 @@ final class EvaluateMemberSkill
 {
     public function __construct(
         private MemberSkillRepositoryInterface $memberSkillRepository,
-    ){}
+    ) {
+    }
 
     public function __invoke(
         MemberSkill $memberSkill,

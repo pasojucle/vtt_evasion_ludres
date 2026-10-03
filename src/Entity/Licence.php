@@ -11,6 +11,7 @@ use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Enum\RegistrationFormEnum;
+use App\Model\Money;
 use App\Repository\LicenceRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -147,6 +148,9 @@ class Licence
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $clubName = null;
 
+    #[ORM\Column(type: 'money', nullable: true)]
+    private ?Money $amount = null;
+
     public function __construct()
     {
         $this->licenceAgreements = new ArrayCollection();
@@ -238,6 +242,16 @@ class Licence
     public function getSeason(): ?int
     {
         return $this->season;
+    }
+
+    public function getShortSeason(): string
+    {
+        return sprintf('%s - %s', (string) ($this->season - 1), (string) $this->season);
+    }
+
+    public function getFullSeason(): string
+    {
+        return sprintf('%s - %s (jusqu\'au 31 décembre %s) ', (string) ($this->season - 1), (string) $this->season, (string) $this->season);
     }
 
     public function setSeason(int $season): self
@@ -474,6 +488,18 @@ class Licence
     public function setClubName(?string $clubName): static
     {
         $this->clubName = $clubName;
+
+        return $this;
+    }
+
+    public function getAmount(): ?Money
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(?Money $amount): static
+    {
+        $this->amount = $amount;
 
         return $this;
     }

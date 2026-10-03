@@ -28,15 +28,15 @@ class ClusterSkillMemberMapper
     }
 
     public function mapToView(
-        Member $participant, 
-        Skill $skill, 
-        ?MemberSkill $memberSkill, 
+        Member $participant,
+        Skill $skill,
+        ?MemberSkill $memberSkill,
         ?FlashMessage $flashMessage = null
     ): ClusterSkillMembersView {
         $identity = $participant->getIdentity();
         
         return new ClusterSkillMembersView(
-            id: sprintf('%s-%s',$participant->getId(), $skill->getId()),
+            id: sprintf('%s-%s', $participant->getId(), $skill->getId()),
             fullName: $identity->getFullName(),
             unacquired: $this->evaluationButton($skill, $participant, $memberSkill, EvaluationEnum::UNACQUIRED),
             pending: $this->evaluationButton($skill, $participant, $memberSkill, EvaluationEnum::PENDING),

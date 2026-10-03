@@ -59,7 +59,7 @@ class MemberParticipationReadMapper
             period: sprintf('Du %s au %s', $filter->startAt->format('d/m/Y'), $filter->endAt->format('d/m/Y')),
             type: $filter->type?->getName(),
             filterChips: $this->filterChipsMapper->mapToView(
-                $filter, 
+                $filter,
                 $filterConfig->getAdvancedFields(),
                 'admin_member_participation_filter_delete',
                 ['member' => $member],

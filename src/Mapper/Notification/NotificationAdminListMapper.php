@@ -80,7 +80,6 @@ class NotificationAdminListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
         );
     }

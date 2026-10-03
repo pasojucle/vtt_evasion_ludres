@@ -43,6 +43,7 @@ trait FilterHydratorTrait
                 return $config;
             }
         }
+        
         return null;
     }
 }

@@ -84,7 +84,6 @@ class OrderAdminListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             wiki:  $this->wikiMapper->mapToView('boutique', RoundedVariant::ROUNDED_START),
         );

@@ -56,9 +56,7 @@ class ParticipantMapper
         $level = $user->getLevel();
         $licences = $user->getLicences();
         $isPendingReceipt = false;
-        $lastLicence = $licences->findFirst(function (int $key, Licence $licence) use ($currentSeason) {
-            return $licence->getSeason() === $currentSeason;
-        });
+        $isEndTesting = false;
         $lastLicence = $licences->findFirst(fn (int $key, Licence $licence) => $licence->getSeason() === $currentSeason);
         $availability = $session->getAvailability();
         $isPresent = $session->isPresent();
@@ -84,8 +82,8 @@ class ParticipantMapper
                     size: Size::ICON,
                 );
             }
-
-            if ($lastLicence?->isEndTesting($participations)) {
+            $isEndTesting = $lastLicence?->isEndTesting($participations) ?? false;
+            if ($isEndTesting) {
                 $indicators[] = new BadgeView(
                     value: 'lucide:file-clock',
                     variant: ColorVariant::DESTRUCTIVE,
@@ -94,7 +92,7 @@ class ParticipantMapper
             }
             $isPendingReceipt = $lastLicence?->isPendingReceipt($currentSeason, $licences->count()) ?? false;
         }
-
+        $warningMessageId = $this->warningMessage($isPendingReceipt, $isEndTesting);
 
         return new ParticipantView(
             sessionId: $session->getId(),
@@ -116,7 +114,7 @@ class ParticipantMapper
                 $fallback
             ),
             indicators: $indicators,
-            action: $this->getAction($session, $isPresent, $isClusterComplete, $isPendingReceipt),
+            action: $this->getAction($session, $isPresent, $isClusterComplete, $warningMessageId),
             status: ($isClusterComplete)
                 ? ($isPresent)
                     ? new BadgeView(
@@ -129,6 +127,19 @@ class ParticipantMapper
                     )
                 : null,
         );
+    }
+
+    private function warningMessage(bool $isPendingReceipt, bool $isEndTesting): ?string
+    {
+        if ($isPendingReceipt) {
+            return 'BIKE_RIDE_MUST_PROVIDE_REGISTRATION';
+        }
+
+        if ($isEndTesting) {
+            return 'BIKE_RIDE_END_TESTING';
+        }
+
+        return null;
     }
 
     private function dropdown(
@@ -208,7 +219,7 @@ class ParticipantMapper
         );
     }
 
-    private function getAction(Session $session, bool $isPresent, bool $isClusterComplete, bool $isPendingReceipt): ?LinkView
+    private function getAction(Session $session, bool $isPresent, bool $isClusterComplete, ?string $warningMessageId): ?LinkView
     {
         if ($isClusterComplete) {
             return null;
@@ -229,10 +240,11 @@ class ParticipantMapper
                 icon: 'lucide:square-check-big'
             );
         }
-        if ($isPendingReceipt) {
+        if ($warningMessageId) {
             return new LinkView(
                 url: $this->urlGenerator->generate('admin_session_message', [
                     'session' => $session->getId(),
+                    'messageId' => $warningMessageId,
                     'csrfToken' => $tokenValue,
                 ]),
                 variant: ColorVariant::WARNING,

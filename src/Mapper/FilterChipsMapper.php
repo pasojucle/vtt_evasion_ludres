@@ -24,9 +24,9 @@ class FilterChipsMapper
     }
 
     public function mapToView(
-        AbstractFilter $filter, 
-        array $fields, 
-        string $routeName,  
+        AbstractFilter $filter,
+        array $fields,
+        string $routeName,
         array $routeParams = [],
         string $turboFrame = '_top'
     ): array {

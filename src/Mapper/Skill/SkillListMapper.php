@@ -78,7 +78,6 @@ class SkillListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             addItem: new LinkView(
                 label: 'Ajouter une compétence',
                 url: $this->urlGenerator->generate('admin_skill_add'),

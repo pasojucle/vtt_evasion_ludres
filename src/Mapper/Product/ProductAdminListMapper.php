@@ -83,7 +83,6 @@ class ProductAdminListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             wiki:  $this->wikiMapper->mapToView('boutique'),
         );
     }

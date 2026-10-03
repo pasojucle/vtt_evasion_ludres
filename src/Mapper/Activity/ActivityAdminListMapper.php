@@ -92,7 +92,6 @@ class ActivityAdminListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-
             addItem: new LinkView(
                 label: 'Ajouter une activité',
                 url: $this->urlContextService->generateUrl('admin_bike_ride_add', [], $targetUrl),

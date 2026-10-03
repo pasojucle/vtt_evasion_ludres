@@ -82,13 +82,13 @@ readonly class ActionFormHandler
             if ($provider instanceof TurboStreamUpdateProviderInterface) {
                 $streamView = $provider->getUpdateStreamView($data, $context);
                 return new Response(
-                        $this->twig->render($streamView->getStreamTemplate(), [
+                    $this->twig->render($streamView->getStreamTemplate(), [
                             'view' => $streamView,
                             'form' => $form->createView(),
                         ]),
-                        Response::HTTP_UNPROCESSABLE_ENTITY,
-                        ['Content-Type' => 'text/vnd.turbo-stream.html'],
-                    );
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    ['Content-Type' => 'text/vnd.turbo-stream.html'],
+                );
             }
 
             return new Response(

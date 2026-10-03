@@ -14,7 +14,8 @@ final class CreateMemberSkill
 {
     public function __construct(
         private MemberSkillRepositoryInterface $memberSkillRepository,
-    ){}
+    ) {
+    }
 
     public function __invoke(
         Member $member,

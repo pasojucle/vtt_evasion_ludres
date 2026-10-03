@@ -9,7 +9,7 @@ use App\Dto\Filter\AbstractFilter;
 use App\Dto\View\ListDrawerView;
 
 /**
- * @template T of object
+ * @template T of AbstractFilter
  */
 interface ListDrawerProviderInterface extends ListFilteredProviderInterface
 {
