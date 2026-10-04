@@ -16,6 +16,7 @@ use App\Entity\Session;
 use App\Mapper\Cluster\ClusterReadMapper;
 use App\Repository\LicenceAgreementRepository;
 use App\Repository\SessionRepository;
+use App\Service\Cluster\AbsentParticipantsService;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
@@ -35,6 +36,7 @@ class ClusterSkillAddProvider implements FormComponentProviderInterface, TurboSt
         private UrlContextService $urlContextService,
         private ClusterReadMapper $clusterReadMapper,
         private Security $security,
+        private AbsentParticipantsService $absentParticipants,
     ) {
     }
 
@@ -74,6 +76,7 @@ class ClusterSkillAddProvider implements FormComponentProviderInterface, TurboSt
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),
             $this->seasonService->getCurrentSeason(),
+            (!$data->isComplete()) ? ($this->absentParticipants)($data) : [],
             $targetUrl,
             $flashMessage,
         );

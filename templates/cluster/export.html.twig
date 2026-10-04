@@ -2,88 +2,88 @@
 
 {% block body %}
 <main class="minimize">
-    <h2>{{ user.fullName }}</h2>
+    <h2>{{ view.fullName }}</h2>
     <div>
         <br>
         <table class="table-fixed">
             <tr>
                 <td rowspan="8" style="width: 150px">
-                    {% if user.picture %}
-                        <img src="{{ user.picture|imgPath(media) }}" style="width: 80px;">
+                    {% if view.picture %}
+                        <img src="{{ view.picture|imgPath(media) }}" style="width: 80px;">
                     {% endif %}
                 </td>
-                <td colspan="3" ><b>Date naissance : </b>{{ user.birthDate }}</td>
+                <td colspan="3" ><b>Date naissance : </b>{{ view.birthDate }}</td>
             </tr>
             <tr>
-                <td colspan="3" ><b>Lieu de naissance : </b>{{ user.birthPlace }}</td>
+                <td colspan="3" ><b>Lieu de naissance : </b>{{ view.birthPlace }}</td>
             </tr>
-            {% if user.birthDepartment %}
+            {% if view.birthDepartment %}
                 <tr>
-                    <td colspan="3" ><b>Déprtement de naissance : </b>{{ user.birthDepartment }}</td>
+                    <td colspan="3" ><b>Département de naissance : </b>{{ view.birthDepartment }}</td>
                 </tr>
             {% endif %}
             <tr>
-                <td colspan="3" ><b>Pays de naissance : </b>{{ user.birthCountry }}</td>
+                <td colspan="3" ><b>Pays de naissance : </b>{{ view.birthCountry }}</td>
             </tr>
             <tr>
-                <td colspan="3" ><b>Adresse : </b> {{ user.address.street }} {{ user.address.postalCode }} {{ user.address.town }}</td>
+                <td colspan="3" ><b>Adresse : </b> {{ view.address }}</td>
             </tr>
             <tr>
-                <td colspan="3" ><b>Courriel : </b>{{ user.email }}</td>
+                <td colspan="3" ><b>Courriel : </b>{{ view.email }}</td>
             </tr>
             <tr>
-                <td colspan="3" ><b>Téléphone : </b>{{ user.phone}}</td>
+                <td colspan="3" ><b>Téléphone : </b>{{ view.phones }}</td>
             </tr>
-            {% if user.emergencyPhone is not null %}
+            {% if view.emergencyPhone is not null %}
                 <tr>
-                    <td colspan="3"><b>Personne à prévenir en cas d'urgence: </b>{{ user.emergencyPhone}}</td>
+                    <td colspan="3"><b>Personne à prévenir en cas d'urgence: </b>{{ view.emergencyPhone}}</td>
                 </tr>
             {% endif %}
-            {% if user.emergencyContact is not null %}
+            {% if view.emergencyContact is not null %}
                 <tr>
-                    <td colspan="3"><b>Lien de parenté: </b>{{ user.emergencyContact}}</td>
+                    <td colspan="3"><b>Lien de parenté: </b>{{ view.emergencyContact}}</td>
                 </tr>
             {% endif %}
         </table>
     </div>
-    {% if user.legalGardian %}
+    {% if view.legalGardian %}
         <table class="table-border table-fixed">
             <tr>
                 <td></td>
-                <td><b>{{ user.legalGardian.kind | trans  }}</b></td>
-                <td><b>{{ user.secondKinship.kind|trans}}</b></td>
+                <td><b>{{ view.legalGardian.kind  }}</b></td>
+                <td><b>{{ view.secondContact.kind }}</b></td>
             </tr>
             <tr>
                 <td style="width: 150px">Nom et prénom</td>
-                <td>{{ user.legalGardian.fullName }}</td>
-                <td>{{ user.secondKinship.fullName}}</td>
+                <td>{{ view.legalGardian.fullName }}</td>
+                <td>{{ view.secondContact.fullName }}</td>
             </tr>
             <tr>
                 <td>Téléphone</td>
-                <td>{{ user.legalGardian.phone}}</td>
-                <td>{{ user.secondKinship.phone}}</td>
+                <td>{{ view.legalGardian.phone }}</td>
+                <td>{{ view.secondContact.phone }}</td>
             </tr>
             <tr>
                 <td>Adresse</td>
                 <td colspan="2">
-                    {{ user.legalGardian.address.street }}<br>{{ user.legalGardian.address.postalCode }} {{ user.legalGardian.address.town }}
+                    {{ view.legalGardian.address }}
                 </td>
             </tr>
             <tr>
                 <td>Courriel</td>
-                <td colspan="2">{{ user.legalGardian.email }}</td>
+                <td colspan="2">{{ view.legalGardian.email }}</td>
             </tr>
         </table>
     {% endif %}
-    {% if user.health.content is not null %}
+    {% if view.healthContent is not null %}
         <table class="table-background table-fixed">
             <tr>
-                <td colspan="7">{{ user.health.content }}</td>
+                <td colspan="7">{{ view.healthContent }}</td>
             </tr>
         </table>
     {% endif %}
         <ul>
-            <li><b>Type d'assurance : </b>{{ user.lastLicence.coverageStr|trans }}</li>
+            <li><b>Type d'assurance : </b>{{ view.coverage }}</li>
         </ul>
     </div>
 </main>

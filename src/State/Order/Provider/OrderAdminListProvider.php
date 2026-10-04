@@ -14,10 +14,10 @@ use App\Mapper\Order\OrderAdminListMapper;
 use App\Repository\OrderHeaderRepository;
 use App\Service\PaginatorService;
 use App\State\Interface\ListProviderInterface;
-use App\State\Interface\StreamExportableInterface;
+use App\State\Interface\StreamListExportableInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class OrderAdminListProvider implements ListProviderInterface, StreamExportableInterface
+class OrderAdminListProvider implements ListProviderInterface, StreamListExportableInterface
 {
     use FilterHydratorTrait;
 

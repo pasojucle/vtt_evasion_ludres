@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\State\Session\Provider;
+namespace App\State\Cluster\Provider;
 
 use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
-use App\Dto\Payload\AssociateResourcePayload;
+use App\Dto\Enum\DialogType;
 use App\Dto\View\Cluster\ClusterView;
 use App\Dto\View\DialogModalView;
+use App\Entity\Cluster;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Mapper\Cluster\ClusterReadMapper;
-use App\Mapper\DestructiveModalMapper;
+use App\Mapper\DialogueModalMapper;
 use App\Repository\LicenceAgreementRepository;
 use App\Repository\SessionRepository;
 use App\Service\Cluster\AbsentParticipantsService;
@@ -22,20 +24,17 @@ use App\Service\UrlContextService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
 use Symfony\Bundle\SecurityBundle\Security;
 
-/**
- * @implements FormComponentProviderInterface<AssociateResourcePayload>
- */
-class SessionDeleteProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
+class ClusterCompleteProvider implements FormComponentProviderInterface, TurboStreamProviderInterface
 {
     use ClusterDataProviderTrait;
 
     public function __construct(
+        private ClusterReadMapper $clusterReadMapper,
+        private DialogueModalMapper $dialogModalMapper,
         protected readonly LicenceAgreementRepository $licenceAgreementRepository,
         protected readonly SessionRepository $sessionRepository,
         private SeasonService $seasonService,
         private UrlContextService $urlContextService,
-        private ClusterReadMapper $clusterReadMapper,
-        private DestructiveModalMapper $destructiveModalMapper,
         private Security $security,
         private AbsentParticipantsService $absentParticipants,
     ) {
@@ -43,11 +42,21 @@ class SessionDeleteProvider implements FormComponentProviderInterface, TurboStre
 
     public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
-        return $this->destructiveModalMapper->mapToView(
-            sprintf(
-                '<p>Etes vous certain de supprimer<br> %s',
-                $data->parent->getUser()->getIdentity()->getFullName(),
-            )
+        $absentParticipants = ($this->absentParticipants)($data);
+        $absentParticipantFullnames = array_map(fn(Member $member) => $member->getIdentity()->getFullName(), $absentParticipants);
+
+        $message =  sprintf('<p>%s %s</p><p>%s<p>',
+            implode(', ', $absentParticipantFullnames),
+            (1 < count($absentParticipants)) ? 'sont absents.' : 'est absent.',
+            'Êtes-vous sûre de vouloir valider le groupe ?'
+        );
+
+        return $this->dialogModalMapper->mapToView(
+            DialogType::WARNING,
+            'Groupe imcomplet',
+            'Valider le groupe',
+            $message,
+            'lucide:square-check-big',
         );
     }
 
@@ -55,25 +64,27 @@ class SessionDeleteProvider implements FormComponentProviderInterface, TurboStre
     {
         return [
             'attr' => [
-                'data-action' => 'turbo:submit-end->modal#close',
+                'data-action' => 'turbo:submit->cluster#export turbo:submit-end->modal#close',
             ],
         ];
     }
 
-    /** @param object $data  */
+    /**
+     * @param Cluster $data
+     */
     public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): ClusterView
     {
         $userIds = $data->getSessions()->map(fn (Session $session) => $session->getUser()->getId())->toArray();
-        $targetUrl = $this->urlContextService->decodeUrl($context->encodedFallback);
+        $bikeRide = $data->getBikeRide();
 
         return $this->clusterReadMapper->mapToView(
             $data,
-            $this->security->isGranted('BIKE_RIDE_EDIT', $data->getBikeRide()),
+            $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide),
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),
             $this->seasonService->getCurrentSeason(),
             (!$data->isComplete()) ? ($this->absentParticipants)($data) : [],
-            $targetUrl,
+            $this->urlContextService->encodeUrl('admin_cluster_list_activity', ['bikeRide' => $bikeRide->getId()]),
             $flashMessage,
         );
     }

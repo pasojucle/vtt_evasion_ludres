@@ -20,6 +20,7 @@ use App\Entity\Session;
 use App\Mapper\Cluster\ClusterReadMapper;
 use App\Repository\LicenceAgreementRepository;
 use App\Repository\SessionRepository;
+use App\Service\Cluster\AbsentParticipantsService;
 use App\Service\SeasonService;
 use App\Service\SurveyService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
@@ -41,6 +42,7 @@ class SessionCreateProvider implements FormComponentProviderInterface, TurboStre
         private SurveyService $surveyService,
         private ClusterReadMapper $clusterReadMapper,
         private Security $security,
+        private AbsentParticipantsService $absentParticipants,
     ) {
     }
 
@@ -92,6 +94,7 @@ class SessionCreateProvider implements FormComponentProviderInterface, TurboStre
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),
             $this->seasonService->getCurrentSeason(),
+            (!$cluster->isComplete()) ? ($this->absentParticipants)($cluster) : [],
             $context->encodedFallback,
         );
     }

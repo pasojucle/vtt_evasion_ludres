@@ -38,13 +38,14 @@ class ClusterTabMapper
                 value: $pratice->trans($this->translator),
                 variant: $pratice->variant(),
             ),
-            total: $cluster->getSessions()->map(function (Session $session) use ($isNeedFramers) {
-                if ($isNeedFramers) {
-                    return $session->isPresent()
-                    && LevelType::SCHOOL === $session->getUser()->getLevel()?->getType();
-                }
-                return $session->isPresent();
-            })->count(),
+            // total: $cluster->getSessions()->map(function (Session $session) use ($isNeedFramers) {
+            //     if ($isNeedFramers) {
+            //         return $session->isPresent()
+            //         && LevelType::SCHOOL === $session->getUser()->getLevel()?->getType();
+            //     }
+            //     return $session->isPresent();
+            // })->count(),
+            exportUrl: $this->urlGenerator->generate('admin_cluster_export', ['cluster' => $cluster->getId()]),
         );
     }
 }

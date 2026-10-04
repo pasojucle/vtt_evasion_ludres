@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDialogHandler;
+use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionExportHandler;
 use App\Core\Handler\DetailHandler;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
 use App\Service\CacheService;
-use App\Service\LogService;
+use App\State\Cluster\Processor\ClusterCompleteProcessor;
+use App\State\Cluster\Processor\ClusterUnlockProcessor;
+use App\State\Cluster\Provider\ClusterCompleteProvider;
+use App\State\Cluster\Provider\ClusterExportProvider;
 use App\State\Cluster\Provider\ClusterFrameReadProvider;
 use App\State\Cluster\Provider\ClusterReadProvider;
 use App\State\Cluster\Provider\ClustersActivityReadProvider;
-use App\UseCase\Cluster\ExportCluster;
-use App\UseCase\Cluster\GetUsersOffSite;
-use App\UseCase\Cluster\MailerSendUsersOffSite;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -44,39 +46,57 @@ class ClusterController extends AbstractCrudController
         return $handler->handle($request, $provider, $bikeRide);
     }
 
-    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_toggle_complete', requirements: ['cluster' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
-    public function adminClusterComplete(
+    public function adminClusterToggleComplete(
         Request $request,
-        GetUsersOffSite $usersOffSite,
-        MailerSendUsersOffSite $mailerSendUsersOffSite,
-        Cluster $cluster
+        ClusterCompleteProvider $provider,
+        ClusterCompleteProcessor $processor,
+        Cluster $cluster,
+        ActionDirectHandler $handler,
     ): Response {
-        /** @var BikeRide $bikeRide */
-        $bikeRide = $cluster->getBikeRide();
-        list($usersOffSite, $response) = $usersOffSite->execute($request, $cluster);
-        if ($response instanceof Response) {
-            return $response;
-        }
 
-        $cluster->setIsComplete(!$cluster->isComplete());
-        $this->entityManager->flush();
-        $this->cacheService->deleteCacheIndex($cluster);
-        $mailerSendUsersOffSite->execute($usersOffSite, $bikeRide);
-
-        return new JsonResponse(['codeError' => 0]);
+        return $handler->handle(
+            request: $request,
+            data: $cluster,
+            provider: $provider,
+            processor: $processor
+        );
     }
 
-    #[Route('/admin/groupe/unlock/{cluster}', name: 'admin_cluster_unlock', methods: ['POST'])]
+    #[Route('/admin/groupe/complete/warning/{cluster}', name: 'admin_cluster_warning_complete', methods: ['GET', 'POST'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
+    public function adminClusterWarningComplete(
+        Request $request,
+        ClusterCompleteProvider $provider,
+        ClusterCompleteProcessor $processor,
+        Cluster $cluster,
+        ActionDialogHandler $handler,
+    ): Response {
+        return $handler->handle(
+            request: $request,
+            data: $cluster,
+            provider: $provider,
+            processor: $processor,
+        );
+    }
+
+    #[Route('/admin/groupe/unlock/{cluster}', name: 'admin_cluster_unlock', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function adminClusterUnlock(
-        Cluster $cluster
+        Request $request,
+        ClusterCompleteProvider $provider,
+        ClusterUnlockProcessor $processor,
+        Cluster $cluster,
+        ActionDirectHandler $handler,
     ): Response {
-        $cluster->setIsComplete(false);
-        $this->entityManager->flush();
-        $this->cacheService->deleteCacheIndex($cluster);
 
-        return new JsonResponse(['codeError' => 0]);
+        return $handler->handle(
+            request: $request,
+            data: $cluster,
+            provider: $provider,
+            processor: $processor
+        );
     }
 
     #[Route('/admin/groupe/ajoute/{bikeRide}', name: 'admin_cluster_add', methods: ['GET', 'POST'])]
@@ -152,13 +172,15 @@ class ClusterController extends AbstractCrudController
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_CLUSTER_EXPORT', 'cluster')]
     public function adminClusterExport(
-        LogService $logService,
-        ExportCluster $exportCluster,
-        Cluster $cluster
+        ClusterExportProvider $provider,
+        Cluster $cluster,
+        ActionExportHandler $handler,
     ): Response {
-        $logService->writeFromEntity($cluster);
-
-        return $exportCluster->execute($cluster);
+        return $handler->handle(
+            $cluster,
+            $provider,
+            sprintf('%s-%s', $cluster->getTitle(), $cluster->getBikeRide()->getStartAt()->format('Ymd')),
+        );
     }
 
     #[Route('/admin/groupe/supprime/{cluster}', name: 'admin_cluster_delete', methods: ['GET'])]

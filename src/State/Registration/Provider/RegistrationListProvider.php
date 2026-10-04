@@ -19,10 +19,10 @@ use App\Repository\MemberRepository;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use App\State\Interface\ListProviderInterface;
-use App\State\Interface\StreamExportableInterface;
+use App\State\Interface\StreamListExportableInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class RegistrationListProvider implements ListProviderInterface, StreamExportableInterface
+class RegistrationListProvider implements ListProviderInterface, StreamListExportableInterface
 {
     use FilterHydratorTrait;
 

@@ -18,6 +18,7 @@ use App\Dto\View\WidgetView;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
+use App\Entity\Member;
 use App\Mapper\Session\ParticipantMapper;
 use App\Service\UrlContextService;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,13 +31,18 @@ class ClusterReadMapper
         private ParticipantMapper $participantMapper,
     ) {
     }
+
+    /**
+     * @param Member[] $absentParticipants
+     */
     public function mapToView(
         Cluster $cluster,
         bool $isEditable,
         array $authorizationsByUser,
         array $participationsByUser,
         int $currentSeason,
-        ?string $fallback,
+        array $absentParticipants = [],
+        ?string $fallback = null,
         ?FlashMessage $flashMessage = null,
     ): ClusterView {
         $pratice = $cluster->getPractice();
@@ -93,9 +99,7 @@ class ClusterReadMapper
             isComplete: $isComplete,
             participants: $particpants,
             isEditable: $isEditable,
-            actions: [
-
-            ],
+            actions: $this->actions($cluster, $isComplete, $absentParticipants, $fallback),
             dropdown: new DropdownView(
                 variant: DropdownVariant::GOST,
             ),
@@ -118,7 +122,7 @@ class ClusterReadMapper
             value: (string) $presentParticipants,
             content: sprintf('Sur %d inscrits', $totalParticipants),
             icon: ($isSchoolActivity) ? LevelType::SCHOOL->getIcon() : LevelType::ADULT->getIcon(),
-            actions: [$this->addParticipantAction($cluster, $isComplete, false, $fallback)],
+            actions: $this->addParticipantActions($cluster, $isComplete, false, $fallback),
         )];
         
         if ($isSchoolActivity) {
@@ -127,7 +131,7 @@ class ClusterReadMapper
                 value: (string) $presentFramers,
                 content: sprintf('Sur %d inscrits', $totalFramers),
                 icon: LevelType::FRAME->getIcon(),
-                actions: [$this->addParticipantAction($cluster, $isComplete, true, $fallback)],
+                actions: $this->addParticipantActions($cluster, $isComplete, true, $fallback),
             );
 
             $clusterSkills = $cluster->getSkills();
@@ -169,24 +173,86 @@ class ClusterReadMapper
         return $widgets;
     }
 
-    private function addParticipantAction(Cluster $cluster, bool $isComplete, bool $isFramer, string $fallback): ?LinkView
+    /**
+     * @return LinkView[]
+     */
+    private function addParticipantActions(Cluster $cluster, bool $isComplete, bool $isFramer, string $fallback): array
     {
         if ($isComplete) {
-            return null;
+            return [];
         }
 
-        return new LinkView(
-            url: $this->urlContextService->generateUrl('admin_session_add', [
-                    'cluster' => $cluster->getId(),
-                    'isFramer' => (int) $isFramer,
+        return [
+            new LinkView(
+                url: $this->urlContextService->generateUrl('admin_session_add', [
+                        'cluster' => $cluster->getId(),
+                        'isFramer' => (int) $isFramer,
+                    ], $fallback),
+                variant: ColorVariant::PRIMARY,
+                size: Size::SM,
+                label: 'Ajouter',
+                icon: 'lucide:plus',
+                htmlAttributes: [
+                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                ],
+            )
+        ];
+    }
+
+    /**
+     * @return LinkView[] $actions
+     */
+    private function actions(Cluster $cluster, bool $isComplete, array $absentParticipants, string $fallback): array
+    {
+        if ($isComplete) {
+            return [
+                new LinkView(
+                    url: $this->urlContextService->generateUrl('admin_cluster_unlock', [
+                        'cluster' => $cluster->getId()
+                    ], $fallback),
+                    variant: ColorVariant::DESTRUCTIVE,
+                    label: 'Déverrouiller le groupe',
+                    icon: 'lucide:lock-keyhole-open',
+                ),
+                new LinkView(
+                    url: $this->urlContextService->generateUrl('admin_cluster_export', [
+                        'cluster' => $cluster->getId()
+                    ], $fallback),
+                    variant: ColorVariant::ACCENT,
+                    label: 'Exporter le groupe',
+                    icon: 'lucide:file-down',
+                )
+            ];
+        }
+
+        if (0 < count($absentParticipants)) {
+            return [
+                new LinkView(
+                    url: $this->urlContextService->generateUrl('admin_cluster_warning_complete', [
+                        'cluster' => $cluster->getId()
+                    ], $fallback),
+                    variant: ColorVariant::SUCCESS,
+                    label: 'Valider le groupe',
+                    icon: 'lucide:square-check-big',
+                    htmlAttributes: [
+                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    ],
+                )
+            ];
+        }
+
+        return [
+            new LinkView(
+                url: $this->urlContextService->generateUrl('admin_cluster_toggle_complete', [
+                    'cluster' => $cluster->getId()
                 ], $fallback),
-            variant: ColorVariant::PRIMARY,
-            size: Size::SM,
-            label: 'Ajouter',
-            icon: 'lucide:plus',
-            htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-            ],
-        );
+                variant: ColorVariant::SUCCESS,
+                label: 'Valider le groupe',
+                icon: 'lucide:square-check-big',
+                htmlAttributes: [
+                    new HtmlAttributView('data-action', 'turbo:click->cluster#export'),
+                ],
+            )
+        ];
     }
 }

@@ -71,9 +71,7 @@ class ClusterFrameReadMapper
             isComplete: $isComplete,
             participants: $particpants,
             isEditable: $isEditable,
-            actions: [
-
-            ],
+            actions: [],
             dropdown: new DropdownView(
                 variant: DropdownVariant::GOST,
             ),

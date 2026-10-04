@@ -4,11 +4,8 @@
     src="{{ content.url }}"
     data-controller="cluster"
     data-cluster-refresh-interval-value="60000"
-    data-cluster-complete-value="{{ path('admin_cluster_complete', {'cluster': content.id}) }}"
-    data-cluster-unlock-value="{{ path('admin_cluster_complete', {'cluster': content.id}) }}"
-    data-cluster-export-value="{{ path('admin_cluster_export', {'cluster': content.id}) }}"
+    data-cluster-export-url-value="{{ content.exportUrl }}"
     data-cluster-cluster-id-value="{{ content.id }}"
-    data-action="participation:status-changed->cluster#updateTotal"
 >
     <div class="block !mt-0">
         <div class="animate-pulse flex flex-col gap-2">

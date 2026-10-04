@@ -20,6 +20,7 @@ class PassportPhotoMapper
         private FileService $fileService,
     ) {
     }
+
     public function mapToView(?string $filename): string
     {
         [$directoy, $filename] = $filename
@@ -30,6 +31,15 @@ class PassportPhotoMapper
             'directory' => $directoy,
             'filename' => $filename,
         ]);
+    }
+
+    public function mapToPath(?string $filename): string
+    {
+        [$directoy, $filename] = $filename
+            ? $this->fileLocation($filename)
+            : $this->defaultFileLocation();
+
+        return $this->fileService->join($directoy, $filename);
     }
 
     private function defaultFileLocation(): array

@@ -68,6 +68,9 @@ class UpdateCommand extends Command
                 ['cmd' => 'geo:convert:birthplace', 'onlyOne' => true],
                 ['cmd' => 'geo:convert:town', 'onlyOne' => true],
                 ['cmd' => 'app:media:migrate-second-hand', 'onlyOne' => true],
+                ['cmd' => 'tailwind:build', 'onlyOne' => false],
+                ['cmd' => 'asset-mapper:compile', 'onlyOne' => false],
+                ['cmd' => 'ux:icons:lock', 'onlyOne' => false],
             ];
 
             foreach ($commands as $command) {

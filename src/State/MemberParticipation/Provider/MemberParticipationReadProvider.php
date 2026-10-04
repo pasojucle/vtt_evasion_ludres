@@ -17,13 +17,13 @@ use App\Repository\SessionRepository;
 use App\Service\Indemnity\ComputeParticipationIndemnity;
 use App\Service\PaginatorService;
 use App\State\Interface\ListLoadMoreProviderInterface;
-use App\State\Interface\StreamExportableInterface;
+use App\State\Interface\StreamListExportableInterface;
 use App\State\MemberParticipation\Enum\QueryScope;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, StreamExportableInterface
+class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, StreamListExportableInterface
 {
     use FilterHydratorTrait;
 

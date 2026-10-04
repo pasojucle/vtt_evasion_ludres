@@ -6,7 +6,7 @@ namespace App\State\Interface;
 
 use App\Dto\Filter\AbstractFilter;
 
-interface StreamExportableInterface
+interface StreamListExportableInterface
 {
     /**
      * @template TFilter of AbstractFilter

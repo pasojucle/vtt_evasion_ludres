@@ -18,6 +18,7 @@ use App\Mapper\Cluster\ClusterReadMapper;
 use App\Mapper\DialogueModalMapper;
 use App\Repository\LicenceAgreementRepository;
 use App\Repository\SessionRepository;
+use App\Service\Cluster\AbsentParticipantsService;
 use App\Service\MessageService;
 use App\Service\Placeholder\PlaceholderResolver;
 use App\Service\SeasonService;
@@ -42,6 +43,7 @@ class SessionWarningProvider implements FormComponentProviderInterface, TurboStr
         private ClusterReadMapper $clusterReadMapper,
         private DialogueModalMapper $dialogModalMapper,
         private Security $security,
+        private AbsentParticipantsService $absentParticipants,
     ) {
     }
 
@@ -81,6 +83,7 @@ class SessionWarningProvider implements FormComponentProviderInterface, TurboStr
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),
             $this->seasonService->getCurrentSeason(),
+            (!$data->isComplete()) ? ($this->absentParticipants)($data) : [],
             $targetUrl,
             $flashMessage,
         );

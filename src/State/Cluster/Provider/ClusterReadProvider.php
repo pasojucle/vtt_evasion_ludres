@@ -12,6 +12,7 @@ use App\Entity\Session;
 use App\Mapper\Cluster\ClusterReadMapper;
 use App\Repository\LicenceAgreementRepository;
 use App\Repository\SessionRepository;
+use App\Service\Cluster\AbsentParticipantsService;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use App\State\Cluster\Trait\ClusterDataProviderTrait;
@@ -28,6 +29,7 @@ class ClusterReadProvider implements ComponentProviderInterface
         private SeasonService $seasonService,
         private UrlContextService $urlContextService,
         private Security $security,
+        private AbsentParticipantsService $absentParticipants,
     ) {
     }
 
@@ -45,6 +47,7 @@ class ClusterReadProvider implements ComponentProviderInterface
             $this->authorizationsByUser($userIds),
             $this->participationsByUser($userIds),
             $this->seasonService->getCurrentSeason(),
+            (!$data->isComplete()) ? ($this->absentParticipants)($data) : [],
             $this->urlContextService->encodeUrl('admin_cluster_list_activity', [
                 'bikeRide' => $bikeRide->getId(),
                 '_redirect_to' => $context->encodedFallback,

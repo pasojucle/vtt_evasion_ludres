@@ -4,27 +4,26 @@ declare(strict_types=1);
 
 namespace App\Core\Handler;
 
-use App\Core\Contract\View\TurboStreamViewInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
+use App\State\Interface\StreamListExportableInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 readonly class ListExportHandler
 {
-    public function __construct(
-        private Environment $twig,
-        private RequestStack $requestStack,
-    ) {
-    }
-
     public function handle(
+        Request $request,
+        string $filterClass,
+        StreamListExportableInterface $provider,
+        string $filename,
+    ): StreamedResponse {
+        $filter = $provider->getHydratedDto($request->query->all(), $filterClass);
 
-    ): Response {
-        return new Response();
-    }
+        $response = new StreamedResponse(function () use ($provider, $filter) {
+            $provider->streamExportContent($filter);
+        });
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
 
-    private function renderView(TurboStreamViewInterface $view): string
-    {
-        return '';
+        return $response;
     }
 }

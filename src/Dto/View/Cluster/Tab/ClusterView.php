@@ -14,7 +14,7 @@ readonly class ClusterView implements TabContentInterface
         public string $url,
         public string $title,
         public BadgeView $pratice,
-        public int $total,
+        public ?string $exportUrl = null,
     ) {
     }
 

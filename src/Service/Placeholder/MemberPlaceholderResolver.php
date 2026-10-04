@@ -6,34 +6,22 @@ namespace App\Service\Placeholder;
 
 use App\Entity\Member;
 
-readonly class MemberPlaceholderResolver implements PlaceholderResolverInterface
+readonly class MemberPlaceholderResolver extends AbstractPlaceholderResolver
 {
-    public function supports(?object $entity): bool
+    public function supports(?object $data): bool
     {
-        return $entity instanceof Member;
+        return $data instanceof Member;
     }
 
-    public function resolve(string $template, ?object $entity = null): string
+    protected function getValueForPlaceholder(string $placeholder, ?object $data): ?string
     {
-        if (!$entity instanceof Member) {
-            return $template;
-        }
-
-        return preg_replace_callback(
-            '/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/',
-            fn (array $matches) => $this->getValueForPlaceholder($matches[1], $entity) ?? $matches[0],
-            $template
-        ) ?? $template;
-    }
-
-    private function getValueForPlaceholder(string $placeholder, Member $member): ?string
-    {
-        $identity = $member->getIdentity();
+        /** @var Member $data */
+        $identity = $data->getIdentity();
 
         return match ($placeholder) {
-            'prenom_nom' => $identity?->getFullName(),
-            'numero_licence' => $member->getLicenceNumber(),
-            'email_principal' => $member->getMainIdentity()?->getEmail(),
+            'prenom_nom', 'prenom_nom_enfant' => $identity?->getFullName(),
+            'numero_licence' => $data->getLicenceNumber(),
+            'email_principal' => $data->getMainIdentity()?->getEmail(),
             'date_naissance', 'date_naissance_enfant' => $identity?->getBirthDate()?->format('d/m/Y'),
             'lieu_naissance' => $identity?->getBirthCommune()?->getName(),
             default => null,

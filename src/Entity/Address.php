@@ -41,6 +41,11 @@ class Address
         $this->identities = new ArrayCollection();
     }
 
+    public function __tostring(): string
+    {
+        return sprintf('%s, %s %s', $this->street, $this->postalCode, $this->commune->getName());
+    }
+
     public function getId(): ?int
     {
         return $this->id;

@@ -28,6 +28,12 @@
             {% endif %}
         </div>
     </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {% for action in view.actions %}
+            {% include action.template with {(action.name): action} %}
+        {% endfor %}    
+    </div>
+
 </div>
 
 {# <div class="cluster-title">

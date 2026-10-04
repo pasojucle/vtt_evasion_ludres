@@ -8,42 +8,30 @@ use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Licence;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-readonly class LicencePlaceholderResolver implements PlaceholderResolverInterface
+readonly class LicencePlaceholderResolver extends AbstractPlaceholderResolver
 {
     public function __construct(
         private TranslatorInterface $translator,
     ) {
     }
 
-    public function supports(?object $entity): bool
+    public function supports(?object $data): bool
     {
-        return $entity instanceof Licence;
+        return $data instanceof Licence;
     }
 
-    public function resolve(string $template, ?object $entity = null): string
+    protected function getValueForPlaceholder(string $placeholder, ?object $data): ?string
     {
-        if (!$entity instanceof Licence) {
-            return $template;
-        }
-
-        return preg_replace_callback(
-            '/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/',
-            fn (array $matches) => $this->getValueForPlaceholder($matches[1], $entity) ?? $matches[0],
-            $template
-        ) ?? $template;
-    }
-
-    private function getValueForPlaceholder(string $placeholder, Licence $licence): ?string
-    {
+        /** @var Licence $data */
         return match ($placeholder) {
-            'saison' => $licence->getSeason(),
-            'full_saison' => $licence->getFullSeason(),
-            'date' => ($licence->getState()->isYearly())
-                ? $licence->getCreatedAt()->format('d/m/Y')
-                : $licence->getTestingAt()?->format('d/m/Y'),
-            'type_assurance' => $licence->getCoverage()->trans($this->translator),
-            'VTTAE' => (BikeTypeEnum::ELECTRIC === $licence->getBikeType()) ? 'Oui' : 'Non',
-            'montant', 'cotisation' => $licence->getAmount()?->__toString(),
+            'saison' => $data->getSeason(),
+            'full_saison' => $data->getFullSeason(),
+            'date' => ($data->getState()->isYearly())
+                ? $data->getCreatedAt()->format('d/m/Y')
+                : $data->getTestingAt()?->format('d/m/Y'),
+            'type_assurance' => $data->getCoverage()->trans($this->translator),
+            'VTTAE' => (BikeTypeEnum::ELECTRIC === $data->getBikeType()) ? 'Oui' : 'Non',
+            'montant', 'cotisation' => $data->getAmount()?->__toString(),
             default => null,
         };
     }

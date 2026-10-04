@@ -19,7 +19,7 @@ use App\State\Interface\InputInitializerInterface;
 use App\State\Interface\JsonProcessorInterface;
 use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\Interface\ListProviderInterface;
-use App\State\Interface\StreamExportableInterface;
+use App\State\Interface\StreamListExportableInterface;
 use App\State\Interface\TurboStreamProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -203,7 +203,7 @@ abstract class AbstractCrudController extends AbstractController
     protected function handleExportAction(
         Request $request,
         string $filterClass,
-        StreamExportableInterface $provider,
+        StreamListExportableInterface $provider,
         string $filename,
     ): StreamedResponse {
         $filter = $provider->getHydratedDto($request->query->all(), $filterClass);

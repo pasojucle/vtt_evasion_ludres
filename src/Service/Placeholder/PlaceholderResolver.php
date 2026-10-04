@@ -17,11 +17,11 @@ readonly class PlaceholderResolver
     ) {
     }
 
-    public function resolve(string $template, ?object ...$entities): string
+    public function resolve(string $template, ?object ...$data): string
     {
         $result = $template;
         $targets = [
-            ...array_filter($entities, static fn (?object $e) => $e !== null),
+            ...array_filter($data, static fn (?object $e) => $e !== null),
             null
         ];
 

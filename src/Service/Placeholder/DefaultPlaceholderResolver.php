@@ -7,7 +7,7 @@ namespace App\Service\Placeholder;
 use App\Service\SeasonService;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-readonly class DefaultPlaceholderResolver implements PlaceholderResolverInterface
+readonly class DefaultPlaceholderResolver extends AbstractPlaceholderResolver
 {
     public function __construct(
         private SeasonService $seasonService,
@@ -15,25 +15,12 @@ readonly class DefaultPlaceholderResolver implements PlaceholderResolverInterfac
     ) {
     }
 
-    public function supports(?object $entity): bool
+    public function supports(?object $data): bool
     {
-        return $entity === null;
+        return $data === null;
     }
 
-    public function resolve(string $template, ?object $entity = null): string
-    {
-        if (null !== $entity) {
-            return $template;
-        }
-
-        return preg_replace_callback(
-            '/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/',
-            fn (array $matches) => $this->getValueForPlaceholder($matches[1]) ?? $matches[0],
-            $template
-        ) ?? $template;
-    }
-
-    private function getValueForPlaceholder(string $placeholder): ?string
+    protected function getValueForPlaceholder(string $placeholder, ?object $data): ?string
     {
         return match ($placeholder) {
             'saison_actuelle' => (string) $this->seasonService->getCurrentSeason(),

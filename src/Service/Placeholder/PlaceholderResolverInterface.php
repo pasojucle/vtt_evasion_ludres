@@ -10,9 +10,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 interface PlaceholderResolverInterface
 {
-    public function supports(?object $entity): bool;
+    public function supports(?object $data): bool;
+    
     /**
      * Remplace les placeholders d'un texte par les valeurs de l'entité.
      */
-    public function resolve(string $template, ?object $entity = null): string;
+    public function resolve(string $template, ?object $data = null): string;
 }
