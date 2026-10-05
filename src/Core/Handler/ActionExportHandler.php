@@ -12,14 +12,13 @@ readonly class ActionExportHandler
     public function handle(
         object $data,
         StreamActionExportableInterface $provider,
-        string $filename,
     ): StreamedResponse {
-
-        $response = new StreamedResponse(function () use ($provider, $data, $filename) {
-            $provider->streamExportContent($data, $filename);
+        $basename = $provider->basename($data);
+        $response = new StreamedResponse(function () use ($provider, $data) {
+            $provider->streamExportContent($data);
         });
-        $response->headers->set('Content-Type', 'appication/pdf; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
+        $response->headers->set('Content-Type', 'application/pdf; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $basename);
 
         return $response;
     }

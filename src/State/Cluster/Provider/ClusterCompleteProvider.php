@@ -40,6 +40,9 @@ class ClusterCompleteProvider implements FormComponentProviderInterface, TurboSt
     ) {
     }
 
+    /**
+     * @param Cluster $data
+     */
     public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
         $absentParticipants = ($this->absentParticipants)($data);
@@ -60,11 +63,15 @@ class ClusterCompleteProvider implements FormComponentProviderInterface, TurboSt
         );
     }
 
+    /**
+     * @param Cluster $data
+     */
     public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [
             'attr' => [
-                'data-action' => 'turbo:submit->cluster#export turbo:submit-end->modal#close',
+                'data-action' => 'turbo:submit-end->modal#close',
+                'data-dispatch-event' => sprintf('cluster:export#cluster#%s', $data->getId()),
             ],
         ];
     }

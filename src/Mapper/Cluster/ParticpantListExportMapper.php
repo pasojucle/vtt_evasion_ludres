@@ -13,7 +13,6 @@ use App\Entity\Session;
 use App\Mapper\Identity\PassportPhotoMapper;
 use App\Service\PdfService;
 use App\Service\ProjectDirService;
-use App\Service\StringService;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -24,7 +23,6 @@ class ParticpantListExportMapper
         private TranslatorInterface $translator,
         private Environment $twig,
         private PdfService $pdfService,
-        private StringService $stringService,
         private PassportPhotoMapper $passportPhotoMapper,
         private ProjectDirService $projectDir,
         private Filesystem $filesystem,
@@ -32,7 +30,7 @@ class ParticpantListExportMapper
 
     public function streamToPdf(Cluster $cluster): void
     {
-        $dirName = $this->projectDir->path('tmp', $this->stringService->clean($cluster->getTitle()));
+        $dirName = $this->projectDir->path('tmp', uniqid());
 
         if (!$this->filesystem->exists($dirName)) {
             $this->filesystem->mkdir($dirName);
@@ -55,7 +53,7 @@ class ParticpantListExportMapper
             }
         }
 
-        $mergedFileName = $this->stringService->clean($cluster->getTitle() . '_' . $cluster->getBikeRide()->getStartAt()->format('Ymd')) . '.pdf';
+        $mergedFileName = uniqid() . '.pdf';
         $pathName = $this->pdfService->joinPdf($files, null, null, $this->projectDir->path('tmp', $mergedFileName));
         try {
             if ($this->filesystem->exists($pathName)) {
@@ -77,6 +75,8 @@ class ParticpantListExportMapper
         $emergencyContact = $member->getEmergencyContact();
         $health = $member->getHealth();
         $licence = $member->getLastLicence();
+        $legalGardian = $member->getLegalGardian();
+        $secondContact = $member->getSecondContact();
 
         return new ParticipantExportView(
             picture: $this->passportPhotoMapper->mapToPath($identity->getFilename()),
@@ -90,8 +90,8 @@ class ParticpantListExportMapper
             phones: implode(', ', [$identity->getMobile(), $identity->getPhone()]),
             emergencyPhone: $emergencyContact?->getPhone(),
             emergencyContact: $emergencyContact?->getKinship(),
-            legalGardian: GardianExportView::fromEntity($member->getLegalGardian(), $this->translator),
-            secondContact: GardianExportView::fromEntity($member->getSecondContact(), $this->translator),
+            legalGardian: $legalGardian ? GardianExportView::fromEntity($legalGardian, $this->translator) : null,
+            secondContact: $secondContact ? GardianExportView::fromEntity($secondContact, $this->translator) : null,
             healthContent: $health->getContent(),
             coverage: $licence->getCoverage()->trans($this->translator),
         );

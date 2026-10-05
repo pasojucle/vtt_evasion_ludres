@@ -67,9 +67,21 @@ export default class extends Controller {
         this.open();
     }
 
-    close() {
+    close(event) {
         this.containerTarget.classList.replace('translate-y-0', '-translate-y-full');
         this.containerTarget.classList.remove('lg:translate-y-20');
+
+        console.log('target', event.target);
+        const dispatch = event.target.dataset.dispatchEvent;
+        if (dispatch) {
+            const [eventName, targetId, payload ] = dispatch.split('#');
+            const customEvent = new CustomEvent(eventName, { 
+                bubbles: true, 
+                detail: { [targetId]: payload }
+            });
+            console.log('customEvent', customEvent);
+            document.dispatchEvent(customEvent);
+        }
 
         setTimeout(() => {
             this.dialogTarget.close();

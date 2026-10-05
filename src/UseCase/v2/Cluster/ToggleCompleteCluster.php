@@ -21,7 +21,6 @@ class ToggleCompleteCluster
     ): OperationResult {
         $cluster->setIsComplete($isComplete);
         $this->clusterRepository->save($cluster);
-        dump($cluster);
 
         return OperationResult::success();
     }

@@ -19,6 +19,10 @@
     >
         {{ form_row(form.bikeType) }}
     </div>
+
+    {% if form.cluster is defined %}
+        {{ form_row(form.cluster) }}
+    {% endif %}
     {% include 'session/survey_responses.html.twig' %}
     {{ form_errors(form) }}
 </div>

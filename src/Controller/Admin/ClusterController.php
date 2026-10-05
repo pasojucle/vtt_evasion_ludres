@@ -179,7 +179,6 @@ class ClusterController extends AbstractCrudController
         return $handler->handle(
             $cluster,
             $provider,
-            sprintf('%s-%s', $cluster->getTitle(), $cluster->getBikeRide()->getStartAt()->format('Ymd')),
         );
     }
 

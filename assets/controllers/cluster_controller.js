@@ -11,6 +11,8 @@ export default class extends Controller {
 
     connect() {
         this.refreshCluster();
+        this.exportHandler = this.export.bind(this);
+        document.addEventListener("cluster:export", this.exportHandler);
 
         this.activeHandler = this.activeFromTab.bind(this);
         document.addEventListener("cluster:active-from-tab", this.activeHandler);
@@ -18,6 +20,7 @@ export default class extends Controller {
 
     disconnect() {
         clearInterval(this.interval);
+        document.removeEventListener("cluster:export", this.exportHandler);
         document.removeEventListener("cluster:active-from-tab", this.activeHandler);
     }
 
@@ -48,71 +51,8 @@ export default class extends Controller {
         }
     }
 
-    exportUrlValueChanged(value, previousValue) {
-        console.log("watcher", previousValue, value);
-        if (previousValue === null && value) {
-            window.location.href = value;
-        }
-    }
-
-    // complete(event) {
-    //     event.preventDefault();
-    //     fetch(this.completeValue)
-    //     .then(response => response.json())
-    //     .then(json => {
-    //         if (json.modal) {
-    //             this.dispatch("openWithContent", { 
-    //                 prefix: "modal",
-    //                 detail: { content: json.modal } 
-    //             });
-    //             return;
-    //         }
-
-    //         this.reloadCluster();
-    //         this.exportCluster();
-    //     });
-    // }
-
-    // confirmComplete(event) {
-    //     event.preventDefault();
-    //     const targetId = event.detail?.targetId;
-    //     console.log("confirmComplete", this.clusterIdValue, Number(targetId))
-    //     if (targetId && Number(targetId) !== this.clusterIdValue) {
-    //         return;
-    //     }
-    //     const data = new FormData();
-    //     data.append('isComplete', 1);
-    //     fetch(this.completeValue, {
-    //         method: 'POST',
-    //         body : data,
-    //     })
-    //     .then(response => {
-    //         if (response.ok) {
-    //             this.reloadCluster();
-    //             this.exportCluster();
-    //         }
-    //     });
-    // }
-
-    // unlock(event) {
-    //    event.preventDefault();
-    //     fetch(this.completeValue)
-    //     .then(response => {
-    //         if (response.ok) {
-    //             this.reloadCluster();
-    //         }
-    //     });
-    // }
-
-    export() {
-        console.log("exportCluster ------------");
+    export(event) {
+        console.log("export cluster", event);
         window.location.href = this.exportUrlValue;
     }
-
-    // updateTotal() {
-    //     const presents = this.element.querySelectorAll('[data-on-site="1"]').length;
-    //     if (this.hasCountBadgeTarget) {
-    //         this.countBadgeTarget.textContent = presents;
-    //     }
-    // }
 }

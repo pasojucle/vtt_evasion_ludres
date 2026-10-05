@@ -8,7 +8,6 @@ use App\Entity\Interface\UploadableInterface;
 use App\Service\FileLocation\FileLocationResolver;
 use GdImage;
 use RuntimeException;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
