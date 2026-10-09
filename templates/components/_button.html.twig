@@ -15,8 +15,8 @@
     type="{button.type}"
     title="{{ button.title ?? button.label }}"
     class="{{ base_classes }}  {{ utils.rounded_class(button.rounded.value) }} {{ utils.color_class(button.variant.value) }} hover:cursor-pointer"
-    {% for attribut in button.htmlAttributes %}
-        {{ attribut.name }}="{{ attribut.value }}"
+    {% for attribute in button.htmlAttributes %}
+        {{ attribute.name }}="{{ attribute.value }}"
     {% endfor %}
 >
     <div class="flex {{ align_class }}">

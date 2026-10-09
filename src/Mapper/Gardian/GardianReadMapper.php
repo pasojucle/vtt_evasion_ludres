@@ -9,7 +9,7 @@ use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
 use App\Dto\View\EmailView;
 use App\Dto\View\Gardian\GardianView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 use App\Entity\MemberGardian;
@@ -51,7 +51,7 @@ class GardianReadMapper
                 icon: 'lucide:pencil',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             )
         );

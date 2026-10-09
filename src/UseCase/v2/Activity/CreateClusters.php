@@ -7,19 +7,19 @@ namespace App\UseCase\v2\Activity;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Enum\RegistrationEnum;
+use App\Repository\Interface\ClusterRepositoryInterface;
 use App\Repository\LevelRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class CreateClusters
 {
     private int $position = 0;
     public function __construct(
         private LevelRepository $levelRepository,
-        private EntityManagerInterface $entityManager,
+        private ClusterRepositoryInterface $clusterRepository,
     ) {
     }
     
-    public function execute(BikeRide $bikeRide)
+    public function __invoke(BikeRide $bikeRide)
     {
         if ($bikeRide->getBikeRideType()->isNeedFramers()) {
             $this->addFramer($bikeRide);
@@ -43,7 +43,7 @@ class CreateClusters
                 ->setPosition($this->position)
             ;
             $bikeRide->addCluster($cluster);
-            $this->entityManager->persist($cluster);
+            $this->clusterRepository->save($cluster, false);
             ++$this->position;
         }
     }
@@ -56,7 +56,7 @@ class CreateClusters
                 ->setPosition($this->position)
             ;
             $bikeRide->addCluster($cluster);
-            $this->entityManager->persist($cluster);
+            $this->clusterRepository->save($cluster, false);
             ++$this->position;
         }
     }
@@ -69,7 +69,7 @@ class CreateClusters
             ->setPosition($this->position)
         ;
         $bikeRide->addCluster($cluster);
-        $this->entityManager->persist($cluster);
+        $this->clusterRepository->save($cluster, false);
         ++$this->position;
     }
 }

@@ -13,7 +13,7 @@ use App\Dto\Enum\RoundedVariant;
 use App\Dto\SessionDto;
 use App\Dto\UserDto;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\Member;
 use App\Entity\Session;
@@ -256,8 +256,8 @@ class GetParticipations
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
-                        new HtmlAttributView('data-turbo', 'false')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo', 'false')
                     ]
                 )
             ],

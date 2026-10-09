@@ -6,7 +6,7 @@ namespace App\Mapper;
 
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
@@ -138,7 +138,7 @@ class DropdownMapper
                 url: $this->urlGenerator->generate('admin_registration_reject', ['licence' => $licence->getId()]),
                 icon: 'lucide:message-circle-warning',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
             $menuItems[] = new LinkView(
@@ -146,7 +146,7 @@ class DropdownMapper
                 url: $this->urlGenerator->generate('admin_licence_delete', ['licence' => $licence->getId()]),
                 icon: 'lucide:delete',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
         }
@@ -193,7 +193,7 @@ class DropdownMapper
                 url: $this->urlGenerator->generate('admin_survey_disable', ['survey' => $survey->getId()]),
                 icon: 'lucide:toggle-left',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
         }
@@ -202,7 +202,7 @@ class DropdownMapper
             url: $this->urlGenerator->generate('admin_survey_delete', ['survey' => $survey->getId()]),
             icon: 'lucide:delete',
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
             ],
         );
 
@@ -214,7 +214,7 @@ class DropdownMapper
                     label: 'Copier l\'url',
                     icon: 'lucide:clipboard-copy',
                     htmlAttributes: [
-                        new HtmlAttributView(
+                        new HtmlAttributeView(
                             'data-clipboard-url-value',
                             $this->urlGenerator->generate(
                                 'survey',
@@ -222,8 +222,8 @@ class DropdownMapper
                                 UrlGeneratorInterface::ABSOLUTE_URL
                             ),
                         ),
-                        new HtmlAttributView('data-controller', 'clipboard'),
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-controller', 'clipboard'),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],
                 ),
             ],
@@ -239,7 +239,7 @@ class DropdownMapper
                     url: $this->urlGenerator->generate('order_delete', ['survey' => $order->getId()]),
                     icon: 'lucide:delete',
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
                     ],
                 ),
             ]

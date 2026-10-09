@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Gardian;
 
-
 use App\Dto\View\PhoneView;
 use App\Entity\MemberGardian;
 use Symfony\Contracts\Translation\TranslatorInterface;

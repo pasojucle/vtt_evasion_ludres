@@ -7,7 +7,7 @@ namespace App\Mapper\Licence;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\Licence\LicenceView;
 use App\Dto\View\LinkView;
 use App\Entity\User;
@@ -57,7 +57,7 @@ class LicenceReadMapper
                 size: Size::SM,
                 label: 'Envoyer le numéro de licence',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::TOP),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::TOP),
                 ],
             ),
             editAction: new LinkView(
@@ -66,7 +66,7 @@ class LicenceReadMapper
                 icon: 'lucide:pencil',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             )
         );

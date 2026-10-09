@@ -8,7 +8,7 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Repository\ParameterRepository;
 use App\Service\MessageService;
@@ -56,8 +56,8 @@ class DropdownSettingsMapper
             icon: 'lucide:settings-2',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                new HtmlAttributView('data-action', 'click->dropdown#close')
+                new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                new HtmlAttributeView('data-action', 'click->dropdown#close')
             ],
         ), $this->parameterRepository->findBySectionId($section));
     }
@@ -71,8 +71,8 @@ class DropdownSettingsMapper
             icon: 'lucide:message-circle',
             variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                new HtmlAttributView('data-action', 'click->dropdown#close')
+                new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                new HtmlAttributeView('data-action', 'click->dropdown#close')
             ],
         ), $this->messageService->getMessagesBySection($section));
     }

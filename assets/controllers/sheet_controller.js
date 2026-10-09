@@ -87,8 +87,8 @@ export default class extends Controller {
 
     handleAction(event) {
         event.preventDefault();
-        const eventName = event.currentTarget.dataset.modalEventNameValue;
-        const payload = event.currentTarget.dataset.modalPayloadValue;
+        const eventName = event.currentTarget.dataset.dialogEventNameValue;
+        const payload = event.currentTarget.dataset.dialogPayloadValue;
         console.log("eventName", eventName, payload);
         if (eventName) {
             const customEvent = new CustomEvent(eventName, { 

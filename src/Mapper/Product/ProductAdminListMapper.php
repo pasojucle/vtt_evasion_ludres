@@ -6,14 +6,16 @@ namespace App\Mapper\Product;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Contract\View\ListActionViewInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\ProductFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
+use App\Dto\View\ListItemUrlView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Dto\View\ToggleStatusView;
@@ -39,9 +41,12 @@ class ProductAdminListMapper
     ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage, ProductFilter $filter, FilterConfigInterface $filterConfig): ListView
+    public function mapToView(Paginator $entities, HandlerContext $context, ProductFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
-        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $route = $context->route;
+        $currentPage = $context->page;
+        $fallback = $this->urlContextService->encodeUrl($route, $filter->toQueryParams($currentPage));
+    
         $items = [];
         /** @var Product $entity */
         foreach ($entities as $entity) {
@@ -52,10 +57,20 @@ class ProductAdminListMapper
                 ],
                 indicators: $entity->getSizes()->map(fn ($size) => new BadgeView($size->getName()))->toArray(),
                 status: $this->productStatusMapper->mapToView($entity, $tokenId),
-                dropdown: $this->getDropdown($entity, $targetUrl),
+                dropdown: $this->getDropdown($entity, $fallback),
                 isDeleted: $entity->isDeleted(),
                 action: $this->getAction($entity, $tokenId),
-                url: $this->urlGenerator->generate("admin_product", ['product' => $entity->getId()]),
+                url: new ListItemUrlView(
+                    path: $this->urlContextService->generateUrl(
+                        "admin_product",
+                        ['product' => $entity->getId()],
+                        $fallback,
+                    ),
+                    htmlAttributes: [
+                        new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close')
+                    ],
+                ),
                 gridTemplateRow: 'grid-cols-[1fr_50px]',
                 gridTemplateBadges: 'grid-cols-[1fr_70px]',
             );
@@ -69,17 +84,21 @@ class ProductAdminListMapper
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             addItem: new LinkView(
                 label: 'Ajouter un produit',
-                url: $this->urlGenerator->generate('admin_product_add'),
+                url: $this->urlContextService->generateUrl('admin_product_add', [], $fallback),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
             ),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
@@ -87,7 +106,7 @@ class ProductAdminListMapper
         );
     }
 
-    private function getDropdown(Product $product, string $targetUrl): DropdownView
+    private function getDropdown(Product $product, string $fallback): DropdownView
     {
         if ($product->isDeleted()) {
             return new DropdownView(
@@ -96,7 +115,7 @@ class ProductAdminListMapper
                         label: 'Restaurer',
                         url: $this->urlContextService->generateUrl('admin_product_restore', [
                             'product' => $product->getId()
-                        ], $targetUrl),
+                        ], $fallback),
                         icon: 'lucide:archive-restore',
                         variant: ColorVariant::DROPDOWN,
                     ),
@@ -108,12 +127,12 @@ class ProductAdminListMapper
             menuItems: [
                 new LinkView(
                     label: 'Supprimer',
-                    url: $this->urlContextService->generateUrl('admin_product_delete', ['product' => $product->getId()], $targetUrl),
+                    url: $this->urlContextService->generateUrl('admin_product_delete', ['product' => $product->getId()], $fallback),
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],
                 ),
             ],

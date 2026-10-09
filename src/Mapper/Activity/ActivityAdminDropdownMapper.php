@@ -7,7 +7,7 @@ namespace App\Mapper\Activity;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\BikeRide;
 use App\Service\UrlContextService;
@@ -55,8 +55,8 @@ class ActivityAdminDropdownMapper
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],
                 );
             }
@@ -81,7 +81,7 @@ class ActivityAdminDropdownMapper
                 label: 'Copier l\'url',
                 icon: 'lucide:clipboard-copy',
                 htmlAttributes: [
-                    new HtmlAttributView(
+                    new HtmlAttributeView(
                         'data-clipboard-url-value',
                         $this->urlGenerator->generate(
                             'bike_ride_detail',
@@ -89,8 +89,8 @@ class ActivityAdminDropdownMapper
                             UrlGeneratorInterface::ABSOLUTE_URL
                         )
                     ),
-                    new HtmlAttributView('data-controller', 'clipboard'),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
+                    new HtmlAttributeView('data-controller', 'clipboard'),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ]
             );
         }

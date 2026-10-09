@@ -55,7 +55,6 @@ class ClusterController extends AbstractCrudController
         Cluster $cluster,
         ActionDirectHandler $handler,
     ): Response {
-
         return $handler->handle(
             request: $request,
             data: $cluster,
@@ -90,7 +89,6 @@ class ClusterController extends AbstractCrudController
         Cluster $cluster,
         ActionDirectHandler $handler,
     ): Response {
-
         return $handler->handle(
             request: $request,
             data: $cluster,

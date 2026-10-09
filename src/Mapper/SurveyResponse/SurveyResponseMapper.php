@@ -8,7 +8,7 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Enum\SurveyResponseValueType;
 use App\Dto\View\BadgeView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\SurveyResponse\SurveyResponseIssueView;
 use App\Dto\View\SurveyResponse\SurveyResponseListView;
@@ -52,7 +52,7 @@ class SurveyResponseMapper
                     ]),
                     icon:'lucide:users',
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                        new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     ],
                 )
             );

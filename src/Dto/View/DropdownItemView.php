@@ -9,7 +9,7 @@ readonly class DropdownItemView
     /**
      * @param string $label
      * @param string $icon
-     * @param HtmlAttributView[] $htmlAttributes
+     * @param HtmlAttributeView[] $htmlAttributes
      */
     public function __construct(
         public readonly string $label,

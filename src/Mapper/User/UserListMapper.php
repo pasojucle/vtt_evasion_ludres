@@ -13,9 +13,10 @@ use App\Dto\Filter\UserFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
+use App\Dto\View\ListItemUrlView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\Member;
@@ -64,7 +65,7 @@ class UserListMapper
                 indicators: $this->getIndicators($entity),
                 status: $this->levelBadgeMapper->mapToView($level),
                 dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
-                url: $this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl),
+                url: new ListItemUrlView($this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl)),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateBadges: 'grid-cols-[auto_160px]',
             );
@@ -83,8 +84,8 @@ class UserListMapper
                 size: Size::ICON,
                 icon: 'lucide:settings-2',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
@@ -147,8 +148,8 @@ class UserListMapper
                     url: $this->urlGenerator->generate('admin_members_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
-                        new HtmlAttributView('data-turbo', 'false')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo', 'false')
                     ],
                 ),
                 new LinkView(
@@ -157,7 +158,7 @@ class UserListMapper
                     url: $this->urlGenerator->generate('admin_user_skill_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close')
                     ],
                 ),
                 new LinkView(
@@ -166,7 +167,7 @@ class UserListMapper
                     url: $this->urlGenerator->generate('admin_overview_season'),
                     icon: 'lucide:chart-scatter',
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close')
                     ],
                 ),
             ],
@@ -175,9 +176,9 @@ class UserListMapper
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
+                        new HtmlAttributeView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributeView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
                             'admin_members_email_to_clipboard',
                             $filter->toArray()
                         )),

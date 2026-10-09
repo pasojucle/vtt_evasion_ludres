@@ -6,10 +6,8 @@ namespace App\Dto\View\User;
 
 use App\Dto\View\Gardian\GardianExportView;
 
-
 readonly class ParticipantExportView
 {
-
     public function __construct(
         public string $picture,
         public string $fullName,

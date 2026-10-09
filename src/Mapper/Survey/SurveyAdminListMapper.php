@@ -10,9 +10,10 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SurveyFilter;
 use App\Dto\View\BadgeView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
+use App\Dto\View\ListItemUrlView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Dto\View\ToggleStatusView;
@@ -59,9 +60,9 @@ class SurveyAdminListMapper
                     (string) $entity->getRespondents()->count(),
                 ),
                 dropdown: $this->surveyAdminDropdownMapper->mapToView($entity, $targetUrl),
-                url: $this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey_response_list', [
+                url: new ListItemUrlView($this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey_response_list', [
                     'survey' => $entity->getId()
-                ]),
+                ])),
                 gridTemplateRow: 'grid-cols-[1fr_50px]',
                 gridTemplateBadges: 'grid-cols-[1fr_1fr_30px]'
             );
@@ -77,8 +78,8 @@ class SurveyAdminListMapper
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),

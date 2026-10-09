@@ -14,8 +14,8 @@
 <a href="{{ link.url }}" 
    title="{{ link.title ?? link.label }}"
    class="{{ base_classes }}  {{ utils.rounded_class(link.rounded.value) }} {{ utils.color_class(link.variant.value) }} hover:cursor-pointer"
-    {% for attribut in link.htmlAttributes %}
-        {{ attribut.name }}="{{ attribut.value }}"
+    {% for attribute in link.htmlAttributes %}
+        {{ attribute.name }}="{{ attribute.value }}"
     {% endfor %}
 >
     <div class="flex {{ align_class }}">

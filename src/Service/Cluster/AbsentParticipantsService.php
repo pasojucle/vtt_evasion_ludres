@@ -9,8 +9,6 @@ use App\Entity\Cluster;
 use App\Entity\Enum\LevelType;
 use App\Entity\Enum\RegistrationEnum;
 
-
-
 class AbsentParticipantsService
 {
     public function __invoke(Cluster $cluster): array

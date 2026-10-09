@@ -9,7 +9,7 @@ use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\Member;
 use App\Service\LevelService;
@@ -83,8 +83,8 @@ class GetMembersFiltered extends GetUsersFiltered
                     url: $this->urlGenerator->generate('admin_members_export'),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
-                        new HtmlAttributView('data-turbo', 'false')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo', 'false')
                     ],
                 ),
                 new LinkView(
@@ -93,7 +93,7 @@ class GetMembersFiltered extends GetUsersFiltered
                     url: $this->urlGenerator->generate('admin_user_skill_export'),
                     icon: 'lucide:file-down',
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close')
                     ],
                 ),
                 new LinkView(
@@ -102,7 +102,7 @@ class GetMembersFiltered extends GetUsersFiltered
                     url: $this->urlGenerator->generate('admin_overview_season'),
                     icon: 'lucide:chart-scatter',
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close')
                     ],
                 ),
             ],
@@ -111,9 +111,9 @@ class GetMembersFiltered extends GetUsersFiltered
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_members_email_to_clipboard')),
+                        new HtmlAttributeView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributeView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_members_email_to_clipboard')),
                     ],
                 ),
             ],

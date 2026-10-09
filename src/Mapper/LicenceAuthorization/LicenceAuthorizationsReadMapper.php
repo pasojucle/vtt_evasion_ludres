@@ -6,7 +6,7 @@ namespace App\Mapper\LicenceAuthorization;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LicenceAuthorization\LicenceAuthorizationsView;
 use App\Dto\View\LinkView;
 use App\Entity\Licence;
@@ -35,7 +35,7 @@ class LicenceAuthorizationsReadMapper
                 icon: 'lucide:pencil',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             )
         );

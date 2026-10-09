@@ -14,9 +14,10 @@ use App\Dto\Filter\RegistrationFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
+use App\Dto\View\ListItemUrlView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\Licence;
@@ -72,7 +73,7 @@ class RegistrationListMapper
                     variant: $state->variant(),
                 ),
                 dropdown: $this->registrationDropdownMapper->mapToView($entity, $fallback),
-                url: $this->urlGenerator->generate("admin_user_show", ['user' => $entity->getId()]),
+                url: new ListItemUrlView($this->urlGenerator->generate("admin_user_show", ['user' => $entity->getId()])),
                 action: $this->getAction($licence, $currentPage, $filter),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_2fr]',
@@ -93,8 +94,8 @@ class RegistrationListMapper
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close'),
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
@@ -129,8 +130,8 @@ class RegistrationListMapper
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
-                        new HtmlAttributView('data-turbo', 'false')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo', 'false')
                     ]
                 )
             ],
@@ -139,9 +140,9 @@ class RegistrationListMapper
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
+                        new HtmlAttributeView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributeView('data-email-to-clipboard-url-value', $this->urlGenerator->generate(
                             'admin_registrations_email_to_clipboard',
                             $filter->toArray()
                         )),
@@ -195,7 +196,7 @@ class RegistrationListMapper
                 size: Size::SM,
                 title: 'Réceptionner le dossier d\'inscription',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
             $state->toRegister() => new LinkView(
@@ -206,7 +207,7 @@ class RegistrationListMapper
                 size: Size::SM,
                 title: 'Inscrire à la FFvélo',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
             default => null,

@@ -15,7 +15,7 @@ readonly class ListItemView
      * @param ?BadgeView $counter
      * @param ?DropdownView $dropdown
      * @param ?string  $background
-     * @param ?string $url
+     * @param ?ListItemUrlView $url
      * @param ?ListActionViewInterface $action
      */
     public function __construct(
@@ -25,7 +25,7 @@ readonly class ListItemView
         public ?BadgeView $counter = null,
         public ?DropdownView $dropdown = null,
         public ?string $background = null,
-        public ?string $url = null,
+        public ?ListItemUrlView $url = null,
         public ?bool $isDeleted = false,
         public ?ListActionViewInterface $action = null,
         public string $gridTemplateRow = 'grid-cols-1',

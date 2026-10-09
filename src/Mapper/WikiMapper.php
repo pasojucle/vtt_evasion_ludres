@@ -7,7 +7,7 @@ namespace App\Mapper;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -28,7 +28,7 @@ class WikiMapper
             size: Size::ICON,
             rounded: $rounded,
             htmlAttributes: [
-                new HtmlAttributView('target', '_blank'),
+                new HtmlAttributeView('target', '_blank'),
             ],
         );
     }

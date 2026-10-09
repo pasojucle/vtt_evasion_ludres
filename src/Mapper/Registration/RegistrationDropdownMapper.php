@@ -6,7 +6,7 @@ namespace App\Mapper\Registration;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\User;
 use App\Mapper\User\UserDropdownMapper;
@@ -30,7 +30,7 @@ class RegistrationDropdownMapper
                 icon: 'lucide:message-circle-warning',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
             $menuItems[] = new LinkView(
@@ -39,7 +39,7 @@ class RegistrationDropdownMapper
                 icon: 'lucide:delete',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
                 ],
             );
         }

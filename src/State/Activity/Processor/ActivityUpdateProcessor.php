@@ -12,12 +12,10 @@ use App\Core\Dto\RedirectProcessorResult;
 use App\Entity\BikeRide;
 use App\Service\UrlContextService;
 use App\UseCase\v2\Activity\UpdateActivity;
-use Doctrine\ORM\EntityManagerInterface;
 
 class ActivityUpdateProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private UpdateActivity $updateActivity,
         private UrlContextService $urlContextService,
     ) {
@@ -28,15 +26,15 @@ class ActivityUpdateProcessor implements RedirectProcessorInterface
      */
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $entity = $this->updateActivity->execute($payload->data, $payload->files);
+        /** @var BikeRide $bikeRide */
+        $bikeRide = $payload->data;
+        $id = $bikeRide->getId();
+        ($this->updateActivity)($bikeRide, $payload->files);
 
         $messageKey = 'activity.flash.success.edit';
-        if (!$entity->getId()) {
-            $this->entityManager->persist($entity);
+        if (!$id) {
             $messageKey = 'activity.flash.success.create';
         }
-        
-        $this->entityManager->flush();
 
         return new RedirectProcessorResult(
             success: true,

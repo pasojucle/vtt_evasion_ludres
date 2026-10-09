@@ -8,7 +8,7 @@ use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\MemberSkillFilter;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\MemberSkill\MemberSkillsView;
 use App\Entity\Member;
@@ -58,7 +58,7 @@ class MemberSkillReadMapper
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             ),
             addAction: new LinkView(
@@ -66,7 +66,7 @@ class MemberSkillReadMapper
                 icon: 'lucide:plus',
                 label: 'Ajouter',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             ),
             loadMoreAction: ($hasMoreSkills)

@@ -6,10 +6,11 @@ namespace App\Service\Placeholder;
 
  readonly class DataPlaceholder
  {
-    /**
-     * @param array<string, string> $values
-     */
-    public function __construct(
-        public array $values
-    ){}
+     /**
+      * @param array<string, string> $values
+      */
+     public function __construct(
+         public array $values
+     ) {
+     }
  }

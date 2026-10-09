@@ -1,0 +1,43 @@
+
+    <div class="min-h-96 border border-border rounded-t-md">
+        <div data-controller="tabs">
+            <div class="flex flex-col">
+                <div>
+                    {% for tab in view.formView.tabs %}
+                        <div 
+                            class="flex items-center gap-2 p-2 border-b border-border"
+                            data-tabs-target="trigger"
+                            data-action="click->tabs#switchTab"
+                            data-index="{{tab.index}}"
+                        >
+                            {% if tab.color %}
+                                <div 
+                                    class="w-1 self-stretch custom-background rounded-md"
+                                    style="--badge-color: {{ tab.color }};"
+                                ></div>
+                            {% endif %}
+                            {% if tab.icon %}
+                                <div>{{ ux_icon(tab.icon, {class: 'size-5'}) }}</div>
+                            {% endif %}
+                            <div>{{ tab.title }}</div>
+                            <div 
+                                class="ml-auto mr-2{% if tab.isActive %} rotate-90{% endif %}"
+                                data-tabs-target="chevron"
+                                data-index="{{tab.index}}"
+                            >
+                                {{ ux_icon('lucide:chevron-down')}}
+                            </div>
+                        </div>
+                        <div  
+                            class="flex flex-col gap-4 p-4 lg:p-6 2xl:p-10 2xl:gap-10 border-border border-b{% if not tab.isActive %} hidden{% endif %}"
+                            data-index="{{tab.index}}"
+                            data-tabs-target="panel"
+                        >
+                            {% include tab.view.template with {(tab.view.name): tab.view} %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+

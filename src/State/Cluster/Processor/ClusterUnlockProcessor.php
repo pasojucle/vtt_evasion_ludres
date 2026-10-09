@@ -12,7 +12,6 @@ use App\Core\Dto\TurboStreamProcessorResult;
 use App\Entity\Cluster;
 use App\UseCase\v2\Cluster\ToggleCompleteCluster;
 
-
 /**
  * @implements TurboStreamProcessorInterface<ActionPayload>
  */

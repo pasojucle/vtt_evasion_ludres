@@ -11,7 +11,7 @@ use App\Dto\View\BadgeView;
 use App\Dto\View\Cluster\ParticipantView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
@@ -183,8 +183,8 @@ class ParticipantMapper
                     url: $this->urlGenerator->generate('admin_bike_ride_switch_cluster', ['cluster' => $cluster->getId(), 'session' => $session->getId()]),
                     icon: 'lucide:refresh-cw',
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],
                 );
             }
@@ -195,8 +195,8 @@ class ParticipantMapper
                     url: $this->urlGenerator->generate('admin_session_delete', ['session' => $session->getId()]),
                     icon: 'lucide:delete',
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],
                 );
             }
@@ -251,7 +251,7 @@ class ParticipantMapper
                 size: Size::ICON,
                 icon: 'lucide:message-circle-question-mark',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             );
         }

@@ -29,10 +29,9 @@ readonly class ListPaginatedHandler
         Request $request,
         ListProviderInterface $provider,
     ): Response {
-        $route = $request->attributes->get('_route');
         $context = HandlerContext::fromRequest($request);
 
-        $filterConfig = $provider->getFilterConfig($route);
+        $filterConfig = $provider->getFilterConfig($context->route);
         if (!$filterConfig) {
             throw new NotFoundHttpException();
         }

@@ -13,7 +13,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,16 +25,13 @@ class ProductType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
             ])
             ->add('content', TiptapType::class, [
                 'label' => 'Détail (optionnel)',
                 'config_name' => 'base',
                 'required' => false,
             ])
-            ->add('pictureFile', FileType::class, [
+            ->add('file', FileType::class, [
                 'label' => 'Photo',
                 'mapped' => false,
                 'required' => false,
@@ -58,18 +54,12 @@ class ProductType extends AbstractType
             ])
             ->add('ref', TextType::class, [
                 'label' => 'Référence',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
             ])
             ->add('price', NumberType::class, [
                 'label' => 'Prix',
                 'scale' => 2,
                 'attr' => [
                     'min' => 0,
-                ],
-                'row_attr' => [
-                    'class' => 'form-group',
                 ],
             ])
             ->add('sizes', EntityType::class, [
@@ -83,12 +73,7 @@ class ProductType extends AbstractType
                 'choice_label' => 'name',
                 'expanded' => true,
                 'multiple' => true,
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
+                'block_prefix' => 'ballot_radio'
             ])
         ;
     }

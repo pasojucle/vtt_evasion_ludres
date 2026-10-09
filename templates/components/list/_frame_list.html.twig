@@ -24,10 +24,12 @@
                     >
                         {% if item.url %}
                             <a 
-                                href="{{ item.url }}" 
+                                href="{{ item.url.path }}" 
                                 class="absolute inset-0 z-10 mr-10{% if item.action %} lg:w-[calc(100%-112px)]{% endif %}" 
                                 title="Voir l'élément" 
-                                data-turbo-frame="_top"
+                                {% for attribute in item.url.htmlAttributes %}
+                                    {{ attribute.name }}="{{ attribute.value }}"
+                                {% endfor %}
                             >
                                 <span class="sr-only">Voir l'élément</span>
                             </a>

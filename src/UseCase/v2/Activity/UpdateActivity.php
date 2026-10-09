@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\v2\Activity;
 
 use App\Entity\BikeRide;
+use App\Repository\Interface\BikeRideRepositoryInterface;
 use App\Service\UploadService;
 use App\UseCase\v2\Activity\CreateClusters;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class UpdateActivity
 {
     public function __construct(
+        private BikeRideRepositoryInterface $bikeRideRepository,
         private CreateClusters $createClusters,
         private UploadService $uploadService,
     ) {
@@ -20,16 +22,18 @@ class UpdateActivity
     /**
      * @param UploadedFile[] $files
      */
-    public function execute(BikeRide $bikeRide, array $files): BikeRide
+    public function __invoke(BikeRide $bikeRide, array $files): BikeRide
     {
         $clusters = $bikeRide->getClusters();
 
         if ($clusters->isEmpty()) {
-            $this->createClusters->execute($bikeRide);
+            ($this->createClusters)($bikeRide);
         }
 
         $this->uploadMedias($files, $bikeRide);
         $this->uploadParcours($files, $bikeRide);
+
+        $this->bikeRideRepository->save($bikeRide);
 
         return $bikeRide;
     }

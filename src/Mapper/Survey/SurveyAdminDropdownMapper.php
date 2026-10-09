@@ -7,7 +7,7 @@ namespace App\Mapper\Survey;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\Survey;
 use App\Service\UrlContextService;
@@ -30,9 +30,9 @@ class SurveyAdminDropdownMapper
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_survey_email_to_clipboard')),
-                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributeView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_survey_email_to_clipboard')),
+                        new HtmlAttributeView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
                     ]
                 )
             ],
@@ -55,8 +55,8 @@ class SurveyAdminDropdownMapper
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributView('data-action', 'click->dropdown#close')
+                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close')
                     ],
                 )
             ],

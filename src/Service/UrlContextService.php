@@ -15,9 +15,9 @@ class UrlContextService
     }
 
 
-    public function generateUrl(string $route, array $params, $referer): string
+    public function generateUrl(string $route, array $params, $fallback): string
     {
-        $params['_redirect_to'] = $referer;
+        $params['_redirect_to'] = $fallback;
 
         return $this->urlGenerator->generate($route, $params);
     }

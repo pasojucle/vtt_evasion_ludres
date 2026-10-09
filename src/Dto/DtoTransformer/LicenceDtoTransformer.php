@@ -6,7 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\Enum\ColorVariant;
 use App\Dto\LicenceDto;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\LevelType;
@@ -111,7 +111,7 @@ class LicenceDtoTransformer
                 variant: ColorVariant::SUCCESS,
                 title: 'Réceptionner le dossier d\'inscription',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
             $state->toRegister() => new LinkView(
@@ -121,7 +121,7 @@ class LicenceDtoTransformer
                 variant: ColorVariant::SUCCESS,
                 title: 'Inscrire à la FFvélo',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT)
                 ],
             ),
             default => null
@@ -142,7 +142,7 @@ class LicenceDtoTransformer
             variant: ColorVariant::SUCCESS,
             title: 'Valider l\'assurance ffvélo',
             htmlAttributes: [
-                new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT)
+                new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT)
             ],
         );
 

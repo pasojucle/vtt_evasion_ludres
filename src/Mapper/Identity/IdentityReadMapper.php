@@ -7,7 +7,7 @@ namespace App\Mapper\Identity;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\EmailView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\Identity\IdentityView;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
@@ -53,7 +53,7 @@ class IdentityReadMapper
                 icon: 'lucide:pencil',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             )
         );

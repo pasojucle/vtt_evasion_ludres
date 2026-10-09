@@ -12,9 +12,10 @@ use App\Dto\Enum\Size;
 use App\Dto\Filter\OrderFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
+use App\Dto\View\ListItemUrlView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\Enum\OrderStatusEnum;
@@ -58,7 +59,7 @@ class OrderAdminListMapper
                 ],
                 status: new BadgeView($status->trans($this->translator), $status->variant()),
                 dropdown: $this->getDropdown($entity, $targetUrl),
-                url: $this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()]),
+                url: new ListItemUrlView($this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()])),
                 action: $this->getAction($entity, $currentPage, $filter),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
@@ -79,8 +80,8 @@ class OrderAdminListMapper
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
@@ -116,8 +117,8 @@ class OrderAdminListMapper
                 variant: ColorVariant::ACCENT,
                 size: Size::SM,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', 'order-list'),
-                    new HtmlAttributView('data-turbo-method', 'post'),
+                    new HtmlAttributeView('data-turbo-frame', 'order-list'),
+                    new HtmlAttributeView('data-turbo-method', 'post'),
                 ]
             );
 
@@ -137,8 +138,8 @@ class OrderAdminListMapper
                     icon: 'lucide:delete',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],
                 )
             ]
@@ -156,8 +157,8 @@ class OrderAdminListMapper
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
-                        new HtmlAttributView('data-turbo', 'false')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo', 'false')
                     ]
                 ),
             ],

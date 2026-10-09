@@ -22,7 +22,7 @@ readonly class LinkView implements ListActionViewInterface
      * @param ?string $label
      * @param string|null $icon
      * @param string|null $className
-     * @param HtmlAttributView[] $htmlAttributes
+     * @param HtmlAttributeView[] $htmlAttributes
      */
     public function __construct(
         public string $url,
@@ -33,7 +33,7 @@ readonly class LinkView implements ListActionViewInterface
         public ?string $icon = null,
         public ?string $className = null,
         public array $htmlAttributes = [
-            new HtmlAttributView('data-turbo-frame', self::TOP)
+            new HtmlAttributeView('data-turbo-frame', self::TOP)
         ],
         public string $title = '',
     ) {

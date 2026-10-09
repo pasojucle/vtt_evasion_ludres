@@ -12,10 +12,11 @@ use App\Dto\Enum\Size;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\<?= $entity_name ?>Filter;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LabelView;
 use App\Dto\View\ListView;
 use App\Dto\View\ListItemView;
+use App\Dto\View\ListItemUrlView;
 use App\Entity\<?= $entity_name ?>;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
@@ -62,7 +63,7 @@ class <?= $entity_name ?>ListMapper
             //         $isComplete ? ColorVariant::SUCCESS : ColorVariant::DEFAULT,
             //     ),
             //     dropdown: $this->entityAdminDropdownMapper->mapToView($entity),
-            //     url: $this->urlGenerator->generate("ma_route", ['<?= $entity_name ?>' => $entity->getId()]),
+            //     url: new ListItemUrlView($this->urlGenerator->generate("ma_route", ['<?= $entity_name ?>' => $entity->getId()])),
             // );
         }
 
@@ -78,8 +79,8 @@ class <?= $entity_name ?>ListMapper
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
@@ -101,7 +102,7 @@ class <?= $entity_name ?>ListMapper
             //     icon: 'lucide:circle-help',
             //     variant: ColorVariant::DEFAULT,
             //     htmlAttributes: [
-            //         new HtmlAttributView('target', '_blank'),
+            //         new HtmlAttributeView('target', '_blank'),
             //     ],
             // ),
         );

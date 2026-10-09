@@ -18,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class ParticpantListExportMapper
-{    
+{
     public function __construct(
         private TranslatorInterface $translator,
         private Environment $twig,
@@ -26,7 +26,8 @@ class ParticpantListExportMapper
         private PassportPhotoMapper $passportPhotoMapper,
         private ProjectDirService $projectDir,
         private Filesystem $filesystem,
-    ) {}
+    ) {
+    }
 
     public function streamToPdf(Cluster $cluster): void
     {

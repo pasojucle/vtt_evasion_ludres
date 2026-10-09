@@ -46,9 +46,10 @@ class ClusterCompleteProvider implements FormComponentProviderInterface, TurboSt
     public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
         $absentParticipants = ($this->absentParticipants)($data);
-        $absentParticipantFullnames = array_map(fn(Member $member) => $member->getIdentity()->getFullName(), $absentParticipants);
+        $absentParticipantFullnames = array_map(fn (Member $member) => $member->getIdentity()->getFullName(), $absentParticipants);
 
-        $message =  sprintf('<p>%s %s</p><p>%s<p>',
+        $message = sprintf(
+            '<p>%s %s</p><p>%s<p>',
             implode(', ', $absentParticipantFullnames),
             (1 < count($absentParticipants)) ? 'sont absents.' : 'est absent.',
             'Êtes-vous sûre de vouloir valider le groupe ?'

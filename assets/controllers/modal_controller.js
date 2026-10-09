@@ -79,7 +79,6 @@ export default class extends Controller {
                 bubbles: true, 
                 detail: { [targetId]: payload }
             });
-            console.log('customEvent', customEvent);
             document.dispatchEvent(customEvent);
         }
 
@@ -92,8 +91,8 @@ export default class extends Controller {
 
     handleAction(event) {
         event.preventDefault();
-        const eventName = event.currentTarget.dataset.modalEventNameValue;
-        const payload = event.currentTarget.dataset.modalPayloadValue;
+        const eventName = event.currentTarget.dataset.dialogEventNameValue;
+        const payload = event.currentTarget.dataset.dialogPayloadValue;
         console.log("eventName", eventName, payload);
         if (eventName) {
             const customEvent = new CustomEvent(eventName, { 
@@ -103,13 +102,13 @@ export default class extends Controller {
             window.dispatchEvent(customEvent);
         }
 
-        this.close();
+        this.close(event);
     }
 
     handleFormSubmit(event) {
-        console.log("handleFormSubmit");
         if (event.detail.success) {
-            this.close();
+            document.querySelectorAll('turbo-frame[busy]').forEach(frame => frame.removeAttribute("busy"));
+            this.close(event);
             Turbo.visit(window.location.href, { action: "replace" });
         } else {
             this.frameTarget.scrollTop = 0;

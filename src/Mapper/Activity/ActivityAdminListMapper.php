@@ -11,9 +11,10 @@ use App\Dto\Enum\Size;
 use App\Dto\Filter\ActivityFilter;
 use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
+use App\Dto\View\ListItemUrlView;
 use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\BikeRide;
@@ -68,7 +69,13 @@ class ActivityAdminListMapper
                 ),
                 dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $targetUrl),
                 isDeleted: $entity->isDeleted(),
-                url: $this->urlContextService->generateUrl("admin_cluster_list_activity", ['bikeRide' => $entity->getId()], $targetUrl),
+                url: new ListItemUrlView(
+                    $this->urlContextService->generateUrl(
+                    "admin_cluster_list_activity",
+                    ['bikeRide' => $entity->getId()],
+                    $targetUrl
+                )
+                ),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateLabels: 'grid-cols-[80px_auto]',
                 gridTemplateBadges: 'grid-cols-[80px_auto_40px]',
@@ -87,8 +94,8 @@ class ActivityAdminListMapper
                 icon: 'lucide:settings-2',
                 size: Size::ICON,
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close')
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),

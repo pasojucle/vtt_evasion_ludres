@@ -7,7 +7,7 @@ namespace App\Mapper\SecondHand;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\SecondHand\SecondHandDetailView;
 use App\Entity\Enum\SecondHandStateEnum;
@@ -71,8 +71,8 @@ class SecondHandDetailMapper
                 label: 'Supprimer',
                 icon: 'lucide:delete',
                 htmlAttributes: [
-                    new HtmlAttributView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                    new HtmlAttributView('data-action', 'click->dropdown#close'),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close'),
                 ],
             ),
             buttonValidate: $this->buttonValidate($secondHand),

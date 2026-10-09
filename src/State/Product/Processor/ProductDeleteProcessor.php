@@ -4,32 +4,36 @@ declare(strict_types=1);
 
 namespace App\State\Product\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\Product;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
 use App\Service\SoftDeleteService;
-use App\State\Interface\FormRedirectProcessorInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ProductDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class ProductDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private SoftDeleteService $softDeleteService,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    /**
-     * @param Product $entity
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $this->softDeleteService->softDelete($entity);
+        $this->softDeleteService->softDelete($payload->data);
         $this->entityManager->flush();
 
         return new RedirectProcessorResult(
             success: true,
             messageKey: 'documentation.flash.success.delete',
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             flashType: 'success'
         );
     }

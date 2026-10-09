@@ -6,8 +6,8 @@
 {% block action %}
     <button 
         data-action="click->modal#handleAction" 
-        data-modal-event-name-value="participation:toggle"
-        data-modal-payload-value="{{ session.id }}"
+        data-dialog-event-name-value="participation:toggle"
+        data-dialog-payload-value="{{ session.id }}"
         class="btn btn-warning"
     >
         Valider sa participation

@@ -10,7 +10,7 @@ use App\Dto\Enum\Size;
 use App\Dto\View\BadgeView;
 use App\Dto\View\Cluster\ClusterView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\WidgetView;
 use App\Entity\BikeRide;
@@ -110,7 +110,7 @@ class ClusterFrameReadMapper
                         label: 'Afficher',
                         icon: 'lucide:eye',
                         htmlAttributes: [
-                            new HtmlAttributView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                            new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                         ],
                     ),
                 ],

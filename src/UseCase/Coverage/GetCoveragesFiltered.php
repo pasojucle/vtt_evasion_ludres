@@ -9,7 +9,7 @@ use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
-use App\Dto\View\HtmlAttributView;
+use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
@@ -68,8 +68,8 @@ class GetCoveragesFiltered extends GetUsersFiltered
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
-                        new HtmlAttributView('data-action', 'click->dropdown#close'),
-                        new HtmlAttributView('data-turbo', 'false')
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                        new HtmlAttributeView('data-turbo', 'false')
                     ],
                 )
             ],
@@ -78,9 +78,9 @@ class GetCoveragesFiltered extends GetUsersFiltered
                     label: 'Copier les emails de la séléction',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributView('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                        new HtmlAttributView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_coverages_email_to_clipboard')),
+                        new HtmlAttributeView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                        new HtmlAttributeView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_coverages_email_to_clipboard')),
                     ],
                 ),
             ],

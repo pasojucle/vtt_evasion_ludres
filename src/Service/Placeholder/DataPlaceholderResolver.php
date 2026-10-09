@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service\Placeholder;
 
-
 readonly class DataPlaceholderResolver extends AbstractPlaceholderResolver
 {
     public function supports(?object $data): bool

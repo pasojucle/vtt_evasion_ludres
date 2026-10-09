@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\State\Product\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Enum\PublishStatus;
 use App\Dto\Filter\AbstractFilter;
@@ -13,7 +15,6 @@ use App\Dto\View\ListView;
 use App\Mapper\Product\ProductAdminListMapper;
 use App\Repository\ProductRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class ProductAdminListProvider implements ListProviderInterface
@@ -29,9 +30,10 @@ class ProductAdminListProvider implements ListProviderInterface
     /**
      * @param ProductFilter $filter
      */
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, HandlerContext $context): ListView
     {
         $qb = $this->getQueryBuilder($filter);
+        $currentPage = $context->page;
 
         $entities = $this->paginator->paginate(
             $qb,
@@ -39,7 +41,7 @@ class ProductAdminListProvider implements ListProviderInterface
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
-        return $this->mapper->mapToView($entities, $route, $currentPage, $filter, $filterConfig);
+        return $this->mapper->mapToView($entities, $context, $filter, $filterConfig);
     }
 
     private function getQueryBuilder(ProductFilter $filter): QueryBuilder

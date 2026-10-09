@@ -13,6 +13,9 @@ use App\Repository\SurveyResponseRepository;
 use App\Service\UrlContextService;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
 class SurveyDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
@@ -23,9 +26,6 @@ class SurveyDeleteProcessor implements RedirectProcessorInterface
     ) {
     }
 
-    /**
-     * @implements RedirectProcessorInterface<ActionPayload>
-     */
     public function process(object $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
         $survey = $payload->data;

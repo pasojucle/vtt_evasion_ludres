@@ -19,7 +19,8 @@ class ClusterExportProvider implements StreamActionExportableInterface
         private ParticpantListExportMapper $particpantListExportMapper,
         private LogService $logService,
         private StringService $stringService,
-    ){}
+    ) {
+    }
 
     public function streamExportContent(object $data): void
     {
@@ -31,8 +32,11 @@ class ClusterExportProvider implements StreamActionExportableInterface
     public function basename(object $data): string
     {
         return $this->stringService->clean(
-            sprintf('%s-%s', $data->getTitle(), 
-            $data->getBikeRide()->getStartAt()->format('Ymd'))
-        ). '.pdf';
+            sprintf(
+                '%s-%s',
+                $data->getTitle(),
+                $data->getBikeRide()->getStartAt()->format('Ymd')
+            )
+        ) . '.pdf';
     }
 }
