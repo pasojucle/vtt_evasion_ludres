@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Dto\Enum\SurveyResponseValueType;
+use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Member;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
@@ -185,5 +187,34 @@ class SurveyResponseRepository extends ServiceEntityRepository
             ->setParameter('survey', $survey)
             ->getQuery()
             ->getResult();
+    }
+
+    public function getSurveyResponseQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('sr');
+    }
+
+    public function filterSurveyResponse(QueryBuilder $qb, SurveyResponse $surveyResponse): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sr.id', ':response'),
+        )
+        ->setParameter('response', $surveyResponse);
+    }
+
+    public function filterIssue(QueryBuilder $qb, SurveyIssue $issue): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sr.surveyIssue', ':issue'),
+        )
+        ->setParameter('issue', $issue);
+    }
+
+    public function filterValue(QueryBuilder $qb, ?bool $value): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('sr.value', ':value'),
+        )
+        ->setParameter('value', $value);
     }
 }

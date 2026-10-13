@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\DetailHandler;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\Filter\UserFilter;
@@ -12,6 +13,7 @@ use App\Entity\User;
 use App\Form\Admin\LicenceMemberType;
 use App\Repository\MemberRepository;
 use App\State\User\Processor\LicenceNumberSendProcessor;
+use App\State\User\Provider\LicenceNumberSendProvider;
 use App\State\User\Provider\UserListProvider;
 use App\State\User\Provider\UserReadProvider;
 use App\UseCase\User\GetFramersFiltered;
@@ -118,17 +120,18 @@ class UserController extends AbstractCrudController
     #[Route('/send/numberlicence/{member}', name: 'send_number_licence', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]
     public function adminSendLicence(
+        Request $request,
+        LicenceNumberSendProvider $provider,
         LicenceNumberSendProcessor $processor,
-        Member $member
+        Member $member,
+        ActionDirectHandler $handler,
     ): Response {
-        $result = $processor->process($member);
-        $streamView = $result->flashMessages;
-
-        return $this->render($streamView->getStreamTemplate(), [
-                'view' => $streamView,
-            ], new Response('', Response::HTTP_OK, [
-                'Content-Type' => 'text/vnd.turbo-stream.html',
-            ]));
+        return $handler->handle(
+            $request,
+            $member,
+            $provider,
+            $processor
+        );
     }
 
     #[Route('/adherent/autocomplete', name: 'member_autocomplete', methods: ['GET'])]

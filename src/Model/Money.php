@@ -16,9 +16,19 @@ final readonly class Money
         return number_format($this->amountInCents / 100, 2) . ' €';
     }
 
+    public static function fromFloat(float $amount): self
+    {
+        return new self((int) round($amount * 100));
+    }
+
     public function getAmountInCents(): int
     {
         return $this->amountInCents;
+    }
+
+    public function getAmount(): float
+    {
+        return round($this->amountInCents / 100, 2);
     }
 
     public function add(self $other): self

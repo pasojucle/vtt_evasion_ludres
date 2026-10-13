@@ -6,6 +6,7 @@ namespace App\State\SecondHand\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Contract\Provider\FilterInitializerInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SecondHandFilter;
@@ -47,7 +48,7 @@ class SecondHandListProvider implements ListProviderInterface, FilterInitializer
         );
     }
 
-    public function initializeFilters(AbstractFilter $filter, array $queryParams = []): void
+    public function initializeFilters(AbstractFilter $filter, ?HandlerContext $context): void
     {
         /** @var SecondHandFilter $filter */
         $filter->setDefaultState();

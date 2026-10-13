@@ -19,7 +19,7 @@ use App\Entity\SurveyIssue;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SurveyResponseMapper
+class SurveyResponseListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
@@ -48,7 +48,8 @@ class SurveyResponseMapper
                 types: $this->getSurveyResponsesByType($entity),
                 show: new LinkView(
                     url :$this->urlGenerator->generate('admin_survey_response_show', [
-                        'surveyResponse' => $entity->getId()
+                        'survey' => $survey->getId(),
+                        'issue' => $entity->getId()
                     ]),
                     icon:'lucide:users',
                     htmlAttributes: [

@@ -7,19 +7,16 @@ namespace App\State\Activity\Provider;
 use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\InputInitializerInterface;
 use App\Core\Dto\HandlerContext;
-use App\Dto\Enum\Size;
 use App\Dto\View\Activity\Tab\MainView;
 use App\Dto\View\Activity\Tab\OptionsView;
 use App\Dto\View\Activity\Tab\ParticipantsView;
 use App\Dto\View\Activity\Tab\TracksView;
-use App\Dto\View\ButtonView;
-use App\Dto\View\FormTabWrapperView;
-use App\Dto\View\LinkView;
+use App\Dto\View\SheetFormWrapperView;
+use App\Dto\View\SheetTabsView;
 use App\Dto\View\TabView;
 use App\Entity\BikeRide;
 use App\Mapper\Activity\Update\MediasMapper;
 use App\Service\MessageService;
-use App\Service\UrlContextService;
 
 /**
  * @implements FormComponentProviderInterface<BikeRide>
@@ -29,20 +26,20 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
     public function __construct(
         private MediasMapper $mediasMapper,
         private MessageService $messageService,
-        private UrlContextService $urlContextService,
     ) {
     }
 
-    public function getView(object $entity, ?HandlerContext $context = null): FormTabWrapperView
+    public function getView(object $data, ?HandlerContext $context = null): SheetFormWrapperView
     {
-        $action = ($entity->getId()) ? 'Modifier' : 'Ajouter';
+        $action = ($data->getId()) ? 'Modifier' : 'Ajouter';
         $currentTab = $context->tab;
 
-        return new FormTabWrapperView(
-            name: 'activityEdit',
+        return new SheetFormWrapperView(
             title: sprintf('%s une activité', $action),
             description: sprintf('%s une activité en définissant les paramètres généreaux, des participants, des médias, des parcours...', $action),
-            tabs: [
+            action: $action,
+            frameId: sprintf('product-update-%s', $data->getId() ?? ''),
+            formView: new SheetTabsView([
                 new TabView(
                     title: 'Général',
                     index: 1,
@@ -69,7 +66,7 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
                     index: 4,
                     isActive: 4 === $currentTab,
                     icon: 'lucide:image',
-                    view: $this->mediasMapper->mapToView($entity),
+                    view: $this->mediasMapper->mapToView($data),
                 ),
                 new TabView(
                     title: 'Parcours GPX',
@@ -78,36 +75,27 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
                     icon: 'lucide:map',
                     view: new TracksView(),
                 ),
-            ],
-            fallback: new LinkView(
-                url: $this->urlContextService->decodeUrl($context->encodedFallback),
-                icon: 'lucide:chevron-left',
-                size: Size::ICON
-            ),
-            submit: new ButtonView(
-                label: $action,
-                icon: 'lucide:square-check-big'
-            ),
+            ]),
         );
     }
 
-    public function getFormOptions(object $entity, ?HandlerContext $context = null): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [];
     }
 
     /**
-     * @param BikeRide $entity
+     * @param BikeRide $data
      * @return BikeRide
      */
-    public function setDefaultValues(object $entity): object
+    public function setDefaultValues(object $data): object
     {
-        if (null === $entity->getId()) {
-            $entity->setRegistrationClosedMessage(
+        if (null === $data->getId()) {
+            $data->setRegistrationClosedMessage(
                 $this->messageService->getMessageById('REGISTRATION_CLOSED_DEFAULT_MESSAGE')
             );
         }
 
-        return $entity;
+        return $data;
     }
 }

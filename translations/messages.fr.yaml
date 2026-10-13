@@ -222,7 +222,7 @@ survey:
   issue:
     check: oui/non
     choice: oui/non/ne se prononce pas
-    string: Réponse libre
+    text: Réponse libre
   filter:
     pending: En cours
     expired: Expiré

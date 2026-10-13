@@ -10,6 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -72,5 +73,27 @@ class SurveyIssueRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult()
         ;
+    }
+
+    public function getSurveyIssueQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('si');
+    }
+
+    public function filterSurveyy(QueryBuilder $qb, Survey $survey): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('si.survey', ':survey')
+        )
+        ->setParameter('survey', $survey);
+    }
+
+    public function filterContent(QueryBuilder $qb, string $term): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->like('LOWER(si.content)', ':term')
+            )
+            ->setParameter('term', '%' . strtolower($term) . '%');
     }
 }

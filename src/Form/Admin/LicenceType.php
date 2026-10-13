@@ -8,11 +8,11 @@ use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
+use App\Form\Type\AppMoneyType;
 use App\Service\SeasonService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -75,6 +75,10 @@ class LicenceType extends AbstractType
                             return true;
                         },
                     ),
+                ])
+                ->add('amount', AppMoneyType::class, [
+                    'label' => 'Montant de la cotisation',
+                    'required' => false,
                 ])
                 ->add('currentSeasonForm', CheckboxType::class, [
                     'block_prefix' => 'switch',

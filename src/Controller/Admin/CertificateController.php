@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDialogHandler;
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\Member;
 use App\Form\Admin\CertificateType;
+use App\State\Certificate\Processor\MemberCertificateCreateProcessor;
+use App\State\Certificate\Provider\MemberCertificateCreateProvider;
 use App\UseCase\Certificate\GetAccompanyingAdultCertificate;
 use App\UseCase\Certificate\GetRegistrationCertificate;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,8 +32,19 @@ class CertificateController extends AbstractController
     public function adminRegistrationCertificate(
         Request $request,
         GetRegistrationCertificate $getRegistrationCertificate,
-        Member $member
+        MemberCertificateCreateProvider $provider,
+        MemberCertificateCreateProcessor $processor,
+        Member $member,
+        ActionFormHandler $handler,
     ): Response {
+        return $handler->handle(
+            $request,
+            $member,
+            $provider,
+            $processor,
+            CertificateType::class
+        );
+
         list($content) = $getRegistrationCertificate->execute($request, $member);
         $form = $this->createForm(CertificateType::class, [
             'content' => $content,

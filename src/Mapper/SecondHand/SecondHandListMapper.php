@@ -64,10 +64,10 @@ class SecondHandListMapper
                 dropdown: $this->dropDown($entity, $targetUrl),
                 url: new ListItemUrlView(
                     $this->urlContextService->generateUrl(
-                    "admin_second_hand_show",
-                    ['secondHand' => $entity->getId()],
-                    $targetUrl
-                )
+                        "admin_second_hand_show",
+                        ['secondHand' => $entity->getId()],
+                        $targetUrl
+                    )
                 ),
                 gridTemplateBadges: 'grid-cols-2',
             );

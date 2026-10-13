@@ -23,9 +23,9 @@ class ProductDeleteProvider implements FormComponentProviderInterface
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf(
-            'Etes vous certain de supprimer l\'article <b>%s</b> ?',
-            $data->getName()
-        )
+                'Etes vous certain de supprimer l\'article <b>%s</b> ?',
+                $data->getName()
+            )
         );
     }
 

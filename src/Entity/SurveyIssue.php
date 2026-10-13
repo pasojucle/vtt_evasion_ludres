@@ -53,6 +53,11 @@ class SurveyIssue
         $this->surveyResponses = new ArrayCollection();
     }
 
+    public function __tostring(): string
+    {
+        return $this->content;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

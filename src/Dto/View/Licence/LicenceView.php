@@ -23,6 +23,7 @@ readonly class LicenceView implements TurboStreamViewInterface
         public string $bikeType,
         public ?string $familyMember,
         public ?string $familyMemberUrl,
+        public ?string $amount,
         public LinkView $sendNuberLicenceAction,
         public LinkView $editAction,
     ) {

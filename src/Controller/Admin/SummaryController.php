@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDialogHandler;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Summary;
@@ -12,7 +13,6 @@ use App\State\Summary\Processor\SummaryDeleteProcessor;
 use App\State\Summary\Provider\SummaryDeleteProvider;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -87,11 +87,12 @@ class SummaryController extends AbstractCrudController
     #[IsGranted('SUMMARY_EDIT', 'summary')]
     public function delete(
         Request $request,
-        SummaryDeleteProcessor $processor,
         SummaryDeleteProvider $provider,
-        Summary $summary
+        SummaryDeleteProcessor $processor,
+        Summary $summary,
+        ActionDialogHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $summary,
             $provider,

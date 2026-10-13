@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
+use App\Core\Contract\View\ComponentViewInterface;
 use App\Dto\View\EmptyView;
 use App\Dto\View\LinkView;
 
 readonly class ListDrawerView
 {
     /**
-     * @param ListDrawerItemView[] $items
+     * @param ComponentViewInterface[] $items
      */
     public function __construct(
         public string $title,
+        public string $name,
         public string $description,
         public array $items,
         public EmptyView $empty,

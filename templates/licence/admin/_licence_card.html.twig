@@ -12,7 +12,6 @@
             <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Numéro :</dt>
             <dd class="text-foreground font-medium flex flex-col gap-1 items-start">
                 {{ view.number }}
-                {% include view.sendNuberLicenceAction.template with {(view.sendNuberLicenceAction.name): view.sendNuberLicenceAction} %}
             </dd>
         </div>
 
@@ -64,5 +63,17 @@
             </div>
         {% endif %}
 
+        {% if view.amount %}
+            <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:gap-x-2">
+                <dt class="text-xs font-semibold uppercase tracking-wider text-muted 2xl:leading-5">Montant de la cotisation :</dt>
+                <dd class="text-foreground font-medium">
+                    {{ view.amount  }}
+                </dd>
+            </div>
+        {% endif %}
+        
+        {% include view.sendNuberLicenceAction.template with {(view.sendNuberLicenceAction.name): view.sendNuberLicenceAction} %}
+
     </dl>
+
 </div>

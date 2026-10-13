@@ -71,10 +71,10 @@ class ActivityAdminListMapper
                 isDeleted: $entity->isDeleted(),
                 url: new ListItemUrlView(
                     $this->urlContextService->generateUrl(
-                    "admin_cluster_list_activity",
-                    ['bikeRide' => $entity->getId()],
-                    $targetUrl
-                )
+                        "admin_cluster_list_activity",
+                        ['bikeRide' => $entity->getId()],
+                        $targetUrl
+                    )
                 ),
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
                 gridTemplateLabels: 'grid-cols-[80px_auto]',
@@ -104,6 +104,10 @@ class ActivityAdminListMapper
                 url: $this->urlContextService->generateUrl('admin_bike_ride_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
             ),
         );
     }

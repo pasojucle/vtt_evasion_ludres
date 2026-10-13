@@ -8,21 +8,13 @@ use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\ActivityFramersFilter;
 use App\Entity\Enum\AvailabilityEnum;
-use App\Entity\Enum\LevelType;
 use App\Entity\Member;
 use App\Form\Admin\UserAutocompleteField;
-use App\Form\ChoiceProvider\LevelChoiceProvider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class ActivityFramersFilterConfig implements FilterConfigInterface
 {
-    public function __construct(
-        private LevelChoiceProvider $levelChoiceProvider,
-    ) {
-    }
-
     public function getRouteName(): string
     {
         return 'admin_bike_ride_framer_list';
@@ -82,24 +74,7 @@ class ActivityFramersFilterConfig implements FilterConfigInterface
 
     public function getAdvancedFields(): array
     {
-        return [
-            new FilterFieldConfig(
-                name: 'levelType',
-                type: EnumType::class,
-                options: [
-                    'class' => LevelType::class,
-                ],
-            ),
-            new FilterFieldConfig(
-                name: 'levels',
-                type: ChoiceType::class,
-                options: [
-                    'multiple' => true,
-                    'required' => false,
-                    'choices' => $this->levelChoiceProvider->getChoices(),
-                ],
-            ),
-        ];
+        return [];
     }
 
     public function getDataClass(): ?string

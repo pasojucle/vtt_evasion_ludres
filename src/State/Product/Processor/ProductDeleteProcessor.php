@@ -9,9 +9,9 @@ use App\Core\Contract\Processor\RedirectProcessorInterface;
 use App\Core\Dto\ActionPayload;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\RedirectProcessorResult;
-use App\Service\SoftDeleteService;
+use App\Entity\Product;
 use App\Service\UrlContextService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\UseCase\v2\Product\DeleteProduct;
 
 /**
  * @implements RedirectProcessorInterface<ActionPayload>
@@ -19,16 +19,18 @@ use Doctrine\ORM\EntityManagerInterface;
 class ProductDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SoftDeleteService $softDeleteService,
+        private DeleteProduct $deleteProduct,
         private UrlContextService $urlContextService,
     ) {
     }
 
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $this->softDeleteService->softDelete($payload->data);
-        $this->entityManager->flush();
+        /**
+         * @var Product $data
+         */
+        $data = $payload->data;
+        ($this->deleteProduct)($data);
 
         return new RedirectProcessorResult(
             success: true,

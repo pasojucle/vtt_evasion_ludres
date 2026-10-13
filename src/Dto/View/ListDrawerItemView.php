@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\View;
 
-readonly class ListDrawerItemView
+use App\Core\Contract\View\ComponentViewInterface;
+
+readonly class ListDrawerItemView implements ComponentViewInterface
 {
     /**
      * @param string $label
@@ -18,5 +20,15 @@ readonly class ListDrawerItemView
         public BadgeView $status,
         public string $url,
     ) {
+    }
+
+    public function getName(): string
+    {
+        return 'view';
+    }
+
+    public function getTemplate(): string
+    {
+        return 'components/list/_drawer_items.html.twig';
     }
 }

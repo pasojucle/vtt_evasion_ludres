@@ -8,6 +8,7 @@ export default class extends Controller {
     }
 
     connect() {
+        this.timeoutId = null;
         this.toggleHandler = this.toggleNotifications.bind(this);
         document.addEventListener("notifications:toggleNotifications", this.toggleHandler);
         this.hideHandler = this.hideNotifications.bind(this);
@@ -18,47 +19,59 @@ export default class extends Controller {
     disconnect() {
         document.removeEventListener("notifications:toggleNotifications", this.toggleHandler);
         document.removeEventListener("notifications:hideNotifications", this.hideHandler);
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
     }
 
     async fetchList() {
-            console.log("url", this.urlValue)
-            await fetch(this.urlValue)
-            .then((response) => {
-                if (response.status !== 500) {
-                    return response.json();
-                }
-                throw new Error('Something went wrong.');    
-            })
-            .then((json)=> {
-                if (json.modal) {
-                    this.dispatch("openWithContent", { 
-                        prefix: "modal",
-                        detail: { content: json.modal } 
-                    })
-                }
-                console.log("notifications-trigger", json.notifications)
-                if (json.notifications && 0 < json.notifications.total) {
-                    console.log("notifications-trigger", json.notifications.total)
-                    this.dispatch("notify", { 
-                        prefix: "notifications-trigger",
-                        detail: { total: json.notifications.total } 
-                    });
-                    this.element.innerHTML = json.notifications.list;
+        if (!this.urlValue) return;
 
-                    this.setDropdownTop();
-                }
-                if(json.repeat) {
-                    setTimeout(() => {
-                        this.fetchList();
-                    }, 30000);
-                }
-            });
+        try {
+            const response = await fetch(this.urlValue);
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const json = await response.json();
+
+            if (!this.element) return;
+
+            if (json.modal) {
+                this.dispatch("openWithContent", { 
+                    prefix: "modal",
+                    detail: { content: json.modal } 
+                });
+            }
+
+            if (json.notifications && json.notifications.total > 0) {
+                this.dispatch("notify", { 
+                    prefix: "notifications-trigger",
+                    detail: { total: json.notifications.total } 
+                });
+
+                this.element.innerHTML = json.notifications.list;
+
+                this.setDropdownTop();
+            }
+
+            if (json.repeat) {
+                this.timeoutId = setTimeout(() => {
+                    this.fetchList();
+                }, 30000);
+            }
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des notifications:", error);
+        }
     }
 
     setDropdownTop() {
         let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-        if (1024 < vw) {
+        if (this.hasDropdownTarget && 1024 < vw) {
             const nav = document.querySelector('nav');
+            console.log("dropdownTarget", this.dropdownTarget)
             this.dropdownTarget.style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
         }
     }

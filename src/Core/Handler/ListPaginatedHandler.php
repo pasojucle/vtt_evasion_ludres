@@ -39,7 +39,7 @@ readonly class ListPaginatedHandler
         $dataClass = $filterConfig->getDataClass();
         $filter = $provider->getHydratedDto($context->queryParams, $dataClass);
         if ($provider instanceof FilterInitializerInterface) {
-            $provider->initializeFilters($filter, $context->queryParams);
+            $provider->initializeFilters($filter, $context);
         }
 
         $form = $this->formFactory->create(ListFilterType::class, $filter, [

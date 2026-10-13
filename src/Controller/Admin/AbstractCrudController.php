@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Contract\Provider\FilterInitializerInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\State\RedirectProcessorResult;
 use App\Dto\State\TurboStreamProcessorResult;
 use App\Dto\State\ViewContext;
@@ -43,18 +44,17 @@ abstract class AbstractCrudController extends AbstractController
         ListProviderInterface $provider,
         Request $request,
     ): Response {
-        $route = $request->attributes->get('_route');
-        $queryParams = $request->query->all();
+        $context = HandlerContext::fromRequest($request);
 
-        $filterConfig = $provider->getFilterConfig($route);
+        $filterConfig = $provider->getFilterConfig($context->route);
         if (!$filterConfig) {
             throw $this->createNotFoundException();
         }
 
         $dataClass = $filterConfig->getDataClass();
-        $filter = $provider->getHydratedDto($queryParams, $dataClass);
+        $filter = $provider->getHydratedDto($context->queryParams, $dataClass);
         if ($provider instanceof FilterInitializerInterface) {
-            $provider->initializeFilters($filter, $queryParams);
+            $provider->initializeFilters($filter, $context);
         }
 
         $form = $this->createForm(ListFilterType::class, $filter, [
@@ -68,8 +68,8 @@ abstract class AbstractCrudController extends AbstractController
             'list' => $provider->getCollection(
                 $filter,
                 $filterConfig,
-                $route,
-                $request->query->getInt('page', 1),
+                $context->route,
+                $context->page,
             ),
         ]);
     }
@@ -80,10 +80,10 @@ abstract class AbstractCrudController extends AbstractController
         ListLoadMoreProviderInterface $provider,
         ViewContext $context
     ): Response {
-        $queryParams = $request->query->all();
-        $filter = $provider->getHydratedDto($queryParams, $filterClass);
+        $context = HandlerContext::fromRequest($request);
+        $filter = $provider->getHydratedDto($context->queryParams, $filterClass);
         if ($provider instanceof FilterInitializerInterface) {
-            $provider->initializeFilters($filter, $queryParams);
+            $provider->initializeFilters($filter, $context);
         }
 
         $currentPage = $context->page;

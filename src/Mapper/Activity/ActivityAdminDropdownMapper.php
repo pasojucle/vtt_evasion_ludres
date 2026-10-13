@@ -47,6 +47,10 @@ class ActivityAdminDropdownMapper
                 url: $this->urlContextService->generateUrl('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()], $referer),
                 icon: 'lucide:pencil',
                 variant: ColorVariant::DROPDOWN,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
             );
             if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
                 $menuItems[] = new LinkView(

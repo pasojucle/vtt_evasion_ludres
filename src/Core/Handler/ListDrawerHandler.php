@@ -38,7 +38,7 @@ readonly class ListDrawerHandler
 
         $filter = $provider->getHydratedDto($context->queryParams, $filterConfig->getDataClass());
         if ($provider instanceof FilterInitializerInterface) {
-            $provider->initializeFilters($filter, $context->queryParams);
+            $provider->initializeFilters($filter, $context);
         }
 
         $form = $this->formFactory->create(ListFilterType::class, $filter, [

@@ -19,15 +19,16 @@ class ActivityFramersReadMapper
     /**
      * @param list<array{member: Member, availability?: AvailabilityEnum|null}> $framers
      */
-    public function mapToView(array $framers, string $referer): ListDrawerView
+    public function mapToView(array $framers, string $fallback): ListDrawerView
     {
         return new ListDrawerView(
             title: 'Encadrant',
+            name: 'activity-framers-drawer',
             description: 'Liste des disponibiltés par encaddrants',
             items: array_map(fn (array $framer) => $this->activityFramerReadMapper->mapToView(
                 $framer['member'],
                 $framer['availability'] ?? AvailabilityEnum::NONE,
-                $referer
+                $fallback
             ), $framers),
             empty: new EmptyView(icon: 'lucide:shield-user', message: 'Aucun encadrant')
         );
