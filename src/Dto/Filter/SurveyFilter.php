@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Filter;
 
-use App\Dto\Enum\SurveyRestriction;
+use App\Entity\Enum\SurveyRestriction;
 use App\Entity\Enum\SurveyStatusEnum;
 
 class SurveyFilter extends AbstractFilter

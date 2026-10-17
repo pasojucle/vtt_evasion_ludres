@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Handler;
 
 use App\Core\Contract\Processor\ProcessorInterface;
+use App\Core\Contract\Provider\DataInitializerInterface;
 use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Contract\Provider\InputInitializerInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
@@ -43,20 +44,26 @@ readonly class ActionFormHandler
         ?object $parent = null,
     ): Response {
         $context = HandlerContext::fromRequest($request, $parent);
-        if ($provider instanceof InputInitializerInterface) {
-            $provider->setDefaultValues($data);
+        $formData = $data;
+
+        if ($provider instanceof DataInitializerInterface) {
+            $formData = $provider->initializeData($data);
         }
 
-        $form = $this->formFactory->create($formClass, $data, array_merge([
+        if ($provider instanceof InputInitializerInterface) {
+            $provider->setDefaultValues($formData);
+        }
+
+        $form = $this->formFactory->create($formClass, $formData, array_merge([
             'action' => $request->getUri(),
-        ], $provider->getFormOptions($data, $context)));
+        ], $provider->getFormOptions($formData, $context)));
         
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
                 $result = $processor->process(
                     new ActionPayload(
-                        $data,
+                        $formData,
                         $request->files->get($form->getName(), [])
                     ),
                     $context,
@@ -80,7 +87,7 @@ readonly class ActionFormHandler
                 }
             }
             if ($provider instanceof TurboStreamUpdateProviderInterface) {
-                $streamView = $provider->getUpdateStreamView($data, $context);
+                $streamView = $provider->getUpdateStreamView($formData, $context);
                 return new Response(
                     $this->twig->render($streamView->getStreamTemplate(), [
                             'view' => $streamView,
@@ -92,7 +99,7 @@ readonly class ActionFormHandler
             }
 
             return new Response(
-                $this->renderView($provider->getView($data, $context), $form),
+                $this->renderView($provider->getView($formData, $context), $form),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }

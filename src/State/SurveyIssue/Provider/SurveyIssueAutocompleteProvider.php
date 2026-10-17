@@ -22,7 +22,7 @@ class SurveyIssueAutocompleteProvider
     }
     
     public function getAutocompleteChoices(
-        ?string $query, 
+        ?string $query,
         AbstractFilter $filter,
     ): array {
         /** @var SurveyIssueAutocompleteFilter $filter */

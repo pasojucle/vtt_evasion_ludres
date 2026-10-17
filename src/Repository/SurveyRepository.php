@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Enum\SurveyStatusEnum;
 use App\Entity\History;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
+use App\Repository\Interface\SurveyRepositoryInterface;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,13 +26,30 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Survey[]    findAll()
  * @method Survey[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SurveyRepository extends ServiceEntityRepository
+class SurveyRepository extends ServiceEntityRepository implements SurveyRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Survey::class);
     }
 
+    public function save(Survey $survey, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($survey);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Survey $survey, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($survey);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
     public function findAllDESCQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('s')

@@ -6,8 +6,8 @@ namespace App\Service\Filter;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
-use App\Dto\Enum\SurveyRestriction;
 use App\Dto\Filter\SurveyFilter;
+use App\Entity\Enum\SurveyRestriction;
 use App\Entity\Enum\SurveyStatusEnum;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

@@ -15,6 +15,6 @@ readonly class MainView implements TabContentInterface
 
     public function getTemplate(): string
     {
-        return 'activity/admin/edit/tab_general.html.twig';
+        return 'activity/admin/edit/tab_main.html.twig';
     }
 }

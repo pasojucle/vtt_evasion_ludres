@@ -33,7 +33,7 @@
     </div>
   </button>
   <div 
-    class="hidden absolute mt-0! top-0 right-8 bg-white rounded-sm border border-border w-max max-w-80 z-50" 
+    class="hidden absolute mt-0! top-0 right-8 bg-white rounded-sm border border-border w-max max-w-60 z-50" 
     data-dropdown-target="content"
   >
     {% if dropdown.title is not null %}
@@ -44,15 +44,10 @@
     <ul class="[&>*:not(:first-child)]:border-t-1 [&>*:not(:first-child)]:border-border max-h-80 overflow-y-auto">
       {% for item in dropdown.infoItems %}
           <li class="px-3 py-2 text-primary italic flex items-center gap-2">
-            {{ ux_icon(item.icon) }} {{ item.label }}
+            {{ ux_icon(item.icon) }} <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-56">{{ item.label }}</div>
           </li>
       {% endfor %}
 
-      {% for item in dropdown.menuItems %}
-          <li>
-            {% include 'components/_link.html.twig'  with {link: item} %}
-          </li>
-      {% endfor %}
       {% for item in dropdown.actionItems %}
         <li>
           <div
@@ -63,11 +58,18 @@
             {% endfor %}
           >
             <div class="flex items-center gap-2">
-              {{ ux_icon(item.icon) }} <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-48">{{ item.label}}</div>
+              {{ ux_icon(item.icon) }} <div class="whitespace-nowrap overflow-hidden text-ellipsis max-w-56">{{ item.label}}</div>
             </div>
           </div>
         </li>
       {% endfor %}
+
+      {% for item in dropdown.menuItems %}
+          <li>
+            {% include 'components/_link.html.twig'  with {link: item} %}
+          </li>
+      {% endfor %}
+    
     </ul>
   </div>
 </div>

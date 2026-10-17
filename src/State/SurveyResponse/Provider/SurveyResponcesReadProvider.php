@@ -12,7 +12,6 @@ use App\Dto\Enum\SurveyResponseValueType;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SurveyResponseFilter;
 use App\Dto\View\ListDrawerView;
-use App\Entity\Survey;
 use App\Mapper\SurveyResponse\SurveyResponseIssueReadMapper;
 use App\Repository\SurveyResponseRepository;
 use App\Service\UrlContextService;
@@ -59,11 +58,10 @@ class SurveyResponcesReadProvider implements ListDrawerProviderInterface, Filter
         }
 
         if ($filter->value) {
-            dump($filter->value);
             $valueRaw = match ($filter->value) {
-                SurveyResponseValueType::YES => true,
-                SurveyResponseValueType::NO => false,
-                SurveyResponseValueType::NO_OPINION => null,
+                SurveyResponseValueType::YES => '1',
+                SurveyResponseValueType::NO => '0',
+                SurveyResponseValueType::NO_OPINION => '2',
                 default => $filter->value
             };
 

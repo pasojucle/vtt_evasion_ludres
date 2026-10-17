@@ -21,45 +21,72 @@ class SurveyAdminDropdownMapper
     ) {
     }
 
-    public function mapToView(Survey $survey, string $referer): DropdownView
+    public function mapToView(Survey $survey, string $fallback): DropdownView
     {
+        $menuItems = [];
+
+        $menuItems[] = new LinkView(
+            label: 'Exporter les réponses',
+            url: $this->urlGenerator->generate('admin_survey_response_export', ['survey' => $survey->getId()]),
+            icon: 'lucide:file-down',
+            variant: ColorVariant::DROPDOWN,
+        );
+
+        if (!$survey->isDisabled()) {
+            $menuItems[] = new LinkView(
+                label: 'Modifier',
+                url: $this->urlContextService->generateUrl('admin_survey_edit', ['survey' => $survey->getId()], $fallback),
+                icon: 'lucide:pencil',
+                variant: ColorVariant::DROPDOWN,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
+            );
+        }
+
+        $menuItems[] = new LinkView(
+            label: 'Dupliquer',
+            url: $this->urlContextService->generateUrl('admin_survey_copy', ['survey' => $survey->getId()], $fallback),
+            icon: 'lucide:copy-plus',
+            variant: ColorVariant::DROPDOWN,
+            htmlAttributes: [
+                new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
+        );
+
+        $menuItems[] = new LinkView(
+            label: 'Supprimer',
+            url: $this->urlContextService->generateUrl('admin_survey_delete', ['survey' => $survey->getId()], $fallback),
+            icon: 'lucide:delete',
+            variant: ColorVariant::DROPDOWN,
+            htmlAttributes: [
+                new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                new HtmlAttributeView('data-action', 'click->dropdown#close')
+            ],
+        );
+
         return new DropdownView(
             title: $survey->getTitle(),
             actionItems: [
                 new DropdownItemView(
-                    label: 'Copier les emails de la séléction',
+                    label: 'Copier les emails des participants',
                     icon: 'lucide:clipboard-type',
                     htmlAttributes: [
-                        new HtmlAttributeView('data-email-to-clipboard-url-value', $this->urlGenerator->generate('admin_survey_email_to_clipboard')),
+                        new HtmlAttributeView(
+                            'data-email-to-clipboard-url-value',
+                            $this->urlGenerator->generate(
+                                'admin_survey_response_email_to_clipboard',
+                                ['survey' => $survey->getId()]
+                            )
+                        ),
                         new HtmlAttributeView('data-controller', 'email-to-clipboard'),
                         new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
                     ]
                 )
             ],
-            menuItems: [
-                new LinkView(
-                    label: 'Exporter',
-                    url: $this->urlGenerator->generate('admin_survey_export', ['survey' => $survey->getId()]),
-                    icon: 'lucide:file-down',
-                    variant: ColorVariant::DROPDOWN,
-                ),
-                new LinkView(
-                    label: 'Dupliquer',
-                    url: $this->urlGenerator->generate('admin_survey_copy', ['survey' => $survey->getId()]),
-                    icon: 'lucide:copy-plus',
-                    variant: ColorVariant::DROPDOWN,
-                ),
-                new LinkView(
-                    label: 'Supprimer',
-                    url: $this->urlContextService->generateUrl('admin_survey_delete', ['survey' => $survey->getId()], $referer),
-                    icon: 'lucide:delete',
-                    variant: ColorVariant::DROPDOWN,
-                    htmlAttributes: [
-                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributeView('data-action', 'click->dropdown#close')
-                    ],
-                )
-            ],
+            menuItems: $menuItems,
         );
     }
 }

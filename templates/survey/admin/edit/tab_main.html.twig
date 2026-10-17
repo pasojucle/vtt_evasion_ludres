@@ -1,0 +1,11 @@
+<div data-id="survey-main" data-form-modifier-target="container">
+    <div class="flex flex-col gap-4">
+        {{ form_row(form.title) }}
+        <div class="grid grid-cols-2 gap-2">
+            {{ form_row(form.startAt) }}
+            {{ form_row(form.endAt) }}
+        </div>
+        {{ form_row(form.isAnonymous) }}
+        {{ form_row(form.content) }}
+    </div>
+</div>

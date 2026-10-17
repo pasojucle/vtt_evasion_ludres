@@ -1,0 +1,14 @@
+<div data-id="survey-participants" data-form-modifier-target="container">
+    {% for restriction in form.restriction %}
+        <div class="py-1">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
+        {% if restriction.vars.value == enum('App\\Entity\\Enum\\SurveyRestriction').MEMBERS.value %}
+            <div class="flex flex-col gap-4">
+                <div class="">{{ form_row(form.members) }}</div>
+                <div class="">{{ form_row(form.levelFilter) }}</div>
+            </div>
+        {% endif %}
+        {% if restriction.vars.value == enum('App\\Entity\\Enum\\SurveyRestriction').ACTIVITY.value %}
+            <div class="grid grid-cols-2 gap-4">{{ form_row(form.bikeRide) }}</div>
+        {% endif %}
+    {% endfor %}
+</div>

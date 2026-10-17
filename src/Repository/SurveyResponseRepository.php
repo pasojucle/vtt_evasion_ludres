@@ -210,7 +210,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
         ->setParameter('issue', $issue);
     }
 
-    public function filterValue(QueryBuilder $qb, ?bool $value): void
+    public function filterValue(QueryBuilder $qb, ?string $value): void
     {
         $qb->andWhere(
             $qb->expr()->eq('sr.value', ':value'),

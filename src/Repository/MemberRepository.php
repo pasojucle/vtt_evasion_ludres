@@ -13,9 +13,9 @@ use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Member;
-use App\Entity\MemberSkill;
 use App\Entity\Session;
-use App\Entity\Skill;
+use App\Entity\Survey;
+use App\Entity\SurveyResponse;
 use App\Entity\User;
 use App\Service\SeasonService;
 use DateInterval;
@@ -1311,5 +1311,18 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
         ->setParameter('isPresent', true)
         ->getQuery()
         ->getResult();
+    }
+
+    public function findRespondantsBySurvey(Survey $survey): array
+    {
+        return $this->createQueryBuilder('mbr')
+            ->join(SurveyResponse::class, 'sr', 'WITH', (new Expr())->eq('sr.member', 'mbr.id'))
+            ->join('sr.surveyIssue', 'si')
+            ->andWhere(
+                (new Expr())->eq('si.survey', ':survey')
+            )
+            ->setParameter('survey', $survey)
+            ->getQuery()
+            ->getResult();
     }
 }

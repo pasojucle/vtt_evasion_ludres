@@ -34,8 +34,12 @@ export default class extends Controller {
             //         // element.addEventListener('click', getFile);
             //     })
             // }
-        }
+        } 
+    }
 
-        
+    removeItem(event) {
+        console.log("removeItem", event.target)
+        const item = event.target.closest('li');
+        if (item) item.remove();
     }
 }

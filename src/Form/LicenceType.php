@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Enum\BikeTypeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Enum\LicenceOptionEnum;
@@ -79,6 +80,7 @@ class LicenceType extends AbstractType
                             ),
                             'expanded' => true,
                             'multiple' => false,
+                            'block_prefix' => 'ballot_radio'
                         ])
                         ->add('options', ChoiceType::class, [
                             'label' => 'Sélectionnez en complément, si besoin, la ou les garanties optionnelles proposée',
@@ -91,18 +93,18 @@ class LicenceType extends AbstractType
                                     'data-coverage-options-target' => 'option'
                                 ];
                             },
+                            'block_prefix' => 'ballot_radio'
                         ])
                     ;
                     if (LicenceCategoryEnum::ADULT === $options['category'] && $licence->getState()->isYearly()) {
                         $form
-                            ->add('isVae', ChoiceType::class, [
+                            ->add('bikeType', EnumType::class, [
                                 'label' => 'Type de vélo',
-                                'choices' => [
-                                    'Vélo musculaire' => false,
-                                    'VTT à assistance électrique' => true,
-                                ],
+                                'class' => BikeTypeEnum::class,
+                                'choices' => [BikeTypeEnum::MUSCULAR, BikeTypeEnum::ELECTRIC],
                                 'expanded' => true,
                                 'multiple' => false,
+                                'block_prefix' => 'ballot_radio'
                             ])
                         ;
                     }

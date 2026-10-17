@@ -8,13 +8,13 @@
             {{ form_row(identity.birthDate)}}
         {% endif %}
     {% endset %}
-    {% if identity.pictureFile is defined %}
+    {% if identity.passportPhoto is defined %}
         <div class="col-2">
             <div>
                 {{ first_block}}
             </div>
             <div class="align-center">
-                {% set picture = identity.vars.value.picture %}
+                {% set picture = identity.vars.value.filename %}
                 <div class="form-group form-group-file" data-controller="input-file">
                     <img 
                         class="user-picture" 
@@ -23,7 +23,7 @@
                         data-input-file-target="media"
                     >            
                     <p data-input-file-target="filename">{{ picture }}</p>
-                    {{ form_row(identity.pictureFile) }}
+                    {{ form_row(identity.passportPhoto) }}
                 </div>
             </div>
         </div>

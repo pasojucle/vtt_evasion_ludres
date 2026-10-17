@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Enum;
+namespace App\Entity\Enum;
 
 use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
@@ -10,9 +10,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 enum SurveyRestriction: string implements TranslatableInterface
 {
+    case ALL_MEMBERS = 'all';
+
     case MEMBERS = 'members';
 
-    case Activity = 'activity';
+    case ACTIVITY = 'activity';
 
     use EnumTrait;
 

@@ -15,6 +15,11 @@
                 <h1 class="font-bold text-3xl">{{ list.title }}</h1>
                 <div class="text-muted mt-1">{{ list.description|raw}}</div>
             </div>
+            <div class="ml-auto">
+                <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
+                    {% include "components/_link.html.twig" with {link: list.fallback} %}
+                </div>
+            </div>
         </div>
         <div id="surveys_container" class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
             {% for issue in list.issues %}
@@ -22,13 +27,15 @@
                     <div class="bg-slate-300 uppercase pl-4 pr-2 py-2 text-white text-sm flex gap-4 items-center">
                         <div class="flex items-center">{{ issue.content }}</div>
                         <div class="ml-auto">
-                            {% include "components/_link.html.twig" with {'link': issue.show} %}
+                            {% if issue.show %}
+                                {% include "components/_link.html.twig" with {'link': issue.show} %}
+                            {% endif %}
                         </div>
                     </div>
                     <div class="grid {{ type_classes[issue.type.value] ?? type_classes.text }} grow">
                         {% for type in issue.types %}
-                            <div class="flex flex-1 gap-4 items-center justify-center px-3 py-1 text-foreground  bg-slate-100">
-                                {{ type.label}}  
+                            <div class="flex flex-1 gap-2 items-center justify-center text-foreground  bg-slate-100 p-4">
+                                <div class="text-center text-sm">{{ ux_icon(type.icon, {class: 'size-6'}) }}</div> 
                                 {% include "components/_badge.html.twig" with {badge: type.total} %}
                             </div>
                         {% endfor %}

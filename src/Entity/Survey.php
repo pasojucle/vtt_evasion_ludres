@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\SurveyRestriction;
 use App\Entity\Enum\SurveyStatusEnum;
 use App\Entity\Interface\DisableableInterface;
 use App\Entity\Trait\DisableableTrait;
-use App\Form\Admin\SurveyType;
 use App\Repository\SurveyRepository;
 use DateInterval;
 use DateTime;
@@ -60,7 +60,7 @@ class Survey implements DisableableInterface
     #[ManyToMany(targetEntity: Member::class, inversedBy: 'surveys')]
     private Collection $members;
 
-    private ?int $restriction = SurveyType::DISPLAY_ALL_MEMBERS;
+    private SurveyRestriction $restriction = SurveyRestriction::ALL_MEMBERS;
 
     #[Column(type: 'json', options:['default' => '[]'])]
     private array $levelFilter = [];
@@ -254,14 +254,14 @@ class Survey implements DisableableInterface
         return $this;
     }
 
-    public function setRestriction(?int $restriction): self
+    public function setRestriction(SurveyRestriction $restriction): self
     {
         $this->restriction = $restriction;
 
         return $this;
     }
 
-    public function getRestriction(): ?int
+    public function getRestriction(): SurveyRestriction
     {
         return $this->restriction;
     }

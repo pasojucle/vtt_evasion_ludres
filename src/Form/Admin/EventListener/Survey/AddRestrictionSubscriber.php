@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\Form\Admin\EventListener\Survey;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\SurveyRestriction;
 use App\Entity\Member;
 use App\Entity\Survey;
 use App\Form\Admin\BikeRideAutocompleteField;
-use App\Form\Admin\SurveyType;
 use App\Form\Admin\UsersAutocompleteField;
-use App\Form\HiddenArrayType;
 use App\Repository\BikeRideRepository;
 use App\Repository\MemberRepository;
 use App\Service\LevelService;
@@ -19,8 +18,7 @@ use DateInterval;
 use DateTimeImmutable;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -61,7 +59,9 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $survey = $event->getForm()->getData();
 
         $data = $event->getData();
-        $restriction = (array_key_exists('restriction', $data)) ? (int) $data['restriction'] : null;
+        $restriction = (array_key_exists('restriction', $data))
+            ? SurveyRestriction::tryFrom($data['restriction'])
+            : SurveyRestriction::ALL_MEMBERS;
         $levelFilter = null;
         $levels = $this->toArray($data, 'levels');
         $memberIds = $this->toArray($data, 'memberIds');
@@ -73,96 +73,71 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $this->addOrRemoveMembers($data, $levels, $memberIds, $survey);
             $this->cleanData($restriction, $data, $survey);
         }
-        
+
         $this->setPeriod($restriction, $survey, $data);
         $event->setData($data);
         $event->getForm()->setData($survey);
         $this->modifier($event->getForm(), $restriction, $levelFilter, $memberIds, $survey->getBikeRide());
     }
 
-    private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter, ?array $memberIds, ?BikeRide $bikeRide): void
+    private function modifier(FormInterface $form, SurveyRestriction $restriction, ?array $levelFilter, ?array $memberIds, ?BikeRide $bikeRide): void
     {
         $options = $form->getConfig()->getOptions();
-        $disabledMembers = SurveyType::DISPLAY_USER_LIST !== $restriction;
-        $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction;
-        $disabledPeriod = SurveyType::DISPLAY_BIKE_RIDE === $restriction && null !== $bikeRide;
-        if (!$disabledBikeRide) {
-            $form
-                ->add('bikeRide', BikeRideAutocompleteField::class, [
-                    'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
-                    'required' => true,
-                    'attr' => [
-                        'data-action' => 'change->form-modifier#change',
-                        'data-container-id' => 'survey-restriction',
-                    ],
-                ]);
-        } else {
-            $form->add('bikeRide', HiddenType::class);
-        }
+        $disabledMembers = SurveyRestriction::MEMBERS !== $restriction;
+        $disabledBikeRide = SurveyRestriction::ACTIVITY !== $restriction;
+        $disabledPeriod = SurveyRestriction::ACTIVITY === $restriction && null !== $bikeRide;
         $form
-            ->add('startAt', DateTimeType::class, [
-                    'label' => 'Date de début',
-                    'widget' => 'single_text',
-                    'html5' => false,
-                    'format' => 'dd/MM/yyyy',
-                    'attr' => [
-                        'class' => 'js-datepicker',
-                        'autocomplete' => 'off',
-                    ],
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
-                    'disabled' => $disabledPeriod,
-                ])
-            ->add('endAt', DateTimeType::class, [
+            ->add('bikeRide', BikeRideAutocompleteField::class, [
+                'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
+                'required' => true,
+                'attr' => [
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'survey-restriction',
+                ],
+                'disabled' => $disabledBikeRide,
+            ])
+            ->add('startAt', DateType::class, [
+                'input' => 'datetime',
+                'label' => 'Date de début',
+                'widget' => 'single_text',
+                'html5' => true,
+                'disabled' => $disabledPeriod,
+            ])
+            ->add('endAt', DateType::class, [
+                'input' => 'datetime',
                 'label' => 'Date de fin',
                 'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => 'off',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
+                'html5' => true,
                 'disabled' => $disabledPeriod,
-            ]);
-        if (!$disabledMembers) {
-            $form
-                ->add('members', UsersAutocompleteField::class, [
-                    'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $options['filters']),
-                    'required' => true,
-                    'disabled' => $disabledMembers,
-                    'attr' => [
-                        'data-action' => 'change->form-modifier#change',
-                        'data-container-id' => 'survey-restriction',
-                        'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
-                        'data-add-to-fetch' => 'memberIds',
-                    ],
-                ])
-                ->add('levelFilter', ChoiceType::class, [
-                    'label' => false,
-                    'multiple' => true,
-                    'choices' => $this->levelService->getLevelChoices(),
-                    'autocomplete' => true,
-                    'attr' => [
-                        'data-action' => 'change->form-modifier#change',
-                        'data-container-id' => 'survey-restriction',
-                        'data-width' => '100%',
-                        'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
-                        'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
-                        'data-add-to-fetch' => 'levels',
-                    ],
-                    'required' => false,
-                    'disabled' => $disabledMembers,
+            ])
+            ->add('members', UsersAutocompleteField::class, [
+                'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $options['filters']),
+                'required' => true,
+                'disabled' => $disabledMembers,
+                'attr' => [
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'survey-restriction',
+                    'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
+                    'data-add-to-fetch' => 'memberIds',
+                ],
+            ])
+            ->add('levelFilter', ChoiceType::class, [
+                'label' => false,
+                'multiple' => true,
+                'choices' => $this->levelService->getLevelChoices(),
+                'autocomplete' => true,
+                'attr' => [
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'survey-restriction',
+                    'data-width' => '100%',
+                    'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
+                    'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
+                    'data-add-to-fetch' => 'levels',
+                ],
+                'required' => false,
+                'disabled' => $disabledMembers,
                 ])
             ;
-        } else {
-            $form
-                ->add('members', HiddenArrayType::class, ['data' => []])
-                ->add('levelFilter', HiddenArrayType::class, ['data' => []]);
-        }
     }
 
     private function addOrRemoveMembers(array &$data, ?array $levels, ?array $memberIds, Survey $survey): void
@@ -235,12 +210,12 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         return [];
     }
 
-    private function cleanData(?int $restriction, array &$data, Survey $survey): void
+    private function cleanData(SurveyRestriction $restriction, array &$data, Survey $survey): void
     {
-        if (SurveyType::DISPLAY_USER_LIST !== $restriction) {
+        if (SurveyRestriction::MEMBERS !== $restriction) {
             $this->clearMembers($data, $survey);
         }
-        if (SurveyType::DISPLAY_BIKE_RIDE !== $restriction) {
+        if (SurveyRestriction::ACTIVITY !== $restriction) {
             $data['bikeRide'] = [];
             $survey->setBikeRide(null);
         }
@@ -261,12 +236,12 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             ->setLevelFilter([]);
     }
 
-    private function setPeriod(int $restriction, Survey $survey, array &$data): void
+    private function setPeriod(SurveyRestriction $restriction, Survey $survey, array &$data): void
     {
-        $startAt = (array_key_exists('startAt', $data)) ? DateTimeImmutable::createFromFormat('d/m/Y', $data['startAt']) : new DateTimeImmutable();
-        $endAt = (array_key_exists('endAt', $data)) ? DateTimeImmutable::createFromFormat('d/m/Y', $data['endAt']) : new DateTimeImmutable();
+        $startAt = (array_key_exists('startAt', $data)) ? DateTimeImmutable::createFromFormat('Y-m-d', $data['startAt']) : new DateTimeImmutable();
+        $endAt = (array_key_exists('endAt', $data)) ? DateTimeImmutable::createFromFormat('Y-m-d', $data['endAt']) : new DateTimeImmutable();
 
-        if (SurveyType::DISPLAY_BIKE_RIDE === $restriction && array_key_exists('bikeRide', $data)) {
+        if (SurveyRestriction::ACTIVITY === $restriction && array_key_exists('bikeRide', $data)) {
             $bikeRide = $this->bikeRideRepository->find($data['bikeRide']);
             if ($bikeRide) {
                 $intervalDisplay = new DateInterval('P' . $bikeRide->GetDisplayDuration() . 'D');
@@ -282,7 +257,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $endAt = $endAt->setTime(23, 59, 59);
         $survey->setStartAt($startAt);
         $survey->setEndAt($endAt);
-        $data['startAt'] = $startAt->format('d/m/Y');
-        $data['endAt'] = $endAt->format('d/m/Y');
+        $data['startAt'] = $startAt->format('Y-m-d');
+        $data['endAt'] = $endAt->format('Y-m-d');
     }
 }

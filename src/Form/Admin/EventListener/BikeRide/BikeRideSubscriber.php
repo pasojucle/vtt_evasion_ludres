@@ -19,10 +19,9 @@ use App\Validator\RangeAge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -123,16 +122,11 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'config_name' => 'full',
                 'required' => false,
             ])
-            ->add('endAt', DateTimeType::class, [
+            ->add('endAt', DateType::class, [
                 'input' => 'datetime_immutable',
                 'label' => 'Date de fin (optionnel)',
                 'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => 'off',
-                ],
+                'html5' => true,
                 'required' => false,
                 'disabled' => $isDiabled,
             ])

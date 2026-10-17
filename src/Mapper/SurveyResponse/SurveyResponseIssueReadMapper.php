@@ -28,7 +28,7 @@ class SurveyResponseIssueReadMapper
             name: 'survey-response-drawer',
             description: sprintf('Liste des réponse au sondage %s', $survey->getTitle()),
             items: array_map(function (SurveyResponse $response) {
-                $identity = $response->getMember()->getIdentity();
+                $identity = $response->getMember()?->getIdentity();
                 $isResponseText = SurveyResponseType::TEXT === $response->getSurveyIssue()->getResponseType();
                 $value = (!$isResponseText)
                     ? $this->translator->trans(SurveyResponse::VALUES[$response->getValue()])
@@ -36,7 +36,7 @@ class SurveyResponseIssueReadMapper
 
                 return  new ListDrawerItemView(
                     $value,
-                    $identity->getFullName(),
+                    $identity?->getFullName(),
                     $isResponseText,
                 );
             }, $surveyResponses),

@@ -228,8 +228,9 @@ survey:
     expired: Expiré
     disabled: Clôturer
   restriction:
-    members: Limiter à des participants
+    members: Limiter à des adhérents
     activity: Limiter aux participants d'une activité
+    all: Accessible à tous les adhérents
 
 second_hand:
   valided: Validées

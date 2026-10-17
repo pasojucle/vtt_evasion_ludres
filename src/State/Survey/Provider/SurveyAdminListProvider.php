@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace App\State\Survey\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
-use App\Dto\Enum\SurveyRestriction;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SurveyFilter;
 use App\Dto\View\ListView;
+use App\Entity\Enum\SurveyRestriction;
 use App\Entity\Enum\SurveyStatusEnum;
 use App\Mapper\EmailClipboardMapper;
 use App\Mapper\Survey\SurveyAdminListMapper;
 use App\Repository\SurveyRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 
@@ -34,22 +35,20 @@ class SurveyAdminListProvider implements ListProviderInterface
     public function getCollection(
         AbstractFilter $filter,
         FilterConfigInterface $filterConfig,
-        string $route,
-        ?int $currentPage = 1,
+        HandlerContext $context,
     ): ListView {
         /** @var SurveyFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
             $qb,
-            $currentPage,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(
             $entities,
-            $route,
-            $currentPage,
+            $context,
             $filter,
             $filterConfig
         );
@@ -76,7 +75,8 @@ class SurveyAdminListProvider implements ListProviderInterface
         if ($filter->restriction) {
             match ($filter->restriction) {
                 SurveyRestriction::MEMBERS => $this->surveyRepository->filterHasMembers($qb),
-                SurveyRestriction::Activity => $this->surveyRepository->filterHasActivity($qb),
+                SurveyRestriction::ACTIVITY => $this->surveyRepository->filterHasActivity($qb),
+                default => null,
             };
         }
 

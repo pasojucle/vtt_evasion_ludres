@@ -14,7 +14,6 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use PhpParser\Node\Expr\Cast\Void_;
 
 /**
  * @extends ServiceEntityRepository<SecondHand>
@@ -141,12 +140,11 @@ class SecondHandRepository extends ServiceEntityRepository
                     (new Expr())->lt('log.viewAt', 's.validedAt'),
                 ),
                 (new Expr())->isNotNull('s.validedAt'),
-                (new Expr())->eq('s.disabled', ':disabled'),
+                // (new Expr())->isNull('s.disabledAt'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('member', $member),
                 new Parameter('entityName', 'SecondHand'),
-                new Parameter('disabled', false),
             ]))
        ;
     }

@@ -9,7 +9,7 @@ use App\Dto\View\BadgeView;
 readonly class SurveyResponseTypeView
 {
     public function __construct(
-        public string $label,
+        public string $icon,
         public BadgeView $total,
     ) {
     }

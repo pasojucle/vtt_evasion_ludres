@@ -6,6 +6,7 @@ namespace App\Mapper\Survey;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Contract\View\ListActionViewInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SurveyFilter;
@@ -40,9 +41,13 @@ class SurveyAdminListMapper
     ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage, SurveyFilter $filter, FilterConfigInterface $filterConfig): ListView
+    public function mapToView(Paginator $entities, HandlerContext $context, SurveyFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
-        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $route = $context->route;
+        $currentPage = $context->page;
+        $queries = $filter->toQueryParams($currentPage);
+        $targetUrl = $this->urlContextService->generateTargetUrl($route, $queries);
+        $fallback = $this->urlContextService->encodeUrl($route, $queries);
 
         $items = [];
         foreach ($entities as $entity) {
@@ -60,9 +65,11 @@ class SurveyAdminListMapper
                     (string) $entity->getRespondents()->count(),
                 ),
                 dropdown: $this->surveyAdminDropdownMapper->mapToView($entity, $targetUrl),
-                url: new ListItemUrlView($this->urlGenerator->generate($entity->isAnonymous() ? 'admin_anonymous_survey' : 'admin_survey_response_list', [
-                    'survey' => $entity->getId()
-                ])),
+                url: new ListItemUrlView($this->urlContextService->generateUrl(
+                    'admin_survey_response_list',
+                    ['survey' => $entity->getId()],
+                    $fallback,
+                )),
                 gridTemplateRow: 'grid-cols-[1fr_50px]',
                 gridTemplateBadges: 'grid-cols-[1fr_1fr_30px]'
             );
@@ -86,9 +93,13 @@ class SurveyAdminListMapper
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             addItem: new LinkView(
                 label: 'Ajouter un sondage',
-                url: $this->urlGenerator->generate('admin_survey_add'),
+                url: $this->urlContextService->generateUrl('admin_survey_add', [], $fallback),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
             ),
         );
     }

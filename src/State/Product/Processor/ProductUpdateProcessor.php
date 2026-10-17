@@ -30,7 +30,7 @@ class ProductUpdateProcessor implements RedirectProcessorInterface
         
         ($this->updateProduct)($product, $payload->files);
 
-        $messageKey = 'activity.flash.success.edit';
+        $messageKey = 'product.flash.success.edit';
         if (!$id) {
             $messageKey = 'product.flash.success.create';
         }

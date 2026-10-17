@@ -8,6 +8,9 @@ use App\Entity\Member;
 
 class EmailClipboardMapper
 {
+    /**
+     * @param Member[] $entities
+     */
     public function mapToEmailCsvString(array $entities): string
     {
         $emails = [];

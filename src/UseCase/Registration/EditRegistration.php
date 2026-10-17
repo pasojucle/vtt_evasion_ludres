@@ -132,8 +132,8 @@ class EditRegistration
     private function UploadFile(Request $request, Member $member): void
     {
         $requestFile = $request->files->get('user');
-        if (null !== $requestFile && array_key_exists('identity', $requestFile) && !empty($requestFile['identity']) && null !== $requestFile['identity']['pictureFile']) {
-            $pictureFile = $requestFile['identity']['pictureFile'];
+        if (null !== $requestFile && array_key_exists('identity', $requestFile) && !empty($requestFile['identity']) && null !== $requestFile['identity']['passportPhoto']) {
+            $pictureFile = $requestFile['identity']['passportPhoto'];
             $newFilename = $this->uploadService->uploadFile($pictureFile, $member->getIdentity());
             if (null !== $newFilename) {
                 $member->getIdentity()->setFilename($newFilename);

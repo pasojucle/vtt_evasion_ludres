@@ -20,6 +20,16 @@ enum SurveyResponseValueType: string implements TranslatableInterface
 
     use EnumTrait;
 
+    public function getIcon(): string
+    {
+        return match ($this) {
+            self::TEXT => 'lucide:message-square-text',
+            self::YES => 'lucide:thumbs-up',
+            self::NO => 'lucide:thumbs-down',
+            default => 'lucide:badge-minus'
+        };
+    }
+
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {

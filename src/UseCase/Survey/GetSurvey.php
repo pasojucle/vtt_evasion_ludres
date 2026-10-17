@@ -35,6 +35,7 @@ class GetSurvey
             $survey->addSurveyIssue($issue);
         }
     }
+    
 
     private function getRestriction(Survey $survey): ?int
     {

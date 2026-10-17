@@ -17,7 +17,7 @@ readonly class SurveyResponseIssueView
         public SurveyResponseType $type,
         public string $content,
         public array $types,
-        public LinkView $show,
+        public ?LinkView $show,
     ) {
     }
 }

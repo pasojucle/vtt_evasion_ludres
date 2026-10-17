@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -36,6 +37,15 @@ class ParameterService
         }
 
         return $value;
+    }
+
+    public function updateParamer(Parameter $parameter): void
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $session = ($request && $request->hasSession()) ? $request->getSession() : null;
+        if ($session) {
+            $session->set($parameter->getId(), $parameter->getValue());
+        }
     }
 
     // public function getParametersByParameterGroupName(string $name): array

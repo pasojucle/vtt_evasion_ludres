@@ -81,7 +81,11 @@ class ActivityUpdateProvider implements FormComponentProviderInterface, InputIni
 
     public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-controller' => 'form-modifier',
+            ],
+        ];
     }
 
     /**

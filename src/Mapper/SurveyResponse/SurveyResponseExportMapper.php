@@ -2,33 +2,30 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\Survey;
+namespace App\Mapper\SurveyResponse;
 
 use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
-use App\Repository\SurveyResponseRepository;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SurveyExportMapper
+class SurveyResponseExportMapper
 {
     private const CSV_SEPARATOR = ",";
     
     public function __construct(
-        private SurveyResponseRepository $surveyResponseRepository,
         private TranslatorInterface $translator,
     ) {
     }
 
-    public function streamToCsv(Survey $entity): void
+    public function streamToCsv(Survey $entity, array $surveyResponsesByUuid): void
     {
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
         $fp = fopen('php://output', 'w');
         
-        $surveyResponsesByUuid = $this->findResponsesByUuid($entity);
         $today = new DateTime();
         fputcsv($fp, ['Export du ' . $today->format('d/m/Y H:i:s') . ' - ' . $entity->getTitle()], self::CSV_SEPARATOR);
         fputcsv($fp, [], self::CSV_SEPARATOR);
@@ -50,20 +47,6 @@ class SurveyExportMapper
         }
         flush();
         fclose($fp);
-    }
-
-    private function findResponsesByUuid(Survey $survey): array
-    {
-        $responses = $this->surveyResponseRepository->findResponsesBySurvey($survey);
-
-        $responsedByUuid = [];
-        if (!empty($responses)) {
-            foreach ($responses as $response) {
-                $responsedByUuid[$response->getUuid()]['responses'][] = $response;
-            }
-        }
-
-        return $responsedByUuid;
     }
 
     private function addResponses(array $surveyResponsesByUuid, $fp): void

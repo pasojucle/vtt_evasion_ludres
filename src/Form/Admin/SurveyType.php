@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\Enum\SurveyRestriction;
 use App\Entity\Survey;
 use App\Form\Admin\EventListener\Survey\AddRestrictionSubscriber;
 use App\Form\Type\TiptapType;
@@ -13,9 +14,8 @@ use App\Service\LevelService;
 use App\Validator\CKEditorBlank;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -42,24 +42,12 @@ class SurveyType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'base',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
                 'constraints' => [
                     new CKEditorBlank(),
-                ],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
                 ],
             ])
             ->add('surveyIssues', CollectionType::class, [
@@ -68,8 +56,12 @@ class SurveyType extends AbstractType
                 'entry_options' => [
                     'label' => false,
                     'attr' => [
-                        'class' => ($options['display_disabled']) ? 'row form-group-collection not-deleted' : 'row form-group-collection',
+                        'class' => 'flex flex-col gap-2 p-2 border border-border rounded-sm'
                     ],
+                    'issues_disabled' => $options['issues_disabled'],
+                    // 'attr' => [
+                    //     'class' => ($options['display_disabled']) ? 'row form-group-collection not-deleted' : 'row form-group-collection',
+                    // ],
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -82,7 +74,7 @@ class SurveyType extends AbstractType
                     'data-switch-off' => 'Activer le mode anonyme',
                 ],
                 'required' => false,
-                'disabled' => $options['display_disabled'],
+                'disabled' => $options['issues_disabled'],
             ])
         ;
 
@@ -91,24 +83,20 @@ class SurveyType extends AbstractType
             /** @var Survey $survey */
             $survey = $event->getData();
             $restriction = match (true) {
-                null !== $survey->getBikeRide() => self::DISPLAY_BIKE_RIDE,
-                !$survey->getMembers()->isEmpty() => self::DISPLAY_USER_LIST,
-                default => self::DISPLAY_ALL_MEMBERS,
+                null !== $survey->getBikeRide() => SurveyRestriction::ACTIVITY,
+                !$survey->getMembers()->isEmpty() => SurveyRestriction::MEMBERS,
+                default => SurveyRestriction::ALL_MEMBERS
             };
             $survey->setRestriction($restriction);
             $form
-                ->add('restriction', ChoiceType::class, [
+                ->add('restriction', EnumType::class, [
                     'expanded' => true,
                     'multiple' => false,
-                    'choices' => [
-                        'Afficher le sondage à tous les adhérents' => self::DISPLAY_ALL_MEMBERS,
-                        'Afficher le sondage à l\'inscription à une sortie' => self::DISPLAY_BIKE_RIDE,
-                        'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_USER_LIST,
-                    ],
+                    'class' => SurveyRestriction::class,
                     'choice_attr' => function () {
                         return [
                             'data-action' => 'change->form-modifier#change',
-                            'data-container-id' => 'survey-restriction',
+                            'data-container-id' => 'survey-participants',
                         ];
                     },
                 ]);
@@ -122,7 +110,7 @@ class SurveyType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Survey::class,
             'filters' => [],
-            'display_disabled' => false,
+            'issues_disabled' => false,
             'attr' => [
                 'data-controller' => 'form-modifier'
             ]

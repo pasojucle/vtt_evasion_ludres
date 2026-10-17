@@ -39,7 +39,7 @@ class RegistrationStepController extends AbstractCrudController
     ): Response {
         list($labels, $registrationByTypes) = $registrationByTypes->execute();
 
-        return $this->render('registration/admin/registrationList.html.twig', [
+        return $this->render('registration_step/admin/registrationList.html.twig', [
             'registrationStepGroups' => $this->registrationStepGroupRepository->findAll(),
             'registrationByTypes' => $registrationByTypes,
             'labels' => $labels,
@@ -90,7 +90,7 @@ class RegistrationStepController extends AbstractCrudController
             return $this->redirectToRoute('admin_registration_step_list');
         }
 
-        return $this->render('registration/admin/registrationStep.html.twig', [
+        return $this->render('registration_step/admin/registrationStep.html.twig', [
             'registrationStep' => $this->registrationStepDtoTransformer->fromEntity($registrationStep),
             'form' => $form->createView(),
         ]);

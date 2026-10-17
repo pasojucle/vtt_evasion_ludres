@@ -71,6 +71,7 @@ class CoverageListProvider implements ListProviderInterface, StreamListExportabl
 
         return $this->emailClipboardMapper->mapToEmailCsvString($entities);
     }
+    
     public function streamExportContent(AbstractFilter $filter): void
     {
         /** @var CoverageFilter $filter */

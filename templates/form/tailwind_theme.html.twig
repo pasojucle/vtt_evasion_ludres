@@ -12,7 +12,7 @@
     {% set background =  form.vars.uses_autocomplete is same as (true) ? 'border border-slate-200' : ' bg-slate-200' %}
     {% set height =  form.vars.multiple is same as (true) ? ' min-h-8' : ' h-8' %}
     {% set attr = attr|merge({
-        'class': attr.class|default('') ~ ' w-full leading-8 px-2 py-1 border-none text-foreground focus:outline-none rounded-sm'~ height ~ background
+        'class': attr.class|default('') ~ ' w-full leading-8 px-2 py-1 border-none text-foreground focus:outline-none disabled:bg-slate-100 rounded-sm'~ height ~ background
     }) %}
     {{ parent() }}
 {% endblock %}
