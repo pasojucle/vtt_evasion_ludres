@@ -104,7 +104,7 @@ readonly class ActionFormHandler
             );
         }
 
-        return new Response($this->renderView($provider->getView($data, $context), $form));
+        return new Response($this->renderView($provider->getView($formData, $context), $form));
     }
 
     private function renderView(ComponentFormViewInterface $view, FormInterface $form): string

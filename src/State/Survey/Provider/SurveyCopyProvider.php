@@ -36,19 +36,19 @@ class SurveyCopyProvider implements FormComponentProviderInterface, DataInitiali
         );
     }
 
-    public function initializeData(object $sourceData): object
+    public function initializeData(object $data): object
     {
         $today = new DateTimeImmutable();
         $newSurvey = new Survey();
 
-        $newSurvey->setTitle($sourceData->getTitle())
-            ->setContent($sourceData->getContent())
+        $newSurvey->setTitle($data->getTitle())
+            ->setContent($data->getContent())
             ->setStartAt($today)
             ->setEndAt($today->add(new DateInterval('P7D')))
-            ->setIsAnonymous($sourceData->isAnonymous())
-            ->setLevelFilter($sourceData->getLevelFilter());
-        $this->addIssues($sourceData, $newSurvey);
-        $this->addMembres($sourceData, $newSurvey);
+            ->setIsAnonymous($data->isAnonymous())
+            ->setLevelFilter($data->getLevelFilter());
+        $this->addIssues($data, $newSurvey);
+        $this->addMembres($data, $newSurvey);
 
 
         return $newSurvey;

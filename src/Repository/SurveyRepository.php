@@ -50,6 +50,7 @@ class SurveyRepository extends ServiceEntityRepository implements SurveyReposito
             $this->getEntityManager()->flush();
         }
     }
+    
     public function findAllDESCQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('s')

@@ -6,7 +6,7 @@ use App\Entity\BikeRide;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\Summary;
-use App\Entity\User;
+use App\Repository\Interface\SummaryRepositoryInterface;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,11 +22,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Summary[]    findAll()
  * @method Summary[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SummaryRepository extends ServiceEntityRepository
+class SummaryRepository extends ServiceEntityRepository implements SummaryRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Summary::class);
+    }
+
+    public function save(Summary $summary, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($summary);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Summary $summary, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($summary);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

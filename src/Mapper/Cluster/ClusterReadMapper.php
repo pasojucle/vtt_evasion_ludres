@@ -135,9 +135,8 @@ class ClusterReadMapper
             );
 
             $clusterSkills = $cluster->getSkills();
-            $actions = [];
-            if (!$isComplete) {
-                $actions[] = new LinkView(
+            $actions = [
+                new LinkView(
                     url: $this->urlContextService->generateUrl('admin_cluster_skill_add', ['cluster' => $cluster->getId()], $fallback),
                     variant: ColorVariant::OUTLINE,
                     size: Size::SM,
@@ -146,19 +145,20 @@ class ClusterReadMapper
                     htmlAttributes: [
                         new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     ],
+                )
+            ];
+
+            if (!$clusterSkills->isEmpty()) {
+                $actions[] = new LinkView(
+                    url: $this->urlContextService->generateUrl('admin_cluster_skills', ['cluster' => $cluster->getId()], $fallback),
+                    variant: ColorVariant::PRIMARY,
+                    size: Size::SM,
+                    label: 'Evaluer',
+                    icon: 'lucide:square-check-big',
+                    htmlAttributes: [
+                        new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    ],
                 );
-                if (!$clusterSkills->isEmpty()) {
-                    $actions[] = new LinkView(
-                        url: $this->urlContextService->generateUrl('admin_cluster_skills', ['cluster' => $cluster->getId()], $fallback),
-                        variant: ColorVariant::PRIMARY,
-                        size: Size::SM,
-                        label: 'Evaluer',
-                        icon: 'lucide:square-check-big',
-                        htmlAttributes: [
-                            new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                        ],
-                    );
-                }
             }
             
             $widgets[] = new WidgetView(

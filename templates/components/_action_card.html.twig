@@ -1,0 +1,14 @@
+<a href="{{ link.url }}" 
+    title="{{ link.title ?? link.label }}"
+    class="flex flex-row lg:flex-col items-center justify-center p-4 lg:p-12 text-slate-400
+        hover:cursor-pointer hover:text-foreground bg-slate-100 lg:bg-transparent hover:bg-slate-100
+        border border-border rounded-md self-center"
+    {% for attribute in link.htmlAttributes %}
+        {{ attribute.name }}="{{ attribute.value }}"
+    {% endfor %}
+>
+    <div class="mb-0 lg:mb-4 opacity-100 lg:opacity-20">
+        {{ ux_icon(link.icon, {class: 'size-5 lg:size-16'}) }}
+    </div>
+    <p class="lg:text-lg font-medium">{{ link.label }}</p>
+</a>

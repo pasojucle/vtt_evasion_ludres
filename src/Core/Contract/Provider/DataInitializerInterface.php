@@ -10,8 +10,8 @@ namespace App\Core\Contract\Provider;
 interface DataInitializerInterface
 {
     /**
-     * @param T $sourceData
+     * @param T $data
      * @return T
      */
-    public function initializeData(object $sourceData): object;
+    public function initializeData(object $data): object;
 }

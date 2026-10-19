@@ -26,7 +26,7 @@ class ClusterSkillsReadMapper
     {
         return new ClusterSkillsSheetView(
             title: 'Compétences',
-            description: sprintF('Compétences à évaluer au groupe %s', $cluster->getTitle()),
+            description: sprintF('Compétences à évaluer au groupe <b>%s</b>', $cluster->getTitle()),
             action: 'Fermer',
             items: $cluster->getSkills()->map(fn (Skill $skill) =>
                 new ClusterSkillView(

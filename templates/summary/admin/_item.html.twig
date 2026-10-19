@@ -1,0 +1,15 @@
+<div class="border border-border rounded-md flex flex-col">
+    <div class="bg-slate-300 pl-4 pr-2 py-2 flex gap-4 items-center relative">
+        <div class="flex gap-1 items-center uppercase text-white text-sm ">
+            <div>{{ item.createdAt }}</div>
+            <div>{{ ux_icon('lucide:dot', {class: 'size-6'}) }}</div>
+            <div>{{ item.title }}</div>
+            </div>
+        <div class="ml-auto">
+            {% include item.dropdown.template with {(item.dropdown.name): item.dropdown} %}
+        </div>
+    </div>
+    <div class="p-2">
+        {{ item.content|raw }}
+    </div>
+</div>

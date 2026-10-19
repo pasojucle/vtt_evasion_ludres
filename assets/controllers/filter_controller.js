@@ -4,6 +4,7 @@ export default class extends Controller {
     static targets = ['form', "container"];
 
     submit() {
+        console.log("this.hasFormTarget", this.hasFormTarget)
         if (this.hasFormTarget) {
             // On désactive temporairement les champs vides avant la soumission
             // pour nettoyer l'ur des champs vides

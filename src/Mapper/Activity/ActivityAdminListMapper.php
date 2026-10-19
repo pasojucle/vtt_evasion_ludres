@@ -149,6 +149,7 @@ class ActivityAdminListMapper
                 size: Size::ICON
             );
         }
+        
         if ($entity->getMaxAge() || $entity->getMinAge()) {
             $indicators[] = new BadgeView(
                 value: 'lucide:cake',
@@ -156,6 +157,7 @@ class ActivityAdminListMapper
                 size: Size::ICON
             );
         }
+
         if (!$entity->registrationEnabled()) {
             $indicators[] = new BadgeView(
                 value: 'lucide:lock',
@@ -163,6 +165,15 @@ class ActivityAdminListMapper
                 size: Size::ICON
             );
         }
+
+        if (!$entity->getSummaries()->isEmpty()) {
+            $indicators[] = new BadgeView(
+                value: 'lucide:image',
+                variant: ColorVariant::ACCENT,
+                size: Size::ICON
+            );
+        }
+
         if ($entity->isPrivate()) {
             $indicators[] = new BadgeView(
                 value: 'lucide:eye-off',

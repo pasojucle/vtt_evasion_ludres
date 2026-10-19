@@ -24,7 +24,7 @@ class ActivityAdminDropdownMapper
     ) {
     }
 
-    public function mapToView(BikeRide $bikeRide, string $referer): DropdownView
+    public function mapToView(BikeRide $bikeRide, string $fallback): DropdownView
     {
         if ($bikeRide->isDeleted()) {
             return new DropdownView(
@@ -32,7 +32,7 @@ class ActivityAdminDropdownMapper
                 menuItems: [
                 new LinkView(
                     label: 'Restaurer',
-                    url: $this->urlContextService->generateUrl('admin_bike_ride_restore', ['bikeRide' => $bikeRide->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('admin_bike_ride_restore', ['bikeRide' => $bikeRide->getId()], $fallback),
                     icon: 'lucide:archive-restore',
                     variant: ColorVariant::DROPDOWN,
                 )
@@ -40,11 +40,12 @@ class ActivityAdminDropdownMapper
             );
         }
 
+        $isAdmin = $this->security->isGranted('ROLE_ADMIN');
         $menuItems = [];
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        if ($isAdmin) {
             $menuItems[] = new LinkView(
                 label: 'Modifier',
-                url: $this->urlContextService->generateUrl('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()], $referer),
+                url: $this->urlContextService->generateUrl('admin_bike_ride_edit', ['bikeRide' => $bikeRide->getId()], $fallback),
                 icon: 'lucide:pencil',
                 variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
@@ -52,18 +53,6 @@ class ActivityAdminDropdownMapper
                     new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             );
-            if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
-                $menuItems[] = new LinkView(
-                    label: 'Annuler',
-                    url: $this->urlContextService->generateUrl('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()], $referer),
-                    icon: 'lucide:delete',
-                    variant: ColorVariant::DROPDOWN,
-                    htmlAttributes: [
-                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
-                    ],
-                );
-            }
             $menuItems[] = new LinkView(
                 label: 'Exporter la séance',
                 url: $this->urlGenerator->generate('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
@@ -74,7 +63,7 @@ class ActivityAdminDropdownMapper
         if ($this->security->isGranted('SUMMARY_LIST')) {
             $menuItems[] = new LinkView(
                 label: 'Actualités',
-                url: $this->urlGenerator->generate('admin_summary_list', ['bikeRide' => $bikeRide->getId()]),
+                url: $this->urlContextService->generateUrl('admin_summary_list', ['bikeRide' => $bikeRide->getId()], $fallback),
                 icon: 'lucide:image',
                 variant: ColorVariant::DROPDOWN,
             );
@@ -97,6 +86,20 @@ class ActivityAdminDropdownMapper
                     new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ]
             );
+        }
+        if ($isAdmin) {
+            if ($bikeRide->getStartAt() > new DateTimeImmutable()) {
+                $menuItems[] = new LinkView(
+                    label: 'Annuler',
+                    url: $this->urlContextService->generateUrl('admin_bike_ride_delete', ['bikeRide' => $bikeRide->getId()], $fallback),
+                    icon: 'lucide:delete',
+                    variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
+                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                    ],
+                );
+            }
         }
                                                          
         return new DropdownView(

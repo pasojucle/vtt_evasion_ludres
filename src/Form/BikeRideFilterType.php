@@ -24,7 +24,6 @@ class BikeRideFilterType extends AbstractType
                 'choices' => array_flip(BikeRide::PERIODS),
                 'attr' => [
                     'class' => 'btn',
-                    'data-controller' => "filter",
                     'data-action' => 'change->filter#submit'
                 ],
             ])
@@ -62,6 +61,7 @@ class BikeRideFilterType extends AbstractType
         $resolver->setDefaults([
             'attr' => [
                 'data-controller' => "filter",
+                'data-filter-target' => "form",
             ],
         ]);
     }

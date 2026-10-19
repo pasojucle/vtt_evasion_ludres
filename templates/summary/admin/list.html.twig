@@ -1,41 +1,35 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}Actualitées{% endblock %}
+{% block title %}{{ view.title }}{% endblock %}
+
 
 {% block body %}
- <div class="wrapper">
-        <div class="wrapper-title">
-            <h1 class="font-bold text-3xl">Actualités</h1>
-            <div class="tool-group">
-                <a href="{{ path('admin_bike_ride_list') }}" class="btn btn-ico" title="Retour à la liste des randos"><i class="fas fa-chevron-left"></i></a>
+    <div class="p-4 lg:p-6">
+        <div class="flex mt-4">
+            <div>
+                <h1 class="font-bold text-3xl">{{ view.title }} </h1>
+                <div class="text-muted mt-1">{{ view.description|raw }}</div>
+            </div>
+            <div class="ml-auto">
+                <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
+                    {% include "components/_link.html.twig" with {link: view.fallback} %}
+                </div>
             </div>
         </div>
-        <div class="wrapper-body">
-            <a href="{{ path('admin_summary_add', {'bikeRide': bike_ride.id}) }}" class="btn btn-primary mb-20" title="Ajouter une actualité"><i class="fas fa-plus"></i> Ajouter une actualité</a>
-            <h2>{{ bike_ride.title }} - {{ bike_ride.period }}</h2>
-            <ul>
-                {% for summary in summaries %}     
-                    <li class="list-dropdown">
-                        <a href="{{ path('admin_summary_edit', {'summary': summary.id})}}" >
-                            <div class="row">
-                                <div class="col-md-3">{{ summary.createdAt|date('d/m/Y') }}</div>
-                                <div class="col-md-9">{{ summary.Title }}</div>
-                            </div>
-                            
-                        </a>
-                        <div class="dropdown">
-                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ summary.id }}"></button>
-                                <div class="dropdown-menu" data-target="dropdown-{{ summary.id }}">
-                                    <ul class="dropdown-body">
-                                        {% if is_granted('SUMMARY_LIST') %}
-                                            <li><a href="{{ path('admin_summary_delete', {'summary': summary.id}) }}" class="dropdown-item" title="supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Supprimer</a></li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                            </div>
-                    </li>
-                {% endfor %}
-            </ul>
+        <div id="summaries_container" class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+            {% if view.items is empty %}
+                <div class="border border-border rounded-md flex flex-col">
+                    {% include view.empty.template with {icon : view.empty.icon, message: view.empty.message} %}
+                </div>
+            {% endif %}
+
+            {% include view.addAction.template with {(view.addAction.name): view.addAction} %}
+            
+            {% for item in view.items %}
+                {% include item.template with {(item.name): item} %}
+            {% endfor %}
+
         </div>
     </div>
 {% endblock %}

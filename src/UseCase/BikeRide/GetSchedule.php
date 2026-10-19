@@ -74,7 +74,6 @@ class GetSchedule
             $parameters['paginator'] = null;
         }
 
-
         $parameters += [
             'form' => $form->createView(),
             'bikeRides' => $this->bikeRideDtoTransformer->shedulefromEntities($bikeRides),

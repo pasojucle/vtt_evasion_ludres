@@ -27,4 +27,14 @@ readonly class DropdownView
         public array $actionItems = [],
     ) {
     }
+
+    public function getName(): string
+    {
+        return 'dropdown';
+    }
+
+    public function getTemplate(): string
+    {
+        return 'components/_dropdown.html.twig';
+    }
 }

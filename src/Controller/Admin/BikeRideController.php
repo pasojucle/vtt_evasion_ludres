@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\ListDrawerHandler;
 use App\Core\Handler\ListPaginatedHandler;
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
@@ -30,20 +29,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin')]
 class BikeRideController extends AbstractCrudController
 {
-    public function __construct(
-        private BikeRideRepository $bikeRideRepository,
-        private BikeRideDtoTransformer $bikeRideDtoTransformer,
-    ) {
-    }
-
     #[Route('/calendrier', name: 'admin_bike_ride_list', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminList(
         Request $request,
         ActivityAdminListProvider $provider,
-        ListPaginatedHandler $listPaginedHandler,
+        ListPaginatedHandler $handler,
     ): Response {
-        return $listPaginedHandler->handle(
+        return $handler->handle(
             $request,
             $provider,
         );
@@ -93,25 +86,25 @@ class BikeRideController extends AbstractCrudController
         return $exportBikeRide->execute($bikeRide);
     }
 
-    #[Route('/sortie_choices', name: 'admin_bike_ride_choices', methods: ['GET'])]
-    public function bikeRideChoices(
-        Request $request
-    ): JsonResponse {
-        $query = $request->query->get('q');
-        $bikeRides = (null !== $query)
-            ? $this->bikeRideRepository->findLike($query)
-            : $this->bikeRideRepository->findAllDESC();
+    // #[Route('/sortie_choices', name: 'admin_bike_ride_choices', methods: ['GET'])]
+    // public function bikeRideChoices(
+    //     Request $request
+    // ): JsonResponse {
+    //     $query = $request->query->get('q');
+    //     $bikeRides = (null !== $query)
+    //         ? $this->bikeRideRepository->findLike($query)
+    //         : $this->bikeRideRepository->findAllDESC();
 
-        $response = [];
-        foreach ($this->bikeRideDtoTransformer->fromEntities($bikeRides) as $bikeRide) {
-            $response[] = [
-                'id' => $bikeRide->id,
-                'text' => $bikeRide->period . ' - ' . $bikeRide->title,
-            ];
-        }
+    //     $response = [];
+    //     foreach ($this->bikeRideDtoTransformer->fromEntities($bikeRides) as $bikeRide) {
+    //         $response[] = [
+    //             'id' => $bikeRide->id,
+    //             'text' => $bikeRide->period . ' - ' . $bikeRide->title,
+    //         ];
+    //     }
 
-        return new JsonResponse($response);
-    }
+    //     return new JsonResponse($response);
+    // }
 
     #[Route('/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]

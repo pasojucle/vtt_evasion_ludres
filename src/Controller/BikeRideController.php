@@ -30,7 +30,13 @@ class BikeRideController extends AbstractController
         return $this->redirectToRoute('schedule');
     }
 
-    #[Route('/programme/{period}/{year}/{month}/{day}', name: 'schedule', methods: ['GET', 'POST'], defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null])]
+    #[Route(
+        '/programme/{period}/{year}/{month}/{day}',
+        name: 'schedule',
+        methods: ['GET', 'POST'],
+        defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null],
+        requirements:['period' => '\w+', 'year' => '\d+', 'month' => '\d+', 'day' => '\d+']
+    )]
     public function list(
         Request $request,
         ?string $period,
