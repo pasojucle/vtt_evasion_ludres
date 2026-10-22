@@ -57,6 +57,7 @@ class ActivityAdminListMapper
                 $participantsTotal = (string) $participantTotalByEntity[$entity->getId()][$isComplete ? 'present' : 'count'];
             }
             $items[] = new ListItemView(
+                id: sprintf('activity-item-%s',$entity->getId()),
                 labels: [
                     new LabelView($entity->getStartAt()->format('d/m/y')),
                     new LabelView($entity->getTitle()),

@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace App\State\BikeRideType\Provider;
+namespace App\State\ActivityType\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\BikeRideTypeFilter;
 use App\Dto\View\ListView;
-use App\Mapper\BikeRideType\BikeRideTypeListMapper;
+use App\Mapper\ActivityType\ActivityTypeListMapper;
 use App\Repository\BikeRideTypeRepository;
 use App\Service\PaginatorService;
 use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class BikeRideTypeListProvider implements ListProviderInterface
+class ActivityTypeListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
 
     public function __construct(
         private BikeRideTypeRepository $bikeRideTypeRepository,
         private PaginatorService $paginator,
-        private BikeRideTypeListMapper $mapper,
+        private ActivityTypeListMapper $mapper,
     ) {
     }
 

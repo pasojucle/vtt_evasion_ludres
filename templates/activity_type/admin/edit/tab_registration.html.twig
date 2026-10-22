@@ -1,0 +1,36 @@
+<div 
+    class="flex flex-col gap-4"
+    data-id="activity-type-clusters" 
+    data-form-modifier-target="container"
+>
+    {{ form_row(form.registration) }}
+    {% if form.clusters is defined %}
+            <div data-controller="collection" class="flex flex-col gap-4">
+            <ul 
+                class="grid grid-cols-1 gap-4" 
+                data-collection-target="container" 
+                data-index="{{ form.clusters|length > 0 ? form.clusters|last.vars.name + 1 : 0 }}" 
+                data-prototype="{{ form_widget(form.clusters.vars.prototype)|e('html_attr') }}"
+            >
+                {% for item in form.clusters %}
+                    <li>{{ form_widget(item) }}</li>
+                {% endfor %}
+            </ul>
+            <div>
+                <button 
+                    type="button" 
+                    class="p-2 bg-slate-500 text-white rounded-sm flex items-center gap-2 add-bike-ride-track" 
+                    data-action="click->collection#addItem"
+                >
+                    {{ ux_icon('lucide:circle-plus') }} Ajouter un groupe
+                </button>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.public) }}
+    {{ form_row(form.needFramers) }}
+    {{ form_row(form.showMemberList) }}
+    {{ form_row(form.requireAvailability) }}
+    {{ form_row(form.displayBikeKind) }}
+</div>

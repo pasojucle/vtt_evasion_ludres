@@ -52,6 +52,7 @@ class OrderAdminListMapper
         foreach ($entities as $entity) {
             $status = $entity->getStatus();
             $items[] = new ListItemView(
+                id: sprintf('order-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getCreatedAt()->format('d/m/y')),
                     new LabelView($entity->getMember()->getIdentity()->getFullName()),

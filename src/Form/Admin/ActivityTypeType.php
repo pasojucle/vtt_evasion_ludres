@@ -13,7 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -22,7 +21,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class BikeRideTypeType extends AbstractType
+class ActivityTypeType extends AbstractType
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -33,24 +32,15 @@ class BikeRideTypeType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'empty_data' => 'Nouveau type de sortie',
             ])
             ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'base',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
             ])
             ->add('needFramers', CheckboxType::class, [
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Nécessites un encadrement',
                     'data-switch-off' => 'Sans encadrement',
@@ -59,36 +49,27 @@ class BikeRideTypeType extends AbstractType
             ->add('isCompensable', CheckboxType::class, [
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Indemnités pour les encadrants',
                     'data-switch-off' => 'Aucune d\'indemnité',
                 ],
             ])
             ->add('registration', EnumType::class, [
-                'label' => 'Inscriptions',
+                'label' => 'Mode d\'inscription',
                 'class' => RegistrationEnum::class,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
-                    'class' => 'form-modifier',
-                    'data-modifier' => 'bikeRideTypeContainer',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'activity-type-clusters'
                 ],
             ])
             ->add('messages', MessageAutocompleteField::class, [
                 'label' => 'Message envoyé à l\'inscription au participant',
-                'autocomplete_url' => $this->urlGenerator->generate('admin_message_autocomplete'),
+                'autocomplete_url' => $this->urlGenerator->generate('admin_message_autocomplete', ['section' => 'BIKE_RIDE_TYPE']),
             ])
             ->add('useLevels', CheckboxType::class, [
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Afficher le niveau des participants',
                     'data-switch-off' => 'Ne pas afficher le niveau des participants',
@@ -98,9 +79,6 @@ class BikeRideTypeType extends AbstractType
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Afficher la liste des participants à l\'inscription',
                     'data-switch-off' => 'Ne pas afficher la liste des participants à l\'inscription',
@@ -110,9 +88,6 @@ class BikeRideTypeType extends AbstractType
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Ouvert au public',
                     'data-switch-off' => 'Seul les adhérents peuvent s\'inscrire',
@@ -122,9 +97,6 @@ class BikeRideTypeType extends AbstractType
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Demander la participation ou non à l\'inscription',
                     'data-switch-off' => 'Ne pas demander la participation à l\'inscription',
@@ -134,9 +106,6 @@ class BikeRideTypeType extends AbstractType
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Envoyer une notification à la création de la rando',
                     'data-switch-off' => 'Pas de notification à la création de la rando',
@@ -146,9 +115,6 @@ class BikeRideTypeType extends AbstractType
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Afficher le type de vélo à l\'inscription',
                     'data-switch-off' => 'Ne pas afficher le type de vélo à l\'inscription',
@@ -161,29 +127,15 @@ class BikeRideTypeType extends AbstractType
                     'min' => 0,
                     'max' => 90,
                 ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
             ])
             ;
+
         $formModifier = function (FormInterface $form, ?RegistrationEnum $registration) {
             if (RegistrationEnum::CLUSTERS === $registration) {
                 $form->add('clusters', CollectionType::class, [
                     'label' => 'Groupes',
                     'entry_options' => [
                         'label' => false,
-                        'row_attr' => [
-                            'class' => 'row form-group-collection',
-                        ],
-                        'attr' => [
-                            'class' => 'col-md-11',
-                        ],
                     ],
                     'allow_add' => true,
                     'allow_delete' => true,

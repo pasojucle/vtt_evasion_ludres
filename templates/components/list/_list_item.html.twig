@@ -1,34 +1,59 @@
-<div class="grid gap-2 {{ item.gridTemplateContent }}">
-    <div class="grid {{ grid_template_labels }} {% if item.isDeleted %}line-through{% endif %}">
-        {% for label in item.labels %}
-            {% if label.type == 'number' %}
-                <div class="text-right font-mono">{{ label.value }}</div>
-            {% else %}
-                <div class="text-left">{{ label.value|raw }}</div>
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div class="grid {{ grid_template_badges }}">
-        {% if item.indicators is not null %}
-            <div class="flex gap-1">
-            {% for indicator in item.indicators %}
-                {% include 'components/_badge.html.twig' with {'badge': indicator} %}
+<li
+    id="{{ item.id }}"
+    class="grid {{ item.gridTemplateRow }} group relative lg:gap-4 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors"
+    {% if item.action and item.action.name == "toggle"%} 
+        data-controller="toggle-status"
+        data-toggle-status-url-value="{{ item.action.url }}"
+        data-toggle-status-token-value="{{ csrf_token(item.action.csrfToken) }}"
+    {% endif %}
+>
+    {% if item.url %}
+        <a 
+            href="{{ item.url.path }}" 
+            class="absolute inset-0 z-10 mr-10{% if item.action %} lg:w-[calc(100%-112px)]{% endif %}" 
+            title="Voir l'élément" 
+            {% for attribute in item.url.htmlAttributes %}
+                {{ attribute.name }}="{{ attribute.value }}"
             {% endfor %}
-            </div>
-        {% endif %}
-        {% if item.status is not null %}
-            <div class="flex justify-start lg:justify-center">
-                {% include 'components/_badge.html.twig' with {'badge': item.status} %}
-            </div>
-        {% endif %}
-        {% if item.counter is not null %}
-            {% include 'components/_badge.html.twig' with {'badge': item.counter} %}
-        {% endif %}
+        >
+            <span class="sr-only">Voir l'élément</span>
+        </a>
+    {% endif %}
+    <div class="grid gap-2 {{ item.gridTemplateContent }}">
+        <div class="grid {{ item.gridTemplateLabels }} {% if item.isDeleted %}line-through{% endif %}">
+            {% for label in item.labels %}
+                {% if label.type == 'number' %}
+                    <div class="text-right font-mono">{{ label.value }}</div>
+                {% else %}
+                    <div class="text-left">{{ label.value|raw }}</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="grid {{ item.gridTemplateBadges }}">
+            {% if item.indicators is not null %}
+                <div class="flex gap-1">
+                {% for indicator in item.indicators %}
+                    {% include 'components/_badge.html.twig' with {'badge': indicator} %}
+                {% endfor %}
+                </div>
+            {% endif %}
+            {% if item.status is not null %}
+                <div class="flex justify-start lg:justify-center">
+                    {% include 'components/_badge.html.twig' with {'badge': item.status} %}
+                </div>
+            {% endif %}
+            {% if item.counter is not null %}
+                {% include 'components/_badge.html.twig' with {'badge': item.counter} %}
+            {% endif %}
+        </div>
     </div>
-</div>
-{% if item.action %}
-    <div class="lg:pr-4">
-        {% include item.action.template with {(item.action.name): item.action} %}
-    </div>
-{% endif %}
+    {% if item.action %}
+        <div class="lg:pr-4">
+            {% include item.action.template with {(item.action.name): item.action} %}
+        </div>
+    {% endif %} 
+    {% if item.dropdown %}
+        {% include 'components/_dropdown.html.twig' with {dropdown: item.dropdown} %}
+    {% endif %}
+</li>
 

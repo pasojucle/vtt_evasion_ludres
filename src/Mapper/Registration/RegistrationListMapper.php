@@ -64,6 +64,7 @@ class RegistrationListMapper
             $licence = $entity->getLastLicence();
             $state = $licence->getState();
             $items[] = new ListItemView(
+                id: sprintf('registration-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($identity->getFullName()),
                 ],

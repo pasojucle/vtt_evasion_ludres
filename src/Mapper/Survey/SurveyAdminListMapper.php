@@ -55,6 +55,7 @@ class SurveyAdminListMapper
             $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
 
             $items[] = new ListItemView(
+                id: $entity->getId(),
                 labels: [
                     new LabelView($entity->getTitle()),
                 ],

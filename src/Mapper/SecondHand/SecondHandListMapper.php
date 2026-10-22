@@ -53,6 +53,7 @@ class SecondHandListMapper
         foreach ($entities as $entity) {
             $state = $entity->getState();
             $items[] = new ListItemView(
+                id: sprintf('secondhand-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getName()),
                 ],

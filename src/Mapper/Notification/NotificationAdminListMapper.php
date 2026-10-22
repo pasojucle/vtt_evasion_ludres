@@ -46,6 +46,7 @@ class NotificationAdminListMapper
             $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
 
             $items[] = new ListItemView(
+                id: sprintf('notification-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getTitle()),
                     new LabelView(sprintf('Du %s au %s', $entity->getStartAt()->format('d/m/y'), $entity->getEndAt()->format('d/m/y'))),

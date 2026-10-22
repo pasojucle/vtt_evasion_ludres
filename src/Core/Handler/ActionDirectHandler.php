@@ -9,6 +9,7 @@ use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Core\Dto\ActionDirectPayload;
 use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -26,12 +27,13 @@ readonly class ActionDirectHandler
         TurboStreamProviderInterface $provider,
         TurboStreamProcessorInterface $processor,
     ): Response {
+        $context = HandlerContext::fromRequest($request);
         $result = $processor->process(new ActionDirectPayload(
             data: $data,
             token: $request->query->get('csrfToken')
         ));
         $flash = $result->messageKey ? new FlashMessage($result->flashType, $result->messageKey) : null;
-        $streamView = $provider->getStreamView(data: $result->data, flashMessage: $flash);
+        $streamView = $provider->getStreamView(data: $result->data, flashMessage: $flash, context: $context);
         
         return new Response(
             $this->renderView($streamView),

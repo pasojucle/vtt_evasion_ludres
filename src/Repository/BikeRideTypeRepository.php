@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\BikeRideType;
+use App\Repository\Interface\ActivityTypeRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
@@ -15,11 +16,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method BikeRideType[]    findAll()
  * @method BikeRideType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class BikeRideTypeRepository extends ServiceEntityRepository
+class BikeRideTypeRepository extends ServiceEntityRepository implements ActivityTypeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BikeRideType::class);
+    }
+
+    public function save(BikeRideType $bikeRideType, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($bikeRideType);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(BikeRideType $bikeRideType, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($bikeRideType);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

@@ -52,6 +52,7 @@ class ProductAdminListMapper
         foreach ($entities as $entity) {
             $tokenId = $this->csrfTokenService->getTokenId($entity);
             $items[] = new ListItemView(
+                id: sprintf('product-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getName()),
                 ],

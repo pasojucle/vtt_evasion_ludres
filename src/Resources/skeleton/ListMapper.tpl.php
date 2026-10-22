@@ -52,6 +52,7 @@ class <?= $entity_name ?>ListMapper
             // TODO définir listItem ici
             // exemple
             // $items[] = new ListItemView(
+            //    id: $entity->getId(),
             //     labels: [
             //         new LabelView($entity->getStartAt()->format('d/m/y')),
             //         new LabelView($entity->getTitle()),

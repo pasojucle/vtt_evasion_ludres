@@ -35,6 +35,10 @@ class ActivityDeleteProvider implements FormComponentProviderInterface
 
     public function getFormOptions(object $entity): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ]
+        ];
     }
 }

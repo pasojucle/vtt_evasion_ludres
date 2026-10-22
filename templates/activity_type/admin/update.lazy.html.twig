@@ -1,0 +1,5 @@
+<turbo-stream action="replace" target="{{ view.item.id }}">
+    <template>
+        {% include "components/list/_list_item.html.twig" with {item: view.item} %}
+    </template>
+</turbo-stream>

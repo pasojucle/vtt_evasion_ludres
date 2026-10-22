@@ -45,6 +45,7 @@ class SecondHandCategoryListMapper
         /** @var SecondHandCategory $entity */
         foreach ($entities as $entity) {
             $items[] = new ListItemView(
+                id: sprintf('secondhand-category-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getName()),
                 ],

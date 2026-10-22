@@ -46,6 +46,7 @@ class BoardRoleListMapper
         /** @var BoardRole $entity */
         foreach ($entities as $entity) {
             $items[] = new ListItemView(
+                id: sprintf('board-role-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getName()),
                 ],

@@ -19,6 +19,7 @@ readonly class ListItemView
      * @param ?ListActionViewInterface $action
      */
     public function __construct(
+        public string $id,
         public array $labels = [],
         public ?array $indicators = null,
         public ?BadgeView $status = null,

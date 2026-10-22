@@ -72,12 +72,9 @@ class AgreementType extends AbstractType
                 'label' => 'Type',
                 'class' => AgreementKindEnum::class,
                 'autocomplete' => true,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
-                    'class' => 'form-modifier',
-                    'data-modifier' => 'autorization-container'
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'autorization-container'
                 ],
             ])
             ->add('registrationSteps', EntityType::class, [

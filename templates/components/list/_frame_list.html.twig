@@ -14,35 +14,7 @@
             </div>
             <ul id="{{ list.name }}_container" class="divide-y divide-border">
                 {% for item in list.items %}
-                    <li 
-                        class="grid {{ item.gridTemplateRow }} group relative lg:gap-4 items-center gap-x-4 gap-y-2 p-3 pr-6 text-foreground lg:text-foreground/60 lg:hover:text-foreground bg-slate-100 hover:bg-slate-200 transition-colors"
-                        {% if item.action and item.action.name == "toggle"%} 
-                            data-controller="toggle-status"
-                            data-toggle-status-url-value="{{ item.action.url }}"
-                            data-toggle-status-token-value="{{ csrf_token(item.action.csrfToken) }}"
-                        {% endif %}
-                    >
-                        {% if item.url %}
-                            <a 
-                                href="{{ item.url.path }}" 
-                                class="absolute inset-0 z-10 mr-10{% if item.action %} lg:w-[calc(100%-112px)]{% endif %}" 
-                                title="Voir l'élément" 
-                                {% for attribute in item.url.htmlAttributes %}
-                                    {{ attribute.name }}="{{ attribute.value }}"
-                                {% endfor %}
-                            >
-                                <span class="sr-only">Voir l'élément</span>
-                            </a>
-                        {% endif %}
-                        {% include 'components/list/_list_item.html.twig' with {
-                            item: item, 
-                            grid_template_labels: item.gridTemplateLabels, 
-                            grid_template_badges: item.gridTemplateBadges
-                            } %} 
-                        {% if item.dropdown %}
-                            {% include 'components/_dropdown.html.twig' with {dropdown: item.dropdown} %}
-                        {% endif %}
-                    </li>
+                    {% include 'components/list/_list_item.html.twig' with {item: item} %}
                 {% endfor %}
             </ul>
             {% if list.items is empty %}

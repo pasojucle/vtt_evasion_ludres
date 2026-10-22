@@ -52,6 +52,7 @@ class LevelListMapper
         /** @var Level $entity */
         foreach ($entities as $entity) {
             $items[] = new ListItemView(
+                id: sprintf('level-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getTitle()),
                 ],

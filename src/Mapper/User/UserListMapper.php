@@ -59,6 +59,7 @@ class UserListMapper
             $identity = $entity->getIdentity();
             $level = $entity->getLevel();
             $items[] = new ListItemView(
+                id: sprintf('user-item-%s',$entity->getId()),
                 labels: [
                     new LabelView($identity->getFullName()),
                 ],

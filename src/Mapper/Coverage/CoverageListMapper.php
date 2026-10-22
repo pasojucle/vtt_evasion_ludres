@@ -58,6 +58,7 @@ class CoverageListMapper
             $licence = $entity->getLastLicence();
 
             $items[] = new ListItemView(
+                id: sprintf('coverage-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($identity->getFullName()),
                 ],

@@ -2,19 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\BikeRideType;
+namespace App\Mapper\ActivityType;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\BikeRideTypeFilter;
-use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\BikeRideType;
 use App\Mapper\DropdownSettingsMapper;
@@ -24,7 +21,7 @@ use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class BikeRideTypeListMapper
+class ActivityTypeListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
@@ -32,6 +29,7 @@ class BikeRideTypeListMapper
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
+        private ActivityTypeMapper $ActivityTypeMapper,
     ) {
     }
 
@@ -44,26 +42,11 @@ class BikeRideTypeListMapper
     ): ListView {
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
-        $items = [];
-
-        /** @var BikeRideType $entity */
-        foreach ($entities as $entity) {
-            $items[] = new ListItemView(
-                labels: [
-                    new LabelView($entity->getName()),
-                ],
-                status: $this->getStatus($entity),
-                dropdown: $this->dropDown($entity, $targetUrl),
-                isDeleted: $entity->isDeleted(),
-                gridTemplateContent: 'grid-cols-1 grid-cols-[1fr_100px]'
-            );
-        }
-
         return new ListView(
             name: 'bike_ride_type',
             title: 'Type d\'activité',
             description: 'Administration des types d\'activité.',
-            items: $items,
+            items: $this->listItems($entities, $targetUrl),
             settings: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
@@ -78,9 +61,13 @@ class BikeRideTypeListMapper
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
             addItem: new LinkView(
                 label: 'Ajouter un type d\'activité',
-                url: $this->urlGenerator->generate('admin_bike_ride_type_add'),
+                url: $this->urlContextService->generateUrl('admin_bike_ride_type_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
             ),
         );
     }
@@ -99,55 +86,15 @@ class BikeRideTypeListMapper
         ]);
     }
 
-    private function dropDown(BikeRideType $entity, string $targetUrl): DropdownView
+    private function listItems(Paginator $bikeRideTypes, string $targetUrl): array
     {
-        if ($entity->isDeleted()) {
-            return new DropdownView(
-                menuItems: [
-                    new LinkView(
-                        label: 'Restaurer',
-                        url: $this->urlContextService->generateUrl('admin_bike_ride_type_restore', [
-                            'bikeRideType' => $entity->getId()
-                            ], $targetUrl),
-                        icon: 'lucide:archive-restore',
-                        variant: ColorVariant::DROPDOWN,
-                    ),
-                ]
-            );
+        $items = [];
+
+        /** @var BikeRideType $bikeRideType */
+        foreach ($bikeRideTypes as $bikeRideType) {
+            $items[] = $this->ActivityTypeMapper->mapToView($bikeRideType, $targetUrl);
         }
 
-        return  new DropdownView(
-            menuItems: [
-                new LinkView(
-                    label: 'Modifier',
-                    url: $this->urlContextService->generateUrl('admin_bike_ride_type_edit', [
-                        'bikeRideType' => $entity->getId()
-                        ], $targetUrl),
-                    icon: 'lucide:pencil',
-                    variant: ColorVariant::DROPDOWN,
-                ),
-                new LinkView(
-                    label: 'Supprimer',
-                    url: $this->urlContextService->generateUrl('admin_bike_ride_type_delete', [
-                        'bikeRideType' => $entity->getId()
-                        ], $targetUrl),
-                    icon: 'lucide:delete',
-                    variant: ColorVariant::DROPDOWN,
-                    htmlAttributes: [
-                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
-                    ],
-                ),
-            ]
-        );
-    }
-
-    private function getStatus(BikeRideType $entity): ?BadgeView
-    {
-        if ($entity->isDeleted()) {
-            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
-        }
-
-        return null;
+        return $items;
     }
 }

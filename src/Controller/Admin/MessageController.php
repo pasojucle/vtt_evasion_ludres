@@ -107,7 +107,7 @@ class MessageController extends AbstractCrudController
         );
     }
 
-    #[Route('/{message}', name: 'edit', methods: ['GET', 'POST'])]
+    #[Route('/edit/{message}', name: 'edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminEdit(
         Request $request,
@@ -152,8 +152,9 @@ class MessageController extends AbstractCrudController
         Request $request,
     ): JsonResponse {
         $query = $request->query->get('q');
+        $section = $request->query->get('section','BIKE_RIDE_TYPE' );
         $results = [];
-        $messages = $this->messageRepository->findBySectionNameAndQuery('BIKE_RIDE_TYPE', $query);
+        $messages = $this->messageRepository->findBySectionNameAndQuery($section, $query);
         foreach ($messages as $message) {
             $results[] = [
                 'value' => $message->getId(),
