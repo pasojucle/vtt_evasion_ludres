@@ -1,0 +1,10 @@
+<div 
+    class="flex flex-col gap-4"
+    data-id="activity-type-indemnities" 
+    data-form-modifier-target="container"
+>
+    {{ form_row(form.isCompensable) }}
+    {% if form.indemnities is defined %}
+        {{ form_row(form.indemnities) }}
+    {% endif %}   
+</div>

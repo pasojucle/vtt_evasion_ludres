@@ -52,6 +52,8 @@ class ActivityTypeType extends AbstractType
                 'attr' => [
                     'data-switch-on' => 'Indemnités pour les encadrants',
                     'data-switch-off' => 'Aucune d\'indemnité',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'activity-type-indemnities'
                 ],
             ])
             ->add('registration', EnumType::class, [
@@ -130,12 +132,14 @@ class ActivityTypeType extends AbstractType
             ])
             ;
 
-        $formModifier = function (FormInterface $form, ?RegistrationEnum $registration) {
+        $formModifier = function (FormInterface $form, ?RegistrationEnum $registration, bool $isCompensable) {
             if (RegistrationEnum::CLUSTERS === $registration) {
                 $form->add('clusters', CollectionType::class, [
                     'label' => 'Groupes',
+                    'block_prefix' => 'prototyped_collection',
                     'entry_options' => [
                         'label' => false,
+                        'block_prefix' => 'prototyped_collection_entry',
                     ],
                     'allow_add' => true,
                     'allow_delete' => true,
@@ -147,22 +151,36 @@ class ActivityTypeType extends AbstractType
             } else {
                 $form->remove('clusters');
             }
+            $form->add('indemnities', CollectionType::class, [
+                'label' => false,
+                'entry_type' => IndemnityType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'is_compensable' => $isCompensable
+                ],
+                'attr' => [
+                    'class' => 'flex flex-col gap-2'
+                ],
+            ]);
         };
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
             $form = $event->getForm();
             $data = $event->getData();
 
-            $formModifier($form, $data?->getRegistration());
+            $formModifier($form, $data?->getRegistration(), $data->isCompensable());
         });
 
-        $builder->get('registration')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
-                $registration = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $registration);
-            }
-        );
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($formModifier) {
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            $formModifier(
+                $form,
+                RegistrationEnum::from($data['registration'] ?? null),
+                (bool) ($data['isCompensable'] ?? 0)
+            );
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

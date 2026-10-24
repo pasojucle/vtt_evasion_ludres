@@ -21,6 +21,7 @@ twig:
         - 'form/ux_icon_choices.html.twig'
         - 'form/tailwind_theme.html.twig'
         - 'form/ballot_radio_widget.html.twig'
+        - 'form/prototyped_collection_row.html.twig'
 
     globals:
         menu_service: '@App\Service\MenuService'

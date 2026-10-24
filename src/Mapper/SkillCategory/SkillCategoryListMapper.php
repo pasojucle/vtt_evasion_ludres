@@ -46,7 +46,7 @@ class SkillCategoryListMapper
         /** @var SkillCategory $entity */
         foreach ($entities as $entity) {
             $items[] = new ListItemView(
-                id: sprintf('skill-category-item-%s',$entity->getId()),
+                id: sprintf('skill-category-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getName()),
                 ],

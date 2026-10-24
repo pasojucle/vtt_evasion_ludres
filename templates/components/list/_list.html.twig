@@ -17,6 +17,9 @@
                     {% if list.settings is not null %}
                         {% include 'components/_dropdown.html.twig' with {dropdown: list.settings} %}
                     {% endif %}
+                    {% if list.fallback is not null %}
+                        {% include list.fallback.template with {(list.fallback.name): list.fallback} %}
+                    {% endif %}
                 </div>
             </div>
         </div>

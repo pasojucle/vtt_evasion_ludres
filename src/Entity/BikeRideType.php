@@ -33,7 +33,7 @@ class BikeRideType implements SoftDeletableInterface
     #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: BikeRide::class)]
     private Collection $bikeRides;
 
-    #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: Indemnity::class)]
+    #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: Indemnity::class, cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     private $indemnities;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
@@ -172,12 +172,7 @@ class BikeRideType implements SoftDeletableInterface
 
     public function removeIndemnity(Indemnity $indemnity): self
     {
-        if ($this->indemnities->removeElement($indemnity)) {
-            // set the owning side to null (unless already changed)
-            if ($indemnity->getBikeRideType() === $this) {
-                $indemnity->setBikeRideType(null);
-            }
-        }
+        $this->indemnities->removeElement($indemnity);
 
         return $this;
     }

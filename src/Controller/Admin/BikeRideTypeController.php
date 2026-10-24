@@ -6,15 +6,16 @@ namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ListPaginatedHandler;
 use App\Entity\BikeRideType;
 use App\Form\Admin\ActivityTypeType;
-use App\State\ActivityType\Processor\ActivityTypeUpdateProcessor;
-use App\State\ActivityType\Provider\ActivityTypeUpdateProvider;
 use App\State\ActivityType\Processor\ActivityTypeDeleteProcessor;
 use App\State\ActivityType\Processor\ActivityTypeRestoreProcessor;
+use App\State\ActivityType\Processor\ActivityTypeUpdateProcessor;
+use App\State\ActivityType\Provider\ActivityRestoreProvider;
 use App\State\ActivityType\Provider\ActivityTypeDeleteProvider;
 use App\State\ActivityType\Provider\ActivityTypeListProvider;
-use App\State\ActivityType\Provider\ActivityRestoreProvider;
+use App\State\ActivityType\Provider\ActivityTypeUpdateProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,10 +29,11 @@ class BikeRideTypeController extends AbstractCrudController
     public function adminList(
         Request $request,
         ActivityTypeListProvider $provider,
+        ListPaginatedHandler $handler
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 

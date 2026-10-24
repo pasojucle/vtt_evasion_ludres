@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Indemnity;
+use App\Repository\Interface\IndemnityRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,11 +13,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Indemnity[]    findAll()
  * @method Indemnity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class IndemnityRepository extends ServiceEntityRepository
+class IndemnityRepository extends ServiceEntityRepository implements IndemnityRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Indemnity::class);
+    }
+
+    public function save(Indemnity $indemnity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($indemnity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Indemnity $indemnity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($indemnity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

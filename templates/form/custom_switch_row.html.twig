@@ -8,12 +8,13 @@
         {% endif %}
     >
         <label class="relative inline-block w-[30px] h-3.5 cursor-pointer select-none shrink-0">
-            
-            {{ form_widget(form, {'attr': {
-                'data-action': 'change->switch#change',
-                'data-switch-target': "input",
-                'class': 'sr-only peer'
-            }}) }}
+            {% set widget_attr = form.vars.attr|merge({
+                'data-action': (form.vars.attr['data-action']|default('') ~ ' change->switch#change')|trim,
+                'data-switch-target': 'input',
+                'class': (form.vars.attr.class|default('') ~ ' sr-only peer')|trim
+            }) %} 
+
+            {{ form_widget(form, {'attr': widget_attr}) }}
             
             <span class="
                 absolute inset-0 rounded-full transition-all duration-300

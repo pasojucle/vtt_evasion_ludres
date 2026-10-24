@@ -33,6 +33,7 @@ readonly class ListView
         public ?LinkView $advancedFilter = null,
         public array $filterChipViews = [],
         public ?LinkView $wiki = null,
+        public ?LinkView $fallback = null,
     ) {
     }
 }

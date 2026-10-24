@@ -34,7 +34,7 @@ class SummaryController extends AbstractCrudController
     ): Response {
         return $handler->handle(
             $request,
-            $provider,   
+            $provider,
             $bikeRide
         );
     }
@@ -63,7 +63,7 @@ class SummaryController extends AbstractCrudController
         Request $request,
         SummaryUpdateProvider $provider,
         SummaryUpdateProcessor $processor,
-        Summary $summary,        
+        Summary $summary,
         ActionFormHandler $handler,
     ): Response {
         return $handler->handle(

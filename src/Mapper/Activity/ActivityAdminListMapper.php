@@ -57,7 +57,7 @@ class ActivityAdminListMapper
                 $participantsTotal = (string) $participantTotalByEntity[$entity->getId()][$isComplete ? 'present' : 'count'];
             }
             $items[] = new ListItemView(
-                id: sprintf('activity-item-%s',$entity->getId()),
+                id: sprintf('activity-item-%s', $entity->getId()),
                 labels: [
                     new LabelView($entity->getStartAt()->format('d/m/y')),
                     new LabelView($entity->getTitle()),
@@ -129,12 +129,7 @@ class ActivityAdminListMapper
         return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
                 label: 'Types de rando',
-                url: $this->urlGenerator->generate('admin_bike_ride_type_list'),
-                variant: ColorVariant::DROPDOWN,
-            ),
-            new LinkView(
-                label: 'Indemnités',
-                url: $this->urlGenerator->generate('admin_indemnity_list'),
+                url: $this->urlContextService->generateUrl('admin_bike_ride_type_list', [], $targetUrl),
                 variant: ColorVariant::DROPDOWN,
             ),
         ]);

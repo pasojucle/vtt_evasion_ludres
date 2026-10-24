@@ -28,6 +28,10 @@ export default class extends Controller {
         const response = await fetch(form.action || window.location.href, {
             method: 'POST',
             body: data,
+            headers: {
+                'X-Form-Filter': '1',
+                'X-Requested-With': 'XMLHttpRequest' 
+            }
         });
 
         const html = await response.text();

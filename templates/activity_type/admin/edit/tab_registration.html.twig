@@ -5,7 +5,9 @@
 >
     {{ form_row(form.registration) }}
     {% if form.clusters is defined %}
-            <div data-controller="collection" class="flex flex-col gap-4">
+        {{ form_row(form.clusters) }}
+
+        {# <div data-controller="collection" class="flex flex-col gap-4 border border-border rounded-sm p-2">
             <ul 
                 class="grid grid-cols-1 gap-4" 
                 data-collection-target="container" 
@@ -25,7 +27,7 @@
                     {{ ux_icon('lucide:circle-plus') }} Ajouter un groupe
                 </button>
             </div>
-        </div>
+        </div> #}
     {% endif %}
 
     {{ form_row(form.public) }}

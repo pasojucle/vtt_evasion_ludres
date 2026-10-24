@@ -53,13 +53,17 @@ readonly class ActionFormHandler
         if ($provider instanceof InputInitializerInterface) {
             $provider->setDefaultValues($formData);
         }
-
+        dump($formData);
         $form = $this->formFactory->create($formClass, $formData, array_merge([
             'action' => $request->getUri(),
         ], $provider->getFormOptions($formData, $context)));
-        
+
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($request->headers->has('X-Form-Filter') || $request->isXmlHttpRequest()) {
+                return new Response($this->renderView($provider->getView($formData, $context), $form));
+            }
+
             if ($form->isValid()) {
                 $result = $processor->process(
                     new ActionPayload(

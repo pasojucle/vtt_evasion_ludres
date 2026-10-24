@@ -152,7 +152,7 @@ class MessageController extends AbstractCrudController
         Request $request,
     ): JsonResponse {
         $query = $request->query->get('q');
-        $section = $request->query->get('section','BIKE_RIDE_TYPE' );
+        $section = $request->query->get('section', 'BIKE_RIDE_TYPE');
         $results = [];
         $messages = $this->messageRepository->findBySectionNameAndQuery($section, $query);
         foreach ($messages as $message) {

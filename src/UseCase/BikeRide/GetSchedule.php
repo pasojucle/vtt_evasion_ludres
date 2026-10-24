@@ -122,11 +122,6 @@ class GetSchedule
     //             url: $this->urlGenerator->generate('admin_bike_ride_type_list'),
     //             variant: ColorVariant::DROPDOWN,
     //         ),
-    //         new LinkView(
-    //             label: 'Indemnités',
-    //             url: $this->urlGenerator->generate('admin_indemnity_list'),
-    //             variant: ColorVariant::DROPDOWN,
-    //         ),
     //     ]);
     // }
 }

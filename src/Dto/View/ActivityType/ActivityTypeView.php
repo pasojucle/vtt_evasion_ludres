@@ -7,10 +7,8 @@ namespace App\Dto\View\ActivityType;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\ListItemView;
 
-
 readonly class ActivityTypeView implements TurboStreamViewInterface
 {
-
     public function __construct(
         public ListItemView $item,
     ) {

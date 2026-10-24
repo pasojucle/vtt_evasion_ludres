@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\ActivityType;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
@@ -35,11 +36,12 @@ class ActivityTypeListMapper
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         BikeRideTypeFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $route = $context->route;
+        $currentPage = $context->page;
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         return new ListView(
@@ -69,12 +71,18 @@ class ActivityTypeListMapper
                     new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             ),
+            fallback: new LinkView(
+                url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                icon: 'lucide:chevron-left',
+                rounded: RoundedVariant::ROUNDED_END,
+                size: Size::ICON,
+            ),
         );
     }
 
     private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', $targetUrl, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', $targetUrl, RoundedVariant::ROUNDED_START, [
             new LinkView(
                 label: 'Ajouter un message',
                 url: $this->urlContextService->generateUrl('admin_message_add', [

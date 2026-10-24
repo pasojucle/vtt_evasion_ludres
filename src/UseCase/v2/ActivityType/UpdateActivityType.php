@@ -21,6 +21,9 @@ class UpdateActivityType
         if (RegistrationEnum::CLUSTERS !== $activityType->getRegistration()) {
             $activityType->setClusters([]);
         }
+        if (!$activityType->isCompensable()) {
+            $activityType->getIndemnities()->clear();
+        }
 
         $this->activityTypeRepository->save($activityType);
 

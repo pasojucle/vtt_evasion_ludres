@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\State\ActivityType\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\BikeRideTypeFilter;
@@ -12,7 +14,6 @@ use App\Dto\View\ListView;
 use App\Mapper\ActivityType\ActivityTypeListMapper;
 use App\Repository\BikeRideTypeRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class ActivityTypeListProvider implements ListProviderInterface
@@ -29,20 +30,19 @@ class ActivityTypeListProvider implements ListProviderInterface
     /**
      * @param BikeRideTypeFilter $filter
      */
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, ?HandlerContext $context = null): ListView
     {
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
             $qb,
-            $currentPage,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(
             $entities,
-            $route,
-            $currentPage,
+            $context,
             $filter,
             $filterConfig
         );

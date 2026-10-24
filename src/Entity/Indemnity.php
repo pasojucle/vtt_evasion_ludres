@@ -11,17 +11,17 @@ class Indemnity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\ManyToOne(targetEntity: Level::class, inversedBy: 'indemnities')]
     #[ORM\JoinColumn(nullable: false)]
-    private $level;
+    private Level $level;
 
     #[ORM\Column(type: 'float')]
-    private $amount;
+    private ?float $amount = null;
 
     #[ORM\ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'indemnities')]
-    private $bikeRideType;
+    private BikeRideType $bikeRideType;
 
     public function getId(): ?int
     {
