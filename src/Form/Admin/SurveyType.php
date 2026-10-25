@@ -53,15 +53,21 @@ class SurveyType extends AbstractType
             ->add('surveyIssues', CollectionType::class, [
                 'label' => false,
                 'entry_type' => SurveyIssueType::class,
+                'block_prefix' => 'prototyped_collection',
+                'attr' => [
+                    'data-button-label' => 'Ajouter une question',
+                    'class' => 'flex flex-col gap-4',
+                ],
                 'entry_options' => [
                     'label' => false,
-                    'attr' => [
+                    'block_prefix' => 'prototyped_collection_entry',
+                    'row_attr' => [
                         'class' => 'flex flex-col gap-2 p-2 border border-border rounded-sm'
                     ],
-                    'issues_disabled' => $options['issues_disabled'],
-                    // 'attr' => [
-                    //     'class' => ($options['display_disabled']) ? 'row form-group-collection not-deleted' : 'row form-group-collection',
-                    // ],
+                    'attr' => [
+                        'class' => 'flex flex-col gap-2'
+                    ],
+                    'disabled' => $options['issues_disabled'],
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,

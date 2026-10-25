@@ -39,7 +39,7 @@ export default class extends Controller {
 
     removeItem(event) {
         console.log("removeItem", event.target)
-        const item = event.target.closest('li');
+        const item = event.target.closest('[data-collection-target="item"]');
         if (item) item.remove();
     }
 }

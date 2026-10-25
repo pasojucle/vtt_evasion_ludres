@@ -1,7 +1,9 @@
 {% block prototyped_collection_row %}
     <div>
         {{ form_label(form) }}
-        <div data-controller="collection" class="flex flex-col gap-4 border border-border rounded-sm p-2">
+        <div 
+            data-controller="collection" 
+            class="{{ form.vars.attr['class']|default('flex gap-4') }}">
             <ul
                 class="grid grid-cols-1 gap-4" 
                 data-collection-target="container" 
@@ -20,7 +22,7 @@
                     class="p-2 bg-slate-500 text-white rounded-sm flex items-center gap-2 add-bike-ride-track" 
                     data-action="click->collection#addItem"
                 >
-                    {{ ux_icon('lucide:circle-plus') }} Ajouter
+                    {{ ux_icon('lucide:circle-plus') }} {{ form.vars.attr['data-button-label']|default('Ajouter') }}
                 </button>
             </div>
         </div>
@@ -28,16 +30,18 @@
 {% endblock prototyped_collection_row %}
 
 {% block prototyped_collection_entry_widget %}
-    <li class="collection-item">
-        <div class="flex gap-2">
-            {{ form_widget(form) }}  
-            <button 
-                type="button" 
-                class="p-1 bg-destructive text-sm text-white rounded-sm flex items-center gap-2"
-                data-action="click->collection#removeItem"
-            >
-                Supprimer
-            </button>
+    <li data-collection-target="item">
+        <div class="{{ form.vars.row_attr['class']|default('flex gap-2') }}">
+            {{ form_widget(form) }}
+            {% if not form.vars.disabled %}
+                <button 
+                    type="button" 
+                    class="flex-none w-fit p-1 bg-destructive text-sm text-white rounded-sm flex items-center gap-2"
+                    data-action="click->collection#removeItem"
+                >
+                    {{ ux_icon('lucide:delete', {class: 'size-4'} ) }} Supprimer
+                </button>
+            {% endif %}
         </div>
     </li>
 {% endblock prototyped_collection_entry_widget %}

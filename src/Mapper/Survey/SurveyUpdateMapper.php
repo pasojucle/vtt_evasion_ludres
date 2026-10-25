@@ -17,8 +17,8 @@ class SurveyUpdateMapper
     public function mapToView(Survey $data, string $action, int $currentTab): SheetFormWrapperView
     {
         return new SheetFormWrapperView(
-            title: sprintf('%s un sondage', $action),
-            description: sprintf('%s un sondage en définissant les paramètres généreaux, l\'image, les tailles...', $action),
+            title: sprintf('%s un sondage', ucfirst($action)),
+            description: sprintf('%s un sondage en définissant les paramètres généreaux, l\'image, les tailles...', ucfirst($action)),
             action: $action,
             frameId: sprintf('product-update-%s', $data->getId() ?? ''),
             formView: new SheetTabsView([

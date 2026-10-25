@@ -137,9 +137,16 @@ class ActivityTypeType extends AbstractType
                 $form->add('clusters', CollectionType::class, [
                     'label' => 'Groupes',
                     'block_prefix' => 'prototyped_collection',
+                    'attr' => [
+                        'class' => 'flex flex-col gap-4 border border-border rounded-sm p-2',
+                        'data-button-label' => 'Ajouter un groupe',
+                    ],
                     'entry_options' => [
                         'label' => false,
                         'block_prefix' => 'prototyped_collection_entry',
+                        'attr' => [
+                            'placeholder' => 'Nom du groupe',
+                        ],
                     ],
                     'allow_add' => true,
                     'allow_delete' => true,
