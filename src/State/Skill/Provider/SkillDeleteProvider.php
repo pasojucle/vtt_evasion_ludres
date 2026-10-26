@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\State\Skill\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Skill;
 use App\Mapper\DestructiveModalMapper;
-use App\State\Interface\FormComponentProviderInterface;
 
 class SkillDeleteProvider implements FormComponentProviderInterface
 {
@@ -16,17 +16,21 @@ class SkillDeleteProvider implements FormComponentProviderInterface
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
-        /** @var Skill $entity */
+        /** @var Skill $data */
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer la compétence <b>%s</b> ?',
-            strip_tags($entity->getContent())
+            strip_tags($data->getContent())
         ));
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $content = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ],
+        ];
     }
 }

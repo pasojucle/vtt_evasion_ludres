@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\State\Skill\Provider;
 
+use App\Core\Contract\Provider\AutocompleteProviderInterface;
+use App\Core\Contract\Provider\ListFilteredProviderInterface;
 use App\Core\Filter\FilterHydratorTrait;
+use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SkillAutocompleteFilter;
 use App\Entity\MemberSkill;
 use App\Entity\Skill;
@@ -12,16 +15,21 @@ use App\Mapper\Skill\SkillAutocompleteMapper;
 use App\Repository\SkillRepository;
 use Doctrine\ORM\QueryBuilder;
 
-class SkillAutocompleteProvider
+/**
+ * @implements AutocompleteProviderInterface<SkillAutocompleteFilter>
+ */
+class SkillAutocompleteProvider implements AutocompleteProviderInterface, ListFilteredProviderInterface
 {
     use FilterHydratorTrait;
+
+    
     public function __construct(
         private SkillRepository $skillRepository,
         private SkillAutocompleteMapper $skillAutocompleteMapper,
     ) {
     }
 
-    public function getAutocompleteChoices(?string $query, SkillAutocompleteFilter $filter): array
+    public function getAutocompleteChoices(?string $query, ?AbstractFilter $filter): array
     {
         /** @var SkillAutocompleteFilter $filter */
         $skills = $this->getQueryBuilder($query, $filter)->getQuery()->getResult();

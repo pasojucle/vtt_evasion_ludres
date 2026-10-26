@@ -8,6 +8,9 @@ use App\Entity\Member;
 
 class UserAutocompleteMapper
 {
+    /**
+     * @return list<array{value: int|string, text: string}>
+     */
     public function mapToChoices(array $users): array
     {
         $results = [];

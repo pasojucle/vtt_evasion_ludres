@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace App\Mapper\Skill;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SkillFilter;
-use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\Skill;
 use App\Mapper\DropdownSettingsMapper;
@@ -28,6 +27,7 @@ class SkillListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private SkillMapper $skillMapper,
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
@@ -37,36 +37,20 @@ class SkillListMapper
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         SkillFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $route = $context->route;
+        $currentPage = $context->page;
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
-
-        $items = [];
-
-        /** @var Skill $entity */
-        foreach ($entities as $entity) {
-            $items[] = new ListItemView(
-                id: sprintf('skill-item-%s', $entity->getId()),
-                labels: [
-                    new LabelView($entity->getContent()),
-                ],
-                indicators: $this->getIndicators($entity),
-                status: $this->getStatus($entity),
-                isDeleted: $entity->isDeleted(),
-                dropdown: $this->dropDown($entity, $targetUrl),
-                gridTemplateContent: 'grid-cols-[1fr_80px] lg:grid-cols-[1fr_150px]',
-                gridTemplateBadges: 'grid-cols-1 lg:grid-cols-[1fr_2fr] gap-2 justify-items-center',
-            );
-        }
 
         return new ListView(
             name: 'skill',
             title: 'Compétences',
             description: 'Administration de la liste des compétences.',
-            items: $items,
+            items: array_map(fn (Skill $skill) => $this->skillMapper->mapToView($skill, $targetUrl), iterator_to_array($entities)),
+            tools: $this->getTools($filter->toArray()),
             settings: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
@@ -81,9 +65,12 @@ class SkillListMapper
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
             addItem: new LinkView(
                 label: 'Ajouter une compétence',
-                url: $this->urlGenerator->generate('admin_skill_add'),
+                url: $this->urlContextService->generateUrl('admin_skill_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                ],
             ),
         );
     }
@@ -99,61 +86,24 @@ class SkillListMapper
         ]);
     }
 
-    private function dropDown(Skill $entity, string $targetUrl): DropdownView
+    private function getTools(array $filter): DropdownView
     {
-        if ($entity->isDeleted()) {
-            return new DropdownView(
-                menuItems: [
-                    new LinkView(
-                        label: 'Restaurer',
-                        url: $this->urlContextService->generateUrl('admin_skill_restore', [
-                            'skill' => $entity->getId()
-                            ], $targetUrl),
-                        icon: 'lucide:archive-restore',
-                        variant: ColorVariant::DROPDOWN,
-                    ),
-                ]
-            );
-        }
-        return  new DropdownView(
+        $dropdown = new DropdownView(
+            variant: DropdownVariant::GOST,
             menuItems: [
                 new LinkView(
-                    label: 'Modifier',
-                    url: $this->urlContextService->generateUrl('admin_skill_edit', ['skill' => $entity->getId()], $targetUrl),
-                    icon: 'lucide:pencil',
+                    label: 'Exporter la sélection',
+                    url: $this->urlGenerator->generate('admin_skill_export', $filter),
+                    icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
-                ),
-                 new LinkView(
-                     label: 'Supprimer',
-                     url: $this->urlContextService->generateUrl('admin_skill_delete', ['skill' => $entity->getId()], $targetUrl),
-                     icon: 'lucide:delete',
-                     variant: ColorVariant::DROPDOWN,
-                     htmlAttributes: [
-                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
+                    htmlAttributes: [
                         new HtmlAttributeView('data-action', 'click->dropdown#close'),
-                    ],
-                 )
-            ]
+                        new HtmlAttributeView('data-turbo', 'false')
+                    ]
+                ),
+            ],
         );
-    }
 
-    private function getIndicators(Skill $entity): array
-    {
-        return [
-            new BadgeView(
-                value: $entity->getCategory()->getIcon(),
-                variant: ColorVariant::ACCENT,
-                size: Size::ICON
-            )
-        ];
-    }
-
-    private function getStatus(Skill $entity): ?BadgeView
-    {
-        if ($entity->isDeleted()) {
-            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
-        }
-
-        return null;
+        return $dropdown;
     }
 }

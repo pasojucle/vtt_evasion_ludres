@@ -6,6 +6,7 @@ use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
+use App\Repository\Interface\SkillRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -16,11 +17,29 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Skill>
  */
-class SkillRepository extends ServiceEntityRepository
+class SkillRepository extends ServiceEntityRepository implements SkillRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Skill::class);
+    }
+
+    public function save(Skill $skill, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($skill);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Skill $skill, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($skill);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

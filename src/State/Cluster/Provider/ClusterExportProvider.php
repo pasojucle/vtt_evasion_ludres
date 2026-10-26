@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\State\Cluster\Provider;
 
 use App\Core\Contract\Provider\StreamActionExportableInterface;
+use App\Dto\Filter\AbstractFilter;
 use App\Entity\Cluster;
 use App\Mapper\Cluster\ParticpantListExportMapper;
 use App\Service\LogService;
@@ -22,7 +23,7 @@ class ClusterExportProvider implements StreamActionExportableInterface
     ) {
     }
 
-    public function streamExportContent(object $data): void
+    public function streamExportContent(?object $data, ?AbstractFilter $filter): void
     {
         $this->logService->writeFromEntity($data);
 

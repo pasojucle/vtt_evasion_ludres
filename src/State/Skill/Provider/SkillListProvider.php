@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\State\Skill\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SkillFilter;
@@ -12,12 +14,12 @@ use App\Dto\View\ListView;
 use App\Mapper\Skill\SkillListMapper;
 use App\Repository\SkillRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
-use Doctrine\ORM\QueryBuilder;
+use App\State\Skill\Trait\SkillDataProviderTrait;
 
 class SkillListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
+    use SkillDataProviderTrait;
 
     public function __construct(
         private SkillRepository $skillRepository,
@@ -26,50 +28,22 @@ class SkillListProvider implements ListProviderInterface
     ) {
     }
 
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, ?HandlerContext $context = null): ListView
     {
         /** @var SkillFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
             $qb,
-            $currentPage,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(
             $entities,
-            $route,
-            $currentPage,
+            $context,
             $filter,
             $filterConfig
         );
-    }
-
-    private function getQueryBuilder(SkillFilter $filter): QueryBuilder
-    {
-        $qb = $this->skillRepository->getSkillQuery();
-
-        if ($filter->category) {
-            $this->skillRepository->filterCategory($qb, $filter->category);
-        }
-
-        if ($filter->content) {
-            $this->skillRepository->filterContent($qb, $filter->content);
-        }
-
-        if ($filter->level) {
-            $this->skillRepository->filterLevel($qb, $filter->level);
-        }
-
-        if (!$filter->showDeleted) {
-            $this->skillRepository->filterActive($qb);
-        }
-        
-        if ($filter->sort) {
-            $this->skillRepository->filterSort($qb, $filter->sort);
-        }
-
-        return $qb;
     }
 }

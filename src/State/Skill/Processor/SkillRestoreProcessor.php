@@ -4,33 +4,37 @@ declare(strict_types=1);
 
 namespace App\State\Skill\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\TurboStreamProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\TurboStreamProcessorResult;
 use App\Entity\Skill;
-use App\Service\SoftDeleteService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\UseCase\v2\Skill\RestoreSkill;
 
-class SkillRestoreProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements TurboStreamProcessorInterface<ActionPayload>
+ */
+class SkillRestoreProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SoftDeleteService $softDeleteService
+        private RestoreSkill $restoreSkill,
     ) {
     }
 
-    /**
-     * @param Skill $entity
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
-        $this->softDeleteService->restore($entity);
-        $this->entityManager->flush();
+        /**
+         * @var Skill $skill
+         */
+        $skill = $payload->data;
+        ($this->restoreSkill)($skill);
 
-        return new RedirectProcessorResult(
+        return new TurboStreamProcessorResult(
             success: true,
-            messageKey: 'level.flash.success.restore',
-            targetUrl: $targetUrl,
+            messageKey: 'skill.flash.success.restore',
             flashType: 'success',
+            data: $skill,
         );
     }
 }
