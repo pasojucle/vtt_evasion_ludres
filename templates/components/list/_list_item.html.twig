@@ -6,6 +6,13 @@
         data-toggle-status-url-value="{{ item.action.url }}"
         data-toggle-status-token-value="{{ csrf_token(item.action.csrfToken) }}"
     {% endif %}
+    {% if sortable_url %}
+        data-sortable="true"
+        data-sortable-id="{{ item.sortableId }}"
+    {% endif %}
+    {% if item.csrfToken %}
+        data-csrf-token="{{ item.csrfToken }}"
+    {% endif %}
 >
     {% if item.url %}
         <a 
@@ -18,6 +25,14 @@
         >
             <span class="sr-only">Voir l'élément</span>
         </a>
+    {% endif %}
+    {% if sortable_url %}
+        <div 
+            data-sortable-target="handle"
+            class="drag-handle cursor-move touch-none p-1 text-slate-400 hover:text-slate-600"
+        >
+            {{ ux_icon('lucide:grip-vertical',{class: 'size-6'}) }}
+        </div>
     {% endif %}
     <div class="grid gap-2 {{ item.gridTemplateContent }}">
         <div class="grid {{ item.gridTemplateLabels }} {% if item.isDeleted %}line-through{% endif %}">

@@ -34,7 +34,7 @@ class ActivityTypeRestoreProcessor implements TurboStreamProcessorInterface
 
         return new TurboStreamProcessorResult(
             success: true,
-            messageKey: 'bike_ride_type.flash.success.restaure',
+            messageKey: 'activity_type.flash.success.restaure',
             flashType: 'success',
             data: $activityType,
         );

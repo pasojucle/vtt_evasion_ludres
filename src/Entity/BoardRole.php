@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Interface\SoftDeletableInterface;
+use App\Entity\Interface\SortableInterface;
 use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\BoardRoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BoardRoleRepository::class)]
-class BoardRole implements SoftDeletableInterface
+class BoardRole implements SoftDeletableInterface, SortableInterface
 {
     use SoftDeletableTrait;
 

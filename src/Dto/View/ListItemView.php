@@ -21,6 +21,7 @@ readonly class ListItemView
     public function __construct(
         public string $id,
         public array $labels = [],
+        public ?int $sortableId = null,
         public ?array $indicators = null,
         public ?BadgeView $status = null,
         public ?BadgeView $counter = null,
@@ -29,6 +30,7 @@ readonly class ListItemView
         public ?ListItemUrlView $url = null,
         public ?bool $isDeleted = false,
         public ?ListActionViewInterface $action = null,
+        public ?string $csrfToken = null,
         public string $gridTemplateRow = 'grid-cols-1',
         public string $gridTemplateContent = 'grid-cols-1 lg:grid-cols-2',
         public string $gridTemplateLabels = 'grid-cols-1',

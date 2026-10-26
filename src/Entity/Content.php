@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\ContentKindEnum;
 use App\Entity\Interface\DisableableInterface;
+use App\Entity\Interface\SortableInterface;
 use App\Entity\Interface\UploadableInterface;
 use App\Entity\Trait\DisableableTrait;
 use App\Repository\ContentRepository;
@@ -17,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 
 #[ORM\Entity(repositoryClass: ContentRepository::class)]
-class Content implements UploadableInterface, DisableableInterface
+class Content implements UploadableInterface, DisableableInterface, SortableInterface
 {
     use DisableableTrait;
 

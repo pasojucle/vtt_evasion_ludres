@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\View\ActivityType;
+namespace App\Dto\View;
 
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\ListItemView;
 
-readonly class ActivityTypeView implements TurboStreamViewInterface
+readonly class ListItemUpdateView implements TurboStreamViewInterface
 {
     public function __construct(
         public ListItemView $item,
+        public ?FlashesView $flashesView = null,
+        public ?string $sortableUrl = null,
     ) {
     }
 
     public function getStreamTemplate(): string
     {
-        return 'activity_type/admin/update.lazy.html.twig';
+        return 'components/list/update.lazy.html.twig';
     }
 }

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interface\SortableInterface;
 use App\Repository\LinkRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LinkRepository::class)]
-class Link
+class Link implements SortableInterface
 {
     public const POSITION_LINK_PAGE = 1;
 
@@ -122,7 +123,7 @@ class Link
         return $this->orderBy;
     }
 
-    public function setOrderBy(int $orderBy): self
+    public function setOrderBy(?int $orderBy): self
     {
         $this->orderBy = $orderBy;
 

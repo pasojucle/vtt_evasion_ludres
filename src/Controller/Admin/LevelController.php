@@ -4,82 +4,88 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\Filter\LevelFilter;
-use App\Dto\Payload\LevelOrderDto;
+use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ActionJsonHandler;
+use App\Core\Handler\ListPaginatedHandler;
+use App\Dto\Payload\LevelOrderPayload;
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
-use App\Repository\LevelRepository;
 use App\State\Level\Processor\LevelDeleteProcessor;
 use App\State\Level\Processor\LevelOrderProcessor;
 use App\State\Level\Processor\LevelRestoreProcessor;
+use App\State\Level\Processor\LevelUpdateProcessor;
 use App\State\Level\Provider\LevelDeleteProvider;
 use App\State\Level\Provider\LevelListProvider;
-use Doctrine\ORM\EntityManagerInterface;
+use App\State\Level\Provider\LevelRestoreProvider;
+use App\State\Level\Provider\LevelUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/niveau', name: 'admin_level_')]
-class LevelController extends AbstractCrudController
+class LevelController extends AbstractController
 {
-    public function __construct(
-        private EntityManagerInterface $entityManager,
-        private LevelRepository $levelRepository,
-    ) {
-    }
-
     #[Route('x', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         Request $request,
         LevelListProvider $provider,
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 
-    #[Route('/{level}', name: 'edit', methods: ['GET', 'POST'], defaults:['level' => null])]
+    #[Route('/add', name: 'add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminLevelAdd(
+        Request $request,
+        LevelUpdateProvider $provider,
+        LevelUpdateProcessor $processor,
+        ActionFormHandler $handler,
+    ): Response {
+        return $handler->handle(
+            $request,
+            new Level(),
+            $provider,
+            $processor,
+            LevelType::class
+        );
+    }
+
+    #[Route('/edit/{level}', name: 'edit', methods: ['GET', 'POST'], requirements:['level' => '\d+'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelEdit(
         Request $request,
-        ?Level $level
+        LevelUpdateProvider $provider,
+        LevelUpdateProcessor $processor,
+        Level $level,
+        ActionFormHandler $handler,
     ): Response {
-        $form = $this->createForm(LevelType::class, $level);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $level = $form->getData();
-
-            if (null === $level->getOrderBy() && null !== $level->getType()) {
-                $order = $this->levelRepository->findNexOrderByType($level->getType());
-                $level->setOrderBy($order);
-            }
-            $this->entityManager->persist($level);
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_level_list', [
-                'type' => $level->getType(),
-            ]);
-        }
-
-        return $this->render('level/admin/edit.html.twig', [
-            'level' => $level,
-            'form' => $form->createView(),
-        ]);
+        return $handler->handle(
+            $request,
+            $level,
+            $provider,
+            $processor,
+            LevelType::class
+        );
     }
 
     #[Route('/supprimer/{level}', name: 'delete', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelDelete(
         Request $request,
-        LevelDeleteProcessor $processor,
         LevelDeleteProvider $provider,
-        Level $level
+        LevelDeleteProcessor $processor,
+        Level $level,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $level,
             $provider,
@@ -91,26 +97,30 @@ class LevelController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelRestore(
         Request $request,
+        LevelRestoreProvider $provider,
         LevelRestoreProcessor $processor,
-        Level $level
+        Level $level,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleProcessAction(
+        return $handler->handle(
             $request,
             $level,
+            $provider,
             $processor
         );
     }
 
-    #[Route('/ordonner/{level}', name: 'order', methods: ['POST'], options:['expose' => true])]
+    #[Route('/ordonner/{level}', name: 'order', requirements:['level' => '\d+'], methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelOrder(
         Request $request,
         LevelOrderProcessor $processor,
-        Level $level
+        Level $level,
+        ActionJsonHandler $handler,
     ): Response {
-        return $this->handleJsonProcessAction(
+        return $handler->handle(
             $request,
-            new LevelOrderDto($level, (int) $request->request->get('newOrder', 0)),
+            LevelOrderPayload::fromRequest($level, $request),
             $processor
         );
     }

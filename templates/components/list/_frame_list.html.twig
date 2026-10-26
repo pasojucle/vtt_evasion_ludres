@@ -12,9 +12,16 @@
                     {% endif %}
                 </div>
             </div>
-            <ul id="{{ list.name }}_container" class="divide-y divide-border">
+            <ul 
+                id="{{ list.name }}_container" 
+                class="divide-y divide-border"
+                {% if list.sortableUrl %}
+                    data-controller="sortable"
+                    data-sortable-url-value="{{ list.sortableUrl }}"
+                {% endif %}
+            >
                 {% for item in list.items %}
-                    {% include 'components/list/_list_item.html.twig' with {item: item} %}
+                    {% include 'components/list/_list_item.html.twig' with {item: item, sortable_url: list.sortableUrl} %}
                 {% endfor %}
             </ul>
             {% if list.items is empty %}

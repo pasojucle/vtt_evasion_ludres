@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\SortableInterface;
 use App\Repository\DocumentationRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DocumentationRepository::class)]
-class Documentation
+class Documentation implements SortableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,7 +52,7 @@ class Documentation
         return $this->orderBy;
     }
 
-    public function setOrderBy(int $orderBy): self
+    public function setOrderBy(?int $orderBy): self
     {
         $this->orderBy = $orderBy;
 

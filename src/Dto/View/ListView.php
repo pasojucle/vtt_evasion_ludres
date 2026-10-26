@@ -34,6 +34,7 @@ readonly class ListView
         public array $filterChipViews = [],
         public ?LinkView $wiki = null,
         public ?LinkView $fallback = null,
+        public ?string $sortableUrl = null,
     ) {
     }
 }

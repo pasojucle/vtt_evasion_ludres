@@ -5,21 +5,17 @@ declare(strict_types=1);
 namespace App\Mapper\Level;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\LevelFilter;
-use App\Dto\View\BadgeView;
-use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\Level;
 use App\Mapper\FilterChipsMapper;
+use App\Mapper\Level\LevelMapper;
 use App\Mapper\PaginatorMapper;
-use App\Repository\MemberRepository;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -32,18 +28,19 @@ class LevelListMapper
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
         private SeasonService $seasonService,
-        private MemberRepository $memberRepository,
         private UrlContextService $urlContextService,
+        private LevelMapper $levelMapper,
     ) {
     }
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         LevelFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $route = $context->route;
+        $currentPage = $context->page;
         $currentSeason = $this->seasonService->getCurrentSeason();
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
@@ -51,18 +48,7 @@ class LevelListMapper
 
         /** @var Level $entity */
         foreach ($entities as $entity) {
-            $items[] = new ListItemView(
-                id: sprintf('level-item-%s', $entity->getId()),
-                labels: [
-                    new LabelView($entity->getTitle()),
-                ],
-                indicators: $this->getIndicators($entity),
-                status: $this->getStatus($entity),
-                counter: $this->counter($entity, $currentSeason),
-                isDeleted: $entity->isDeleted(),
-                dropdown: $this->dropDown($entity, $targetUrl),
-                gridTemplateBadges: 'grid-cols-[1fr_70px]'
-            );
+            $items[] = $this->levelMapper->mapToView($entity, $targetUrl, $currentSeason);
         }
 
         return new ListView(
@@ -83,87 +69,14 @@ class LevelListMapper
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
             addItem: new LinkView(
                 label: 'Ajouter un niveau',
-                url: $this->urlGenerator->generate('admin_level_edit'),
+                url: $this->urlContextService->generateUrl('admin_level_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
-            ),
-        );
-    }
-
-    private function getIndicators(Level $entity): array
-    {
-        return [
-            new BadgeView(
-                value: 'lucide:palette',
-                size: Size::ICON,
-                color: $entity->getColor(),
-            ),
-            new BadgeView(
-                value: $entity->getType()->getIcon(),
-                size: Size::ICON,
-                variant: ColorVariant::ACCENT,
-            ),
-        ];
-    }
-
-    private function counter(Level $entity, int $currentSeason): ?BadgeView
-    {
-        if ($entity->isDeleted()) {
-            return null;
-        }
-        
-        return new BadgeView(
-            value: (string) $this->memberRepository->countByLevelAndSeason($entity, $currentSeason),
-        );
-    }
-
-    private function dropDown(Level $entity, ?string $targetUrl): DropdownView
-    {
-        if ($entity->isDeleted()) {
-            return new DropdownView(
-                menuItems: [
-                    new LinkView(
-                        label: 'Restaurer',
-                        url: $this->urlContextService->generateUrl('admin_level_restore', [
-                            'level' => $entity->getId()
-                            ], $targetUrl),
-                        icon: 'lucide:archive-restore',
-                        variant: ColorVariant::DROPDOWN,
-                    ),
-                ]
-            );
-        }
-
-        $menusItems = [];
-        $menusItems[] = new LinkView(
-            label: 'Modifier',
-            url: $this->urlContextService->generateUrl('admin_level_edit', ['level' => $entity->getId()], $targetUrl),
-            icon: 'lucide:pencil',
-            variant: ColorVariant::DROPDOWN,
-        );
-        if (!$entity->isProtected()) {
-            $menusItems[] = new LinkView(
-                label: 'Supprimer',
-                url: $this->urlContextService->generateUrl('admin_level_delete', ['level' => $entity->getId()], $targetUrl),
-                icon: 'lucide:delete',
-                variant: ColorVariant::DROPDOWN,
                 htmlAttributes: [
-                    new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                    new HtmlAttributeView('data-action', 'click->dropdown#close'),
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
-            );
-        }
-        return  new DropdownView(
-            menuItems: $menusItems
+            ),
+            sortableUrl: $this->urlContextService->generateUrl('admin_level_order', ['level' => 0], $targetUrl),
         );
-    }
-
-    private function getStatus(Level $entity): ?BadgeView
-    {
-        if ($entity->isDeleted()) {
-            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
-        }
-
-        return null;
     }
 }

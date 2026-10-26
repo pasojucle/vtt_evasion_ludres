@@ -4,54 +4,59 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Interface\SortableInterface;
 
 class OrderByService
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(
-        EntityManagerInterface $entityManager
-    ) {
-        $this->entityManager = $entityManager;
-    }
-
-    public function setNewOrders($current, ?array $entities, int $newOrder)
+    public function setNewOrders(SortableInterface $current, ?array $entities, int $newOrder)
     {
+        if (null === $entities) {
+            return;
+        }
         $oldOrder = $current->getOrderBy();
-        if (null !== $newOrder && null !== $entities) {
-            $startOrder = $oldOrder;
-            $endOrder = $newOrder;
-            $order = $startOrder;
 
-            if (0 < $oldOrder - $newOrder) {
-                $startOrder = $newOrder;
-                $endOrder = $oldOrder;
-                $order = $startOrder;
-                ++$order;
-            }
+        if ($oldOrder === $newOrder) {
+            return;
+        }
 
+        $oldOrder = $current->getOrderBy();
+        if ($oldOrder < $newOrder) {
             foreach ($entities as $entity) {
-                if ($entity !== $current && $startOrder <= $entity->getOrderBy() && $entity->getOrderBy() <= $endOrder) {
-                    $entity->setOrderBy($order);
-                    ++$order;
+                if ($entity === $current) {
+                    continue;
+                }
+
+                $order = $entity->getOrderBy();
+                if ($order > $oldOrder && $order <= $newOrder) {
+                    $entity->setOrderBy($order - 1);
                 }
             }
-            $current->setOrderBy($newOrder);
-            $this->entityManager->flush();
+        } else {
+            foreach ($entities as $entity) {
+                if ($entity === $current) {
+                    continue;
+                }
+
+                $order = $entity->getOrderBy();
+                if ($order >= $newOrder && $order < $oldOrder) {
+                    $entity->setOrderBy($order + 1);
+                }
+            }
         }
+
+        $current->setOrderBy($newOrder);
     }
 
     public function resetOrders(?array $entities)
     {
-        if (null !== $entities) {
-            $order = 0;
-            foreach ($entities as $entity) {
-                $entity->setOrderBy($order);
-                ++$order;
-            }
+        if (null === $entities) {
+            return;
+        }
 
-            $this->entityManager->flush();
+        $order = 0;
+        foreach ($entities as $entity) {
+            $entity->setOrderBy($order);
+            ++$order;
         }
     }
 }

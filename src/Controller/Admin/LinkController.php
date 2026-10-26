@@ -14,8 +14,6 @@ use App\State\Link\Processor\LinkDeleteProcessor;
 use App\State\Link\Provider\LinkDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -4,36 +4,41 @@ declare(strict_types=1);
 
 namespace App\State\Level\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
 use App\Entity\Level;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\SoftDeleteService;
-use App\State\Interface\FormRedirectProcessorInterface;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Level\DeleteLevel;
 
-class LevelDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class LevelDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private LevelRepository $levelRepository,
-        private OrderByService $orderByService,
-        private SoftDeleteService $softDeleteService,
+        private DeleteLevel $deleteLevel,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    /**
-     * @param Level $entity
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
-    {
-        $type = $entity->getType();
-        $levels = $this->levelRepository->findByType($type);
 
-        $this->softDeleteService->softDelete($entity);
-        $this->orderByService->setNewOrders($entity, $levels, count($levels));
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
+    {
+        /**
+         * @var Level $level
+         */
+        $level = $payload->data;
+        ($this->deleteLevel)($level);
 
         return new RedirectProcessorResult(
             success: true,
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             messageKey: 'level.flash.success.delete',
         );
     }

@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\LevelType;
 use App\Entity\Interface\SoftDeletableInterface;
+use App\Entity\Interface\SortableInterface;
 use App\Entity\Trait\SoftDeletableTrait;
 use App\Repository\LevelRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,7 +14,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LevelRepository::class)]
-class Level implements SoftDeletableInterface
+class Level implements SoftDeletableInterface, SortableInterface
 {
     use SoftDeletableTrait;
     public const TYPE_SCHOOL_MEMBER = 1;
@@ -36,7 +37,7 @@ class Level implements SoftDeletableInterface
 
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 50)]
     private string $title;

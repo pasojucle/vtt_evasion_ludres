@@ -4,33 +4,37 @@ declare(strict_types=1);
 
 namespace App\State\Level\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\TurboStreamProcessorInterface;
+use App\Core\Dto\ActionDirectPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\TurboStreamProcessorResult;
 use App\Entity\Level;
-use App\Service\SoftDeleteService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\UseCase\v2\Level\RestoreLevel;
 
-class LevelRestoreProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements TurboStreamProcessorInterface<ActionDirectPayload>
+ */
+class LevelRestoreProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SoftDeleteService $softDeleteService,
+        private RestoreLevel $restoreLevel,
     ) {
     }
 
-    /**
-     * @param Level $entity
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
-        $this->softDeleteService->restore($entity);
-        $this->entityManager->flush();
-        ;
+        /**
+         * @var Level $level
+         */
+        $level = $payload->data;
+        ($this->restoreLevel)($level);
 
-        return new RedirectProcessorResult(
+        return new TurboStreamProcessorResult(
             success: true,
-            targetUrl: $targetUrl,
             messageKey: 'level.flash.success.restore',
+            flashType: 'success',
+            data: $level,
         );
     }
 }

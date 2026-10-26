@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interface\SortableInterface;
 use App\Repository\RegistrationStepGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
 
 #[Entity(repositoryClass: RegistrationStepGroupRepository::class)]
-class RegistrationStepGroup
+class RegistrationStepGroup implements SortableInterface
 {
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
@@ -58,7 +59,7 @@ class RegistrationStepGroup
         return $this->orderBy;
     }
 
-    public function setOrderBy(int $orderBy): self
+    public function setOrderBy(?int $orderBy): self
     {
         $this->orderBy = $orderBy;
 

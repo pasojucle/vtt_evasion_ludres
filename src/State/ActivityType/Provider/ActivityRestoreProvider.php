@@ -7,7 +7,9 @@ namespace App\State\ActivityType\Provider;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
-use App\Dto\View\ActivityType\ActivityTypeView;
+use App\Dto\View\FlashesView;
+use App\Dto\View\ListItemUpdateView;
+use App\Dto\View\ListItemView;
 use App\Entity\BikeRideType;
 use App\Mapper\ActivityType\ActivityTypeMapper;
 use App\Service\UrlContextService;
@@ -24,13 +26,14 @@ class ActivityRestoreProvider implements TurboStreamProviderInterface
     }
 
 
-    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): ActivityTypeView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): ListItemUpdateView
     {
-        return new ActivityTypeView(
-            $this->ActivityTypeMapper->mapToView(
+        return new ListItemUpdateView(
+            item: $this->ActivityTypeMapper->mapToView(
                 $data,
                 $this->urlContextService->decodeUrl($context->encodedFallback),
-            )
+            ),
+            flashesView: ($flashMessage) ? FlashesView::create($flashMessage->type, $flashMessage->messageKey) : null,
         );
     }
 }

@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Enum\LevelType;
 use App\Entity\Level;
+use App\Repository\Interface\LevelRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
@@ -18,11 +19,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Level[]    findAll()
  * @method Level[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LevelRepository extends ServiceEntityRepository
+class LevelRepository extends ServiceEntityRepository implements LevelRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Level::class);
+    }
+
+    public function save(Level $level, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($level);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Level $level, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($level);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function findLevelQuery(LevelType $type): QueryBuilder

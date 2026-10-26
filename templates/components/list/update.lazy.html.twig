@@ -1,0 +1,13 @@
+<turbo-stream action="replace" target="{{ view.item.id }}">
+    <template>
+        {% include "components/list/_list_item.html.twig" with {item: view.item, sortable_url: view.sortableUrl} %}
+    </template>
+</turbo-stream>
+
+{% if view.flashesView %}
+    <turbo-stream action="replace" target="turbo_flash_messages">
+        <template>
+            {% include 'components/_flashes_frame.html.twig' with {flashes: view.flashesView.flashes} %}
+        </template>
+</turbo-stream>
+{% endif %}

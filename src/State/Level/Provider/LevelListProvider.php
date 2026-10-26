@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\State\Level\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\LevelFilter;
@@ -12,7 +14,6 @@ use App\Dto\View\ListView;
 use App\Mapper\Level\LevelListMapper;
 use App\Repository\LevelRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class LevelListProvider implements ListProviderInterface
@@ -26,21 +27,20 @@ class LevelListProvider implements ListProviderInterface
     ) {
     }
 
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, HandlerContext $context): ListView
     {
         /** @var LevelFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
             $qb,
-            $currentPage,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(
             $entities,
-            $route,
-            $currentPage,
+            $context,
             $filter,
             $filterConfig
         );

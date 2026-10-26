@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Enum\AgreementKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
+use App\Entity\Interface\SortableInterface;
 use App\Repository\AgreementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +13,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgreementRepository::class)]
-class Agreement
+class Agreement implements SortableInterface
 {
     #[ORM\Id]
     #[ORM\Column(length: 25, unique: true)]

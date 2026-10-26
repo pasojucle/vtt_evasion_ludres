@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\RegistrationFormEnum;
+use App\Entity\Interface\SortableInterface;
 use App\Entity\Interface\UploadableInterface;
 use App\Repository\RegistrationStepRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: RegistrationStepRepository::class)]
-class RegistrationStep implements UploadableInterface
+class RegistrationStep implements UploadableInterface, SortableInterface
 {
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
@@ -113,7 +114,7 @@ class RegistrationStep implements UploadableInterface
         return $this->orderBy;
     }
 
-    public function setOrderBy(int $orderBy): static
+    public function setOrderBy(?int $orderBy): static
     {
         $this->orderBy = $orderBy;
 
