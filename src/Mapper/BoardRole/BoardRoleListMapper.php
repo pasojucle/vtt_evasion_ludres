@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Mapper\BoardRole;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\BoardRoleFilter;
-use App\Dto\View\BadgeView;
-use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\BoardRole;
 use App\Mapper\FilterChipsMapper;
@@ -28,40 +26,26 @@ class BoardRoleListMapper
         private UrlGeneratorInterface $urlGenerator,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
+        private BoardRoleMapper $boardRoleMapper,
         private UrlContextService $urlContextService,
     ) {
     }
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         BoardRoleFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $route = $context->route;
+        $currentPage = $context->page;
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
-
-        $items = [];
-
-        /** @var BoardRole $entity */
-        foreach ($entities as $entity) {
-            $items[] = new ListItemView(
-                id: sprintf('board-role-item-%s', $entity->getId()),
-                labels: [
-                    new LabelView($entity->getName()),
-                ],
-                status: $this->getStatus($entity),
-                isDeleted: $entity->isDeleted(),
-                dropdown: $this->dropDown($entity, $targetUrl),
-                gridTemplateContent: 'grid-cols-[1fr_80px]'
-            );
-        }
 
         return new ListView(
             name: 'board_role',
             title: 'Rôles du bureau et comité',
             description: 'Administration des rôles du bureau et comité.',
-            items: $items,
+            items: array_map(fn(BoardRole $entity) => $this->boardRoleMapper->mapToView($entity, $targetUrl), iterator_to_array($entities)),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -75,56 +59,20 @@ class BoardRoleListMapper
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
             addItem: new LinkView(
                 label: 'Ajouter un rôle',
-                url: $this->urlGenerator->generate('admin_bike_ride_add'),
+                url: $this->urlContextService->generateUrl('admin_board_role_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                ],
             ),
+            fallback: new LinkView(
+                url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                icon: 'lucide:chevron-left',
+                rounded: RoundedVariant::ROUNDED,
+                size: Size::ICON,
+            ),
+            sortableUrl: $this->urlContextService->generateUrl('admin_board_role_order', ['boardRole' => 0], $targetUrl),
         );
-    }
-    private function dropDown(BoardRole $entity, string $targetUrl): DropdownView
-    {
-        if ($entity->isDeleted()) {
-            return new DropdownView(
-                menuItems: [
-                    new LinkView(
-                        label: 'Restaurer',
-                        url: $this->urlContextService->generateUrl('admin_board_role_restore', [
-                            'boardRole' => $entity->getId()
-                            ], $targetUrl),
-                        icon: 'lucide:archive-restore',
-                        variant: ColorVariant::DROPDOWN,
-                    ),
-                ]
-            );
-        }
-        return  new DropdownView(
-            menuItems: [
-                new LinkView(
-                    label: 'Modifier',
-                    url: $this->urlContextService->generateUrl('admin_board_role_edit', ['boardRole' => $entity->getId()], $targetUrl),
-                    icon: 'lucide:pencil',
-                    variant: ColorVariant::DROPDOWN,
-                ),
-                 new LinkView(
-                     label: 'Supprimer',
-                     url: $this->urlContextService->generateUrl('admin_board_role_delete', ['boardRole' => $entity->getId()], $targetUrl),
-                     icon: 'lucide:delete',
-                     variant: ColorVariant::DROPDOWN,
-                     htmlAttributes: [
-                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
-                    ],
-                 )
-            ]
-        );
-    }
-
-    private function getStatus(BoardRole $entity): ?BadgeView
-    {
-        if ($entity->isDeleted()) {
-            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
-        }
-
-        return null;
     }
 }

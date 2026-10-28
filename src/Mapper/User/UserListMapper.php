@@ -100,17 +100,17 @@ class UserListMapper
         return $this->dropdownSettingsMapper->mapToView('USER', $targetUrl, RoundedVariant::ROUNDED_END, [
             new LinkView(
                 label: 'Niveaux',
-                url: $this->urlGenerator->generate('admin_level_list'),
+                url: $this->urlContextService->generateUrl('admin_level_list', [], $targetUrl),
                 variant: ColorVariant::DROPDOWN,
             ),
             new LinkView(
                 label: 'Compétences',
-                url: $this->urlGenerator->generate('admin_skill_list'),
+                url: $this->urlContextService->generateUrl('admin_skill_list', [], $targetUrl),
                 variant: ColorVariant::DROPDOWN,
             ),
             new LinkView(
                 label: 'Roles du bureau et comité',
-                url: $this->urlGenerator->generate('admin_board_role_list'),
+                url: $this->urlContextService->generateUrl('admin_board_role_list', [], $targetUrl),
                 variant: ColorVariant::DROPDOWN,
             ),
         ]);
@@ -118,7 +118,7 @@ class UserListMapper
 
     private function getIndicators(User $entity): array
     {
-        return [
+        $indicators = [
             ($entity->getLevel())
             ? new BadgeView(
                 value: $entity->getLevel()->getType()->getIcon(),
@@ -133,8 +133,23 @@ class UserListMapper
             new BadgeView(
                 value: (string) $entity->getLastLicence()->getSeason(),
                 variant: ColorVariant::AMBER,
-            )
+            ),
         ];
+
+        $boardRole = ($entity instanceof Member) ? $entity->getBoardRole() : null;
+
+        if ($boardRole?->isBoard()) {
+            array_unshift(
+                $indicators, 
+                new BadgeView(
+                    value: 'lucide:crown',
+                    variant: ColorVariant::ACCENT,
+                    size: Size::ICON
+                )
+            );
+        }
+
+        return $indicators;
     }
 
     private function getTools(UserFilter $filter): DropdownView

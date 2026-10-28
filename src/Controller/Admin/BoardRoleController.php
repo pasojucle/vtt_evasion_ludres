@@ -2,77 +2,89 @@
 
 namespace App\Controller\Admin;
 
-use App\Dto\Filter\BoardRoleFilter;
+use App\Core\Handler\ActionDialogHandler;
+use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ActionJsonHandler;
+use App\Core\Handler\ListPaginatedHandler;
+use App\Dto\Payload\SortablePayload;
 use App\Entity\BoardRole;
 use App\Form\Admin\BoardRoleType;
-use App\Repository\BoardRoleRepository;
-use App\Service\OrderByService;
 use App\State\BoardRole\Processor\BoardRoleDeleteProcessor;
+use App\State\BoardRole\Processor\BoardRoleOrderProcessor;
 use App\State\BoardRole\Processor\BoardRoleRestoreProcessor;
+use App\State\BoardRole\Processor\BoardRoleUpdateProcessor;
 use App\State\BoardRole\Provider\BoardRoleDeleteProvider;
 use App\State\BoardRole\Provider\BoardRoleListProvider;
-use Doctrine\ORM\EntityManagerInterface;
+use App\State\BoardRole\Provider\BoardRoleRestoreProvider;
+use App\State\BoardRole\Provider\BoardRoleUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/bureau/role', name: 'admin_board_role')]
-class BoardRoleController extends AbstractCrudController
+class BoardRoleController extends AbstractController
 {
-    public function __construct(private BoardRoleRepository $boardRoleRepository, private EntityManagerInterface $entityManager, private OrderByService $orderByService)
-    {
-    }
-
     #[Route('s', name: '_list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleList(
+        Request $request,
         BoardRoleListProvider $provider,
-        Request $request
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 
-    #[Route('/{boardRole}', name: '_edit', methods: ['GET', 'POST'], defaults:['boardRole' => null])]
+    #[Route('/add', name: '_add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminBoardRoleAdd(
+        Request $request,
+        BoardRoleUpdateProvider $provider,
+        BoardRoleUpdateProcessor $processor,
+        ActionFormHandler $handler,
+    ): Response {
+        return $handler->handle(
+            $request,
+            new BoardRole(),
+            $provider,
+            $processor,
+            BoardRoleType::class
+        );
+    }
+
+    #[Route('/edit/{boardRole}', name: '_edit', requirements:['boardRole' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleEdit(
         Request $request,
-        ?BoardRole $boardRole
+        BoardRoleUpdateProvider $provider,
+        BoardRoleUpdateProcessor $processor,
+        BoardRole $boardRole,
+        ActionFormHandler $handler,
     ): Response {
-        $form = $this->createForm(BoardRoleType::class, $boardRole);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $boardRole = $form->getData();
-
-            if (null === $boardRole->getOrderBy()) {
-                $order = $this->boardRoleRepository->findNexOrder();
-                $boardRole->setOrderBy($order);
-            }
-            $this->entityManager->persist($boardRole);
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_board_role_list');
-        }
-
-        return $this->render('board_role/admin/edit.html.twig', [
-            'boardRole' => $boardRole,
-            'form' => $form->createView(),
-        ]);
+        return $handler->handle(
+            $request,
+            $boardRole,
+            $provider,
+            $processor,
+            BoardRoleType::class
+        );
     }
 
-    #[Route('/supprimer/{boardRole}', name: '_delete', methods: ['GET', 'POST'])]
+    #[Route('/supprimer/{boardRole}', name: '_delete', requirements:['boardRole' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleDelete(
         Request $request,
-        BoardRoleDeleteProcessor $processor,
         BoardRoleDeleteProvider $provider,
-        BoardRole $boardRole
+        BoardRoleDeleteProcessor $processor,
+        BoardRole $boardRole,
+        ActionDialogHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $boardRole,
             $provider,
@@ -80,30 +92,34 @@ class BoardRoleController extends AbstractCrudController
         );
     }
 
-    #[Route('/ordonner/{boardRole}', name: '_order', methods: ['POST'], options:['expose' => true])]
+    #[Route('/ordonner/{boardRole}', name: '_order', requirements:['boardRole' => '\d+'], methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleOrder(
         Request $request,
-        BoardRole $boardRole
+        BoardRole $boardRole,
+        BoardRoleOrderProcessor $processor,
+        ActionJsonHandler $handler,
     ): Response {
-        $newOrder = (int) $request->request->get('newOrder');
-        $boardRoles = $this->boardRoleRepository->findAllOrdered();
-
-        $this->orderByService->setNewOrders($boardRole, $boardRoles, $newOrder);
-
-        return new Response();
+        return $handler->handle(
+            $request,
+            SortablePayload::fromRequest($boardRole, $request),
+            $processor
+        );
     }
 
-    #[Route('/restaure/{boardRole}', name: '_restore', methods: ['GET', 'POST'])]
+    #[Route('/restaure/{boardRole}', name: '_restore', requirements:['boardRole' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelRestore(
         Request $request,
+        BoardRoleRestoreProvider $provider,
         BoardRoleRestoreProcessor $processor,
-        BoardRole $boardRole
+        BoardRole $boardRole,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleProcessAction(
+        return $handler->handle(
             $request,
             $boardRole,
+            $provider,
             $processor
         );
     }

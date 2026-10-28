@@ -8,7 +8,7 @@ use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\ActionJsonHandler;
 use App\Core\Handler\ListPaginatedHandler;
-use App\Dto\Payload\LevelOrderPayload;
+use App\Dto\Payload\SortablePayload;
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
 use App\State\Level\Processor\LevelDeleteProcessor;
@@ -76,7 +76,7 @@ class LevelController extends AbstractController
         );
     }
 
-    #[Route('/supprimer/{level}', name: 'delete', methods: ['GET', 'POST'])]
+    #[Route('/supprimer/{level}', name: 'delete', requirements:['level' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelDelete(
         Request $request,
@@ -93,7 +93,7 @@ class LevelController extends AbstractController
         );
     }
 
-    #[Route('/restaure/{level}', name: 'restore', methods: ['GET', 'POST'])]
+    #[Route('/restaure/{level}', name: 'restore', requirements:['level' => '\d+'],  methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelRestore(
         Request $request,
@@ -120,7 +120,7 @@ class LevelController extends AbstractController
     ): Response {
         return $handler->handle(
             $request,
-            LevelOrderPayload::fromRequest($level, $request),
+            SortablePayload::fromRequest($level, $request),
             $processor
         );
     }

@@ -53,7 +53,7 @@ readonly class ActionFormHandler
         if ($provider instanceof InputInitializerInterface) {
             $provider->setDefaultValues($formData);
         }
-        dump($formData);
+
         $form = $this->formFactory->create($formClass, $formData, array_merge([
             'action' => $request->getUri(),
         ], $provider->getFormOptions($formData, $context)));

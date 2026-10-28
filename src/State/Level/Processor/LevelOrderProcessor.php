@@ -9,7 +9,7 @@ use App\Core\Contract\Processor\JsonProcessorInterface;
 use App\Core\Dto\ActionDirectPayload;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\JsonProcessorResult;
-use App\Dto\Payload\LevelOrderPayload;
+use App\Dto\Payload\SortablePayload;
 use App\Service\CsrfTokenService;
 use App\UseCase\v2\Level\OrderLevel;
 use Symfony\Component\Security\Csrf\CsrfToken;
@@ -30,10 +30,10 @@ class LevelOrderProcessor implements JsonProcessorInterface
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): JsonProcessorResult
     {
         /**
-         * @param LevelOrderPayload $data
+         * @param SortablePayload $data
          */
         $data = $payload->data;
-        $level = $data->level;
+        $level = $data->entity;
 
         $tokenId = $this->csrfTokenService->getTokenId($level);
         $csrfToken = new CsrfToken($tokenId, $payload->token);

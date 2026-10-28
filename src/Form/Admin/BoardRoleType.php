@@ -19,25 +19,13 @@ class BoardRoleType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Foncton',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('board', CheckboxType::class, [
                 'block_prefix' => 'switch',
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'attr' => [
                     'data-switch-on' => 'Fait parti du bureau et du comité',
                     'data-switch-off' => 'Fait parti uniquement du comité',
-                ],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
                 ],
             ])
         ;

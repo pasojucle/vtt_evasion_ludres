@@ -18,15 +18,15 @@ class UserDropdownMapper
         private UrlContextService $urlContextService,
     ) {
     }
-    public function mapToView(User $user, ?string $referer): DropdownView
+    public function mapToView(User $user, ?string $fallback): DropdownView
     {
         return new DropdownView(
             title: $user->getIdentity()->getFullName(),
-            menuItems: $this->getMenuItemsfromUser($user, $referer),
+            menuItems: $this->getMenuItemsfromUser($user, $fallback),
         );
     }
 
-    public function getMenuItemsfromUser(User $user, string $referer): array
+    public function getMenuItemsfromUser(User $user, string $fallback): array
     {
         $menuItems = [];
         $level = $user->getLevel();
@@ -34,14 +34,14 @@ class UserDropdownMapper
             $menuItems[] = new LinkView(
                 label: 'Attestation d\'inscription CE',
                 variant: ColorVariant::DROPDOWN,
-                url: $this->urlContextService->generateUrl('admin_user_certificate', ['member' => $user->getId()], $referer),
+                url: $this->urlContextService->generateUrl('admin_user_certificate', ['member' => $user->getId()], $fallback),
                 icon: 'lucide:file-user',
             );
             if ($level?->isAccompanyingCertificat()) {
                 $menuItems[] = new LinkView(
                     label: 'Attestation adulte accompagnateur',
                     variant: ColorVariant::DROPDOWN,
-                    url: $this->urlContextService->generateUrl('admin_user_accompanying_certificate', ['member' => $user->getId()], $referer),
+                    url: $this->urlContextService->generateUrl('admin_user_accompanying_certificate', ['member' => $user->getId()], $fallback),
                     icon: 'lucide:file-terminal',
                 );
             }
@@ -49,7 +49,7 @@ class UserDropdownMapper
                 $menuItems[] = new LinkView(
                     label: 'Se connecter en tant que',
                     variant: ColorVariant::DROPDOWN,
-                    url: $this->urlContextService->generateUrl('home', ['_switch_user' => $user->getLicenceNumber()], $referer),
+                    url: $this->urlContextService->generateUrl('home', ['_switch_user' => $user->getLicenceNumber()], $fallback),
                     icon: 'lucide:arrow-left-right',
                 );
             }

@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace App\Dto\Payload;
 
-use App\Entity\Level;
 use Symfony\Component\HttpFoundation\Request;
 
-class LevelOrderPayload
+class SortablePayload
 {
     public function __construct(
-        public Level $level,
+        public object $entity,
         public int $newOrder
     ) {
     }
 
-    public static function fromRequest(Level $level, Request $request): self
+    public static function fromRequest(object $entity, Request $request): self
     {
         return new self(
-            $level,
+            $entity,
             newOrder: $request->request->getInt('newOrder'),
         );
     }

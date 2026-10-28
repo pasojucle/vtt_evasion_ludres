@@ -72,12 +72,18 @@ class SkillListMapper
                     new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             ),
+            fallback: new LinkView(
+                url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                icon: 'lucide:chevron-left',
+                rounded: RoundedVariant::ROUNDED_END,
+                size: Size::ICON,
+            ),
         );
     }
 
     private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView(null, $targetUrl, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView(null, $targetUrl, RoundedVariant::ROUNDED_START, [
             new LinkView(
                 label: 'Catégories',
                 url: $this->urlGenerator->generate('admin_skill_category_list'),

@@ -18,7 +18,7 @@ class BoardRole implements SoftDeletableInterface, SortableInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(length: 50)]
     private string $name = '';
@@ -42,7 +42,7 @@ class BoardRole implements SoftDeletableInterface, SortableInterface
         return $this->name;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

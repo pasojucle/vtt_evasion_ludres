@@ -7,6 +7,7 @@ namespace App\Mapper\Level;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\LevelFilter;
 use App\Dto\View\HtmlAttributeView;
@@ -75,6 +76,13 @@ class LevelListMapper
                 htmlAttributes: [
                     new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
+            ),
+
+            fallback: new LinkView(
+                url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                icon: 'lucide:chevron-left',
+                rounded: RoundedVariant::ROUNDED,
+                size: Size::ICON,
             ),
             sortableUrl: $this->urlContextService->generateUrl('admin_level_order', ['level' => 0], $targetUrl),
         );

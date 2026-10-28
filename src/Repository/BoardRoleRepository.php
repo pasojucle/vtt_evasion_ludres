@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\BoardRole;
+use App\Repository\Interface\BoardRoleRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,14 +16,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method BoardRole[]    findAll()
  * @method BoardRole[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class BoardRoleRepository extends ServiceEntityRepository
+class BoardRoleRepository extends ServiceEntityRepository implements BoardRoleRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BoardRole::class);
     }
 
-    public function save(BoardRole $entity, bool $flush = false): void
+    public function save(BoardRole $entity, bool $flush = true): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -32,7 +32,7 @@ class BoardRoleRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(BoardRole $entity, bool $flush = false): void
+    public function remove(BoardRole $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
 
