@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
+use App\Core\Contract\Filter\CommonFilterFields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\LevelFilter;
 use App\Entity\Enum\LevelType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class LevelFilterConfig implements FilterConfigInterface
@@ -70,37 +70,7 @@ class LevelFilterConfig implements FilterConfigInterface
                 ],
                 computedChip: true,
             ),
-            new FilterFieldConfig(
-                name: 'itemsPerPage',
-                type: ChoiceType::class,
-                options: [
-                    'label' => 'Nombre de résultats',
-                    'choices' => [
-                        '15' => 15,
-                        '25' => 25,
-                        '50' => 50,
-                        '100' => 100,
-                    ],
-                    'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control'],
-                ],
-                computedChip: true,
-            ),
-            new FilterFieldConfig(
-                name: 'sort',
-                type: ChoiceType::class,
-                options: [
-                    'label' => 'Tri',
-                    'choices' => [
-                        'Nom (de A à Z)' => 'ASC',
-                        'Nom (de Z à A)' => 'DESC',
-                    ],
-                    'required' => false,
-                    'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => ['class' => 'form-control'],
-                ],
-            ),
+            CommonFilterFields::createItemsPerPageField(),
         ];
     }
 

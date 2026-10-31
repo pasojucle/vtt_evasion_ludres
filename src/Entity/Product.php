@@ -57,7 +57,6 @@ class Product implements UploadableInterface, SoftDeletableInterface, Disableabl
     #[ORM\Column(type: 'string', enumType:LicenceCategoryEnum::class, options:['default' => LicenceCategoryEnum::UNDEFINED->value])]
     private LicenceCategoryEnum $category = LicenceCategoryEnum::UNDEFINED;
 
-
     public function __construct()
     {
         $this->orderLines = new ArrayCollection();

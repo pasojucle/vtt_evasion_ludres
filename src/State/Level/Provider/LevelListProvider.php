@@ -52,11 +52,7 @@ class LevelListProvider implements ListProviderInterface
 
         $this->levelRepository->filterType($qb, $filter->type);
 
-        if ($filter->sort) {
-            $this->levelRepository->filterSortByTitle($qb, $filter->sort);
-        } else {
-            $this->levelRepository->filterSortByPosition($qb);
-        }
+        $this->levelRepository->filterSortByPosition($qb);
     
         if (!$filter->showDeleted) {
             $this->levelRepository->filterActive($qb);

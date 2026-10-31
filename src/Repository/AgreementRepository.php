@@ -5,21 +5,41 @@ namespace App\Repository;
 use App\Entity\Agreement;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
+use App\Repository\Interface\AgreementRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Andx;
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Agreement>
  */
-class AgreementRepository extends ServiceEntityRepository
+class AgreementRepository extends ServiceEntityRepository implements AgreementRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Agreement::class);
+    }
+
+    public function save(Agreement $agreement, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($agreement);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Agreement $agreement, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($agreement);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function findSchoolAgreements(LicenceMembershipEnum $membership, array $existingLicenceConsents): array
@@ -90,6 +110,14 @@ class AgreementRepository extends ServiceEntityRepository
         $parameters[] = new Parameter('enabled', true);
     }
 
+    public function findAllOrdered(): array
+    {
+        return $this->getAgreementQuery()
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findNexOrder(): int
     {
         $nexOrder = 0;
@@ -105,5 +133,20 @@ class AgreementRepository extends ServiceEntityRepository
         }
 
         return $nexOrder;
+    }
+
+    public function getAgreementQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('ag')
+            ->orderBy('ag.orderBy', 'ASC');
+    }
+
+    public function filterName(QueryBuilder $qb, string $term): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->like('LOWER(ag.title)', ':term')
+            )
+            ->setParameter('term', '%' . strtolower($term) . '%');
     }
 }

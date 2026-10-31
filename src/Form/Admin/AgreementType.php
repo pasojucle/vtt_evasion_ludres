@@ -7,6 +7,7 @@ use App\Entity\Enum\AgreementKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
 use App\Entity\RegistrationStep;
+use App\Form\Type\IconType;
 use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -28,19 +29,15 @@ class AgreementType extends AbstractType
         $builder
             ->add('id', TextType::class, [
                 'label' => 'Nom (en Upper camel case)',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
+                'attr' => [
+                    'placeholder' => 'IDENTIFIANT_EN_MAJUCULE',
                 ],
                 'constraints' => [
                     new NotBlank(),
-                    new Unique()
                 ]
             ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
                 'constraints' => [
                     new NotBlank(),
                 ]
@@ -48,25 +45,16 @@ class AgreementType extends AbstractType
             ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'base',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
             ])
             ->add('category', EnumType::class, [
                 'label' => 'Catégorie',
                 'class' => LicenceCategoryEnum::class,
                 'autocomplete' => true,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('membership', EnumType::class, [
                 'label' => 'Adhésion',
                 'class' => LicenceMembershipEnum::class,
                 'autocomplete' => true,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('kind', EnumType::class, [
                 'label' => 'Type',
@@ -74,7 +62,7 @@ class AgreementType extends AbstractType
                 'autocomplete' => true,
                 'attr' => [
                     'data-action' => 'change->form-modifier#change',
-                    'data-container-id' => 'autorization-container'
+                    'data-container-id' => 'agreement-kind'
                 ],
             ])
             ->add('registrationSteps', EntityType::class, [
@@ -82,45 +70,23 @@ class AgreementType extends AbstractType
                 'class' => RegistrationStep::class,
                 'choice_label' => 'title',
                 'multiple' => true,
-                'expanded' => true,
-                'attr' => [
-                    'class' => 'form-group row',
-                ],
-                'block_prefix' => 'collection_check',
+                'autocomplete' => true,
                 'required' => false,
             ])
-            ->add('save', SubmitType::class, [
-                    'label' => 'Enregister',
-                    'attr' => [
-                        'class' => 'btn btn-primary float-right',
-                    ],
-                ])
         ;
         $formModifier = function (FormInterface $form, AgreementKindEnum $agreement) {
             if (AgreementKindEnum::AUTHORIZATION === $agreement) {
                 $form->add('authorizationMessage', TextType::class, [
                     'label' => 'Message d\'autorisation',
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
                 ])
                 ->add('rejectionMessage', TextType::class, [
                     'label' => 'Message de refus',
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
                 ])
-                ->add('authorizationIcon', TextType::class, [
+                ->add('authorizationIcon', IconType::class, [
                     'label' => 'Icône d\'autorisation',
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
                 ])
-                ->add('rejectionIcon', TextType::class, [
+                ->add('rejectionIcon', IconType::class, [
                     'label' => 'Icône de refus',
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
                 ]);
             } else {
                 $form

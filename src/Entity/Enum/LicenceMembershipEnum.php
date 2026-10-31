@@ -18,6 +18,14 @@ enum LicenceMembershipEnum: string implements TranslatableInterface
 
     use EnumTrait;
 
+    public function icon(): string
+    {
+        if (self::YEARLY === $this) {
+            return 'lucide:calendar-check';
+        }
+
+        return 'lucide:calendar-clock';
+    }
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {

@@ -77,7 +77,6 @@ class LevelListMapper
                     new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                 ],
             ),
-
             fallback: new LinkView(
                 url: $this->urlContextService->decodeUrl($context->encodedFallback),
                 icon: 'lucide:chevron-left',

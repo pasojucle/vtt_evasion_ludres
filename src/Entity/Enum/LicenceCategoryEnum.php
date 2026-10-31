@@ -20,6 +20,14 @@ enum LicenceCategoryEnum: string implements TranslatableInterface
 
     use EnumTrait;
 
+    public function icon(): string
+    {
+        if (self::SCHOOL === $this) {
+            return 'lucide:graduation-cap';
+        }
+
+        return 'lucide:bike';
+    }
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {

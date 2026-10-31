@@ -22,7 +22,7 @@ class BoardRoleRestoreProcessor implements TurboStreamProcessorInterface
     ) {
     }
 
-        public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
         /**
          * @var BoardRole $boardRole

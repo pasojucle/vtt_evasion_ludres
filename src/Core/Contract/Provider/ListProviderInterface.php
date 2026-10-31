@@ -10,13 +10,12 @@ use App\Dto\Filter\AbstractFilter;
 use App\Dto\View\ListView;
 
 /**
- * @template T of object
+ * @template TFilter of AbstractFilter
  */
 interface ListProviderInterface extends ListFilteredProviderInterface
 {
     /**
-     * Summary of getCollection
-     * @param AbstractFilter $filter
+     * @param TFilter $filter
      * @param FilterConfigInterface $filterConfig
      * @param HandlerContext $context
      */

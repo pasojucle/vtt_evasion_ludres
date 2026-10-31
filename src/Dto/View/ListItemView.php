@@ -21,7 +21,7 @@ readonly class ListItemView
     public function __construct(
         public string $id,
         public array $labels = [],
-        public ?int $sortableId = null,
+        public ?string $sortableId = null,
         public ?array $indicators = null,
         public ?BadgeView $status = null,
         public ?BadgeView $counter = null,

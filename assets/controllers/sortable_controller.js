@@ -27,7 +27,7 @@ export default class extends Controller {
 
     async updateOrder(event) {
         const item = event.item;
-        const id = item.dataset.sortableId;
+        const id = item.id.split("-").pop();
         const csrfToken = item.dataset.csrfToken;
         const newOrder = event.newIndex;
         const url = this.urlValue.replace('0', id);

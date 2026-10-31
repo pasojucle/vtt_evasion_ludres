@@ -16,6 +16,15 @@ enum AgreementKindEnum: string implements TranslatableInterface
 
     use EnumTrait;
 
+    public function icon(): string
+    {
+        if (self::AUTHORIZATION === $this) {
+            return 'lucide:circle-dot';
+        }
+
+        return 'lucide:square-check';
+    }
+
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {

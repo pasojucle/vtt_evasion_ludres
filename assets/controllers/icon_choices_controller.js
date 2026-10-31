@@ -66,7 +66,7 @@ export default class extends Controller {
         console.log("select", event.currentTarget, event.currentTarget.dataset.iconItem)
         const target = event.currentTarget;
         this.inputTarget.value = target.dataset.iconItem;
-        document.querySelectorAll("[data-icon-item]").forEach(item => {
+        this.element.querySelectorAll("[data-icon-item]").forEach(item => {
             item.classList.remove("bg-slate-300");
         })
         target.classList.add("bg-slate-300");

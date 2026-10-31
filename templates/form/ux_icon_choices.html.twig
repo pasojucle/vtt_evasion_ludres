@@ -1,10 +1,11 @@
 {% block ux_icon_row %}
+{% set id = "ux_icon_list_" ~ form.vars.name%}
 <div 
     class="{{ form.vars.row_attr.class}}"
     {{ stimulus_controller('icon-choices', {
         choices: form.vars.attr["data-choices"],
         value: form.vars.value,
-        route: path("admin_icon_choices_list")
+        route: path("admin_icon_choices_list", {id: id})
     }) }}
 >
     {{ form_label(form) }}
@@ -44,10 +45,12 @@
     
     <div class="border border-border border-b-0 p-2 ">
         <turbo-frame 
-            id="ux_icon_list" 
+            id="{{ id }}" 
             class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"
         > 
+            {% if form.vars.value is not empty %}
                 {{ ux_icon(form.vars.value) }}
+            {% endif %}
         </turbo-frame>
     </div>
 </div>

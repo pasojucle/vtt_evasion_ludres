@@ -5,7 +5,9 @@ namespace App\Entity;
 use App\Entity\Enum\AgreementKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
+use App\Entity\Interface\DisableableInterface;
 use App\Entity\Interface\SortableInterface;
+use App\Entity\Trait\DisableableTrait;
 use App\Repository\AgreementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,8 +15,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgreementRepository::class)]
-class Agreement implements SortableInterface
+class Agreement implements SortableInterface, DisableableInterface
 {
+    use DisableableTrait;
+
     #[ORM\Id]
     #[ORM\Column(length: 25, unique: true)]
     private ?string $id = null;
@@ -60,9 +64,6 @@ class Agreement implements SortableInterface
 
     #[ORM\Column(nullable: true)]
     private ?int $orderBy = null;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $enabled = true;
 
     public function __construct()
     {
@@ -255,18 +256,6 @@ class Agreement implements SortableInterface
     public function setOrderBy(?int $orderBy): static
     {
         $this->orderBy = $orderBy;
-
-        return $this;
-    }
-
-    public function isEnabled(): ?bool
-    {
-        return $this->enabled;
-    }
-
-    public function setEnabled(bool $enabled): static
-    {
-        $this->enabled = $enabled;
 
         return $this;
     }

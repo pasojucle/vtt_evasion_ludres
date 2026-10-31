@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDialogHandler;
+use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\ListPaginatedHandler;
-use App\Dto\Payload\ProductToggleDto;
 use App\Entity\Product;
 use App\Form\Admin\ProductType;
 use App\State\Product\Processor\ProductDeleteProcessor;
@@ -16,6 +16,7 @@ use App\State\Product\Processor\ProductToggleProcessor;
 use App\State\Product\Processor\ProductUpdateProcessor;
 use App\State\Product\Provider\ProductAdminListProvider;
 use App\State\Product\Provider\ProductDeleteProvider;
+use App\State\Product\Provider\ProductToggleProvider;
 use App\State\Product\Provider\ProductUpdateProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -103,15 +104,19 @@ class ProductController extends AbstractCrudController
         );
     }
 
-    #[Route('/admin/toggle/produit/{product}', name: 'admin_product_toggle', methods: ['GET', 'POST'])]
+    #[Route('/admin/toggle/produit/{product}', name: 'admin_product_toggle', requirements:['product' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('PRODUCT_EDIT', 'product')]
     public function adminProduitDisbaled(
         Request $request,
+        ProductToggleProvider $provider,
         ProductToggleProcessor $processor,
-        Product $product
+        Product $product,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleComponentProcessAction(
-            new ProductToggleDto($product, $request->request->get('csrfToken')),
+        return $handler->handle(
+            $request,
+            $product,
+            $provider,
             $processor
         );
     }

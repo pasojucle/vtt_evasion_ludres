@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\AgreementDtoTransformer;
+use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ActionJsonHandler;
+use App\Core\Handler\ListPaginatedHandler;
+use App\Dto\Payload\SortablePayload;
 use App\Entity\Agreement;
 use App\Form\Admin\AgreementType;
-use App\Repository\AgreementRepository;
-use App\Service\OrderByService;
+use App\State\Agreement\Processor\AgreementOrderProcessor;
+use App\State\Agreement\Processor\AgreementToggleProcessor;
+use App\State\Agreement\Processor\AgreementUpdateProcessor;
+use App\State\Agreement\Provider\AgreementListProvider;
+use App\State\Agreement\Provider\AgreementToggleProvider;
+use App\State\Agreement\Provider\AgreementUpdateProvider;
 use App\UseCase\Agreement\AddAgreement;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,106 +27,84 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin', name: 'admin_agreement_')]
 class AgreementController extends AbstractController
 {
-    public function __construct(
-        private readonly AgreementRepository $agreementRepository,
-        private readonly OrderByService $orderByService,
-        private readonly EntityManagerInterface $entityManager,
-    ) {
-    }
-
     #[Route('/autorisations', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function list(
-        AgreementDtoTransformer $agreementDtoTransformer,
+        Request $request,
+        AgreementListProvider $provider,
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->render('agreement/admin/list.html.twig', [
-            'agreements' => $agreementDtoTransformer->fromEntities($this->agreementRepository->findAll()),
-        ]);
+        return $handler->handle(
+            $request,
+            $provider,
+        );
     }
 
     #[Route('/admin/agreement', name: 'add', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function add(
         Request $request,
+        AgreementUpdateProvider $provider,
+        AgreementUpdateProcessor $processor,
         AddAgreement $addAgreement,
+        ActionFormHandler $handler,
     ): Response {
-        $form = $this->createForm(AgreementType::class);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $addAgreement->execute($form);
-
-            return $this->redirectToRoute('admin_agreement_list');
-        }
-
-        return $this->render('agreement/admin/edit.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $handler->handle(
+            $request,
+            new Agreement(),
+            $provider,
+            $processor,
+            AgreementType::class
+        );
     }
 
     #[Route('/admin/agreement/{agreement}', name: 'edit', methods: ['GET', 'POST'], requirements:['agreement' => '\w+'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
-        Agreement $agreement
+        AgreementUpdateProvider $provider,
+        AgreementUpdateProcessor $processor,
+        Agreement $agreement,
+        ActionFormHandler $handler,
     ): Response {
-        $form = $this->createForm(AgreementType::class, $agreement);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
-                
-            return $this->redirectToRoute('admin_agreement_list');
-        }
-
-        return $this->render('agreement/admin/edit.html.twig', [
-            'agreement' => $agreement,
-            'form' => $form->createView(),
-        ]);
+        return $handler->handle(
+            $request,
+            $agreement,
+            $provider,
+            $processor,
+            AgreementType::class
+        );
     }
 
-    #[Route('/ordonner/{agreement}', name: 'order', methods: ['POST'], options:['expose' => true])]
+    #[Route('/ordonner/{agreement}', name: 'order', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function order(
         Request $request,
-        Agreement $agreement
+        AgreementOrderProcessor $processor,
+        Agreement $agreement,
+        ActionJsonHandler $handler,
     ): Response {
-        $newOrder = (int) $request->request->get('newOrder');
-        $agreements = $this->agreementRepository->findAll();
-
-        $this->orderByService->setNewOrders($agreement, $agreements, $newOrder);
-
-        return new Response();
+        return $handler->handle(
+            $request,
+            SortablePayload::fromRequest($agreement, $request),
+            $processor
+        );
     }
 
-    #[Route('/admin/active/agreement/{agreement}', name: 'enable', methods: ['GET', 'POST'])]
+    #[Route('/admin/toggle/agreement/{agreement}', name: 'toggle', requirements:['agreement' => '\w+'], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function disbaled(
+    public function adminAgreementToggle(
         Request $request,
-        Agreement $agreement
+        AgreementToggleProvider $provider,
+        AgreementToggleProcessor $processor,
+        Agreement $agreement,
+        ActionDirectHandler $handler,
     ): Response {
-        $response = new Response("OK", Response::HTTP_OK);
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $request->getUri(),
-            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted()) {
-            if ($form->isValid()) {
-                $agreement->setEnabled(!$agreement->isEnabled());
-                $this->entityManager->persist($agreement);
-                $this->entityManager->flush();
-
-                return $this->redirectToRoute('admin_agreement_list');
-            }
-            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->render('agreement/admin/enable.modal.html.twig', [
-            'agreement' => $agreement,
-            'form' => $form->createView(),
-            'type' => $agreement->isEnabled() ? 'destructive' : 'success',
-        ], $response);
+        return $handler->handle(
+            $request,
+            $agreement,
+            $provider,
+            $processor
+        );
     }
 }

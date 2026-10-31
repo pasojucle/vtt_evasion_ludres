@@ -45,7 +45,7 @@ class BoardRoleListMapper
             name: 'board_role',
             title: 'Rôles du bureau et comité',
             description: 'Administration des rôles du bureau et comité.',
-            items: array_map(fn(BoardRole $entity) => $this->boardRoleMapper->mapToView($entity, $targetUrl), iterator_to_array($entities)),
+            items: array_map(fn (BoardRole $entity) => $this->boardRoleMapper->mapToView($entity, $targetUrl), iterator_to_array($entities)),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),

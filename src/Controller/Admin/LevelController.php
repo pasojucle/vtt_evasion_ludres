@@ -93,7 +93,7 @@ class LevelController extends AbstractController
         );
     }
 
-    #[Route('/restaure/{level}', name: 'restore', requirements:['level' => '\d+'],  methods: ['GET', 'POST'])]
+    #[Route('/restaure/{level}', name: 'restore', requirements:['level' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelRestore(
         Request $request,

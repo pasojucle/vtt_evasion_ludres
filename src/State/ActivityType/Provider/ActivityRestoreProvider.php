@@ -9,7 +9,6 @@ use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
 use App\Dto\View\FlashesView;
 use App\Dto\View\ListItemUpdateView;
-use App\Dto\View\ListItemView;
 use App\Entity\BikeRideType;
 use App\Mapper\ActivityType\ActivityTypeMapper;
 use App\Service\UrlContextService;

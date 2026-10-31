@@ -41,7 +41,6 @@ class LevelMapper
             labels: [
                 new LabelView($level->getTitle()),
             ],
-            sortableId: $level->getId(),
             indicators: $this->getIndicators($level),
             status: $this->getStatus($level),
             counter: $this->counter($level, $currentSeason),

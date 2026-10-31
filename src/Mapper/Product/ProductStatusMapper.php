@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Mapper\Product;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\PublishStatus;
 use App\Dto\View\BadgeView;
 use App\Entity\Product;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,7 +26,7 @@ class ProductStatusMapper
             );
         }
 
-        $status = $entity->isDisabled() ? PublishStatus::DISABLED : PublishStatus::ENABLED;
+        $status = $entity->getStatus();
         return new BadgeView(
             value: $status->trans($this->translator),
             variant: $status->variant(),

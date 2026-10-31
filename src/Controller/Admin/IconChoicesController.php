@@ -13,17 +13,19 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin/icon-choices', name: 'admin_icon_choices_')]
 class IconChoicesController extends AbstractController
 {
-    #[Route('/list', name: 'list', methods: ['POST'])]
+    #[Route('/list/{id}', name: 'list', methods: ['POST'])]
     public function list(
         Request $request,
-        IconChoicesListProvider $provider
+        IconChoicesListProvider $provider,
+        string $id,
     ): Response {
         return $this->render('form/_ux_icon_choices.stream.html.twig', [
+            'id' => $id,
             'list' => $provider->getCollection(
                 json_decode($request->request->get('choices', '[]'), true),
                 $request->request->get('value'),
                 $request->request->get('action'),
-            )
+            ),
         ]);
     }
 }

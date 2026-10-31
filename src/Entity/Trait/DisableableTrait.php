@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Trait;
 
+use App\Dto\Enum\PublishStatus;
 use App\Entity\User;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
@@ -46,5 +47,10 @@ trait DisableableTrait
     public function isDisabled(): bool
     {
         return null !== $this->disabledAt;
+    }
+
+    public function getStatus(): PublishStatus
+    {
+        return $this->isDisabled() ? PublishStatus::DISABLED : PublishStatus::ENABLED;
     }
 }

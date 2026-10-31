@@ -140,7 +140,7 @@ class UserListMapper
 
         if ($boardRole?->isBoard()) {
             array_unshift(
-                $indicators, 
+                $indicators,
                 new BadgeView(
                     value: 'lucide:crown',
                     variant: ColorVariant::ACCENT,

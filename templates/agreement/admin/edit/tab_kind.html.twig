@@ -1,0 +1,13 @@
+<div 
+    data-id="agreement-kind" 
+    class="flex flex-col gap-4"
+    data-form-modifier-target="container"
+>
+    {{ form_row(form.kind) }}
+    {% if form.authorizationMessage is defined %}
+        {{ form_row(form.authorizationMessage) }}
+        {{ form_row(form.rejectionMessage) }}
+        {{ form_row(form.authorizationIcon) }}
+        {{ form_row(form.rejectionIcon) }}
+    {% endif %}
+</div>

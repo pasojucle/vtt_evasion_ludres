@@ -30,7 +30,6 @@ class BoardRoleMapper
         BoardRole $boardRole,
         string $targetUrl,
     ): ListItemView {
-
         $tokenId = $this->csrfTokenService->getTokenId($boardRole);
         $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
 
@@ -41,7 +40,6 @@ class BoardRoleMapper
                 new LabelView($boardRole->getName()),
             ],
             indicators: $this->indicators($boardRole),
-            sortableId: $boardRole->getId(),
             status: $this->getStatus($boardRole),
             isDeleted: $boardRole->isDeleted(),
             dropdown: $this->dropDown($boardRole, $targetUrl),
@@ -49,7 +47,6 @@ class BoardRoleMapper
             gridTemplateRow: 'grid-cols-[20px_1fr]',
             gridTemplateContent: 'grid-cols-[1fr_80px]'
         );
-        
     }
     private function dropDown(BoardRole $boardRole, string $targetUrl): DropdownView
     {
@@ -74,7 +71,7 @@ class BoardRoleMapper
                     url: $this->urlContextService->generateUrl('admin_board_role_edit', ['boardRole' => $boardRole->getId()], $targetUrl),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
-                     htmlAttributes: [
+                    htmlAttributes: [
                         new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                         new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],

@@ -12,7 +12,6 @@ class LevelFilter extends AbstractFilter
         public LevelType $type = LevelType::SCHOOL,
         public ?bool $showDeleted = null,
         public ?int $itemsPerPage = null,
-        public ?string $sort = null,
         public ?int $page = null,
     ) {
     }
