@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\CoverageFilter;
@@ -63,23 +63,12 @@ class CoverageFilterConfig implements FilterConfigInterface
     public function getAdvancedFields(): array
     {
         return [
-            new FilterFieldConfig(
-                name: 'levels',
-                type: ChoiceType::class,
-                options: [
-                    'label' => 'Niveaux',
-                    'choices' => $this->levelChoiceProvider->getChoices(),
-                    'multiple' => true,
-                    'autocomplete' => true,
-                    'required' => false,
-                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
-                    'attr' => [
-                        'data-action' => 'change@window->filter#update',
-                    ],
-                ],
+            AdvancedFilterFlields::createLevelsField(
+                $this->levelChoiceProvider,
+                'change@window->filter#update'
             ),
-            CommonFilterFields::createItemsPerPageField(),
-            CommonFilterFields::createSortStringField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
+            AdvancedFilterFlields::createSortStringField(),
         ];
     }
 

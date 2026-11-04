@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\OrderFilter;
@@ -69,8 +69,8 @@ class OrderFilterConfig implements FilterConfigInterface
                     'autocomplete' => true,
                 ],
             ),
-            CommonFilterFields::createItemsPerPageField(),
-            CommonFilterFields::createSortDateField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
+            AdvancedFilterFlields::createSortDateField(),
         ];
     }
 

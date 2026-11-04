@@ -8,6 +8,7 @@ readonly class LabelView
 {
     public const TYPE_TEXT = 'text';
     public const TYPE_NUMBER = 'number';
+    public const TYPE_DATE = 'date';
 
     public function __construct(
         public string $value,

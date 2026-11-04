@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\MemberParticipation;
 
 use App\Dto\Filter\MemberParticipationFilter;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Mapper\Activity\ActivityPeriodMapper;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -19,23 +20,22 @@ class MemberParticipationExportMapper
     ) {
     }
 
-    public function streamToCsv(array $entities, MemberParticipationFilter $filter): void
+    public function streamToCsv(array $entities, Member $member, MemberParticipationFilter $filter): void
     {
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
         $fp = fopen('php://output', 'w');
         
-        $this->addExportHeader($filter, $fp);
+        $this->addExportHeader($member, $filter, $fp);
         fputcsv($fp, [], self::CSV_SEPARATOR);
         $this->addExportContent($entities, $fp);
 
         fclose($fp);
     }
 
-    private function addExportHeader(MemberParticipationFilter $filter, $fp): void
+    private function addExportHeader(Member $member, MemberParticipationFilter $filter, $fp): void
     {
-        $member = $filter->member;
         $identity = $member->getIdentity();
         $row = [$identity->getFullName(), $member->getLicenceNumber()];
         fputcsv($fp, $row, self::CSV_SEPARATOR);

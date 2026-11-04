@@ -59,7 +59,7 @@ class ActivityAdminListMapper
             $items[] = new ListItemView(
                 id: sprintf('activity-item-%s', $entity->getId()),
                 labels: [
-                    new LabelView($entity->getStartAt()->format('d/m/y')),
+                    new LabelView($entity->getStartAt()->format('d/m/y'), LabelView::TYPE_DATE),
                     new LabelView($entity->getTitle()),
                 ],
                 indicators: $this->getIndicators($entity),

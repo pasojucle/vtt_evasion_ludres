@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\MemberSkillFilter;
@@ -75,8 +75,8 @@ class MemberSkillFilterConfig implements FilterConfigInterface
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
-            CommonFilterFields::createItemsPerPageField(),
-            CommonFilterFields::createSortDateField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
+            AdvancedFilterFlields::createSortDateField(),
         ];
     }
 

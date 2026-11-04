@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace App\State\MemberParticipation\Provider;
 
+use App\Core\Contract\Provider\ListLoadMoreProviderInterface;
+use App\Core\Contract\Provider\StreamListExportableInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\MemberParticipationFilter;
-use App\Dto\State\ViewContext;
 use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\SheetView;
+use App\Entity\Member;
 use App\Mapper\MemberParticipation\MemberParticipationExportMapper;
 use App\Mapper\MemberParticipation\MemberParticipationReadMapper;
 use App\Repository\IndemnityRepository;
 use App\Repository\SessionRepository;
 use App\Service\Indemnity\ComputeParticipationIndemnity;
 use App\Service\PaginatorService;
-use App\State\Interface\ListLoadMoreProviderInterface;
-use App\State\Interface\StreamListExportableInterface;
 use App\State\MemberParticipation\Enum\QueryScope;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -37,7 +39,7 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
     }
 
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',
@@ -46,7 +48,7 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [
             'attr' => [
@@ -56,29 +58,29 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
     }
 
     /**
-     * @param MemberParticipationFilter $entity
+     * @param MemberParticipationFilter $data
      */
-    public function getStreamView(object $entity, ?ViewContext $context = null): MemberActivitiesView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): MemberActivitiesView
     {
         $currentPage = $context->page;
         $member = $context->parent;
-        $entity->member = $member;
         $filterConfig = $this->getFilterConfig('admin_member_participation_filter');
 
-        $qb = $this->getQueryBuilder($entity);
-        $allPeriodSessions = $this->getQueryBuilder($entity, QueryScope::INDEMNITY)->getQuery()->getResult();
+        $qb = $this->getQueryBuilder($data, $member);
+        $allPeriodSessions = $this->getQueryBuilder($data, $member, QueryScope::INDEMNITY)->getQuery()->getResult();
 
         $indemnityMap = $this->mapIndemnities($this->indemnityRepository->findAll());
 
         $computeParticipationIndemnity = new ComputeParticipationIndemnity();
         $globalResult = $computeParticipationIndemnity(
             sessions: $allPeriodSessions,
-            level: $entity->member?->getLevel(),
+            level: $member?->getLevel(),
             indemnityMap: $indemnityMap
         );
 
         return $this->memberParticipationReadMapper->mapToView(
-            filter: $entity,
+            member: $member,
+            filter: $data,
             filterConfig: $filterConfig,
             totalIndemnity: $globalResult->hasIndemnity() ? $globalResult->totalAmount : null,
             sessionAmounts: $globalResult->amountsBySessionId,
@@ -87,35 +89,33 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
                 $currentPage,
                 PaginatorService::PAGINATOR_PER_PAGE
             ),
-            lineChartParticipations: array_column($this->getParticipations($entity), 'total', 'month'),
-            lineChartPeriod: $this->getPeriod($entity->startAt, $entity->endAt),
-            route: $context->route,
-            currentPage: $currentPage,
+            lineChartParticipations: array_column($this->getParticipations($data, $member), 'total', 'month'),
+            lineChartPeriod: $this->getPeriod($data->startAt, $data->endAt),
+            context: $context,
         );
     }
         
     /**
      * @param MemberParticipationFilter $filter
      */
-    public function streamExportContent(AbstractFilter $filter): void
+    public function streamExportContent(AbstractFilter $filter, ?HandlerContext $context = null): void
     {
-        $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
+        $entities = $this->getQueryBuilder($filter, $context->parent)->getQuery()->getResult();
 
-        $this->memberParticipationExportMapper->streamToCsv($entities, $filter);
+        $this->memberParticipationExportMapper->streamToCsv($entities, $context->parent, $filter);
     }
 
-    private function getQueryBuilder(MemberParticipationFilter $filter, QueryScope $scope = QueryScope::LIST): QueryBuilder
+    private function getQueryBuilder(MemberParticipationFilter $filter, Member $member,  QueryScope $scope = QueryScope::LIST): QueryBuilder
     {
         $qb = $this->sessionRepository->getSessionQuery();
 
-        $this->sessionRepository->filterUser($qb, $filter->member);
+        $this->sessionRepository->filterUser($qb, $member);
 
-        $this->sessionRepository->filterparticipated($qb);
+        $this->sessionRepository->filterParticipated($qb);
 
         if ($filter->startAt && $filter->endAt) {
             $this->sessionRepository->filterPeriod($qb, $filter->startAt, $filter->endAt);
         };
-
 
         if (QueryScope::LIST === $scope) {
             if ($filter->sort) {
@@ -126,7 +126,6 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
                 $this->sessionRepository->filterType($qb, $filter->type);
             }
         }
-
 
         return $qb;
     }
@@ -146,13 +145,13 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
         return $indemnityMap;
     }
 
-    private function getParticipations(MemberParticipationFilter $filter): array
+    private function getParticipations(MemberParticipationFilter $filter, Member $member): array
     {
-        $qb = $this->sessionRepository->getCountSessionQuery();
+        $qb = $this->sessionRepository->getTotalSessionByMonthQuery();
 
-        $this->sessionRepository->filterUser($qb, $filter->member);
+        $this->sessionRepository->filterUser($qb, $member);
 
-        $this->sessionRepository->filterparticipated($qb);
+        $this->sessionRepository->filterParticipated($qb);
 
         if ($filter->startAt && $filter->endAt) {
             $this->sessionRepository->filterPeriod($qb, $filter->startAt, $filter->endAt);
@@ -178,5 +177,10 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
         }
 
         return $months;
+    }
+
+    public function filename(?HandlerContext $context = null): string
+    {
+        return sprintf('export_participation_%s.csv', $context->parent->getLicenceNumber());
     }
 }

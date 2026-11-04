@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\SecondHandFilter;
@@ -83,8 +83,8 @@ class SecondHandFilterConfig implements FilterConfigInterface
                 ],
                 allowedFilterNames: ['status'],
             ),
-            CommonFilterFields::createItemsPerPageField(),
-            CommonFilterFields::createSortDateField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
+            AdvancedFilterFlields::createSortDateField(),
         ];
     }
 

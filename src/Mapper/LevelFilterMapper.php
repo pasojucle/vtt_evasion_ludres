@@ -10,7 +10,7 @@ class LevelFilterMapper
 {
     /**
      * Transforme le tableau mixte du formulaire en deux tableaux distincts (types et IDs)
-     * * @param array $rawLevels Le tableau provenant de $filter->levels
+     * @param array $rawLevels Le tableau provenant de $filter->levels
      * @return array{0: LevelType[], 1: int[]} Tuple [$levelTypes, $levels]
      */
     public function parseRawLevels(array $rawLevels): array

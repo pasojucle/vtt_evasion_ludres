@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Enum\ActivityPeriod;
 use App\Dto\Enum\ActivityRestriction;
 use App\Dto\Enum\ActivityVisibility;
 use App\Dto\Filter\ActivityFilter;
-use App\Entity\BikeRideType;
 use App\Form\Filter\EventListener\ActivityFilterSubscriber;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
@@ -66,16 +63,7 @@ class ActivityFilterConfig implements FilterConfigInterface
     public function getAdvancedFields(): array
     {
         return [
-            new FilterFieldConfig(
-                name: 'type',
-                type: EntityType::class,
-                options: [
-                    'label' => 'Type d\'activité',
-                    'class' => BikeRideType::class,
-                    'required' => false,
-                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
-                ],
-            ),
+            AdvancedFilterFlields::createActivityTypeField(),
             new FilterFieldConfig(
                 name: 'restriction',
                 type: EnumType::class,
@@ -86,17 +74,7 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
-            new FilterFieldConfig(
-                name: 'showDeleted',
-                type: CheckboxType::class,
-                options: [
-                    'label' => 'Afficher les éléments supprimés',
-                    'required' => false,
-                    'block_prefix' => 'switch',
-                    'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4 flex gap-2 flex-row'],
-                ],
-                computedChip: true,
-            ),
+            AdvancedFilterFlields::createShowDeletedField(),
             new FilterFieldConfig(
                 name: 'visibility',
                 type: EnumType::class,
@@ -107,8 +85,8 @@ class ActivityFilterConfig implements FilterConfigInterface
                     'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
                 ],
             ),
-            CommonFilterFields::createItemsPerPageField(),
-            CommonFilterFields::createSortDateField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
+            AdvancedFilterFlields::createSortDateField(),
         ];
     }
 

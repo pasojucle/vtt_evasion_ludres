@@ -44,6 +44,17 @@ class LevelRepository extends ServiceEntityRepository implements LevelRepository
         }
     }
 
+    public function findOneById(int $id): ?Level
+    {
+        return $this->createQueryBuilder('le')
+            ->andWhere(
+                (new Expr())->eq('le.id', ':id')
+            )
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findLevelQuery(LevelType $type): QueryBuilder
     {
         return $this->createQueryBuilder('l')

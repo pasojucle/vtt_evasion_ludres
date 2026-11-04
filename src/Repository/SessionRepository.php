@@ -9,6 +9,7 @@ use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\LevelType;
+use App\Entity\Enum\PracticeEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
@@ -462,10 +463,13 @@ class SessionRepository extends ServiceEntityRepository implements SessionReposi
     {
         return $this->createQueryBuilder('se')
             ->join('se.cluster', 'cl')->addSelect('cl')
-            ->join('cl.bikeRide', 'br')->addSelect('br');
+            ->join('cl.bikeRide', 'br')->addSelect('br')
+            ->join('se.user', 'usr')->addSelect('usr')
+            ->leftJoin('usr.level', 'le')->addSelect('le')
+            ;
     }
 
-    public function getCountSessionQuery(): QueryBuilder
+    public function getTotalSessionByMonthQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('se')
             ->select(
@@ -494,7 +498,7 @@ class SessionRepository extends ServiceEntityRepository implements SessionReposi
         ->setParameter('bikeRideType', $bikeRideType);
     }
 
-    public function filterparticipated(QueryBuilder $qb): void
+    public function filterParticipated(QueryBuilder $qb): void
     {
         $qb->andWhere(
             $qb->expr()->eq('se.isPresent', ':isPresent')
@@ -518,6 +522,33 @@ class SessionRepository extends ServiceEntityRepository implements SessionReposi
             )
             ->setParameter('startAt', $startAt)
             ->setParameter('endAt', $endAt);
+    }
+
+    public function filterLevels(QueryBuilder $qb, array $types, array $ids): void
+    {
+        $orX = $qb->expr()->orX();
+
+        if (!empty($types)) {
+            $orX->add($qb->expr()->in('le.type', ':types'));
+            $qb->setParameter('types', $types);
+        }
+
+        if (!empty($ids)) {
+            $orX->add($qb->expr()->in('le.id', ':ids'));
+            $qb->setParameter('ids', $ids);
+        }
+
+        if ($orX->count() > 0) {
+            $qb->andWhere($orX);
+        }
+    }
+
+    public function filterPractice(QueryBuilder $qb, PracticeEnum $practice): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('se.practice', ':practice')
+        )
+        ->setParameter('practice', $practice);
     }
 
     public function filterSort(QueryBuilder $qb, string $sort): void

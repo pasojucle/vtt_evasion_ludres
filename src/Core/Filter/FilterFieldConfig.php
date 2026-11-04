@@ -6,10 +6,12 @@ namespace App\Core\Filter;
 
 use App\Dto\Filter\RangeChip;
 use App\Form\HiddenChoiceType;
+use App\Form\HiddenDateType;
 use App\Form\HiddenEntityType;
 use App\Form\HiddenEnumType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\UX\Autocomplete\Form\BaseEntityAutocompleteType;
@@ -36,6 +38,7 @@ readonly class FilterFieldConfig
             $dataClass && $isEntityField => [HiddenEntityType::class, ['class' => $dataClass]],
             $dataClass && EnumType::class === $this->type => [HiddenEnumType::class, ['class' => $dataClass, 'multiple' => $multiple]],
             ChoiceType::class === $this->type => [HiddenChoiceType::class, ['multiple' => $multiple]],
+            DateType::class === $this->type => [HiddenDateType::class, []],
             default => [HiddenType::class, []]
         };
     }

@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionStreamDeleteFilterHandler;
+use App\Core\Handler\ActionStreamFilterHandler;
+use App\Core\Handler\ListExportHandler;
+use App\Core\Handler\ListLoadMoreHandler;
 use App\Dto\Filter\MemberParticipationFilter;
-use App\Dto\State\ViewContext;
 use App\Entity\Member;
 use App\State\MemberParticipation\Provider\MemberParticipationReadProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/member/participation', name: 'admin_member_participation')]
-class MemberParticipationController extends AbstractCrudController
+class MemberParticipationController extends AbstractController
 {
     #[Route('/list/{member}', name: '_list', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]
@@ -22,64 +26,61 @@ class MemberParticipationController extends AbstractCrudController
         Request $request,
         MemberParticipationReadProvider $provider,
         Member $member,
+        ListLoadMoreHandler $handler,
     ): Response {
-        return $this->handleListLoadMoreAction(
+        return $handler->handle(
             $request,
             MemberParticipationFilter::class,
             $provider,
-            new ViewContext(
-                route: $request->attributes->get('_route'),
-                routeParams: $request->attributes->get('_route_params'),
-                page: $request->query->getInt('page', 1),
-                parent: $member
-            )
+            $member
         );
     }
 
-    #[Route('/filter/{member}', name: '_filter', methods: ['GET', 'POST'])]
+    #[Route('/filter/{member}', name: '_filter', requirements:['member' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'member')]
     public function filter(
         Request $request,
         MemberParticipationReadProvider $provider,
         Member $member,
+        ActionStreamFilterHandler $handler
     ): Response {
-        return $this->handleStreamFilterAction(
+        return $handler->handle(
             $request,
             $member,
             $provider,
         );
     }
 
-
-    #[Route('/delete/filter/{member}', name: '_filter_delete', methods: ['GET'])]
+    #[Route('/delete/filter/{member}', name: '_filter_delete', requirements:['member' => '\d+'], methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]
     public function deleteFilter(
         Request $request,
         MemberParticipationReadProvider $provider,
         Member $member,
+        ActionStreamDeleteFilterHandler $handler,
     ): Response {
-        return $this->handleStreamFilterDeleteAction(
+        return $handler->handle(
             $request,
             $member,
+            MemberParticipationFilter::class,
             $provider,
-            'admin_member_participation_filter'
         );
     }
 
-    #[Route('/export/{member}', name: '_export', methods: ['GET'])]
+    #[Route('/export/{member}', name: '_export', requirements:['member' => '\d+'], methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]
     public function lineChart(
         Request $request,
         MemberParticipationReadProvider $provider,
         Member $member,
+        ListExportHandler $handler,
     ): Response {
-        $request->query->set('member', $member->getId());
-
-        return $this->handleExportAction(
+        
+        return $handler->handle(
             $request,
             MemberParticipationFilter::class,
             $provider,
-            sprintf('export_participation_%s.csv', $member->getLicenceNumber())
+            $member,
         );
     }
 }

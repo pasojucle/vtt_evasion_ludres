@@ -38,6 +38,8 @@
             {% for label in item.labels %}
                 {% if label.type == 'number' %}
                     <div class="text-right font-mono">{{ label.value }}</div>
+                {% elseif label.type == 'date' %}
+                    <div class="text-left text-muted">{{ label.value }}</div>
                 {% else %}
                     <div class="text-left">{{ label.value|raw }}</div>
                 {% endif %}

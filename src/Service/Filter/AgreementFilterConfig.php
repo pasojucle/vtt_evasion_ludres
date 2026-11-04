@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\AgreementFilter;
@@ -54,7 +54,7 @@ class AgreementFilterConfig implements FilterConfigInterface
     public function getAdvancedFields(): array
     {
         return [
-            CommonFilterFields::createItemsPerPageField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
         ];
     }
 

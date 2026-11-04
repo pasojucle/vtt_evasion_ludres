@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Enum\PublishStatus;
@@ -79,8 +79,8 @@ class ProductFilterConfig implements FilterConfigInterface
                 ],
                 computedChip: true,
             ),
-            CommonFilterFields::createItemsPerPageField(),
-            CommonFilterFields::createSortStringField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
+            AdvancedFilterFlields::createSortStringField(),
         ];
     }
 

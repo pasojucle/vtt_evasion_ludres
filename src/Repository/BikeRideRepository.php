@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
+use App\Entity\Enum\PracticeEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Member;
 use App\Entity\Session;
@@ -18,6 +19,7 @@ use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -53,6 +55,22 @@ class BikeRideRepository extends ServiceEntityRepository implements BikeRideRepo
         }
     }
 
+    private function hasJoin(QueryBuilder $qb, string $alias): bool
+    {
+        $joins = $qb->getDQLPart('join');
+        
+        foreach ($joins as $joinList) {
+            /** @var Join $join */
+            foreach ($joinList as $join) {
+                if ($join->getAlias() === $alias) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @return QueryBuilder
      */
@@ -80,10 +98,79 @@ class BikeRideRepository extends ServiceEntityRepository implements BikeRideRepo
         ;
     }
 
-
     public function getActivityQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('a');
+    }
+
+    public function getTotalSessionsByActivityQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('a')
+            ->select(
+                'a as activity',
+                'COUNT(se.isPresent) as total',
+            )
+            ->groupBy('a.id');
+    }
+
+    public function filterParticipated(QueryBuilder $qb): void
+    {
+        if (!$this->hasJoin($qb, 'cl')) {
+            $qb->join('a.clusters', 'cl')->addSelect('cl');
+        }
+
+        if (!$this->hasJoin($qb, 'se')) {
+            $qb->join('cl.sessions', 'se')->addSelect('se');
+        }
+
+        $qb->andWhere(
+            $qb->expr()->eq('se.isPresent', ':isPresent')
+        )
+        ->setParameter('isPresent', true);
+    }
+
+    public function filterPeriod(QueryBuilder $qb, DateTimeImmutable $startAt, DateTimeImmutable $endAt): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->between('a.startAt', ':startAt', ':endAt')
+            )
+            ->setParameter('startAt', $startAt)
+            ->setParameter('endAt', $endAt);
+    }
+
+    public function filterLevels(QueryBuilder $qb, array $types, array $ids): void
+    {
+        if (!$this->hasJoin($qb, 'usr')) {
+            $qb->join('se.user', 'usr')->addSelect('usr');
+        }
+
+        if (!$this->hasJoin($qb, 'le')) {
+            $qb->leftJoin('usr.level', 'le')->addSelect('le');
+        }
+        $orX = $qb->expr()->orX();
+
+        if (!empty($types)) {
+            $orX->add($qb->expr()->in('le.type', ':types'));
+            $qb->setParameter('types', $types);
+        }
+
+        if (!empty($ids)) {
+            $orX->add($qb->expr()->in('le.id', ':ids'));
+            $qb->setParameter('ids', $ids);
+        }
+
+        if ($orX->count() > 0) {
+            $qb->andWhere($orX);
+        }
+    }
+
+    public function filterPractice(QueryBuilder $qb, PracticeEnum $practice): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('se.practice', ':practice')
+        )
+        ->setParameter('practice', $practice);
     }
 
     public function filterUpcoming(QueryBuilder $qb, DateTimeInterface $today): void

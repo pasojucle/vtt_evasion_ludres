@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ListExportHandler;
+use App\Core\Handler\ListPaginatedHandler;
+use App\Dto\Filter\ParticipationFilter;
+use App\Entity\BikeRide;
+use App\State\Participation\Provider\ParticipationListExportProvider;
+use App\State\Participation\Provider\ParticipationListProvider;
 use App\State\Participation\Provider\ParticipationMonthlyProvider;
-use App\UseCase\User\GetParticipations;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,23 +21,42 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin/participation', name: 'admin_participation', methods: ['GET'])]
 class ParticipationController extends AbstractController
 {
-    public function __construct(
-        private readonly GetParticipations $getParticipations,
-    ) {
-    }
-
     #[Route('s/{filtered}', name: '_list', defaults: ['filtered' => false], methods: ['GET', 'POST'])]
     #[IsGranted('PARTICIPATION_VIEW')]
-    public function participations(Request $request, bool $filtered): Response
-    {
-        return $this->render('participation/admin/list.html.twig', $this->getParticipations->execute($request, $filtered));
+    public function participations(
+        Request $request,
+        ParticipationListProvider $provider,
+        ListPaginatedHandler $handler,
+    ): Response {
+        return $handler->handle(
+            $request,
+            $provider
+        );
     }
 
-    #[Route('/export', name: 's_export', methods: ['GET', 'POST'])]
+    #[Route('/export', name: '_export', methods: ['GET', 'POST'])]
     #[IsGranted('PARTICIPATION_VIEW')]
-    public function export(Request $request): Response
+    public function export(
+        Request $request,
+        ParticipationListExportProvider $provider,
+        ListExportHandler $handler,
+    ): Response
     {
-        return $this->getParticipations->export($request);
+        return $handler->handle(
+            $request,
+            ParticipationFilter::class,
+            $provider,
+        );
+    }
+
+    #[Route('/show/{activity}', name: '_show', methods: ['GET', 'POST'])]
+    #[IsGranted('PARTICIPATION_VIEW')]
+    public function show(
+        Request $request,
+        BikeRide $activity,
+    ): Response
+    {
+        return new Response();
     }
 
     #[Route('/mensuelle/{isSchool}', name: '_monthly', methods: ['GET'])]

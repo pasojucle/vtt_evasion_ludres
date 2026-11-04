@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Filter;
 
-use App\Core\Contract\Filter\CommonFilterFields;
+use App\Core\Contract\Filter\AdvancedFilterFlields;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Filter\FilterFieldConfig;
 use App\Dto\Filter\LevelFilter;
@@ -70,7 +70,7 @@ class LevelFilterConfig implements FilterConfigInterface
                 ],
                 computedChip: true,
             ),
-            CommonFilterFields::createItemsPerPageField(),
+            AdvancedFilterFlields::createItemsPerPageField(),
         ];
     }
 

@@ -222,6 +222,7 @@ abstract class AbstractCrudController extends AbstractController
         object $entity,
         ListLoadMoreProviderInterface $provider,
     ): Response {
+        
         $route = $request->attributes->get('_route');
         $queryParams = $request->query->all();
 

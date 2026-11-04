@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\MemberParticipation;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\MemberParticipationFilter;
@@ -13,6 +14,7 @@ use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\MemberParticipation\MemberActivitiesView;
 use App\Dto\View\MemberParticipation\MemberActivityView;
+use App\Entity\Member;
 use App\Entity\Session;
 use App\Mapper\Activity\ActivityPeriodMapper;
 use App\Mapper\FilterChipsMapper;
@@ -38,6 +40,7 @@ class MemberParticipationReadMapper
      * @param DateTimeImmutable[] $lineChartPeriod
      */
     public function mapToView(
+        Member $member,
         MemberParticipationFilter $filter,
         FilterConfigInterface $filterConfig,
         ?float $totalIndemnity,
@@ -45,13 +48,12 @@ class MemberParticipationReadMapper
         Paginator $paginatedSessions,
         array $lineChartParticipations,
         array $lineChartPeriod,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
     ): MemberActivitiesView {
-        $member = $filter->member;
         $queriyParams = $filter->toArray();
+        $queriyParams['member'] = $member->getId();
 
-        $hasMoreSessions = $currentPage * PaginatorService::PAGINATOR_PER_PAGE < $paginatedSessions->count();
+        $hasMoreSessions = $context->page * PaginatorService::PAGINATOR_PER_PAGE < $paginatedSessions->count();
 
         return new MemberActivitiesView(
             memberId: $member->getId(),
@@ -62,7 +64,7 @@ class MemberParticipationReadMapper
                 $filter,
                 $filterConfig->getAdvancedFields(),
                 'admin_member_participation_filter_delete',
-                ['member' => $member],
+                ['member' => $member->getId()],
             ),
             filterAction: new LinkView(
                 url: $this->urlGenerator->generate('admin_member_participation_filter', $queriyParams),
@@ -82,7 +84,7 @@ class MemberParticipationReadMapper
             loadMoreAction: ($hasMoreSessions)
                 ? new LinkView(
                     label: 'Afficher plus',
-                    url: $this->urlGenerator->generate('admin_member_participation_list', array_merge($queriyParams, ['page' => $currentPage + 1])),
+                    url: $this->urlGenerator->generate('admin_member_participation_list', array_merge($queriyParams, ['page' => $context->page + 1])),
                     variant: ColorVariant::OUTLINE,
                     icon: 'lucide:chevron-down',
                 )
