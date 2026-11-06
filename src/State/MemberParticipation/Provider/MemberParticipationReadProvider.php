@@ -105,7 +105,7 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
         $this->memberParticipationExportMapper->streamToCsv($entities, $context->parent, $filter);
     }
 
-    private function getQueryBuilder(MemberParticipationFilter $filter, Member $member,  QueryScope $scope = QueryScope::LIST): QueryBuilder
+    private function getQueryBuilder(MemberParticipationFilter $filter, Member $member, QueryScope $scope = QueryScope::LIST): QueryBuilder
     {
         $qb = $this->sessionRepository->getSessionQuery();
 

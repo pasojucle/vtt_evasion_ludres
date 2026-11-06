@@ -20,15 +20,15 @@ class ParticipationListExportMapper
     ) {
     }
 
-    /** 
-     * @param array<int, User> $participants 
-     * @param array<int, array{activity: BikeRide, sessions: array<int, Session|null>}> $participationsByActivity 
-     * @param array<string> $levels 
+    /**
+     * @param array<int, User> $participants
+     * @param array<int, array{activity: BikeRide, sessions: array<int, Session|null>}> $participationsByActivity
+     * @param array<string> $levels
      * */
     public function streamToCsv(
         array $participants,
-        array $participationsByActivity, 
-        ParticipationFilter $filter,  
+        array $participationsByActivity,
+        ParticipationFilter $filter,
         array $levels
     ): void {
         while (ob_get_level() > 0) {
@@ -47,33 +47,32 @@ class ParticipationListExportMapper
     {
         if ($filter->startAt && $filter->endAt) {
             fputcsv(
-                $fp, 
-                [sprintf('Du %s au %s', $filter->startAt->format('d/m/Y'), $filter->endAt->format('d/m/Y'))], 
+                $fp,
+                [sprintf('Du %s au %s', $filter->startAt->format('d/m/Y'), $filter->endAt->format('d/m/Y'))],
                 self::CSV_SEPARATOR
             );
-
         }
 
         if ($filter->type) {
             fputcsv(
-                $fp, 
-                [sprintf('Type de sortie : %s', $filter->type->getName())], 
+                $fp,
+                [sprintf('Type de sortie : %s', $filter->type->getName())],
                 self::CSV_SEPARATOR
             );
         }
 
         if (!empty($levels)) {
--           fputcsv(
-                $fp, 
-                [sprintf('Niveau(x) : %s', implode(' - ', $levels))], 
+            -fputcsv(
+                $fp,
+                [sprintf('Niveau(x) : %s', implode(' - ', $levels))],
                 self::CSV_SEPARATOR
             );
         }
 
         if ($filter->practice) {
             fputcsv(
-                $fp, 
-                [sprintf('Type de pratique : %s', $filter->practice->trans($this->translator))], 
+                $fp,
+                [sprintf('Type de pratique : %s', $filter->practice->trans($this->translator))],
                 self::CSV_SEPARATOR
             );
         }
@@ -82,7 +81,7 @@ class ParticipationListExportMapper
         flush();
     }
 
-    private function addExportParticipants(array $participants, $fp):void
+    private function addExportParticipants(array $participants, $fp): void
     {
         $licenceNumbers = ['Licence'];
         $fullNames = ['Nom'];
@@ -100,13 +99,13 @@ class ParticipationListExportMapper
         flush();
     }
 
-    private function addExportActivities(array $participationsByActivity, $fp):void
+    private function addExportActivities(array $participationsByActivity, $fp): void
     {
         foreach ($participationsByActivity as $data) {
             $activity = $data['activity'];
             $activityRow = [sprintf('%s - %s', $activity->getStartAt()->format('d/m/Y'), $activity->getTitle())];
 
-            foreach($data['sessions'] as $session) {
+            foreach ($data['sessions'] as $session) {
                 $practice = $session?->getPractice();
                 $activityRow[] = ($practice)
                     ? $practice !== PracticeEnum::NONE ? $practice->trans($this->translator) : 'Présent'
@@ -115,6 +114,5 @@ class ParticipationListExportMapper
             fputcsv($fp, $activityRow, self::CSV_SEPARATOR);
             flush();
         }
-        
     }
 }

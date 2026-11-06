@@ -490,6 +490,14 @@ class SessionRepository extends ServiceEntityRepository implements SessionReposi
         ->setParameter('member', $member);
     }
 
+    public function filterActivity(QueryBuilder $qb, BikeRide $activity): void
+    {
+        $qb->andWhere(
+            $qb->expr()->eq('br.id', ':activity')
+        )
+        ->setParameter('activity', $activity->getId());
+    }
+
     public function filterType(QueryBuilder $qb, BikeRideType $bikeRideType): void
     {
         $qb->andWhere(
@@ -556,5 +564,14 @@ class SessionRepository extends ServiceEntityRepository implements SessionReposi
         $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
         $qb
             ->orderBy('br.startAt', $direction);
+    }
+
+    public function filterSortByUser(QueryBuilder $qb): void
+    {
+        $qb
+            ->join('usr.identity', 'id')
+            ->orderBy('id.name', 'ASC')
+            ->addOrderBy('id.firstName', 'ASC')
+            ;
     }
 }

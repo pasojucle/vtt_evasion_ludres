@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\State\Participation\Provider;
 
-
 use App\Core\Contract\Provider\StreamListExportableInterface;
 use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
@@ -15,7 +14,6 @@ use App\Mapper\LevelFilterMapper;
 use App\Mapper\Participation\ParticipationListExportMapper;
 use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
-use App\State\Participation\Trait\ParticipationDataProviderTrait;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,7 +23,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ParticipationListExportProvider implements StreamListExportableInterface
 {
     use FilterHydratorTrait;
-    use ParticipationDataProviderTrait;
 
     public function __construct(
         private SessionRepository $sessionRepository,
@@ -76,7 +73,7 @@ class ParticipationListExportProvider implements StreamListExportableInterface
         $defaultParticipations = [];
         $participationsByActivity = [];
         $participants = [];
-        foreach($sessions as $session) {
+        foreach ($sessions as $session) {
             $user = $session->getUser();
             $userId = $user->getId();
             if (!array_key_exists($userId, $participants)) {
@@ -89,22 +86,22 @@ class ParticipationListExportProvider implements StreamListExportableInterface
                 ];
             }
         }
-        usort($participants, fn($a, $b) => strcmp($a['fullName'],$b['fullName']));
+        usort($participants, fn ($a, $b) => strcmp($a['fullName'], $b['fullName']));
         $defaultParticipations = array_column($participants, 'session', 'id');
 
-        foreach($sessions as $session) {
+        foreach ($sessions as $session) {
             $user = $session->getUser();
             $activity = $session->getCluster()->getBikeRide();
             $activityId = $activity->getId();
             if (!array_key_exists($activityId, $participationsByActivity)) {
                 $participationsByActivity[$activityId] = [
-                    'activity' => $activity, 
+                    'activity' => $activity,
                     'sessions' => $defaultParticipations,
                 ];
             }
             $participationsByActivity[$activityId]['sessions'][$user->getId()] = $session;
         }
-        usort($participationsByActivity, fn($a, $b) => $a['activity']->getStartAt() < $b['activity']->getStartAt() ? -1 : 1);
+        usort($participationsByActivity, fn ($a, $b) => $a['activity']->getStartAt() < $b['activity']->getStartAt() ? -1 : 1);
 
         return [
             array_column($participants, 'entity', 'id'),
@@ -115,13 +112,13 @@ class ParticipationListExportProvider implements StreamListExportableInterface
     private function hydrateLevels(ParticipationFilter $filter): array
     {
         $levels = [];
-        foreach($filter->levels as $value) {
+        foreach ($filter->levels as $value) {
             if (is_numeric($value)) {
                 $entity = $this->levelRepository->findOneById((int) $value);
                 if (null !== $entity) {
                     $levels[] = $entity->getTitle();
-                    continue; 
-                } 
+                    continue;
+                }
             }
             $enum = LevelType::tryFrom($value);
             if ($enum instanceof LevelType) {

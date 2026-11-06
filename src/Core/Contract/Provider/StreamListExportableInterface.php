@@ -6,11 +6,9 @@ namespace App\Core\Contract\Provider;
 
 use App\Core\Dto\HandlerContext;
 use App\Dto\Filter\AbstractFilter;
-use TFilter;
-
 
 /**
- * @template TFilter of object
+ * @template TFilter of AbstractFilter
  */
 interface StreamListExportableInterface
 {

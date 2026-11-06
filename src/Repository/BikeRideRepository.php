@@ -139,6 +139,34 @@ class BikeRideRepository extends ServiceEntityRepository implements BikeRideRepo
             ->setParameter('endAt', $endAt);
     }
 
+    public function filterQuery(QueryBuilder $qb, string $term): void
+    {
+        $orX = $qb->expr()->orX();
+        foreach (explode(' ', $term) as $key => $word) {
+            $parameterName = 'word_' . $key;
+            $orX->add(
+                $qb->expr()->like('a.title', ':word_' . $key)
+            );
+            $qb->setParameter($parameterName, '%' . $word . '%');
+
+            $date = DateTimeImmutable::createFromFormat('d/m/y', $word)
+                ?: DateTimeImmutable::createFromFormat('d/m/Y', $word)
+                ?: DateTimeImmutable::createFromFormat('Y-m-d', $word);
+
+            if ($date !== false) {
+                $dateParamName = 'date_' . $key;
+                $startOfDay = $date->setTime(0, 0, 0);
+                $endOfDay = $date->setTime(23, 59, 59);
+
+                $orX->add($qb->expr()->between('a.startAt', ':' . $dateParamName . '_start', ':' . $dateParamName . '_end'));
+                $qb->setParameter($dateParamName . '_start', $startOfDay);
+                $qb->setParameter($dateParamName . '_end', $endOfDay);
+            }
+        }
+
+        $qb->andWhere($orX);
+    }
+
     public function filterLevels(QueryBuilder $qb, array $types, array $ids): void
     {
         if (!$this->hasJoin($qb, 'usr')) {

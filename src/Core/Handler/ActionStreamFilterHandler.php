@@ -20,7 +20,8 @@ class ActionStreamFilterHandler
     public function __construct(
         private FormFactoryInterface $formFactory,
         private Environment $twig,
-    ){}
+    ) {
+    }
 
     public function handle(
         Request $request,
@@ -44,7 +45,8 @@ class ActionStreamFilterHandler
         if ($form->isSubmitted() && $form->isValid()) {
             $streamView = $provider->getStreamView($filter, null, $context);
             return new Response(
-                $this->twig->render($streamView->getStreamTemplate(),
+                $this->twig->render(
+                    $streamView->getStreamTemplate(),
                     ['view' => $streamView]
                 ),
                 Response::HTTP_OK,

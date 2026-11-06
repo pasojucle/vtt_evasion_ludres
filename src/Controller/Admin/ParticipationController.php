@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ListDrawerHandler;
 use App\Core\Handler\ListExportHandler;
 use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\Filter\ParticipationFilter;
-use App\Entity\BikeRide;
+use App\State\Participation\Provider\ActivityParticipantsReadProvider;
 use App\State\Participation\Provider\ParticipationListExportProvider;
 use App\State\Participation\Provider\ParticipationListProvider;
 use App\State\Participation\Provider\ParticipationMonthlyProvider;
@@ -40,8 +41,7 @@ class ParticipationController extends AbstractController
         Request $request,
         ParticipationListExportProvider $provider,
         ListExportHandler $handler,
-    ): Response
-    {
+    ): Response {
         return $handler->handle(
             $request,
             ParticipationFilter::class,
@@ -49,14 +49,14 @@ class ParticipationController extends AbstractController
         );
     }
 
-    #[Route('/show/{activity}', name: '_show', methods: ['GET', 'POST'])]
+    #[Route('/show', name: '_activity_show', methods: ['GET', 'POST'])]
     #[IsGranted('PARTICIPATION_VIEW')]
     public function show(
         Request $request,
-        BikeRide $activity,
-    ): Response
-    {
-        return new Response();
+        ActivityParticipantsReadProvider $provider,
+        ListDrawerHandler $handler,
+    ): Response {
+        return $handler->handle($request, $provider);
     }
 
     #[Route('/mensuelle/{isSchool}', name: '_monthly', methods: ['GET'])]

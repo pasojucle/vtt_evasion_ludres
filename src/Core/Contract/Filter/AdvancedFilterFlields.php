@@ -83,7 +83,7 @@ final class AdvancedFilterFlields
                 'autocomplete' => true,
                 'required' => false,
                 'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
-                'attr' => $dataAction 
+                'attr' => $dataAction
                     ? [
                         'data-action' => $dataAction,
                     ] : [],

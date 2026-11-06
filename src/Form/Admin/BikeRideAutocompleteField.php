@@ -15,7 +15,7 @@ class BikeRideAutocompleteField extends AbstractType
     {
         $resolver->setDefaults([
             'class' => BikeRide::class,
-            'placeholder' => 'Sélectionnez une sortie',
+            'placeholder' => 'Sélectionnez une activité',
             'multiple' => false,
             'label' => false,
             'required' => false,

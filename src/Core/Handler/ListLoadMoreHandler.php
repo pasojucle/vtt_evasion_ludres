@@ -44,8 +44,8 @@ readonly class ListLoadMoreHandler
 
         return new Response(
             $this->renderView($view->getStreamTemplate(), $view),
-                Response::HTTP_OK,
-                ['Content-Type' => 'text/vnd.turbo-stream.html', ]
+            Response::HTTP_OK,
+            ['Content-Type' => 'text/vnd.turbo-stream.html', ]
         );
     }
 

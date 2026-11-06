@@ -15,7 +15,8 @@ class ActionStreamDeleteFilterHandler
 {
     public function __construct(
         private Environment $twig,
-    ){}
+    ) {
+    }
 
     public function handle(
         Request $request,

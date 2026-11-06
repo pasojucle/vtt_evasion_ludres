@@ -26,7 +26,6 @@ class ParticipationMapper
         int $total,
         array $params,
     ): ListItemView {
-
         return new ListItemView(
             id: sprintf('activity-%s', $activity->getId()),
             labels: [
@@ -44,12 +43,11 @@ class ParticipationMapper
     }
     private function dropDown(array $params): DropdownView
     {
-
         return  new DropdownView(
             menuItems: [
                 new LinkView(
                     label: 'Afficher les participants',
-                    url: $this->urlGenerator->generate('admin_participation_show', $params),
+                    url: $this->urlGenerator->generate('admin_participation_activity_show', $params),
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [

@@ -75,7 +75,6 @@ class MemberParticipationController extends AbstractController
         Member $member,
         ListExportHandler $handler,
     ): Response {
-        
         return $handler->handle(
             $request,
             MemberParticipationFilter::class,
