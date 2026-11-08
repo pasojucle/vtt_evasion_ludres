@@ -10,11 +10,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 enum LevelType: string implements TranslatableInterface
 {
+    case NONE = 'none';
+
+    case ADULT = 'adult';
+
     case SCHOOL = 'school';
 
     case FRAME = 'frame';
-
-    case ADULT = 'adult';
 
     use EnumTrait;
 
@@ -23,7 +25,8 @@ enum LevelType: string implements TranslatableInterface
         return match ($this) {
             self::SCHOOL => 'lucide:graduation-cap',
             self::FRAME => 'lucide:shield-user',
-            default => 'lucide:circle-user-round'
+            self::ADULT => 'lucide:circle-user-round',
+            default => 'lucide:user-round-group'
         };
     }
 

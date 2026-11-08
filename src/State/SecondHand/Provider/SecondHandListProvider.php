@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\State\SecondHand\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
-use App\Core\Contract\Provider\FilterInitializerInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
 use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
@@ -14,10 +14,12 @@ use App\Dto\View\ListView;
 use App\Mapper\SecondHand\SecondHandListMapper;
 use App\Repository\SecondHandRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class SecondHandListProvider implements ListProviderInterface, FilterInitializerInterface
+/**
+ * @implements ListProviderInterface<SecondHandFilter>
+ */
+class SecondHandListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
 
@@ -28,30 +30,22 @@ class SecondHandListProvider implements ListProviderInterface, FilterInitializer
     ) {
     }
 
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, HandlerContext $context): ListView
     {
-        /** @var SecondHandFilter $filter */
         $qb = $this->getQueryBuilder($filter);
 
         $entities = $this->paginator->paginate(
             $qb,
-            $currentPage,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(
             $entities,
-            $route,
-            $currentPage,
+            $context,
             $filter,
             $filterConfig
         );
-    }
-
-    public function initializeFilters(AbstractFilter $filter, ?HandlerContext $context): void
-    {
-        /** @var SecondHandFilter $filter */
-        $filter->setDefaultState();
     }
 
     private function getQueryBuilder(SecondHandFilter $filter): QueryBuilder

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use App\Dto\Filter\SecondHandFilter;
 use App\Entity\SecondHand;
@@ -34,10 +35,11 @@ class SecondHandController extends AbstractCrudController
     public function list(
         SecondHandListProvider $provider,
         Request $request,
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 

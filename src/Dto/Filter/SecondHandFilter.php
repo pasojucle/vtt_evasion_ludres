@@ -19,9 +19,4 @@ class SecondHandFilter extends AbstractFilter
         public ?int $page = null,
     ) {
     }
-
-    public function setDefaultState(): void
-    {
-        $this->state = SecondHandStateEnum::DRAFT;
-    }
 }

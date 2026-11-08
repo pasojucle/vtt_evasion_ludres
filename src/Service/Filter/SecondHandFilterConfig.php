@@ -45,14 +45,12 @@ class SecondHandFilterConfig implements FilterConfigInterface
                 name: 'state',
                 type: EnumType::class,
                 options:  [
-                'label' => false,
-                'placeholder' => 'Tous',
-                'class' => SecondHandStateEnum::class,
-                'attr' => [
-                    'data-action' => 'change->filter#submit'
+                    'label' => false,
+                    'class' => SecondHandStateEnum::class,
+                    'attr' => [
+                        'data-action' => 'change->filter#submit'
+                    ],
                 ],
-                'required' => false,
-            ]
             )
         ];
     }

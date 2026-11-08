@@ -12,7 +12,7 @@ class Message
 {
     #[ORM\Id]
     #[ORM\Column(length: 100)]
-    private string $id;
+    private ?string $id = null;
 
     #[ORM\Column(length: 150)]
     private string $label = '';
@@ -20,8 +20,8 @@ class Message
     #[ORM\Column(type: Types::TEXT)]
     private string $content = '';
 
-    #[ORM\Column(nullable: true)]
-    private ?LevelType $levelType = null;
+    #[ORM\Column(length: 255, enumType: LevelType::class, options: ['default' => LevelType::NONE->value])]
+    private ?LevelType $levelType = LevelType::NONE;
 
     #[ORM\ManyToOne]
     private ?Section $section = null;
@@ -70,12 +70,12 @@ class Message
         return $this;
     }
 
-    public function getLevelType(): ?LevelType
+    public function getLevelType(): LevelType
     {
         return $this->levelType;
     }
 
-    public function setLevelType(?LevelType $levelType): static
+    public function setLevelType(LevelType $levelType): static
     {
         $this->levelType = $levelType;
 

@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\LevelType;
 use App\Entity\Message;
 use App\Entity\Section;
+use App\Repository\Interface\MessageRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -20,11 +22,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Message[]    findAll()
  * @method Message[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MessageRepository extends ServiceEntityRepository
+class MessageRepository extends ServiceEntityRepository implements MessageRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Message::class);
+    }
+
+    public function save(Message $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Message $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function findMessageQuery(?Section $section): QueryBuilder
@@ -85,5 +105,44 @@ class MessageRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException $e) {
             return null;
         }
+    }
+
+    public function getMessageQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('me');
+    }
+
+    public function filterSection(QueryBuilder $qb, Section $section): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('me.section', ':section')
+            )
+            ->setParameter('section', $section);
+    }
+
+    public function filterLevelType(QueryBuilder $qb, LevelType $levelType): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('me.levelType', ':levelType')
+            )
+            ->setParameter('levelType', $levelType);
+    }
+
+    public function filterLabel(QueryBuilder $qb, string $label): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->like('me.label', ':label')
+            )
+            ->setParameter('label', '%' . $label . '%');
+    }
+
+    public function filterSort(QueryBuilder $qb, string $sort): void
+    {
+        $direction = strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC';
+        $qb
+            ->orderBy('me.label', $direction);
     }
 }

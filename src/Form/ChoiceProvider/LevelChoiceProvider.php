@@ -21,7 +21,9 @@ class LevelChoiceProvider
         $choices = [];
 
         foreach (LevelType::cases() as $levelType) {
-            $choices[$levelType->trans($this->translator)] = [$this->getLabelGroup($levelType) => $levelType->value];
+            if (LevelType::NONE !== $levelType) {
+                $choices[$levelType->trans($this->translator)] = [$this->getLabelGroup($levelType) => $levelType->value];
+            }
         }
 
         foreach ($this->levelRepository->findAll() as $level) {
@@ -37,6 +39,7 @@ class LevelChoiceProvider
             LevelType::SCHOOL => 'Toute l\'école VTT',
             LevelType::FRAME => 'Tout l\'Encadrement',
             LevelType::ADULT => 'Tout les adultes',
+            default => 'Aucun'
         };
     }
 }

@@ -90,6 +90,10 @@ class ActivityTypeListMapper
                 ], $targetUrl),
                 icon: 'lucide:message-circle-plus',
                 variant: ColorVariant::DROPDOWN,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                    new HtmlAttributeView('data-action', 'click->dropdown#close')
+                ],
             ),
         ]);
     }

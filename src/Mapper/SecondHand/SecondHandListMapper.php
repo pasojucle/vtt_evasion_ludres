@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\SecondHand;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
@@ -40,11 +41,12 @@ class SecondHandListMapper
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         SecondHandFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $route = $context->route;
+        $currentPage = $context->page;
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
@@ -126,16 +128,16 @@ class SecondHandListMapper
                     icon: 'lucide:pencil',
                     variant: ColorVariant::DROPDOWN,
                 ),
-                 new LinkView(
-                     label: 'Supprimer',
-                     url: $this->urlContextService->generateUrl('admin_second_hand_delete', ['secondHand' => $entity->getId()], $targetUrl),
-                     icon: 'lucide:delete',
-                     variant: ColorVariant::DROPDOWN,
-                     htmlAttributes: [
+                new LinkView(
+                    label: 'Supprimer',
+                    url: $this->urlContextService->generateUrl('admin_second_hand_delete', ['secondHand' => $entity->getId()], $targetUrl),
+                    icon: 'lucide:delete',
+                    variant: ColorVariant::DROPDOWN,
+                    htmlAttributes: [
                         new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
                         new HtmlAttributeView('data-action', 'click->dropdown#close'),
                     ],
-                 )
+                ),
             ]
         );
     }

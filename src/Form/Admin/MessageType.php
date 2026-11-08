@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\Enum\LevelType;
 use App\Entity\Level;
 use App\Entity\Message;
 use App\Entity\Section;
@@ -11,7 +12,7 @@ use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -22,58 +23,33 @@ class MessageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('content', TiptapType::class, [
-                'label' => 'Contenu',
-                'config_name' => 'base',
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
-            ])
-        ;
-
-        if ($options['referer']) {
-            $builder->add('referer', HiddenType::class, [
-                'data' => $options['referer'],
-                'mapped' => false,
-            ]);
-        }
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $message = $event->getData();
-            if ($options['full_mode']) {
-                $form
-                    ->add('id', TextType::class, [
-                        'label' => 'Nom (Tout en capital, sans espace)',
-                        'disabled' => $message->isProtected(),
-                        'row_attr' => [
-                            'class' => 'form-group',
-                        ],
-                    ])
-                    ->add('label', TextType::class, [
-                        'label' => 'Désignation',
-                        'row_attr' => [
-                            'class' => 'form-group',
-                        ],
-                    ])
-                    ->add('levelType', ChoiceType::class, [
-                        'label' => 'Type',
-                        'choices' => array_flip(Level::TYPES),
-                        'required' => false,
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                    ])
-                    ->add('section', EntityType::class, [
-                        'label' => 'Section',
-                        'class' => Section::class,
-                        'choice_label' => 'label',
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                    ])
-                ;
-            }
+            dump($message);
+            $form
+                ->add('id', TextType::class, [
+                    'label' => 'Nom (Tout en capital, sans espace)',
+                    'disabled' => $message->isProtected(),
+                ])
+                ->add('label', TextType::class, [
+                    'label' => 'Désignation',
+                ])
+                ->add('content', TiptapType::class, [
+                    'label' => 'Contenu',
+                    'config_name' => 'base',
+                ])
+                ->add('levelType', EnumType::class, [
+                    'label' => 'Type de niveau',
+                    'class' => LevelType::class,
+                    'required' => false,
+                ])
+                ->add('section', EntityType::class, [
+                    'label' => 'Section',
+                    'class' => Section::class,
+                    'choice_label' => 'label',
+                ])
+            ;
         });
     }
 
@@ -81,9 +57,6 @@ class MessageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Message::class,
-            'full_mode' => false,
-            'referer' => null,
-            'attr' => ['data-action' => 'turbo:submit-end->sheet#handleFormSubmit'],
         ]);
     }
 }

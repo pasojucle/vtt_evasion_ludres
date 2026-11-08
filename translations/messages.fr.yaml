@@ -150,6 +150,7 @@ level:
     adult: Adulte
     frame: Encradrement
     awaiting_evaluation: En attente d'évaluation
+    none: Aucun niveau
 
 link:
   position:

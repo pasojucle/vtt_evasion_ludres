@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Form\Transformer;
 
 use Doctrine\Persistence\ObjectManager;
+use ReflectionClass;
+use ReflectionNamedType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
@@ -15,11 +17,21 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class HiddenEntityTransformer implements DataTransformerInterface
 {
-    private $entityClass;
+    private ?string $identifierTypeName;
 
-    public function __construct(private ObjectManager $objectManager, $entityClass)
-    {
-        $this->entityClass = $entityClass;
+    public function __construct(
+        private ObjectManager $objectManager,
+        private string $entityClass,
+    ) {
+        $reflectionClass = new ReflectionClass($this->entityClass);
+        
+        if ($reflectionClass->hasMethod('getId')) {
+            $returnType = $reflectionClass->getMethod('getId')->getReturnType();
+            
+            if ($returnType instanceof ReflectionNamedType) {
+                $this->identifierTypeName = $returnType->getName();
+            }
+        }
     }
 
     /**
@@ -37,7 +49,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
      *
      * @return int
      */
-    public function transform($entity): ?int
+    public function transform($entity): null|int|string
     {
         if (null === $entity) {
             return null;
@@ -61,9 +73,11 @@ class HiddenEntityTransformer implements DataTransformerInterface
             return null;
         }
 
+        $id = 'int' === $this->identifierTypeName ? (int) $identifier : (string) $identifier;
+
         $entity = $this->getObjectManager()
             ->getRepository($this->entityClass)
-            ->find((int) $identifier)
+            ->find($id)
         ;
 
         if (null === $entity) {
