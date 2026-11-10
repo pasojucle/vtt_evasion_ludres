@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Enum\AgreementKindEnum;
 use App\Entity\LicenceAgreement;
 use App\Entity\User;
+use App\Repository\Interface\LicenceAgreementRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -15,12 +16,30 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<LicenceAgreement>
  */
-class LicenceAgreementRepository extends ServiceEntityRepository
+class LicenceAgreementRepository extends ServiceEntityRepository implements LicenceAgreementRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, LicenceAgreement::class);
     }
+    public function save(LicenceAgreement $licenceAgreement, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($licenceAgreement);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(LicenceAgreement $licenceAgreement, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($licenceAgreement);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
 
     public function findOneByUserAndAggrementId(User $user, string $agreement): ?LicenceAgreement
     {

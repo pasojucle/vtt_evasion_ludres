@@ -27,7 +27,7 @@ class SecondHandCategoryType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Titre',
-                'row_attr' => ['class' => 'form-group not-last:border-border not-last:border-b not-last:pb-4'],
+                'row_attr' => ['class' => 'not-last:border-border not-last:border-b not-last:pb-4'],
             ])
             ->add('icon', ChoiceType::class, [
                 'choices' => $iconChoices,

@@ -4,40 +4,37 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
 use App\Dto\Payload\LicenceReject;
-use App\Dto\Service\MailerResult;
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\Member;
-use App\Service\LicenceService;
-use App\Service\MailerService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Licence\RejectLicence;
 
 /**
- * @implements FormRedirectProcessorInterface<LicenceReject>
+ * @implements RedirectProcessorInterface<ActionPayload>
  */
-class LicenceRejectProcessor implements FormRedirectProcessorInterface
+class LicenceRejectProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private LicenceService $licenceService,
-        private MailerService $mailerService,
+        private RejectLicence $updateLicenceState,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $licence = $entity->licence;
-        $member = $licence->getMember();
+        $targetUrl = $this->urlContextService->decodeUrl($context->encodedFallback);
 
-        $result = $this->sendMail($entity->content, $member);
-
-        $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
-
-        if ($result->success && $this->licenceService->applyTransition($licence, $tansition)) {
-            $this->entityManager->persist($licence);
-            $this->entityManager->flush();
-
+        /**
+         * @var LicenceReject $data
+         */
+        $data = $payload->data;
+        $licence = $data->licence;
+        
+        if (($this->updateLicenceState)($licence, $data->content)) {
             return new RedirectProcessorResult(
                 success: true,
                 targetUrl: $targetUrl,
@@ -51,18 +48,6 @@ class LicenceRejectProcessor implements FormRedirectProcessorInterface
             targetUrl: $targetUrl,
             messageKey: 'registration.flash.error.reject',
             flashType: 'danger',
-        );
-    }
-
-    private function sendMail(string $content, Member $member): MailerResult
-    {
-        $mainIdentity = $member->getMainIdentity();
-
-        return $this->mailerService->sendMailToMember(
-            $mainIdentity->getEmail(),
-            $mainIdentity->getFullName(),
-            'Votre inscription au club de Vtt Évasion Ludres',
-            $content,
         );
     }
 }

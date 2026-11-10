@@ -11,6 +11,7 @@ use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Member;
 use App\Entity\RegistrationStep;
 use App\Form\UserType;
+use App\Service\FileLocation\RegistrationStepFileLocation;
 use App\Service\ProjectDirService;
 use App\Service\ReplaceKeywordsService;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -25,7 +26,8 @@ class RegistrationStepDtoTransformer
         public UrlGeneratorInterface $router,
         private FormFactoryInterface $formFactory,
         private ReplaceKeywordsService $replaceKeywordsService,
-        private ProjectDirService $projectDir
+        private ProjectDirService $projectDir,
+        private RegistrationStepFileLocation $location,
     ) {
     }
 
@@ -46,7 +48,7 @@ class RegistrationStepDtoTransformer
             $filename = $registrationStep->getFilename();
             $registrationStepDto->pdfFilename = $filename;
             $registrationStepDto->pdfRelativePath = ($filename) ? $this->projectDir->dir('', 'files', $filename) : null;
-            $registrationStepDto->pdfPath = ($filename) ? $this->projectDir->path('files_directory_path', $filename) : null;
+            $registrationStepDto->pdfPath = ($filename) ? $this->location->getPath($registrationStep) : null;
             $registrationStepDto->yearlyDisplayMode = $registrationStep->getYearlyDisplayMode();
         }
 

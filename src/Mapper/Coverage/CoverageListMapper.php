@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mapper\Coverage;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\Size;
@@ -43,11 +44,12 @@ class CoverageListMapper
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         CoverageFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
+        $route = $context->route;
+        $currentPage = $context->page;
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];

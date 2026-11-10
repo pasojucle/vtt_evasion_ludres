@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Core\Handler\ActionDialogHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Entity\Member;
 use App\Form\Admin\CertificateType;

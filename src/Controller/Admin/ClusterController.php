@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Core\Handler\ActionDialogHandler;
 use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionExportHandler;
+use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\DetailHandler;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
@@ -70,7 +70,7 @@ class ClusterController extends AbstractCrudController
         ClusterCompleteProvider $provider,
         ClusterCompleteProcessor $processor,
         Cluster $cluster,
-        ActionDialogHandler $handler,
+        ActionFormHandler $handler,
     ): Response {
         return $handler->handle(
             request: $request,

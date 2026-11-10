@@ -20,12 +20,13 @@ use App\State\Licence\Provider\LicenceReadProvider;
 use App\State\Licence\Provider\LicenceReceiveProvider;
 use App\State\Licence\Provider\LicenceRegisterProvider;
 use App\State\Licence\Provider\LicenceRejectProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class LicenceController extends AbstractCrudController
+class LicenceController extends AbstractController
 {
     #[Route('/admin/licence/{user}', name: 'admin_licence_show', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'user')]
@@ -60,11 +61,12 @@ class LicenceController extends AbstractCrudController
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminDeleteLicence(
         Request $request,
-        LicenceDeleteProcessor $processor,
         LicenceDeleteProvider $provider,
-        Licence $licence
+        LicenceDeleteProcessor $processor,
+        Licence $licence,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $licence,
             $provider,
@@ -78,25 +80,27 @@ class LicenceController extends AbstractCrudController
         Request $request,
         LicenceReceiveProvider $provider,
         LicenceReceiveProcessor $processor,
-        Licence $licence
+        Licence $licence,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction($request, $licence, $provider, $processor);
+        return $handler->handle($request, $licence, $provider, $processor);
     }
 
     #[Route('/admin/inscription/reject/{licence}', name: 'admin_registration_reject', methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionReject(
         Request $request,
-        LicenceRejectProcessor $processor,
         LicenceRejectProvider $provider,
-        Licence $licence
+        LicenceRejectProcessor $processor,
+        Licence $licence,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
-            request: $request,
-            object: $provider->createContextObject($licence),
-            provider: $provider,
-            processor: $processor,
-            formClass: LicenceRejectType::class,
+        return $handler->handle(
+            $request,
+            $licence,
+            $provider,
+            $processor,
+            LicenceRejectType::class,
         );
     }
 
@@ -106,14 +110,15 @@ class LicenceController extends AbstractCrudController
         Request $request,
         LicenceRegisterProvider $provider,
         LicenceRegisterProcessor $processor,
-        Licence $licence
+        Licence $licence,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
-            request: $request,
-            object: $provider->createContextObject($licence),
-            provider: $provider,
-            processor: $processor,
-            formClass: LicenceRegisterType::class,
+        return $handler->handle(
+            $request,
+            $licence,
+            $provider,
+            $processor,
+            LicenceRegisterType::class,
         );
     }
 }

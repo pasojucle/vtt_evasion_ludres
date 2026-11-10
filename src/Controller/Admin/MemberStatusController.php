@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\DetailHandler;
 use App\Entity\Member;
 use App\Form\Admin\MemberStatusType;
 use App\State\MemberStatus\Processor\MemberStatusUpdateProcessor;
 use App\State\MemberStatus\Provider\MemberStatusReadProvider;
+use App\State\MemberStatus\Provider\MemberStatusUpdateProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,19 +22,23 @@ class MemberStatusController extends AbstractCrudController
     #[Route('/{member}', name: '_show', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]
     public function show(
+        Request $request,
         MemberStatusReadProvider $provider,
         Member $member,
+        DetailHandler $handler,
     ): Response {
-        return $this->render('member_status/admin/show.html.twig', [
-            'view' => $provider->getStreamView($member),
-        ]);
+        return $handler->handle(
+            $request,
+            $provider,
+            $member,
+        );
     }
     
     #[Route('/edit/{member}', name: '_edit', methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'member')]
     public function adminEdit(
         Request $request,
-        MemberStatusReadProvider $provider,
+        MemberStatusUpdateProvider $provider,
         MemberStatusUpdateProcessor $processor,
         Member $member,
         ActionFormHandler $handler,

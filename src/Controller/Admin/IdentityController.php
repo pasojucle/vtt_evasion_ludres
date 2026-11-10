@@ -9,13 +9,14 @@ use App\Entity\Identity;
 use App\Form\IdentityType;
 use App\State\Identity\Processor\IdentityUpdateProcessor;
 use App\State\Identity\Provider\IdentityReadProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/identite', name: 'admin_identity')]
-class IdentityController extends AbstractCrudController
+class IdentityController extends AbstractController
 {
     #[Route('/show/{identity}', name: '_show', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'identity')]

@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace App\State\Coverage\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
 use App\Entity\Licence;
-use App\State\Interface\FormRedirectProcessorInterface;
+use App\Service\UrlContextService;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CoverageValidateProcessor implements FormRedirectProcessorInterface
+class CoverageValidateProcessor implements RedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(object $entity, ?HandlerContext $context = null): RedirectProcessorResult
     {
         /** @var Licence $entity */
         $entity->setCurrentSeasonForm(true);
@@ -24,7 +27,7 @@ class CoverageValidateProcessor implements FormRedirectProcessorInterface
 
         return new RedirectProcessorResult(
             success: false,
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             messageKey: 'coverage.flash.success.valided',
             flashType: 'succes',
         );

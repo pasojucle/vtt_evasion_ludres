@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\State\Parameter\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\SheetView;
 use App\Entity\Parameter;
 use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
-use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<Parameter>
+ */
 class ParameterUpdateProvider implements FormComponentProviderInterface
 {
     public function __construct(
@@ -19,18 +22,16 @@ class ParameterUpdateProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
-        /** @var Parameter $entity */
-
         return new SheetView(
             title: 'Modifier un paramètre',
-            description: $this->replaceKeywords->replaceCurrentSaison($entity->getLabel(), $this->seasonService->getCurrentSeason()),
+            description: $this->replaceKeywords->replaceCurrentSaison($data->getLabel(), $this->seasonService->getCurrentSeason()),
             action: 'Modifier',
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [];
     }

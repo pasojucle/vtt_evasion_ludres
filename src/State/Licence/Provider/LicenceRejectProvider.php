@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
+use App\Core\Contract\Provider\DataInitializerInterface;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\DialogType;
 use App\Dto\Payload\LicenceReject;
-use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
-use App\Entity\Licence;
-use App\State\Interface\FormComponentProviderInterface;
 use App\State\Message\Provider\MessageProvider;
 
 /**
  * @implements FormComponentProviderInterface<LicenceReject>
  */
-class LicenceRejectProvider implements FormComponentProviderInterface
+class LicenceRejectProvider implements FormComponentProviderInterface, DataInitializerInterface
 {
     public function __construct(
         private MessageProvider $messageProvider,
     ) {
     }
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
-        $licence = $entity->licence;
+        $licence = $data->licence;
         return new DialogModalView(
             type: DialogType::WARNING,
             title: sprintf('Inscription de %s', $licence->getMember()->getIdentity()->getFullName()),
@@ -33,16 +33,20 @@ class LicenceRejectProvider implements FormComponentProviderInterface
         );
     }
 
-    public function createContextObject(Licence $licence): LicenceReject
+    public function initializeData(object $data): object
     {
         return new LicenceReject(
-            $licence,
-            $this->messageProvider->getMessageById('REGISTRATION_REJECT_MESSAGE', $licence->getMember())
+            $data,
+            $this->messageProvider->getMessageById('REGISTRATION_REJECT_MESSAGE', $data->getMember())
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ],
+        ];
     }
 }

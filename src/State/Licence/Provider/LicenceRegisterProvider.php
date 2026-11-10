@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Provider;
 
+use App\Core\Contract\Provider\DataInitializerInterface;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\DialogType;
 use App\Dto\Payload\LicenceRegister;
-use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
-use App\Entity\Licence;
-use App\State\Interface\FormComponentProviderInterface;
 
 /**
  * @implements FormComponentProviderInterface<LicenceRegister>
  */
-class LicenceRegisterProvider implements FormComponentProviderInterface
+class LicenceRegisterProvider implements FormComponentProviderInterface, DataInitializerInterface
 {
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
-        $licence = $entity->licence;
+        $licence = $data->licence;
         return new DialogModalView(
             type: DialogType::SUCCESS,
             title: sprintf('Inscription de %s', $licence->getMember()->getIdentity()->getFullName()),
@@ -28,24 +28,27 @@ class LicenceRegisterProvider implements FormComponentProviderInterface
         );
     }
 
-    public function createContextObject(Licence $licence): LicenceRegister
+    public function initializeData(object $data): object
     {
-        $member = $licence->getMember();
+        $member = $data->getMember();
 
         return new LicenceRegister(
-            $licence,
+            $data,
             $member->getLicenceNumber(),
             $member->getHealth()->getMedicalCertificateDate()
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        $licence = $entity->licence;
+        $licence = $data->licence;
         $member = $licence->getMember();
 
         return [
             'disabled_licence_number' => count($member->getLicences()) > 1 || !$licence->getState()->isYearly(),
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ]
         ];
     }
 }

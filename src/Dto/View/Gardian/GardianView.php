@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Dto\View\Gardian;
 
+use App\Core\Contract\View\ComponentViewInterface;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\BadgeView;
 use App\Dto\View\EmailView;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 
-readonly class GardianView implements TurboStreamViewInterface
+readonly class GardianView implements TurboStreamViewInterface, ComponentViewInterface
 {
     /**
      * @param PhoneView[] $phones
@@ -30,5 +31,15 @@ readonly class GardianView implements TurboStreamViewInterface
     public function getStreamTemplate(): string
     {
         return 'gardian/admin/update.lazy.html.twig';
+    }
+
+    public function getName(): string
+    {
+        return 'view';
+    }
+
+    public function getTemplate(): string
+    {
+        return 'gardian/admin/show.html.twig';
     }
 }

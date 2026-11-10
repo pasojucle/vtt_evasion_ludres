@@ -8,7 +8,7 @@ use App\Entity\Licence;
 
 interface LicenceRepositoryInterface
 {
-    public function save(Licence $session, bool $flush = true): void;
+    public function save(Licence $licence, bool $flush = true): void;
 
-    public function remove(Licence $session, bool $flush = true): void;
+    public function remove(Licence $licence, bool $flush = true): void;
 }

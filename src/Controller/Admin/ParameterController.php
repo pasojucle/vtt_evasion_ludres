@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\View\SheetView;
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\Parameter;
 use App\Entity\Section;
 use App\Form\ParameterGroupType;
 use App\Form\ParameterType;
-use App\Repository\ParameterRepository;
 use App\Repository\SectionRepository;
 use App\State\Parameter\Processor\ParameterUpdateProcessor;
 use App\State\Parameter\Provider\ParameterUpdateProvider;
@@ -52,9 +51,10 @@ class ParameterController extends AbstractCrudController
         Request $request,
         ParameterUpdateProvider $provider,
         ParameterUpdateProcessor $processor,
-        Parameter $parameter
+        Parameter $parameter,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $parameter,
             $provider,

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Dto\View\MemberStatus;
 
+use App\Core\Contract\View\ComponentViewInterface;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\BadgeView;
 use App\Dto\View\LinkView;
 
-readonly class MemberStatusView implements TurboStreamViewInterface
+readonly class MemberStatusView implements TurboStreamViewInterface, ComponentViewInterface
 {
     /**
      * @param BadgeView[] $permissions
@@ -24,5 +25,15 @@ readonly class MemberStatusView implements TurboStreamViewInterface
     public function getStreamTemplate(): string
     {
         return 'member_status/admin/update.lazy.html.twig';
+    }
+    
+    public function getName(): string
+    {
+        return 'view';
+    }
+
+    public function getTemplate(): string
+    {
+        return 'member_status/admin/show.html.twig';
     }
 }

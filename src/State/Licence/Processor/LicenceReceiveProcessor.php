@@ -4,26 +4,34 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
 use App\Entity\Licence;
-use App\Service\LicenceService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Licence\ReceiveLicence;
+use App\UseCase\v2\Licence\RejectLicence;
 
-class LicenceReceiveProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class LicenceReceiveProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private LicenceService $licenceService,
+        private ReceiveLicence $receiveLicence,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        /** @var Licence $entity */
-        $tansition = ($entity->getState()->isYearly()) ? 'receive_yearly_file' : 'receive_trial_file';
-        if ($this->licenceService->applyTransition($entity, $tansition)) {
-            $this->entityManager->flush();
+        $targetUrl = $this->urlContextService->decodeUrl($context->encodedFallback);
+
+        /** @var Licence $licence */
+        $licence = $payload->data;
+        if (($this->receiveLicence)($licence)) {
             return new RedirectProcessorResult(
                 success: true,
                 targetUrl: $targetUrl,

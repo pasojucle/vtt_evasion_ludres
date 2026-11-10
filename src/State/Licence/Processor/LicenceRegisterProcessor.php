@@ -4,39 +4,50 @@ declare(strict_types=1);
 
 namespace App\State\Licence\Processor;
 
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
 use App\Dto\Payload\LicenceRegister;
 use App\Dto\Service\MailerResult;
-use App\Dto\State\RedirectProcessorResult;
 use App\Entity\Member;
 use App\Service\LicenceService;
 use App\Service\MailerService;
-use App\State\Interface\FormRedirectProcessorInterface;
+use App\Service\UrlContextService;
 use App\State\Message\Provider\MessageProvider;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @implements FormRedirectProcessorInterface<LicenceRegister>
+ * @implements RedirectProcessorInterface<ActionPayload>
  */
-class LicenceRegisterProcessor implements FormRedirectProcessorInterface
+class LicenceRegisterProcessor implements RedirectProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LicenceService $licenceService,
         private MailerService $mailerService,
         private MessageProvider $messageProvider,
+        private UrlContextService $urlContextService
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $licence = $entity->licence;
+        $targetUrl = $this->urlContextService->decodeUrl($context->encodedFallback);
+
+        /**
+         * @var LicenceRegister $data
+         */
+        $data = $payload->data;
+        $licence = $data->licence;
         
         $member = $licence->getMember();
         $licenceNumber = $member->getLicenceNumber();
         $this->licenceService->applyTransition($licence, 'register_to_federation');
         $this->entityManager->persist($licence);
-        $this->setLicenceNumber($entity, $member);
-        $this->setMedicalCertificateDate($entity, $member);
+        $this->setLicenceNumber($data, $member);
+        $this->setMedicalCertificateDate($data, $member);
 
         $this->entityManager->flush();
 

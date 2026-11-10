@@ -16,13 +16,14 @@ use App\State\ActivityType\Provider\ActivityRestoreProvider;
 use App\State\ActivityType\Provider\ActivityTypeDeleteProvider;
 use App\State\ActivityType\Provider\ActivityTypeListProvider;
 use App\State\ActivityType\Provider\ActivityTypeUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/types-rando/', name: 'admin_bike_ride_type_', methods: ['GET'])]
-class BikeRideTypeController extends AbstractCrudController
+class BikeRideTypeController extends AbstractController
 {
     #[Route('liste', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]

@@ -106,8 +106,7 @@ class AgreementRepository extends ServiceEntityRepository implements AgreementRe
 
     private function addEnabledCriteria(Andx &$andX, array &$parameters): void
     {
-        $andX->add((new Expr())->eq('a.enabled', ':enabled'));
-        $parameters[] = new Parameter('enabled', true);
+        $andX->add((new Expr())->isNull('a.disabledAt'));
     }
 
     public function findAllOrdered(): array

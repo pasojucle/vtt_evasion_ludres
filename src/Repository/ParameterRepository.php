@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Parameter;
+use App\Repository\Interface\ParameterRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
@@ -16,11 +17,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Parameter[]    findAll()
  * @method Parameter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ParameterRepository extends ServiceEntityRepository
+class ParameterRepository extends ServiceEntityRepository implements ParameterRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Parameter::class);
+    }
+
+    public function save(Parameter $parameter, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($parameter);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Parameter $parameter, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($parameter);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function findOneById(string $id): ?Parameter

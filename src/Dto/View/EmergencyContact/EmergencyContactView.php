@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Dto\View\EmergencyContact;
 
+use App\Core\Contract\View\ComponentViewInterface;
 use App\Core\Contract\View\TurboStreamViewInterface;
 use App\Dto\View\LinkView;
 use App\Dto\View\PhoneView;
 
-readonly class EmergencyContactView implements TurboStreamViewInterface
+readonly class EmergencyContactView implements TurboStreamViewInterface, ComponentViewInterface
 {
     public function __construct(
         public int $id,
@@ -21,5 +22,15 @@ readonly class EmergencyContactView implements TurboStreamViewInterface
     public function getStreamTemplate(): string
     {
         return 'emergency_contact/admin/update.lazy.html.twig';
+    }
+
+    public function getName(): string
+    {
+        return 'view';
+    }
+
+    public function getTemplate(): string
+    {
+        return 'emergency_contact/admin/show.html.twig';
     }
 }

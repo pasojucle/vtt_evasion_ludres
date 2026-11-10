@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Core\Handler\ActionDialogHandler;
 use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\ActionJsonHandler;
@@ -82,7 +81,7 @@ class BoardRoleController extends AbstractController
         BoardRoleDeleteProvider $provider,
         BoardRoleDeleteProcessor $processor,
         BoardRole $boardRole,
-        ActionDialogHandler $handler,
+        ActionFormHandler $handler,
     ): Response {
         return $handler->handle(
             $request,

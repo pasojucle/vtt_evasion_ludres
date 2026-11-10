@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
 use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\LicenceCoverageEnum;
 use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Licence;
@@ -54,9 +55,9 @@ class PdfService
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
         $coverage = [
-            Licence::COVERAGE_MINI_GEAR => 55.5,
-            Licence::COVERAGE_SMALL_GEAR => 80,
-            Licence::COVERAGE_HIGH_GEAR => 106,
+            LicenceCoverageEnum::MINI_GEAR->value => 55.5,
+            LicenceCoverageEnum::SMALL_GEAR->value => 80,
+            LicenceCoverageEnum::HIGH_GEAR->value => 106,
         ];
         
         $createdAt = ($userDto->lastLicence->isYearly) ? $userDto->lastLicence->createdAt : $userDto->lastLicence->testingAt;

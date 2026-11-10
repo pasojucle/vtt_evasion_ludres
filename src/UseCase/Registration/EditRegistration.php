@@ -126,7 +126,7 @@ class EditRegistration
         $subject = 'Votre inscription sur le site VTT Evasion Ludres';
         $attachements = $this->getRegistrationFile->execute($member);
 
-        $this->mailerService->sendMailToMember($$mainIdentity->getEmail(), $mainIdentity->getFullName(), $subject, $content, $attachements);
+        $this->mailerService->sendMailToMember($mainIdentity->getEmail(), $mainIdentity->getFullName(), $subject, $content, $attachements);
     }
 
     private function UploadFile(Request $request, Member $member): void

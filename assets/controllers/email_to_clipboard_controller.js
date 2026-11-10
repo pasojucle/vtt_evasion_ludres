@@ -5,13 +5,14 @@ export default class extends Controller {
         url: String,
     }
 
-    emailToClipboard = (event) => {
+    emailToClipboard = async(event) => {
         event.preventDefault();
         const url = this.urlValue;
-        fetch(url)
-        .then ((response) => response.json())
-        .then((data) => {
-            navigator.clipboard.writeText(data);
-        });
+        const response = await fetch(url);
+
+        const json = await response.json();
+        if (json.emails) {
+            navigator.clipboard.writeText(json.emails);
+        }
     }
 }
