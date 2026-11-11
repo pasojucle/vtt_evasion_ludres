@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\State\Notification\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Enum\NotificationVisibility;
 use App\Dto\Enum\PublishStatus;
@@ -14,7 +16,6 @@ use App\Dto\View\ListView;
 use App\Mapper\Notification\NotificationAdminListMapper;
 use App\Repository\NotificationRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
 use Doctrine\ORM\QueryBuilder;
 
 class NotificationAdminListProvider implements ListProviderInterface
@@ -27,19 +28,18 @@ class NotificationAdminListProvider implements ListProviderInterface
         private NotificationAdminListMapper $mapper,
     ) {
     }
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, HandlerContext $context): ListView
     {
         /** @var NotificationFilter $filter */
         $entities = $this->paginator->paginate(
             $this->getQueryBuilder($filter),
-            $currentPage,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(
             $entities,
-            $route,
-            $currentPage,
+            $context,
             $filter,
             $filterConfig
         );

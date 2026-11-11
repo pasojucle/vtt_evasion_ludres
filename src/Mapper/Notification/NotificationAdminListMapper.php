@@ -5,72 +5,50 @@ declare(strict_types=1);
 namespace App\Mapper\Notification;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
-use App\Core\Contract\View\ListActionViewInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\NotificationFilter;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemUrlView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
-use App\Dto\View\ToggleStatusView;
 use App\Entity\Notification;
 use App\Mapper\FilterChipsMapper;
-use App\Mapper\Notification\NotificationStatusMapper;
 use App\Mapper\PaginatorMapper;
-use App\Service\CsrfTokenService;
+use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class NotificationAdminListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private UrlContextService $urlContextService,
         private PaginatorMapper $paginatorMapper,
-        private NotificationStatusMapper $notificationStatusMapper,
         private FilterChipsMapper $filterChipsMapper,
-        private CsrfTokenService $csrfTokenService,
-        private CsrfTokenManagerInterface $csrfTokenManager,
+        private NotificationMapper $notificationMapper,
     ) {
     }
 
-    public function mapToView(Paginator $entities, string $route, int $currentPage, NotificationFilter $filter, FilterConfigInterface $filterConfig): ListView
+    public function mapToView(Paginator $entities, HandlerContext $context, NotificationFilter $filter, FilterConfigInterface $filterConfig): ListView
     {
-        $items = [];
-        /** @var Notification $entity */
-        foreach ($entities as $entity) {
-            $tokenId = $this->csrfTokenService->getTokenId($entity);
-            $tokenValue = $this->csrfTokenManager->getToken($tokenId)->getValue();
-
-            $items[] = new ListItemView(
-                id: sprintf('notification-item-%s', $entity->getId()),
-                labels: [
-                    new LabelView($entity->getTitle()),
-                    new LabelView(sprintf('Du %s au %s', $entity->getStartAt()->format('d/m/y'), $entity->getEndAt()->format('d/m/y'))),
-                ],
-                status: $this->notificationStatusMapper->mapToView($entity, $tokenId),
-                action: $this->getAction($entity, $tokenValue),
-                url: new ListItemUrlView($this->urlGenerator->generate("admin_order", ['orderHeader' => $entity->getId()])),
-                gridTemplateRow: 'grid-cols-[1fr_50px]',
-                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[3fr_1fr]',
-                gridTemplateBadges: 'grid-cols-[fr_70px]',
-                gridTemplateLabels: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
-            );
-        }
+        $route = $context->route;
+        $currentPage = $context->page;
+        $targetUrl = $this->urlContextService->encodeUrl($route, $filter->toQueryParams($currentPage));
 
         return new ListView(
             name: 'notifications',
             title: 'Notification Pop\'up',
             description: 'Administration des messages affichés dans les pop\'up.',
-            items: $items,
+            items: array_map(fn (Notification $notification) => $this->notificationMapper->mapToView($notification, $targetUrl), iterator_to_array($entities)),
             addItem: new LinkView(
                 label: 'Ajouter une pop\'up',
-                url: $this->urlGenerator->generate('admin_notification_add'),
+                url: $this->urlContextService->generateUrl('admin_notification_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
+                htmlAttributes: [
+                    new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
+                ],
             ),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -83,15 +61,6 @@ class NotificationAdminListMapper
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-        );
-    }
-
-    private function getAction(Notification $entity, string $csrfToken): ListActionViewInterface
-    {
-        return new ToggleStatusView(
-            url: $this->urlGenerator->generate('admin_notification_toggle', ['notification' => $entity->getId()]),
-            csrfToken: $csrfToken,
-            isActive: !$entity->isDisabled(),
         );
     }
 }

@@ -7,9 +7,8 @@ use App\Form\Type\TiptapType;
 use App\Validator\Period;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -21,41 +20,24 @@ class NotificationType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'full',
                 'required' => false,
             ])
-            ->add('startAt', DateTimeType::class, [
+            ->add('startAt', DateType::class, [
                 'input' => 'datetime_immutable',
                 'label' => 'Date de départ',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
                 'attr' => [
-                    'class' => 'js-datepicker',
                     'autocomplete' => 'off',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
                 ],
             ])
-            ->add('endAt', DateTimeType::class, [
+            ->add('endAt', DateType::class, [
                 'input' => 'datetime_immutable',
                 'label' => 'Date de fin',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
                 'attr' => [
-                    'class' => 'js-datepicker',
                     'autocomplete' => 'off',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
                 ],
                 'constraints' => [new Period()],
             ])
@@ -66,9 +48,6 @@ class NotificationType extends AbstractType
                     'max' => 90,
                 ],
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('maxAge', IntegerType::class, [
                 'label' => 'Age maximum (optionnel)',
@@ -77,9 +56,6 @@ class NotificationType extends AbstractType
                     'max' => 90,
                 ],
                 'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
             ])
             ->add('public', CheckboxType::class, [
                 'block_prefix' => 'switch',
@@ -88,12 +64,6 @@ class NotificationType extends AbstractType
                     'data-switch-off' => 'Afficher uniquement aux utilisateurs connectés',
                 ],
                 'required' => false,
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
             ])
         ;
     }

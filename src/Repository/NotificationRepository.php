@@ -2,12 +2,10 @@
 
 namespace App\Repository;
 
-use App\Dto\Enum\PublishStatus;
-use App\Dto\UserDto;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\Notification;
-use App\Entity\User;
+use App\Repository\Interface\NotificationRepositoryInterface;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,13 +20,31 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Notification[]    findAll()
  * @method Notification[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NotificationRepository extends ServiceEntityRepository
+class NotificationRepository extends ServiceEntityRepository implements NotificationRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Notification::class);
     }
 
+    public function save(Notification $notification, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($notification);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Notification $notification, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($notification);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+    
     /**
      * @return Notification[] Returns an array of FlashInfo objects
      */

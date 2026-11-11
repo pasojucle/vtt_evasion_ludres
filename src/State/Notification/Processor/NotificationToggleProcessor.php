@@ -4,55 +4,51 @@ declare(strict_types=1);
 
 namespace App\State\Notification\Processor;
 
-use App\Dto\Payload\NotificationToggleDto;
-use App\Dto\State\ComponentProcessorResult;
-use App\Mapper\Notification\NotificationStatusMapper;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\TurboStreamProcessorInterface;
+use App\Core\Dto\ActionDirectPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\TurboStreamProcessorResult;
 use App\Service\CsrfTokenService;
-use App\Service\DisableService;
-use App\State\Interface\ComponentProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\UseCase\v2\Notification\ToggleNotification;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class NotificationToggleProcessor implements ComponentProcessorInterface
+/**
+ * @implements TurboStreamProcessorInterface<ActionDirectPayload>
+ */
+class NotificationToggleProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private CsrfTokenManagerInterface $csrfTokenManager,
         private CsrfTokenService $csrfTokenService,
-        private DisableService $disableService,
-        private NotificationStatusMapper $notificationStatusMapper,
+        private ToggleNotification $toggleNotification,
     ) {
     }
     
-    /**
-     * @implements ComponentProcessorInterface<NotificationToggleDto>
-     */
-    public function process(object $entity): ComponentProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
-        $tokenId = $this->csrfTokenService->getTokenId($entity->notification);
-        $csrfToken = new CsrfToken($tokenId, $entity->token);
+        $notification = $payload->data;
+        $tokenId = $this->csrfTokenService->getTokenId($notification);
+        $csrfToken = new CsrfToken($tokenId, $payload->token);
 
         if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
-            new ComponentProcessorResult(
+            new TurboStreamProcessorResult(
                 success: false,
                 messageKey: 'Jeton CSRF invalide.',
                 flashType: 'danger',
             );
         }
 
-        $notification = $entity->notification;
-        $this->disableService->toggle($notification);
+        ($this->toggleNotification)($notification);
 
-        $this->entityManager->flush();
-
-        return new ComponentProcessorResult(
+        return new TurboStreamProcessorResult(
             success: true,
             messageKey: $notification->isDisabled()
                 ? 'notification.flash.success.disabled'
                 : 'notification.flash.success.enabled',
             flashType: 'success',
-            component: $this->notificationStatusMapper->mapToView($notification, $tokenId)
+            data: $notification,
         );
     }
 }
