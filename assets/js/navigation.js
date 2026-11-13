@@ -1,5 +1,5 @@
-import { hideNotifications } from './notification.js';
-import { disableScroll, enableScroll } from './toggleScroll.js';
+// import { hideNotifications } from './notification.js';
+// import { disableScroll, enableScroll } from './toggleScroll.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.nav-bar .btn').forEach((element) => {

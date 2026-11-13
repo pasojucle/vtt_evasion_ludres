@@ -1,6 +1,6 @@
-import { initModal, buildContent, closeModal } from './modal.js';
-import { disableScroll, enableScroll } from './toggleScroll.js';
-import { hideNav} from './navigation.js';
+// import { initModal, buildContent, closeModal } from './modal.js';
+// import { disableScroll, enableScroll } from './toggleScroll.js';
+// import { hideNav} from './navigation.js';
 
 // document.addEventListener('DOMContentLoaded', () => {
 //     modalBuilded().then(() => {
@@ -61,7 +61,7 @@ const setNavigationsTop = () => {
     let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
     if (1024 < vw) {
         const nav = document.querySelector('nav');
-        document.querySelector('div.dropdown-notifications').style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
+        // document.querySelector('div.dropdown-notifications').style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
     }
 }
 
