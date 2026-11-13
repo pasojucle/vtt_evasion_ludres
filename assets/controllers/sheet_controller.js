@@ -80,7 +80,8 @@ export default class extends Controller {
         this.releaseScroll();
         setTimeout(() => {
             this.dialogTarget.close();
-            this.frameTarget.src = "";
+            // this.frameTarget.src = "";
+            this.frameTarget.removeAttribute('src');
             this.frameTarget.innerHTML = "";
         }, 500);
     }
@@ -102,7 +103,7 @@ export default class extends Controller {
     }
 
     handleFormSubmit(event) {
-        console.log("handleFormSubmit");
+        console.log("handleFormSubmit", event.detail.success);
         if (event.detail.success) {
             this.close();
         } else {

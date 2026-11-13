@@ -10,6 +10,7 @@ use App\Entity\Interface\SoftDeletableInterface;
 use App\Entity\Interface\UploadableInterface;
 use App\Entity\Trait\DisableableTrait;
 use App\Entity\Trait\SoftDeletableTrait;
+use App\Model\SellingPrice;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -184,7 +185,26 @@ class Product implements UploadableInterface, SoftDeletableInterface, Disableabl
 
     public function getDiscountPrice(): ?float
     {
-        return $this->discountPrice;
+        return $this->discountPrice;     
+    }
+
+    public function getSellingPrice(?User $user): SellingPrice
+    {
+        if (!$user instanceof Member) {
+            return new SellingPrice($this->price);
+        }
+
+        $isSchoolCategory = LicenceCategoryEnum::SCHOOL === $this->getCategory();
+        $hasLastLicenceSchool = LicenceCategoryEnum::SCHOOL === $user->getLastLicence()?->getCategory();
+        if ($isSchoolCategory && $hasLastLicenceSchool) {
+            return new SellingPrice(
+                amount: $this->discountPrice,
+                reason: $this->getDiscountTitle(),
+                basePrice: $this->price,
+            );
+        }
+
+        return new SellingPrice($this->price);
     }
 
     public function setDiscountPrice(?float $discountPrice): self

@@ -1,34 +1,43 @@
 {% block ballot_radio_widget %}
+    {% set color_classes = {
+        (enum('App\\Dto\\Enum\\ColorVariant').SUCCESS.value): 'has-checked:border-success has-checked:bg-success/10',
+        (enum('App\\Dto\\Enum\\ColorVariant').WARNING.value): 'has-checked:border-warning has-checked:bg-warning/10',
+        (enum('App\\Dto\\Enum\\ColorVariant').DESTRUCTIVE.value): 'has-checked:border-destructive has-checked:bg-destructive/10',
+        (enum('App\\Dto\\Enum\\ColorVariant').ACCENT.value): 'has-checked:border-accent has-checked:bg-accent/10',
+        (enum('App\\Dto\\Enum\\ColorVariant').DEFAULT.value): 'has-checked:border-slate-600 has-checked:bg-slate-100',
+    } %}
+    {% set icon_color_classes = {
+        (enum('App\\Dto\\Enum\\ColorVariant').SUCCESS.value): 'group-has-checked:border-success group-has-checked:bg-success',
+        (enum('App\\Dto\\Enum\\ColorVariant').WARNING.value): 'group-has-checked:border-warning group-has-checked:bg-warning',
+        (enum('App\\Dto\\Enum\\ColorVariant').DESTRUCTIVE.value): 'group-has-checked:border-destructive group-has-checked:bg-destructive',
+        (enum('App\\Dto\\Enum\\ColorVariant').ACCENT.value): 'group-has-checked:border-accent group-has-checked:bg-accent',
+        (enum('App\\Dto\\Enum\\ColorVariant').DEFAULT.value): 'group-has-checked:border-slate-600 group-has-checked:bg-slate-600',
+    } %}
+
     <div class="flex flex-col gap-2">
         {% for child in form %}
             <label for="{{ child.vars.id }}" 
                    class="group relative flex items-center justify-between p-2 bg-white border-2 border-gray-200 rounded-xl cursor-pointer select-none transition-all duration-200
-                          hover:border-slate-300 hover:bg-gray-50/60
-                          has-checked:border-slate-600 has-checked:bg-slate-50/50 has-checked:shadow-sm
-                          has-focus-visible:ring-2 has-focus-visible:ring-slate-500 has-focus-visible:ring-offset-2">
+                      hover:border-slate-300 hover:bg-gray-50/60
+                        {{ color_classes[child.vars.attr['data-variant'] ?? 'default'] }} has-checked:shadow-sm
+                        has-focus-visible:ring-2 has-focus-visible:ring-slate-500 has-focus-visible:ring-offset-2">
                 
+                {% set existingAttr = child.vars.attr %}
+                {% set mergedClass = (existingAttr.class ?? '') ~ ' sr-only' %}
                 {{ form_widget(child, {
-                    'attr': {
-                        'class': 'sr-only'
-                    }
+                    'attr': existingAttr|merge({
+                        'class': mergedClass,
+                    })
                 }) }}
 
                 <span class="text-base font-semibold text-gray-700 transition-colors group-has-checked:text-slate-950">
                     {{ child.vars.label|trans }}
                 </span>
 
+                {% set icon = child.vars.attr['data-icon'] ?? 'lucide:check'%}
                 <div class="flex items-center justify-center w-6 h-6 border-2 border-gray-300 rounded-full transition-all duration-200
-                            group-has-checked:border-slate-600 group-has-checked:bg-slate-600">
-                    <svg class="w-3.5 h-3.5 text-white opacity-0 transition-opacity duration-200 group-has-checked:opacity-100" 
-                         xmlns="http://www.w3.org/2000/svg" 
-                         viewBox="0 0 24 24" 
-                         fill="none" 
-                         stroke="currentColor" 
-                         stroke-width="3" 
-                         stroke-linecap="round" 
-                         stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
+                        {{ icon_color_classes[child.vars.attr['data-variant'] ?? 'default'] }}">
+                    {{ ux_icon(icon, {class: 'size-4 text-white'}) }}
                 </div>
             </label>
         {% endfor %}

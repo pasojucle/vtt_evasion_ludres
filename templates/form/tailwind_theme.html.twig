@@ -54,3 +54,26 @@
     {% endif %}
     {{ parent() }}
 {% endblock %}
+
+{% block submit_row %}
+    {% set color_classes = {
+        (enum('App\\Dto\\Enum\\ColorVariant').SUCCESS.value): 'bg-success lg:bg-success/80 lg:hover:bg-success disabled:bg-success/20',
+        (enum('App\\Dto\\Enum\\ColorVariant').WARNING.value): 'bg-warning lg:bg-warning/80 lg:hover:bg-warning disabled:bg-warning/20',
+        (enum('App\\Dto\\Enum\\ColorVariant').DESTRUCTIVE.value): 'bg-destructive lg:bg-destructive/80 lg:hover:bg-destructive disabled:bg-destructive/20',
+        (enum('App\\Dto\\Enum\\ColorVariant').DEFAULT.value): 'bg-accent lg:bg-accent/80 lg:hover:bg-accent disabled:bg-muted/50',
+    } %}
+    
+    <button 
+        id="{{ form.vars.name }}"
+        name="{{ form.vars.full_name }}"
+        {% if form.vars.disabled %}disabled{% endif %}
+        type="submit"
+        class="p-2 flex justify-center text-white disabled:cursor-not-allowed {{ color_classes[form.vars.attr['data-variant'] ?? 'default'] }}"
+    >
+        <div class="flex items-center gap-2">
+            {% set icon = form.vars.attr['data-icon'] ?? 'lucide:check' %}
+            <div>{{ ux_icon(icon, {class: 'size-6'})}}</div>
+            <div>{{ form.vars.label }}</div>
+        </div>
+    </button>  
+{% endblock %}

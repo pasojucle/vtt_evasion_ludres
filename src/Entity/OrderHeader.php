@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\OrderLineStateEnum;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Repository\OrderHeaderRepository;
 use DateTimeInterface;
@@ -116,5 +117,17 @@ class OrderHeader
         $this->comments = $comments;
 
         return $this;
+    }
+
+    public function getAmount(): float
+    {
+        $amount = 0;
+        foreach ($this->orderLines as $line) {
+            if (OrderLineStateEnum::UNAVAILABLE !== $line->getState()) {
+                $amount += $line->getAmount();
+            }
+        }
+
+        return $amount;
     }
 }

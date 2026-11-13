@@ -97,4 +97,11 @@ class OrderLine
 
         return $this;
     }
+
+    public function getAmount(): float
+    {
+        $user = $this->getOrderHeader()->getMember();
+
+        return $this->quantity * $this->product->getSellingPrice($user)->amount;
+    }
 }

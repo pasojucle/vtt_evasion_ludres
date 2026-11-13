@@ -16,6 +16,7 @@ use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\RedirectProcessorResult;
 use App\Core\Dto\TurboStreamProcessorResult;
+use Symfony\Component\Form\ClearableErrorsInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -61,26 +62,27 @@ readonly class ActionFormHandler
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($request->headers->has('X-Form-Filter') || $request->isXmlHttpRequest()) {
+                if ($form instanceof ClearableErrorsInterface) {
+                    $form->clearErrors(true);
+                }
+                
                 return new Response($this->renderView($provider->getView($formData, $context), $form));
             }
 
             if ($form->isValid()) {
                 $result = $processor->process(
-                    new ActionPayload(
-                        $formData,
-                        $request->files->get($form->getName(), [])
-                    ),
+                    ActionPayload::create($form, $request),
                     $context,
                 );
                 if ($result instanceof RedirectProcessorResult) {
                     $this->addFlash($result->flashType, $result->messageKey);
-                
+                    dump('redirect');
                     return new RedirectResponse($result->targetUrl, Response::HTTP_SEE_OTHER);
                 }
                 if ($result instanceof TurboStreamProcessorResult && $provider instanceof TurboStreamProviderInterface) {
                     $flash = $result->messageKey ? new FlashMessage($result->flashType, $result->messageKey) : null;
                     $streamView = $provider->getStreamView($result->data, $flash, $context);
-
+                    dump('stream');
                     return new Response(
                         $this->twig->render($streamView->getStreamTemplate(), [
                             'view' => $streamView,

@@ -22,7 +22,7 @@ class OrderLineType extends AbstractType
         if (OrderStatusEnum::ORDERED === $options['order_status']) {
             $attrClass = [
                 'data-action' => 'change->form-modifier#change',
-                'data-container-id' => 'order-detail'
+                'data-container-id' => sprintF('order-update-%s', $options['order_id']),
             ];
 
             $builder
@@ -35,18 +35,17 @@ class OrderLineType extends AbstractType
                     'choice_label' => 'name',
                     'expanded' => false,
                     'multiple' => false,
-                    'row_attr' => [
-                        'class' => 'form-group-inline form-group-small',
-                    ],
                 ])
                 ->add('state', EnumType::class, [
                     'label' => false,
                     'class' => OrderLineStateEnum::class,
                     'expanded' => true,
-                    'block_prefix' => 'btn_radio',
+                    'block_prefix' => 'ballot_radio',
                     'choice_attr' => function ($choice, string $key, mixed $value) use ($attrClass) {
-                        $appearance = $choice->getAppearance();
-                        return array_merge($attrClass, ['data-color' => $appearance['class'], 'data-icon' => $appearance['icon'], ]);
+                        return array_merge($attrClass, [
+                            'data-variant' => $choice->variant()->value, 
+                            'data-icon' => $choice->icon(), 
+                        ]);
                     }
                 ]);
         }
@@ -56,6 +55,7 @@ class OrderLineType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => OrderLine::class,
+            'order_id' => 0,
             'order_status' => OrderStatusEnum::IN_PROGRESS,
         ]);
     }

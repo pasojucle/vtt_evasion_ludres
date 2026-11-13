@@ -6,6 +6,9 @@ namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ActionStreamDeleteFilterHandler;
+use App\Core\Handler\ActionStreamFilterHandler;
+use App\Core\Handler\ListLoadMoreHandler;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\Payload\MemberSkillEvaluationPayload;
@@ -33,17 +36,13 @@ class MemberSkillController extends AbstractCrudController
         Request $request,
         MemberSkillReadProvider $provider,
         Member $member,
+        ListLoadMoreHandler $handler,
     ): Response {
-        return $this->handleListLoadMoreAction(
+        return $handler->handle(
             $request,
             MemberSkillFilter::class,
             $provider,
-            new ViewContext(
-                route: $request->attributes->get('_route'),
-                routeParams: $request->attributes->get('_route_params'),
-                page: $request->query->getInt('page', 1),
-                parent: $member,
-            )
+            $member,
         );
     }
 
@@ -53,8 +52,9 @@ class MemberSkillController extends AbstractCrudController
         Request $request,
         MemberSkillReadProvider $provider,
         Member $member,
+        ActionStreamFilterHandler $handler
     ): Response {
-        return $this->handleStreamFilterAction(
+        return $handler->handle(
             $request,
             $member,
             $provider,
@@ -67,12 +67,13 @@ class MemberSkillController extends AbstractCrudController
         Request $request,
         MemberSkillReadProvider $provider,
         Member $member,
+        ActionStreamDeleteFilterHandler $handler,
     ): Response {
-        return $this->handleStreamFilterDeleteAction(
+        return $handler->handle(
             $request,
             $member,
+            MemberSkillFilter::class,
             $provider,
-            'admin_member_skill_filter'
         );
     }
 

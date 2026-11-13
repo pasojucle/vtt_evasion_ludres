@@ -9,6 +9,7 @@ use App\Entity\History;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\OrderHeader;
+use App\Repository\Interface\OrderHeaderRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -23,11 +24,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method OrderHeader[]    findAll()
  * @method OrderHeader[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OrderHeaderRepository extends ServiceEntityRepository
+class OrderHeaderRepository extends ServiceEntityRepository implements OrderHeaderRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, OrderHeader::class);
+    }
+
+    public function save(OrderHeader $orderHeader, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($orderHeader);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(OrderHeader $orderHeader, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($orderHeader);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function findOrdersByUser(Member $member): array

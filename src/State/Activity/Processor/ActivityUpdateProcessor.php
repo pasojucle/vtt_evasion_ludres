@@ -26,6 +26,7 @@ class ActivityUpdateProcessor implements RedirectProcessorInterface
      */
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
+        dump($payload);
         /** @var BikeRide $bikeRide */
         $bikeRide = $payload->data;
         $id = $bikeRide->getId();

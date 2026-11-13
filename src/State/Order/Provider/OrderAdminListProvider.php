@@ -5,71 +5,42 @@ declare(strict_types=1);
 namespace App\State\Order\Provider;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Contract\Provider\ListProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\OrderFilter;
 use App\Dto\View\ListView;
-use App\Mapper\Order\OrderAdminListExportMapper;
 use App\Mapper\Order\OrderAdminListMapper;
 use App\Repository\OrderHeaderRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListProviderInterface;
-use App\State\Interface\StreamListExportableInterface;
-use Doctrine\ORM\QueryBuilder;
+use App\State\Order\Trait\OrderListDataTrait;
 
-class OrderAdminListProvider implements ListProviderInterface, StreamListExportableInterface
+class OrderAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
+    use OrderListDataTrait;
 
     public function __construct(
         private OrderHeaderRepository $orderHeaderRepository,
         private PaginatorService $paginator,
         private OrderAdminListMapper $mapper,
-        private OrderAdminListExportMapper $exportMapper,
     ) {
     }
-    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, string $route, ?int $currentPage = 1): ListView
+    public function getCollection(AbstractFilter $filter, FilterConfigInterface $filterConfig, HandlerContext $context): ListView
     {
         /** @var OrderFilter $filter */
         $entities = $this->paginator->paginate(
             $this->getQueryBuilder($filter),
-            $currentPage,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 
         return $this->mapper->mapToView(
             $entities,
-            $route,
-            $currentPage,
+            $context,
             $filter,
             $filterConfig
         );
-    }
-
-    public function streamExportContent(AbstractFilter $filter): void
-    {
-        /**  @var OrderFilter $filter */
-        $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
-
-        $this->exportMapper->streamToCsv($entities);
-    }
-
-    private function getQueryBuilder(OrderFilter $filter): QueryBuilder
-    {
-        $qb = $this->orderHeaderRepository->findOrdersQuery();
-
-        if ($filter->status) {
-            $this->orderHeaderRepository->filterStatus($qb, $filter->status);
-        }
-
-        if ($filter->member) {
-            $this->orderHeaderRepository->filterMember($qb, $filter->member);
-        }
-
-        if ($filter->sort) {
-            $this->orderHeaderRepository->filterSort($qb, $filter->sort);
-        }
-
-        return $qb;
     }
 }

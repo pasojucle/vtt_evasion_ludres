@@ -47,7 +47,13 @@ export default class extends Controller {
                 const newContainer = doc.querySelector(`[data-id="${targetId}"]`);
                 console.log("container", container, newContainer)
                 if (container && newContainer) {
+                    const scrollableOld = container.querySelector('.overflow-y-auto') || container;
+                    const scrollTop = scrollableOld.scrollTop;
                     container.replaceWith(newContainer);
+                    const scrollableNew = newContainer.querySelector('.overflow-y-auto') || newContainer;
+                    if (scrollableNew) {
+                        scrollableNew.scrollTop = scrollTop;
+                    }
                 }
             })
         }

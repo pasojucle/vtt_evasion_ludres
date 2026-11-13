@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Dto\Enum\ColorVariant;
 use App\Entity\Enum\OrderLineStateEnum;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use App\Form\Admin\OrderLineType;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -31,19 +31,17 @@ class OrderType extends AbstractType
                 'entry_type' => OrderLineType::class,
                 'entry_options' => [
                     'label' => false,
+                    'order_id' => $options['id'],
                     'order_status' => $options['status'],
                     'required' => false,
                 ],
             ])
         ;
 
-        $formModifier = function (FormInterface $form, array|Collection $orderLines) use ($options) {
+        $formModifier = function (FormInterface $form, array $orderLines) use ($options) {
             if (OrderStatusEnum::ORDERED === $options['status']) {
                 $form->add('comments', TextareaType::class, [
                     'label' => 'Commentaires',
-                    'row_attr' => [
-                        'class' => 'form-group',
-                    ],
                     'required' => false,
                 ]);
                 $this->addBtnValidate($form, $orderLines);
@@ -56,57 +54,47 @@ class OrderType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
             /** @var OrderHeader $order */
             $order = $event->getData();
-            $formModifier($event->getForm(), $order->getOrderLines());
+            $formModifier($event->getForm(), $order->getOrderLines()->getValues());
         });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($formModifier) {
             $data = $event->getData();
-            $orderLines = (array_key_exists('orderLines', $data)) ? $data['orderLines'] : [];
+            $orderLines = $data['orderLines'] ?? [];
             $formModifier($event->getForm(), $orderLines);
         });
     }
 
-    private function allOrderLinesCheked(array|Collection $orderLines): bool
+    private function canValidate(array $orderLines): bool
     {
-        $linesCheked = 0;
+        $availabilities = [];
         foreach ($orderLines as $orderLine) {
-            $isAvailable = match (true) {
-                $orderLine instanceof OrderLine => OrderLineStateEnum::UNAVAILABLE !== $orderLine->getState(),
-                array_key_exists('state', $orderLine) => OrderLineStateEnum::UNAVAILABLE !== OrderLineStateEnum::tryFrom($orderLine['state']),
-                default => null
-            };
-            if (null === $isAvailable) {
+            $availability = $orderLine instanceof OrderLine
+                ? $orderLine->getState()
+                : (array_key_exists('state', $orderLine) ? OrderLineStateEnum::tryFrom($orderLine['state']) : null);
+
+            if (null === $availability) {
                 return false;
             }
-
-            ++$linesCheked;
+            $availabilities[] = $availability;
         }
-        $count = ($orderLines instanceof Collection) ? $orderLines->count() : count($orderLines);
 
-        return $count === $linesCheked;
+        return array_any($availabilities, fn(OrderLineStateEnum $availability) => OrderLineStateEnum::UNAVAILABLE !== $availability);
     }
 
-    private function addBtnValidate(FormInterface $form, array|Collection $orderLines): void
+    private function addBtnValidate(FormInterface $form, array $orderLines): void
     {
-        $attrClass = 'btn btn-success';
-        if (!$this->allOrderLinesCheked($orderLines)) {
-            $attrClass .= ' disabled';
-        }
-
+        dump($this->canValidate($orderLines));
         $form
-            ->add('validate', SubmitType::class, [
-                'label' => '<i class="fas fa-check"></i> Valider la commande',
-                'label_html' => true,
+            ->add('cancel', SubmitType::class, [
+                'label' => 'Annuler',
                 'attr' => [
-                    'class' => $attrClass,
+                    'data-icon' => 'lucide:delete',
+                    'data-variant' => ColorVariant::DESTRUCTIVE->value,
                 ],
             ])
-            ->add('cancel', SubmitType::class, [
-                'label' => '<i class="fas fa-times"></i> Annuler la commande',
-                'label_html' => true,
-                'attr' => [
-                    'class' => 'btn btn-danger',
-                ],
+            ->add('validate', SubmitType::class, [
+                'label' => 'Valider',
+                'disabled' => !$this->canValidate($orderLines),
             ])
             ;
     }
@@ -115,18 +103,13 @@ class OrderType extends AbstractType
     {
         $form
         ->add('unValide', SubmitType::class, [
-            'label' => '<i class="fa-solid fa-pen-to-square"></i> Modifier',
-            'label_html' => true,
-            'attr' => [
-                'class' => 'btn btn-default',
-            ],
+            'label' => 'Modifier',
+                'attr' => [
+                    'data-icon' => 'lucide:pencil'
+                ],
         ])
         ->add('complete', SubmitType::class, [
-            'label' => '<i class="fas fa-check"></i> Clôturer la commande',
-            'label_html' => true,
-            'attr' => [
-                'class' => 'btn btn-primary',
-            ],
+            'label' => 'Clôturer',
         ]);
     }
 
@@ -134,6 +117,7 @@ class OrderType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => OrderHeader::class,
+            'id' => 0,
             'status' => OrderStatusEnum::IN_PROGRESS,
             'attr' => [
                 'data-controller' => 'form-modifier'

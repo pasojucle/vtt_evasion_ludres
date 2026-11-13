@@ -1,0 +1,166 @@
+<turbo-frame id="sheet_content">
+    {% set formAttr = form.vars.attr|default({})|merge({
+        'class': (form.vars.attr.class|default('') ~ ' flex flex-col h-full m-0')|trim
+    }) %}
+    {{ form_start(form, {'attr': formAttr}) }}
+    <div class="flex flex-col flex-1 min-h-0 overflow-hidden" data-id="{{ view.frame }}" data-form-modifier-target="container">
+        <div class="p-4 border-b border-border bg-slate-200">
+            <div class="flex gap-2">
+                <div>
+                    <h3 class="!mt-0 !mb-0 text-xl font-semibold text-slate-800">{{ view.title }}</h3>
+                    <div class="text-muted">{{ view.description|raw }}</div>
+                </div>
+                <div class="ml-auto">
+                    <button 
+                        type="button"  
+                        data-action="click->sheet#close" 
+                        class="end-2.5 text-slate-400 bg-transparent hover:bg-slate-300 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" 
+                        data-modal-hide="authentication-modal">
+                        {{ ux_icon('lucide:x')}}
+                        <span class="sr-only">Fermer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+            <div class="mb-2 flex flex-col gap-4">
+                <div class="border border-border rounded-md">
+                    <div class="px-4 bg-slate-300 flex items-center h-8">
+                        <div class="text-xs font-semibold uppercase text-white">
+                            <h2>Adhérent</h2>
+                        </div>
+                    </div>
+                    <dl class="flex flex-col gap-2 p-2">
+                        <div class="flex flex-col">
+                            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Nom :</dt>
+                            <dd class="font-medium">
+                                {{ view.fullName }}
+                            </dd>
+                        </div>
+                        <div class="flex flex-col">
+                            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Télephone :</dt>
+                            <dd class="font-medium">
+                                {% include view.phone.template with {(view.phone.name): view.phone} %}
+                            </dd>
+                        </div>
+                        <div class="flex flex-col">
+                            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Adresse mail :</dt>
+                            <dd class="font-medium">
+                                {% include view.email.template with {(view.email.name): view.email} %}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                {% for line in view.orderLines %}
+                    <div class="border border-border rounded-md">
+                        <div class="px-4 bg-slate-300 flex items-center h-8">
+                            <div class="text-xs font-semibold uppercase text-white">
+                                <h2>{{ line.productName }}</h2>
+                            </div>
+                            <div class="ml-auto -mr-2">
+                                {% include line.amount.template with {(line.amount.name): line.amount} %}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-[1fr_2fr] gap-2 p-2">
+                            <div>
+                                <a href="{{ line.productUrl }}">
+                                    <img class="" src="{{ line.productPathName }}" alt="{{ line.productName }}">
+                                </a>
+                            </div>
+                            <dl class="flex flex-col gap-2 text-sm">
+                                <div class="flex gap-2 items-center">
+                                    <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Référence :</dt>
+                                    <dd class="font-medium">
+                                        {{ line.productPartNumber }}
+                                    </dd>
+                                </div>
+                                {% if form.orderLines.children[loop.index0].size is defined %}
+                                    <div class="flex flex-col">
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Taille :</dt>
+                                        <dd>
+                                            {{ form_widget(form.orderLines[loop.index0].size) }}
+                                        </dd>
+                                    </div>
+                                {% else %}
+                                    <div class="flex gap-2 items-center">
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Taille :</dt>
+                                        <dd>
+                                            {{ line.size }}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+
+                                <div class="flex flex-col">
+                                    <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Prix/unitaire :</dt>
+                                    <dd class="font-medium">
+                                        {% include line.price.template with {(line.price.name): line.price} %}
+                                    </dd>
+                                </div>
+                                <div class="flex gap-2 items-center">
+                                    <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Quantité :</dt>
+                                    <dd class="font-medium">
+                                        {{ line.quantity }}
+                                    </dd>
+                                </div>
+                                {% if line.status %}
+                                    {% include line.status.template with {(line.status.name): line.status} %}
+                                {% endif %}
+                            </dl>
+                        </div>
+                        <div class="p-2">
+                            {% if form.orderLines[loop.index0].state is defined %}
+                                {{ form_row(form.orderLines[loop.index0].state) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                {% endfor %}
+                <div class="border border-border rounded-md">
+                    <dl class="flex flex-col gap-2 p-2">
+                        <div class="flex flex-col">
+                            <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Montant total :</dt>
+                            <dd class="font-medium">
+                                {{ view.amount }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                {% if form.comments is defined %}
+                {{ form_row(form.comments) }}
+                {% elseif view.comments %}
+                    <div class="border border-border rounded-md">
+                        <dl class="flex flex-col gap-2 p-2">
+                            <div class="flex flex-col">
+                                <dt class="text-xs font-semibold uppercase tracking-wider text-muted">Montant total :</dt>
+                                <dd class="font-medium">
+                                    {{ view.comments }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                {% endif %}
+                
+                {{ form_errors(form) }}
+            </div>
+        </div>
+
+        <div class="shrink-0 p-4 grid grid-cols-3 gap-3 border-t border-border bg-white">
+            <button 
+                type="button"
+                data-action="click->sheet#close" 
+                class="p-2 bg-slate-300 lg:bg-slate-200 lg:hover:bg-slate-300"
+            >
+                Fermer
+            </button>
+            {% for child in form.children %}
+                {% if "submit" in child.vars.block_prefixes %}
+                    {{ form_row(child) }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    {{ form_end(form)}}
+    
+</turbo-frame>

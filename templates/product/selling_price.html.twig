@@ -1,0 +1,11 @@
+{% if selling_price.hasDiscount %}
+    <div class="flex flex-col gap-1">
+        <div class="flex flex-row gap-2">
+            <div class="text-muted line-through">{{ selling_price.basePrice }}</div>
+            <div>{{ selling_price.amount }}</div>
+        </div>
+        {% include selling_price.reason.template with {(selling_price.reason.name): selling_price.reason} %}
+    </div>
+{% else %}
+    <div>{{ selling_price.amount }}</div>
+{% endif %}

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\State\MemberSkill\Provider;
 
+use App\Core\Contract\Provider\ListLoadMoreProviderInterface;
+use App\Core\Dto\FlashMessage;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\MemberSkillFilter;
-use App\Dto\State\ViewContext;
 use App\Dto\View\MemberSkill\MemberSkillsView;
 use App\Dto\View\SheetView;
 use App\Mapper\MemberSkill\MemberSkillReadMapper;
@@ -15,9 +17,11 @@ use App\Repository\MemberSkillRepository;
 use App\Repository\SkillCategoryRepository;
 use App\Repository\SkillRepository;
 use App\Service\PaginatorService;
-use App\State\Interface\ListLoadMoreProviderInterface;
 use App\State\MemberSkill\Trait\MemberSkillDataProviderTrait;
 
+/**
+ * @implements ListLoadMoreProviderInterface<MemberSkillFilter>
+ */
 class MemberSkillReadProvider implements ListLoadMoreProviderInterface
 {
     use FilterHydratorTrait;
@@ -33,20 +37,17 @@ class MemberSkillReadProvider implements ListLoadMoreProviderInterface
     ) {
     }
 
-    /**
-     * @param MemberSkillFilter $entity
-     */
-    public function getStreamView(object $entity, ?ViewContext $context = null): MemberSkillsView
+    public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): MemberSkillsView
     {
         $currentPage = $context->page;
         $member = $context->parent;
         $filterConfig = $this->getFilterConfig('admin_member_skill_filter');
 
-        $qb = $this->getQueryBuilder($member, $entity);
+        $qb = $this->getQueryBuilder($member, $data);
 
         return $this->memberSkillReadMapper->mapToView(
             member: $member,
-            filter: $entity,
+            filter: $data,
             filterConfig: $filterConfig,
             paginatedSkills: $this->paginator->paginate(
                 $qb,
@@ -58,7 +59,7 @@ class MemberSkillReadProvider implements ListLoadMoreProviderInterface
         );
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
         return new SheetView(
             title: 'Modifier',
@@ -67,7 +68,7 @@ class MemberSkillReadProvider implements ListLoadMoreProviderInterface
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $entity, ?HandlerContext $context = null): array
     {
         $filterConfig = $this->getFilterConfig('admin_member_skill_filter');
 

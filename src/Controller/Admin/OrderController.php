@@ -4,96 +4,91 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\OrderDtoTransformer;
+use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ListExportHandler;
+use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\Filter\OrderFilter;
-use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderType as AdminOrderType;
-use App\Service\FilterDecoderService;
+use App\State\Order\Processor\OrderCompleteProcessor;
+use App\State\Order\Processor\OrderValidateProcessor;
+use App\State\Order\Provider\OrderAdminListExportProvider;
 use App\State\Order\Provider\OrderAdminListProvider;
-use App\UseCase\Order\SetOrder;
-use Doctrine\ORM\EntityManagerInterface;
+use App\State\Order\Provider\OrderCompleteProvider;
+use App\State\Order\Provider\OrderValidateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class OrderController extends AbstractCrudController
+class OrderController extends AbstractController
 {
-    public function __construct(
-        private OrderDtoTransformer $orderDtoTransformer,
-        private EntityManagerInterface $entityManager,
-    ) {
-    }
-
     #[Route('/admin/commandes', name: 'admin_order_list', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminOrders(
         Request $request,
         OrderAdminListProvider $provider,
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 
-    #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['POST'], requirements:['status' => OrderStatusEnum::VALIDED->value . '|' . OrderStatusEnum::COMPLETED->value])]
+    #[Route('/admin/command/status/{orderHeader}/completed', 
+        name: 'admin_order_status', 
+        methods: ['POST'], 
+        requirements:['status' => '\d+'])
+    ]
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function adminOrderValidate(
         Request $request,
+        OrderCompleteProvider $provider,
+        OrderCompleteProcessor $processor,
         OrderHeader $orderHeader,
-        FilterDecoderService $filterDecoder,
-        OrderStatusEnum $status
+        ActionDirectHandler $handler,
     ): Response {
-        $orderHeader->setStatus($status);
-        $this->entityManager->flush();
-        $queries = $filterDecoder->decode($request->query->get('filter'));
-        
-        return $this->redirectToRoute('admin_orders', $queries, Response::HTTP_SEE_OTHER);
+        return $handler->handle(
+            $request,
+            $orderHeader,
+            $provider,
+            $processor,
+        );
     }
 
-    #[Route('/admin/commande/{orderHeader}', name: 'admin_order', methods: ['GET', 'POST'])]
+    #[Route('/admin/commande/{orderHeader}', name: 'admin_order', requirements:['orderHeader' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function admin_order(
         Request $request,
-        SetOrder $setOrder,
-        ?OrderHeader $orderHeader
+        OrderValidateProvider $provider,
+        OrderValidateProcessor $processor,
+        OrderHeader $orderHeader,
+        ActionFormHandler $handler,
     ): Response {
-        $request->getSession()->set('user_return', $this->generateUrl('admin_order', [
-            'orderHeader' => $orderHeader->getId(),
-        ]));
-        $form = $this->createForm(AdminOrderType::class, $orderHeader, [
-            'status' => $orderHeader->getStatus(),
-        ]);
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            list($route, $params) = $setOrder->execute($form, $orderHeader);
-            return $this->redirectToRoute($route, $params);
-        }
-
-        return $this->render('order/admin/show.html.twig', [
-            'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
-            'form' => $form->createView(),
-        ]);
+        return $handler->handle(
+            $request,
+            $orderHeader,
+            $provider,
+            $processor,
+            AdminOrderType::class,
+        );
     }
 
     #[Route('/admin/export/commande', name: 'admin_order_headers_export', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminOrderHeadersExport(
-        OrderAdminListProvider $provider,
+        OrderAdminListExportProvider $provider,
         Request $request,
+        ListExportHandler $handler,
     ): StreamedResponse {
-        /**  @var OrderFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), OrderFilter::class);
-
-        $response = new StreamedResponse(function () use ($provider, $filter) {
-            $provider->streamExportContent($filter);
-        });
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export_commandes.csv"');
-
-        return $response;
+        return $handler->handle(
+            $request,
+            OrderFilter::class,
+            $provider,
+        );
     }
 }
