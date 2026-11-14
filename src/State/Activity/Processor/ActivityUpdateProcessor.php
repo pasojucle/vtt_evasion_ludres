@@ -9,10 +9,12 @@ use App\Core\Contract\Processor\RedirectProcessorInterface;
 use App\Core\Dto\ActionPayload;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\RedirectProcessorResult;
-use App\Entity\BikeRide;
 use App\Service\UrlContextService;
 use App\UseCase\v2\Activity\UpdateActivity;
 
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
 class ActivityUpdateProcessor implements RedirectProcessorInterface
 {
     public function __construct(
@@ -21,13 +23,8 @@ class ActivityUpdateProcessor implements RedirectProcessorInterface
     ) {
     }
 
-    /**
-     * @param ActionPayload $payload
-     */
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        dump($payload);
-        /** @var BikeRide $bikeRide */
         $bikeRide = $payload->data;
         $id = $bikeRide->getId();
         ($this->updateActivity)($bikeRide, $payload->files);

@@ -30,10 +30,9 @@ readonly class ListDrawerHandler
         ?object $entity = null,
     ): Response {
         $context = HandlerContext::fromRequest($request, $entity);
-        dump($context);
 
         $filterConfig = $provider->getFilterConfig($context->route);
-        dump($filterConfig->getFields());
+
         if (!$filterConfig) {
             throw new NotFoundHttpException();
         }
@@ -42,7 +41,7 @@ readonly class ListDrawerHandler
         if ($provider instanceof FilterInitializerInterface) {
             $provider->initializeFilters($filter, $context);
         }
-        dump($filter);
+
         $form = $this->formFactory->create(ListFilterType::class, $filter, [
             'action' => $request->getUri(),
             'filter_config' => $filterConfig,

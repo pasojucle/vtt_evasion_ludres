@@ -83,7 +83,6 @@ class OrderType extends AbstractType
 
     private function addBtnValidate(FormInterface $form, array $orderLines): void
     {
-        dump($this->canValidate($orderLines));
         $form
             ->add('cancel', SubmitType::class, [
                 'label' => 'Annuler',

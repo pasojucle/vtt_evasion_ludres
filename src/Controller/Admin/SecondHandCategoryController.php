@@ -93,7 +93,7 @@ class SecondHandCategoryController extends AbstractController
 
     #[Route('/restaure/{category}', name: 'restore', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminLevelRestore(
+    public function restore(
         Request $request,
         SecondHandCategoryRestoreProvider $provider,
         SecondHandCategoryRestoreProcessor $processor,

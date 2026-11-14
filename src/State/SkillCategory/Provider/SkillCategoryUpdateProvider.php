@@ -4,27 +4,32 @@ declare(strict_types=1);
 
 namespace App\State\SkillCategory\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\SheetView;
 use App\Entity\SkillCategory;
-use App\State\Interface\FormComponentProviderInterface;
 
 /**
  * @implements FormComponentProviderInterface<SkillCategory>
 */
 class SkillCategoryUpdateProvider implements FormComponentProviderInterface
 {
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
+        $action = $data->getId() ? 'Modifier' : 'Ajouter';
         return new SheetView(
-            title: 'Catégories',
-            description: 'Catégories de compétence',
-            action: 'Modifier',
+            title: 'Catégorie',
+            description: sprintf('%s une catégorie d\e compétence.', $action),
+            action: $action,
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
+            ],
+        ];
     }
 }

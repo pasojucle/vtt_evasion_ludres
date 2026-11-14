@@ -6,6 +6,7 @@ use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Level;
 use App\Entity\Member;
 use App\Entity\SkillCategory;
+use App\Repository\Interface\SkillCategoryRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -14,11 +15,29 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<SkillCategory>
  */
-class SkillCategoryRepository extends ServiceEntityRepository
+class SkillCategoryRepository extends ServiceEntityRepository implements SkillCategoryRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SkillCategory::class);
+    }
+
+    public function save(SkillCategory $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(SkillCategory $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

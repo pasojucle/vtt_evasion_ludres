@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\Filter\SkillCategoryFilter;
+use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ListPaginatedHandler;
 use App\Entity\SkillCategory;
 use App\Form\Admin\SkillCategoryType;
-use App\State\SkillCategory\Processor\SkillCategoryCreateProcessor;
 use App\State\SkillCategory\Processor\SkillCategoryDeleteProcessor;
 use App\State\SkillCategory\Processor\SkillCategoryRestoreProcessor;
 use App\State\SkillCategory\Processor\SkillCategoryUpdateProcessor;
-use App\State\SkillCategory\Provider\SkillCategoryCreateProvider;
 use App\State\SkillCategory\Provider\SkillCategoryDeleteProvider;
 use App\State\SkillCategory\Provider\SkillCategoryListProvider;
+use App\State\SkillCategory\Provider\SkillCategoryRestoreProvider;
 use App\State\SkillCategory\Provider\SkillCategoryUpdateProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,23 +27,24 @@ class SkillCategoryController extends AbstractCrudController
     #[Route(path: '/list', name: 'list', methods: ['GET'])]
     public function list(
         Request $request,
-        SkillCategoryListProvider $provider
+        SkillCategoryListProvider $provider,
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
-
 
     #[Route(path: '/add', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
     #[IsGranted('SKILL_ADD')]
     public function add(
         Request $request,
-        SkillCategoryCreateProvider $provider,
-        SkillCategoryCreateProcessor $processor,
+        SkillCategoryUpdateProvider $provider,
+        SkillCategoryUpdateProcessor $processor,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             new SkillCategory(),
             $provider,
@@ -57,9 +59,10 @@ class SkillCategoryController extends AbstractCrudController
         Request $request,
         SkillCategoryUpdateProvider $provider,
         SkillCategoryUpdateProcessor $processor,
-        SkillCategory $skillCategory
+        SkillCategory $skillCategory,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $skillCategory,
             $provider,
@@ -73,10 +76,11 @@ class SkillCategoryController extends AbstractCrudController
     public function delete(
         Request $request,
         SkillCategory $skillCategory,
-        SkillCategoryDeleteProcessor $processor,
         SkillCategoryDeleteProvider $provider,
+        SkillCategoryDeleteProcessor $processor,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $skillCategory,
             $provider,
@@ -86,14 +90,17 @@ class SkillCategoryController extends AbstractCrudController
 
     #[Route('/restaure/{skillCategory}', name: 'restore', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminLevelRestore(
+    public function restore(
         Request $request,
+        SkillCategoryRestoreProvider $provider,
         SkillCategoryRestoreProcessor $processor,
-        SkillCategory $skillCategory
+        SkillCategory $category,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleProcessAction(
+        return $handler->handle(
             $request,
-            $skillCategory,
+            $category,
+            $provider,
             $processor
         );
     }
