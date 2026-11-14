@@ -43,8 +43,8 @@ class OrderLineType extends AbstractType
                     'block_prefix' => 'ballot_radio',
                     'choice_attr' => function ($choice, string $key, mixed $value) use ($attrClass) {
                         return array_merge($attrClass, [
-                            'data-variant' => $choice->variant()->value, 
-                            'data-icon' => $choice->icon(), 
+                            'data-variant' => $choice->variant()->value,
+                            'data-icon' => $choice->icon(),
                         ]);
                     }
                 ]);

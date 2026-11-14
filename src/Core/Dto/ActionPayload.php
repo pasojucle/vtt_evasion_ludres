@@ -15,7 +15,7 @@ readonly class ActionPayload implements PayloadInterface
     public function __construct(
         public object $data,
         public array $files = [],
-        Public ?SubmitButton $clickedButton = null,
+        public ?SubmitButton $clickedButton = null,
     ) {
     }
 
@@ -25,7 +25,7 @@ readonly class ActionPayload implements PayloadInterface
         foreach ($form->all() as $child) {
             if ($child instanceof ClickableInterface && $child instanceof SubmitButton && $child->isClicked()) {
                 $clickedButton = $child;
-                break; 
+                break;
             }
         }
 

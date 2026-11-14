@@ -6,7 +6,6 @@ namespace App\State\BoardRole\Provider;
 
 use App\Core\Contract\Provider\FormComponentProviderInterface;
 use App\Core\Dto\HandlerContext;
-use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\BoardRole;
 use App\Mapper\DestructiveModalMapper;

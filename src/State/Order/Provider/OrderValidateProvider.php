@@ -17,7 +17,8 @@ class OrderValidateProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private OrderValidateMapper $mapper,
-    ){}
+    ) {
+    }
     public function getView(object $data, ?HandlerContext $context = null): OrderSheetView
     {
         return $this->mapper->mapToView($data, $context);
@@ -31,7 +32,7 @@ class OrderValidateProvider implements FormComponentProviderInterface
             'attr' => [
                 'data-controller' => 'form-modifier',
                 'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
-                'data-turbo-frame' =>'_top',
+                'data-turbo-frame' => '_top',
             ]
         ];
     }

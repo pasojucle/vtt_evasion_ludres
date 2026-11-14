@@ -185,7 +185,7 @@ class Product implements UploadableInterface, SoftDeletableInterface, Disableabl
 
     public function getDiscountPrice(): ?float
     {
-        return $this->discountPrice;     
+        return $this->discountPrice;
     }
 
     public function getSellingPrice(?User $user): SellingPrice

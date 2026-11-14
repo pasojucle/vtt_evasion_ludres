@@ -65,7 +65,6 @@ class CoverageFilterConfig implements FilterConfigInterface
         return [
             AdvancedFilterFlields::createLevelsField(
                 $this->levelChoiceProvider,
-                'change@window->filter#update'
             ),
             AdvancedFilterFlields::createItemsPerPageField(),
             AdvancedFilterFlields::createSortStringField(),

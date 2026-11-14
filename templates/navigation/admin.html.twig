@@ -77,7 +77,11 @@
                 </a>
             </li>
             <li>
-                <a href="{{ path('check_logout') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-primary hover:bg-primary/10 transition-colors">
+                <a 
+                    href="{{ path('check_logout') }}" 
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm text-primary hover:bg-primary/10 transition-colors"
+                    data-turbo-frame="modal_content"
+                >
                     {{ ux_icon('lucide:log-out', {class: 'size-4'}) }}
                     <span>Se déconnecter</span>
                 </a>

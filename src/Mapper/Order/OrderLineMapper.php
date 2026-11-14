@@ -22,10 +22,11 @@ class OrderLineMapper
         private UrlGeneratorInterface $urlGenerator,
         private UrlContextService $urlContextService,
         private TranslatorInterface $translator,
-    ){}
+    ) {
+    }
 
     public function mapToView(
-        OrderLine $line, 
+        OrderLine $line,
         Member $member,
         bool $isEditable,
         string $targetUrl
@@ -39,8 +40,8 @@ class OrderLineMapper
             productName: $product->getName(),
             productPartNumber: $product->getRef(),
             productUrl: $this->urlContextService->generateUrl(
-                'admin_product_list', 
-                ['partNumber' => $product->getRef()], 
+                'admin_product_list',
+                ['partNumber' => $product->getRef()],
                 $targetUrl
             ),
             productPathName: $this->urlGenerator->generate('get_data_file', [
@@ -54,9 +55,9 @@ class OrderLineMapper
                 number_format($line->getAmount(), 2) . ' €',
             ),
             disable: OrderLineStateEnum::UNAVAILABLE === $line->getState(),
-            status: $isEditable 
+            status: $isEditable
                 ? null
-                :new BadgeView(
+                : new BadgeView(
                     $status->trans($this->translator),
                     $status->variant()
                 ),

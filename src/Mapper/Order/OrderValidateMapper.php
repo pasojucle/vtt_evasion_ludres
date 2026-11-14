@@ -18,7 +18,8 @@ class OrderValidateMapper
     public function __construct(
         private OrderLineMapper $orderLineMapper,
         private UrlContextService $urlContextService,
-    ){}
+    ) {
+    }
 
     public function mapToView(OrderHeader $order, HandlerContext $context): OrderSheetView
     {
@@ -34,8 +35,8 @@ class OrderValidateMapper
             phone: new PhoneView($identity->getMobile()),
             email: new EmailView($identity->getEmail()),
             orderLines: $order->getOrderLines()->map(
-                fn(OrderLine $line) => $this->orderLineMapper->mapToview(
-                    $line, 
+                fn (OrderLine $line) => $this->orderLineMapper->mapToview(
+                    $line,
                     $order->getMember(),
                     OrderStatusEnum::ORDERED === $order->getStatus(),
                     $target

@@ -16,7 +16,8 @@ readonly class SellingPriceView implements ComponentViewInterface
         public string $amount,
         public ?BadgeView $reason = null,
         public ?string $basePrice = null,
-    ){}
+    ) {
+    }
 
     public static function create(SellingPrice $sellingPrice): self
     {

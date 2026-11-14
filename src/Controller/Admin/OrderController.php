@@ -39,10 +39,12 @@ class OrderController extends AbstractController
         );
     }
 
-    #[Route('/admin/command/status/{orderHeader}/completed', 
-        name: 'admin_order_status', 
-        methods: ['POST'], 
-        requirements:['status' => '\d+'])
+    #[Route(
+        '/admin/command/status/{orderHeader}/completed',
+        name: 'admin_order_status',
+        methods: ['POST'],
+        requirements:['status' => '\d+']
+    )
     ]
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function adminOrderValidate(

@@ -33,26 +33,26 @@ class OrderAdminMapper
         $status = $entity->getStatus();
 
         return new ListItemView(
-                id: sprintf('order-item-%s', $entity->getId()),
-                labels: [
+            id: sprintf('order-item-%s', $entity->getId()),
+            labels: [
                     new LabelView($entity->getCreatedAt()->format('d/m/y')),
                     new LabelView($entity->getMember()->getIdentity()->getFullName()),
                     new LabelView($this->orderService->getAmount($entity->getOrderLines(), $entity->getMember()), LabelView::TYPE_NUMBER),
                 ],
-                status: new BadgeView($status->trans($this->translator), $status->variant()),
-                dropdown: $this->getDropdown($entity, $targetUrl),
-                url: new ListItemUrlView(
+            status: new BadgeView($status->trans($this->translator), $status->variant()),
+            dropdown: $this->getDropdown($entity, $targetUrl),
+            url: new ListItemUrlView(
                     $this->urlContextService->generateUrl("admin_order", ['orderHeader' => $entity->getId()], $targetUrl),
                     htmlAttributes: [
                         new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     ]
                 ),
-                action: $this->getAction($entity, $targetUrl),
-                gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
-                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
-                gridTemplateLabels: 'grid-cols-[80px_auto_80px] lg:grid-cols-3',
-                gridTemplateBadges: 'grid-cols-1',
-            );
+            action: $this->getAction($entity, $targetUrl),
+            gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
+            gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
+            gridTemplateLabels: 'grid-cols-[80px_auto_80px] lg:grid-cols-3',
+            gridTemplateBadges: 'grid-cols-1',
+        );
     }
 
     private function getAction(OrderHeader $entity, string $targetUrl): ?LinkView

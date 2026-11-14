@@ -78,8 +78,8 @@ class BikeRideTypeController extends AbstractController
     public function delete(
         Request $request,
         BikeRideType $bikeRideType,
-        ActivityTypeDeleteProcessor $processor,
         ActivityTypeDeleteProvider $provider,
+        ActivityTypeDeleteProcessor $processor,
         ActionFormHandler $handler,
     ): Response {
         return $handler->handle(

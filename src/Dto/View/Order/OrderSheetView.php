@@ -14,9 +14,9 @@ readonly class OrderSheetView implements ComponentFormViewInterface
      * @param OrderLineView[] $orderLines
      */
     public function __construct(
-        public string $title, 
-        public string $description, 
-        public string $action, 
+        public string $title,
+        public string $description,
+        public string $action,
         public string $frame,
         public string $fullName,
         public PhoneView $phone,
@@ -24,7 +24,8 @@ readonly class OrderSheetView implements ComponentFormViewInterface
         public array $orderLines,
         public string $amount,
         public ?string $comments,
-    ){}
+    ) {
+    }
 
     public function getName(): string
     {

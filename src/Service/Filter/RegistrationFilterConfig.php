@@ -79,7 +79,6 @@ class RegistrationFilterConfig implements FilterConfigInterface
             ),
             AdvancedFilterFlields::createLevelsField(
                 $this->levelChoiceProvider,
-                'change@window->filter#update'
             ),
             AdvancedFilterFlields::createItemsPerPageField(),
             AdvancedFilterFlields::createSortStringField(),

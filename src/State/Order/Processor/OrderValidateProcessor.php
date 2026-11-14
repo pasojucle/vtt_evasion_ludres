@@ -29,7 +29,7 @@ class OrderValidateProcessor implements RedirectProcessorInterface
         $orderHeader = $payload->data;
         $clickedButton = $payload->clickedButton;
 
-        $status = match($clickedButton?->getName()) {
+        $status = match ($clickedButton?->getName()) {
             'validate' => OrderStatusEnum::VALIDED,
             'complete' => OrderStatusEnum::COMPLETED,
             'cancel' => OrderStatusEnum::CANCELED,

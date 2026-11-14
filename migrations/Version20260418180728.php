@@ -20,7 +20,7 @@ final class Version20260418180728 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE bike_ride ADD security_guidelines VARCHAR(255) DEFAULT NULL, ADD rules_thumbnail VARCHAR(255) DEFAULT NULL, ADD security_guidelines_thumbnail VARCHAR(255) DEFAULT NULL');
+        // $this->addSql('ALTER TABLE bike_ride ADD security_guidelines VARCHAR(255) DEFAULT NULL, ADD rules_thumbnail VARCHAR(255) DEFAULT NULL, ADD security_guidelines_thumbnail VARCHAR(255) DEFAULT NULL');
             foreach($this->getMessages() as $message) {
             $this->addSql('INSERT INTO `message`(`section_id`, `name`, `label`, `content`, `level_type`, `protected`) VALUES (:section, :name, :label, :content, :levelType, :protected)', $message);
         }

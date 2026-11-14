@@ -78,7 +78,7 @@ class OrderType extends AbstractType
             $availabilities[] = $availability;
         }
 
-        return array_any($availabilities, fn(OrderLineStateEnum $availability) => OrderLineStateEnum::UNAVAILABLE !== $availability);
+        return array_any($availabilities, fn (OrderLineStateEnum $availability) => OrderLineStateEnum::UNAVAILABLE !== $availability);
     }
 
     private function addBtnValidate(FormInterface $form, array $orderLines): void

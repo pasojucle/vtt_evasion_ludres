@@ -6,6 +6,7 @@ namespace App\Mapper\Registration;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Contract\View\ListActionViewInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
@@ -50,12 +51,13 @@ class RegistrationListMapper
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         RegistrationFilter $filter,
         FilterConfigInterface $filterConfig,
     ): ListView {
-        $fallback = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams());
+        $currentPage = $context->page;
+        $route = $context->route;
+        $targetUrl = $this->urlContextService->encodeUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
         /** @var Member $entity */
@@ -73,8 +75,8 @@ class RegistrationListMapper
                     value:$state->shortTrans($this->translator),
                     variant: $state->variant(),
                 ),
-                dropdown: $this->registrationDropdownMapper->mapToView($entity, $fallback),
-                url: new ListItemUrlView($this->urlGenerator->generate("admin_user_show", ['user' => $entity->getId()])),
+                dropdown: $this->registrationDropdownMapper->mapToView($entity, $targetUrl),
+                url: new ListItemUrlView($this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl)),
                 action: $this->getAction($licence, $currentPage, $filter),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_2fr]',
@@ -87,7 +89,7 @@ class RegistrationListMapper
             title: 'Inscriptions',
             description: sprintf('Administration des inscriptions pour la saison %s.', $this->seasonService->getCurrentSeason()),
             items: $items,
-            settings: $this->settings($fallback),
+            settings: $this->settings($targetUrl),
             tools: $this->tools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
@@ -103,9 +105,9 @@ class RegistrationListMapper
         );
     }
 
-    public function settings(string $referer): DropdownView
+    public function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('REGISTRATION', $referer, RoundedVariant::ROUNDED, [
+        return $this->dropdownSettingsMapper->mapToView('REGISTRATION', $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
                 label: 'Étapes des inscriptions',
                 url: $this->urlGenerator->generate('admin_registration_step_list'),

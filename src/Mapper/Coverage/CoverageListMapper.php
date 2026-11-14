@@ -50,10 +50,9 @@ class CoverageListMapper
     ): ListView {
         $route = $context->route;
         $currentPage = $context->page;
-        $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
+        $targetUrl = $this->urlContextService->encodeUrl($route, $filter->toQueryParams($currentPage));
 
         $items = [];
-
         /** @var Member $entity */
         foreach ($entities as $entity) {
             $identity = $entity->getIdentity();
@@ -66,7 +65,7 @@ class CoverageListMapper
                 ],
                 indicators: $this->getIndicators($entity->getLevel()),
                 dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
-                url: new ListItemUrlView($this->urlGenerator->generate("admin_user_show", ['user' => $entity->getId()])),
+                url: new ListItemUrlView($this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl)),
                 action: $this->getAction($licence, $targetUrl),
                 gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
                 gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_200px_100px]',

@@ -47,7 +47,8 @@ class OrderAdminListMapper
             name: 'orders',
             title: 'Commandes',
             description: 'Administration des commandes de la boutique: état des stocks, validation.',
-            items: array_map(fn(OrderHeader $order) => $this->orderAdminMapper->mapToView($order, $targetUrl),
+            items: array_map(
+                fn (OrderHeader $order) => $this->orderAdminMapper->mapToView($order, $targetUrl),
                 iterator_to_array($entities)
             ),
             settings: $this->dropdownSettingsMapper->mapToView('ORDER', $targetUrl, RoundedVariant::ROUNDED_END),
