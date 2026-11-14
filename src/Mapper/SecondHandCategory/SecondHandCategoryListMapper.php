@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace App\Mapper\SecondHandCategory;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SecondHandCategoryFilter;
-use App\Dto\View\BadgeView;
-use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\SecondHandCategory;
 use App\Mapper\FilterChipsMapper;
@@ -29,40 +26,26 @@ class SecondHandCategoryListMapper
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
         private UrlContextService $urlContextService,
+        private SecondHandCategoryMapper $secondHandCategoryMapper,
     ) {
     }
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         SecondHandCategoryFilter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
-        $fallback = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
-
-        $items = [];
-        /** @var SecondHandCategory $entity */
-        foreach ($entities as $entity) {
-            $items[] = new ListItemView(
-                id: sprintf('secondhand-category-item-%s', $entity->getId()),
-                labels: [
-                    new LabelView($entity->getName()),
-                ],
-                status: $this->getStatus($entity),
-                isDeleted: $entity->isDeleted(),
-                indicators: $this->getIndicators($entity),
-                dropdown: $this->dropDown($entity, $fallback),
-                gridTemplateContent: 'grid-cols-[1fr_80px] lg:grid-cols-[1fr_150px]',
-                gridTemplateBadges: 'grid-cols-1 lg:grid-cols-[1fr_2fr] gap-2 justify-items-center',
-            );
-        }
+        $currentPage = $context->page;
+        $route = $context->route;
+        $targetUrl = $this->urlContextService->encodeUrl($route, $filter->toQueryParams($currentPage));
 
         return new ListView(
             name: 'second_hand_category',
             title: 'Catégories',
             description: 'Administration des catégories des annonces d\'occasion.',
-            items: $items,
+            items: array_map(fn (SecondHandCategory $category) =>
+                $this->secondHandCategoryMapper->mapToView($category, $targetUrl), iterator_to_array($entities)),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -76,7 +59,7 @@ class SecondHandCategoryListMapper
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
             addItem: new LinkView(
                 label: 'Ajouter une catégorie',
-                url: $this->urlContextService->generateUrl('admin_second_hand_category_add', [], $fallback),
+                url: $this->urlContextService->generateUrl('admin_second_hand_category_add', [], $targetUrl),
                 icon: 'lucide:plus',
                 variant: ColorVariant::DEFAULT,
                 htmlAttributes: [
@@ -85,67 +68,5 @@ class SecondHandCategoryListMapper
                 ],
             ),
         );
-    }
-
-    private function getIndicators(SecondHandCategory $entity): array
-    {
-        return [
-            new BadgeView(
-                value: $entity->getIcon(),
-                variant: ColorVariant::ACCENT,
-                size: Size::ICON
-            )
-        ];
-    }
-
-    private function dropDown(SecondHandCategory $entity, string $referer): DropdownView
-    {
-        if ($entity->isDeleted()) {
-            return new DropdownView(
-                menuItems: [
-                    new LinkView(
-                        label: 'Restaurer',
-                        url: $this->urlContextService->generateUrl('admin_second_hand_category_restore', [
-                            'category' => $entity->getId()
-                            ], $referer),
-                        icon: 'lucide:archive-restore',
-                        variant: ColorVariant::DROPDOWN,
-                    ),
-                ]
-            );
-        }
-        return  new DropdownView(
-            menuItems: [
-                new LinkView(
-                    label: 'Modifier',
-                    url: $this->urlContextService->generateUrl('admin_second_hand_category_edit', ['category' => $entity->getId()], $referer),
-                    icon: 'lucide:pencil',
-                    variant: ColorVariant::DROPDOWN,
-                    htmlAttributes: [
-                        new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
-                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
-                    ],
-                ),
-                 new LinkView(
-                     label: 'Supprimer',
-                     url: $this->urlContextService->generateUrl('admin_second_hand_category_delete', ['category' => $entity->getId()], $referer),
-                     icon: 'lucide:delete',
-                     variant: ColorVariant::DROPDOWN,
-                     htmlAttributes: [
-                        new HtmlAttributeView('data-turbo-frame', LinkView::MODAL_CONTENT),
-                        new HtmlAttributeView('data-action', 'click->dropdown#close'),
-                    ],
-                 )
-            ]
-        );
-    }
-
-    private function getStatus(SecondHandCategory $entity): ?BadgeView
-    {
-        if ($entity->isDeleted()) {
-            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
-        }
-
-        return null;
     }
 }

@@ -4,26 +4,37 @@ declare(strict_types=1);
 
 namespace App\State\SecondHandCategory\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\SecondHandCategory;
 use App\Mapper\DestructiveModalMapper;
-use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements  FormComponentProviderInterface<SecondHandCategory>
+ */
 class SecondHandCategoryDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
         private DestructiveModalMapper $destructiveModalMapper,
     ) {
     }
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
-        /** @var SecondHandCategory $entity */
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la catégorie %s', $entity->getName()));
+        return $this->destructiveModalMapper->mapToView(
+            sprintf(
+                'Etes vous certain de supprimer la catégorie %s',
+                $data->getName()
+            )
+        );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ],
+        ];
     }
 }

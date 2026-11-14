@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace App\State\SecondHandCategory\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\SheetView;
 use App\Entity\SecondHandCategory;
-use App\State\Interface\FormComponentProviderInterface;
 
 /**
  * @implements FormComponentProviderInterface<SecondHandCategory>
  */
 class SecondHandCategoryUpdateProvider implements FormComponentProviderInterface
 {
-    public function getFormView(object $entity, ?ViewContext $context = null): SheetView
+    public function getView(object $data, ?HandlerContext $context = null): SheetView
     {
+        $action = $data->getId() ? 'Modifier' : 'Ajouter';
         return new SheetView(
             title: 'Catégorie',
-            description: 'Catégorie d\'annonce d\'occasion.',
-            action: 'Modifier',
+            description: sprintf('%s une catégorie d\'annonce d\'occasion.', $action),
+            action: $action,
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [];
     }

@@ -4,29 +4,34 @@ declare(strict_types=1);
 
 namespace App\State\SecondHandCategory\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\SecondHandCategory;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\SecondHandCategory\UpdateSecondHandCategory;
 
-class SecondHandCategoryUpdateProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class SecondHandCategoryUpdateProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private UrlContextService $urlContextService,
+        private UpdateSecondHandCategory $updateSecondHandCategory,
     ) {
     }
 
-    /**
-     * @implements FormRedirectProcessorInterface<SecondHandCategory>
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $this->entityManager->flush();
+        $catgory = $payload->data;
+        ($this->updateSecondHandCategory)($catgory);
 
         return new RedirectProcessorResult(
             success: true,
-            targetUrl: $targetUrl,
-            messageKey: 'secondHandCategory.flash.success.Uupdate',
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
+            messageKey: 'secondHandCategory.flash.success.create',
             flashType: 'success',
         );
     }

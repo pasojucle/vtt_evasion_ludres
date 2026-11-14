@@ -4,34 +4,37 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\Filter\SecondHandCategoryFilter;
+use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\ActionFormHandler;
+use App\Core\Handler\ListPaginatedHandler;
 use App\Entity\SecondHandCategory;
 use App\Form\Admin\SecondHandCategoryType;
-use App\State\SecondHandCategory\Processor\SecondHandCategoryCreateProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryDeleteProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryRestoreProcessor;
 use App\State\SecondHandCategory\Processor\SecondHandCategoryUpdateProcessor;
-use App\State\SecondHandCategory\Provider\SecondHandCategoryCreateProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryDeleteProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryListProvider;
+use App\State\SecondHandCategory\Provider\SecondHandCategoryRestoreProvider;
 use App\State\SecondHandCategory\Provider\SecondHandCategoryUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/occasion-categorie', name: 'admin_second_hand_category_')]
-class SecondHandCategoryController extends AbstractCrudController
+class SecondHandCategoryController extends AbstractController
 {
     #[Route('s', name: 'list', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_LIST')]
     public function list(
+        Request $request,
         SecondHandCategoryListProvider $provider,
-        Request $request
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 
@@ -39,10 +42,11 @@ class SecondHandCategoryController extends AbstractCrudController
     #[IsGranted('SECOND_HAND_ADD')]
     public function add(
         Request $request,
-        SecondHandCategoryCreateProvider $provider,
-        SecondHandCategoryCreateProcessor $processor,
+        SecondHandCategoryUpdateProvider $provider,
+        SecondHandCategoryUpdateProcessor $processor,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             new SecondHandCategory(),
             $provider,
@@ -57,9 +61,10 @@ class SecondHandCategoryController extends AbstractCrudController
         Request $request,
         SecondHandCategoryUpdateProvider $provider,
         SecondHandCategoryUpdateProcessor $processor,
-        SecondHandCategory $category
+        SecondHandCategory $category,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $category,
             $provider,
@@ -73,11 +78,12 @@ class SecondHandCategoryController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
-        SecondHandCategoryDeleteProcessor $processor,
         SecondHandCategoryDeleteProvider $provider,
-        SecondHandCategory $category
+        SecondHandCategoryDeleteProcessor $processor,
+        SecondHandCategory $category,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $category,
             $provider,
@@ -89,12 +95,15 @@ class SecondHandCategoryController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelRestore(
         Request $request,
+        SecondHandCategoryRestoreProvider $provider,
         SecondHandCategoryRestoreProcessor $processor,
         SecondHandCategory $category,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleProcessAction(
+        return $handler->handle(
             $request,
             $category,
+            $provider,
             $processor
         );
     }

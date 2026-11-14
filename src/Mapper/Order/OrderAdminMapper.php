@@ -42,11 +42,11 @@ class OrderAdminMapper
             status: new BadgeView($status->trans($this->translator), $status->variant()),
             dropdown: $this->getDropdown($entity, $targetUrl),
             url: new ListItemUrlView(
-                    $this->urlContextService->generateUrl("admin_order", ['orderHeader' => $entity->getId()], $targetUrl),
-                    htmlAttributes: [
+                $this->urlContextService->generateUrl("admin_order", ['orderHeader' => $entity->getId()], $targetUrl),
+                htmlAttributes: [
                         new HtmlAttributeView('data-turbo-frame', LinkView::SHEET_CONTENT),
                     ]
-                ),
+            ),
             action: $this->getAction($entity, $targetUrl),
             gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
             gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_112px]',

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SecondHandCategory;
+use App\Repository\Interface\SecondHandCategoryRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -16,14 +17,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method SecondHandCategory[]    findAll()
  * @method SecondHandCategory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SecondHandCategoryRepository extends ServiceEntityRepository
+class SecondHandCategoryRepository extends ServiceEntityRepository implements SecondHandCategoryRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SecondHandCategory::class);
     }
 
-    public function save(SecondHandCategory $entity, bool $flush = false): void
+    public function save(SecondHandCategory $entity, bool $flush = true): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -32,7 +33,7 @@ class SecondHandCategoryRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(SecondHandCategory $entity, bool $flush = false): void
+    public function remove(SecondHandCategory $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
 
