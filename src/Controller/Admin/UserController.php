@@ -5,20 +5,24 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDirectHandler;
+use App\Core\Handler\AutocompleteHandler;
 use App\Core\Handler\DetailHandler;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Core\Handler\ListExportHandler;
+use App\Core\Handler\ListJsonHandler;
+use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\Filter\UserFilter;
 use App\Entity\Member;
 use App\Entity\User;
-use App\Form\Admin\LicenceMemberType;
 use App\Repository\MemberRepository;
 use App\State\User\Processor\LicenceNumberSendProcessor;
 use App\State\User\Provider\LicenceNumberSendProvider;
+use App\State\User\Provider\UserAutocompleteProvider;
+use App\State\User\Provider\UserListEmailProvider;
+use App\State\User\Provider\UserListExportProvider;
 use App\State\User\Provider\UserListProvider;
 use App\State\User\Provider\UserReadProvider;
 use App\UseCase\User\GetFramersFiltered;
-use App\UseCase\User\GetOverviewSeason;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,51 +31,47 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin', name: 'admin_')]
-class UserController extends AbstractCrudController
+class UserController extends AbstractController
 {
-    public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserDtoTransformer $userDtoTransformer,
-        private readonly GetOverviewSeason $getOverviewSeason,
-    ) {
-    }
-
     #[Route('/adherents', name: 'user_list', methods: ['GET'])]
     #[IsGranted('USER_LIST')]
     public function adminUsers(
-        UserListProvider $provider,
         Request $request,
+        UserListProvider $provider,
+        ListPaginatedHandler $handler,
     ): Response {
-        return $this->handleListPaginedAction(
+        return $handler->handle(
+            $request,
             $provider,
-            $request
         );
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
     public function adminUsersExport(
-        UserListProvider $provider,
-        Request $request
+        Request $request,
+        UserListExportProvider $provider,
+        ListExportHandler $handler,
     ): StreamedResponse {
-        return $this->handleExportAction(
+        return $handler->handle(
             $request,
             UserFilter::class,
             $provider,
-            'export_adherents.csv'
         );
     }
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
     public function adminEmailUsers(
-        UserListProvider $provider,
-        Request $request
+        Request $request,
+        UserListEmailProvider $provider,
+        ListJsonHandler $handler,
     ): JsonResponse {
-        /**  @var UserFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
-
-        return new JsonResponse($provider->copyEmailListToClipboard($filter));
+        return $handler->handle(
+            $request,
+            $provider,
+            UserFilter::class,
+        );
     }
 
     #[Route('/adherent/{user}', name: 'user_show', requirements:['user' => '\d+'], methods: ['GET'])]
@@ -86,35 +86,6 @@ class UserController extends AbstractCrudController
         DetailHandler $handler,
     ): Response {
         return $handler->handle($request, $provider, $user);
-    }
-
-    #[Route('/adherent/edit/{user}', name: 'user_edit', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]
-    #[IsGranted('USER_EDIT', 'user')]
-    public function adminUserEdit(
-        Request $request,
-        User $user
-    ): Response {
-        $licence = $user->getLastLicence();
-        $form = $this->createForm(LicenceMemberType::class, $user, [
-            'category' => $licence->getCategory(),
-            'season_licence' => $licence,
-        ]);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
-
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_user_show', [
-                'user' => $user->getId(),
-            ]);
-        }
-
-        return $this->render('user/admin/edit.html.twig', [
-            'user' => $this->userDtoTransformer->fromEntity($user),
-            'form' => $form->createView(),
-        ]);
     }
 
     #[Route('/send/numberlicence/{member}', name: 'send_number_licence', methods: ['GET'])]
@@ -137,14 +108,15 @@ class UserController extends AbstractCrudController
     #[Route('/adherent/autocomplete', name: 'member_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
     public function memberAutocomplete(
-        UserListProvider $provider,
-        Request $request
+        Request $request,
+        UserAutocompleteProvider $provider,
+        AutocompleteHandler $handler,
     ): JsonResponse {
-        /**  @var UserFilter $filter */
-        $filter = $provider->getHydratedDto($request->query->all(), UserFilter::class);
-        $query = $request->query->get('query');
-
-        return new JsonResponse(['results' => $provider->getAutocompleteChoices($query, $filter)]);
+        return $handler->handle(
+            $request,
+            $provider,
+            UserFilter::class,
+        );
     }
 
     #[Route('/encadrant/autocomplete', name: 'framer_autocomplete', methods: ['GET'])]
@@ -184,31 +156,5 @@ class UserController extends AbstractCrudController
         }
 
         return new JsonResponse(['results' => $results]);
-    }
-
-    #[Route('/synthese/saison/{filtered}/{tab}', name: 'overview_season', defaults:['filtered' => false, 'tab' => GetOverviewSeason::TAB_NEW_REGISTRATIONS], methods: ['GET', 'POST'])]
-    #[IsGranted('USER_SHARE')]
-    public function overviewSeasonMembers(
-        Request $request,
-        bool $filtered,
-        int $tab,
-    ): Response {
-        return $this->render('user/admin/overviewSeason.html.twig', $this->getOverviewSeason->getMembers($request, $filtered, $tab));
-    }
-
-    #[Route('/export/synthese/saison', name: 'overview_season_export', methods: ['GET', 'POST'])]
-    #[IsGranted('USER_SHARE')]
-    public function exportOverviewSeason(
-        Request $request,
-    ): Response {
-        return $this->getOverviewSeason->export($request);
-    }
-
-    #[Route('/emails/synthese/saison', name: 'overview_season_email_to_clipboard', methods: ['GET'])]
-    #[IsGranted('USER_SHARE')]
-    public function overviewSeasonToClicpboard(
-        Request $request
-    ): JsonResponse {
-        return new JsonResponse($this->getOverviewSeason->emailsToClipboard($request));
     }
 }

@@ -87,7 +87,7 @@ class BikeRideType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'min' => 0,
-                    'max' => 90,
+                    'max' => 210,
                 ],
             ])
             ->add('private', CheckboxType::class, [

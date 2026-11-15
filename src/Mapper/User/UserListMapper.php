@@ -5,25 +5,20 @@ declare(strict_types=1);
 namespace App\Mapper\User;
 
 use App\Core\Contract\Filter\FilterConfigInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\UserFilter;
-use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemUrlView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
-use App\Entity\Member;
 use App\Entity\User;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
-use App\Mapper\Level\LevelBadgeMapper;
 use App\Mapper\PaginatorMapper;
 use App\Mapper\WikiMapper;
 use App\Service\UrlContextService;
@@ -36,9 +31,8 @@ class UserListMapper
         private UrlGeneratorInterface $urlGenerator,
         private DropdownSettingsMapper $dropdownSettingsMapper,
         private FilterChipsMapper $filterChipsMapper,
-        private UserDropdownMapper $userDropdownMapper,
         private PaginatorMapper $paginatorMapper,
-        private LevelBadgeMapper $levelBadgeMapper,
+        private UserMapper $userMapper,
         private WikiMapper $wikiMapper,
         private UrlContextService $urlContextService,
     ) {
@@ -46,37 +40,19 @@ class UserListMapper
 
     public function mapToView(
         Paginator $entities,
-        string $route,
-        int $currentPage,
+        HandlerContext $context,
         UserFilter $filter,
         FilterConfigInterface $filterConfig
     ): ListView {
+        $route = $context->route;
+        $currentPage = $context->page;
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
-
-        $items = [];
-        /** @var Member $entity */
-        foreach ($entities as $entity) {
-            $identity = $entity->getIdentity();
-            $level = $entity->getLevel();
-            $items[] = new ListItemView(
-                id: sprintf('user-item-%s', $entity->getId()),
-                labels: [
-                    new LabelView($identity->getFullName()),
-                ],
-                indicators: $this->getIndicators($entity),
-                status: $this->levelBadgeMapper->mapToView($level),
-                dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
-                url: new ListItemUrlView($this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl)),
-                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
-                gridTemplateBadges: 'grid-cols-[auto_160px]',
-            );
-        }
 
         return new ListView(
             name: 'user',
             title: 'Adhérents ',
             description: 'Administration des adhérents du club',
-            items: $items,
+            items: array_map(fn (User $user) => $this->userMapper->mapToView($user, $targetUrl), iterator_to_array($entities)),
             settings: $this->settings($targetUrl),
             tools: $this->getTools($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
@@ -93,7 +69,6 @@ class UserListMapper
             wiki: $this->wikiMapper->mapToView('adhérents', RoundedVariant::ROUNDED_START),
         );
     }
-
 
     private function settings(string $targetUrl): DropdownView
     {
@@ -114,42 +89,6 @@ class UserListMapper
                 variant: ColorVariant::DROPDOWN,
             ),
         ]);
-    }
-
-    private function getIndicators(User $entity): array
-    {
-        $indicators = [
-            ($entity->getLevel())
-            ? new BadgeView(
-                value: $entity->getLevel()->getType()->getIcon(),
-                variant: ColorVariant::ACCENT,
-                size: Size::ICON,
-            )
-            : new BadgeView(
-                value: 'lucide:badge-help',
-                variant: ColorVariant::WARNING,
-                size: Size::ICON,
-            ),
-            new BadgeView(
-                value: (string) $entity->getLastLicence()->getSeason(),
-                variant: ColorVariant::AMBER,
-            ),
-        ];
-
-        $boardRole = ($entity instanceof Member) ? $entity->getBoardRole() : null;
-
-        if ($boardRole?->isBoard()) {
-            array_unshift(
-                $indicators,
-                new BadgeView(
-                    value: 'lucide:crown',
-                    variant: ColorVariant::ACCENT,
-                    size: Size::ICON
-                )
-            );
-        }
-
-        return $indicators;
     }
 
     private function getTools(UserFilter $filter): DropdownView
