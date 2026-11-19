@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\BackgroundDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Background;
@@ -13,13 +14,14 @@ use App\Service\PaginatorService;
 use App\State\Background\Processor\BackgroundDeleteProcessor;
 use App\State\Background\Provider\BackgroundDeleteProvider;
 use App\UseCase\Background\EditBackground;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin')]
-class BackgroundController extends AbstractCrudController
+class BackgroundController extends AbstractController
 {
     public function __construct(
         private BackgroundRepository $backgroundRepository,
@@ -67,11 +69,12 @@ class BackgroundController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function adminBackgroundDelete(
         Request $request,
-        BackgroundDeleteProcessor $processor,
         BackgroundDeleteProvider $provider,
-        Background $background
+        BackgroundDeleteProcessor $processor,
+        Background $background,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $background,
             $provider,

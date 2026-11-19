@@ -119,7 +119,7 @@ class UserListMapper
                 new LinkView(
                     label: 'Synthèse par saison',
                     variant: ColorVariant::DROPDOWN,
-                    url: $this->urlGenerator->generate('admin_overview_season'),
+                    url: $this->urlGenerator->generate('admin_overview_season_list'),
                     icon: 'lucide:chart-scatter',
                     htmlAttributes: [
                         new HtmlAttributeView('data-action', 'click->dropdown#close')

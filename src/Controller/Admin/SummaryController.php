@@ -16,13 +16,14 @@ use App\State\Summary\Provider\SummaryCreateProvider;
 use App\State\Summary\Provider\SummaryDeleteProvider;
 use App\State\Summary\Provider\SummaryReadProvider;
 use App\State\Summary\Provider\SummaryUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/actualite/', name: 'admin_summary_')]
-class SummaryController extends AbstractCrudController
+class SummaryController extends AbstractController
 {
     #[Route('list/{bikeRide}', name: 'list', methods: ['GET'])]
     #[IsGranted('SUMMARY_EDIT', 'bikeRide')]

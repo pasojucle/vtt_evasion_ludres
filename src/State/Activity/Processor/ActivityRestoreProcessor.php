@@ -4,32 +4,35 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\BikeRide;
-use App\Service\SoftDeleteService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\TurboStreamProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\TurboStreamProcessorResult;
+use App\UseCase\v2\Activity\RestoreActivity;
 
-class ActivityRestoreProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements TurboStreamProcessorInterface<ActionPayload>
+ */
+class ActivityRestoreProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SoftDeleteService $softDeleteService,
+        private RestoreActivity $restoreActivity,
     ) {
     }
 
-    /**
-     * @param BikeRide $entity
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
-    {
-        $this->softDeleteService->restore($entity);
-        $this->entityManager->flush();
 
-        return new RedirectProcessorResult(
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
+    {
+        $activity = $payload->data;
+
+        ($this->restoreActivity)($activity);
+
+        return new TurboStreamProcessorResult(
             success: true,
-            targetUrl: $targetUrl,
             messageKey: 'activity.flash.success.restaure',
+            flashType: 'success',
+            data: $activity,
         );
     }
 }

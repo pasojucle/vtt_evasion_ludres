@@ -22,7 +22,7 @@ class BackgroundRepository extends ServiceEntityRepository
         parent::__construct($registry, Background::class);
     }
 
-    public function add(Background $entity, bool $flush = false): void
+    public function save(Background $entity, bool $flush = true): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -31,9 +31,18 @@ class BackgroundRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Background $entity, bool $flush = false): void
+    public function remove(Background $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function add(Background $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();

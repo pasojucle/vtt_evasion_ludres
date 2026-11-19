@@ -67,8 +67,8 @@ class CoverageListMapper
                 dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
                 url: new ListItemUrlView($this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl)),
                 action: $this->getAction($licence, $targetUrl),
-                gridTemplateRow: 'grid-cols-1 lg:grid-cols-[1fr_112px]',
-                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[1fr_200px_100px]',
+                gridTemplateRow: 'grid-cols-1 md:grid-cols-[1fr_112px]',
+                gridTemplateContent: 'grid-cols-1 md:grid-cols-[1fr_200px_100px]',
             );
         }
         $currentSeason = $this->seasonService->getCurrentSeason();

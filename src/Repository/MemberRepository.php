@@ -17,6 +17,7 @@ use App\Entity\Session;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
+use App\Repository\Interface\MemberRepositoryInterface;
 use App\Service\SeasonService;
 use DateInterval;
 use DateTime;
@@ -38,7 +39,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  * @method Member[]    findAll()
  * @method Member[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MemberRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class MemberRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, MemberRepositoryInterface
 {
     private SeasonService $seasonService;
 
@@ -46,6 +47,24 @@ class MemberRepository extends ServiceEntityRepository implements PasswordUpgrad
     {
         parent::__construct($registry, Member::class);
         $this->seasonService = $seasonService;
+    }
+
+    public function save(Member $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Member $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

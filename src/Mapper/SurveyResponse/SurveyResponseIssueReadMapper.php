@@ -31,7 +31,7 @@ class SurveyResponseIssueReadMapper
                 $identity = $response->getMember()?->getIdentity();
                 $isResponseText = SurveyResponseType::TEXT === $response->getSurveyIssue()->getResponseType();
                 $value = (!$isResponseText)
-                    ? $this->translator->trans(SurveyResponse::VALUES[$response->getValue()])
+                    ? $this->translator->trans(SurveyResponse::VALUES[$response->getValue() ?? 0])
                     : $response->getValue() ?? 'Aucune réponse';
 
                 return  new ListDrawerItemView(

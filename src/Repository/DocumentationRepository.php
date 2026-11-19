@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Documentation;
 use App\Entity\Log;
 use App\Entity\Member;
+use App\Repository\Interface\DocumentationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -21,14 +22,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Documentation[]    findAll()
  * @method Documentation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DocumentationRepository extends ServiceEntityRepository
+class DocumentationRepository extends ServiceEntityRepository implements DocumentationRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Documentation::class);
     }
 
-    public function save(Documentation $entity, bool $flush = false): void
+    public function save(Documentation $entity, bool $flush = true): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -37,7 +38,7 @@ class DocumentationRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Documentation $entity, bool $flush = false): void
+    public function remove(Documentation $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
 

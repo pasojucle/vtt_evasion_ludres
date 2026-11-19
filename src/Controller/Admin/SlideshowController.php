@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Entity\SlideshowDirectory;
 use App\Entity\SlideshowImage;
 use App\Form\Admin\SlideshowDirectoryType;
@@ -20,7 +21,7 @@ use App\State\SlideshowImage\Processor\SlideshowImageDeleteProcessor;
 use App\State\SlideshowImage\Provider\SlideshowImageDeleteProvider;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +30,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/diaporama', name: 'admin_slideshow_')]
-class SlideshowController extends AbstractCrudController
+class SlideshowController extends AbstractController
 {
     public function __construct(
         private SlideshowDirectoryRepository $slideshowDirectoryRepository,
@@ -147,11 +148,12 @@ class SlideshowController extends AbstractCrudController
     #[IsGranted('SLIDESHOW_EDIT', 'directory')]
     public function adminSlideshowDirectoryDelete(
         Request $request,
-        SlideshowDirectoryDeleteProcessor $processor,
         SlideshowDirectoryDeleteProvider $provider,
+        SlideshowDirectoryDeleteProcessor $processor,
         SlideshowDirectory $directory,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $directory,
             $provider,
@@ -163,11 +165,12 @@ class SlideshowController extends AbstractCrudController
     #[IsGranted('SLIDESHOW_EDIT', 'image')]
     public function adminSlideshowImageDelete(
         Request $request,
-        SlideshowImageDeleteProcessor $processor,
         SlideshowImageDeleteProvider $provider,
+        SlideshowImageDeleteProcessor $processor,
         SlideshowImage $image,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $image,
             $provider,

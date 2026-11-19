@@ -11,13 +11,14 @@ use App\Form\Admin\MemberStatusType;
 use App\State\MemberStatus\Processor\MemberStatusUpdateProcessor;
 use App\State\MemberStatus\Provider\MemberStatusReadProvider;
 use App\State\MemberStatus\Provider\MemberStatusUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/member-satus', name: 'admin_member_status')]
-class MemberStatusController extends AbstractCrudController
+class MemberStatusController extends AbstractController
 {
     #[Route('/{member}', name: '_show', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]

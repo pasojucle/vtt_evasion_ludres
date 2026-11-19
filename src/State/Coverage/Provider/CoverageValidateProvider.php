@@ -28,6 +28,10 @@ class CoverageValidateProvider implements FormComponentProviderInterface
 
     public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ],
+        ];
     }
 }

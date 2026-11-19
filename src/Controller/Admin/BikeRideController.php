@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\AutocompleteHandler;
 use App\Core\Handler\ListDrawerHandler;
@@ -18,10 +19,12 @@ use App\State\Activity\Provider\ActivityAdminListProvider;
 use App\State\Activity\Provider\ActivityAutocompleteProvider;
 use App\State\Activity\Provider\ActivityDeleteProvider;
 use App\State\Activity\Provider\ActivityFramersReadProvider;
+use App\State\Activity\Provider\ActivityRestoreProvider;
 use App\State\Activity\Provider\ActivityUpdateProvider;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +32,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin')]
-class BikeRideController extends AbstractCrudController
+class BikeRideController extends AbstractController
 {
     #[Route('/calendrier', name: 'admin_bike_ride_list', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_LIST')]
@@ -114,9 +117,10 @@ class BikeRideController extends AbstractCrudController
         Request $request,
         ActivityDeleteProvider $provider,
         ActivityDeleteProcessor $processor,
-        BikeRide $bikeRide
+        BikeRide $bikeRide,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $bikeRide,
             $provider,
@@ -128,12 +132,15 @@ class BikeRideController extends AbstractCrudController
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminRestaure(
         Request $request,
+        ActivityRestoreProvider $provider,
         ActivityRestoreProcessor $processor,
-        BikeRide $bikeRide
+        BikeRide $bikeRide,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleProcessAction(
+        return $handler->handle(
             $request,
             $bikeRide,
+            $provider,
             $processor,
         );
     }

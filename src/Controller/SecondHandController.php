@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Controller\Admin\AbstractCrudController;
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
@@ -22,6 +22,7 @@ use App\Service\SecondHandService;
 use App\State\SecondHand\Processor\SecondHandDeleteProcessor;
 use App\State\SecondHand\Provider\SecondHandDeleteProvider;
 use App\UseCase\SecondHand\EditSecondHand;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(name: 'second_hand_')]
-class SecondHandController extends AbstractCrudController
+class SecondHandController extends AbstractController
 {
     public function __construct(
         private SecondHandDtoTransformer $secondHandDtoTransformer,
@@ -140,11 +141,12 @@ class SecondHandController extends AbstractCrudController
     #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function delete(
         Request $request,
-        SecondHandDeleteProcessor $processor,
         SecondHandDeleteProvider $provider,
-        SecondHand $secondHand
+        SecondHandDeleteProcessor $processor,
+        SecondHand $secondHand,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $secondHand,
             $provider,

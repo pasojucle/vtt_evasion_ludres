@@ -8,6 +8,7 @@ use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
+use App\Repository\Interface\RegistrationStepRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -21,14 +22,23 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method RegistrationStep[]    findAll()
  * @method RegistrationStep[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RegistrationStepRepository extends ServiceEntityRepository
+class RegistrationStepRepository extends ServiceEntityRepository implements RegistrationStepRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RegistrationStep::class);
     }
 
-    public function remove(RegistrationStep $entity, bool $flush = false): void
+    public function save(RegistrationStep $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(RegistrationStep $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
 

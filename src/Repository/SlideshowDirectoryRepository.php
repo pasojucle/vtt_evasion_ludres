@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SlideshowDirectory;
+use App\Repository\Interface\SlideshowDirectoryRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,11 +15,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method SlideshowDirectory[]    findAll()
  * @method SlideshowDirectory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SlideshowDirectoryRepository extends ServiceEntityRepository
+class SlideshowDirectoryRepository extends ServiceEntityRepository implements SlideshowDirectoryRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SlideshowDirectory::class);
+    }
+
+    public function save(SlideshowDirectory $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(SlideshowDirectory $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

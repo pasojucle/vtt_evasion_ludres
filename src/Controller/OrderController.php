@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Controller\Admin\AbstractCrudController;
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\OrderDtoTransformer;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\Member;
@@ -18,6 +18,7 @@ use App\Service\PdfService;
 use App\State\Order\Processor\OrderDeleteProcessor;
 use App\State\Order\Provider\OrderDeleteProvider;
 use App\UseCase\Order\OrderEdit;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class OrderController extends AbstractCrudController
+class OrderController extends AbstractController
 {
     public function __construct(
         private OrderDtoTransformer $orderDtoTransformer,
@@ -111,11 +112,12 @@ class OrderController extends AbstractCrudController
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function orderDelete(
         Request $request,
-        OrderDeleteProcessor $processor,
         OrderDeleteProvider $provider,
-        OrderHeader $orderHeader
+        OrderDeleteProcessor $processor,
+        OrderHeader $orderHeader,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $orderHeader,
             $provider,

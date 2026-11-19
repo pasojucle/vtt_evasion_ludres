@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\State\SlideshowDirectory\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\SlideshowDirectory;
 use App\Mapper\DestructiveModalMapper;
-use App\State\Interface\FormComponentProviderInterface;
 
 /**
  * @implements FormComponentProviderInterface<SlideshowDirectory>
@@ -20,18 +20,22 @@ class SlideshowDirectoryDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
-            $$entity->getSlideshowImages()->isEmpty()
+            $data->getSlideshowImages()->isEmpty()
             ? 'Etes vous certain de supprimer le répetroire %s ?'
             : 'Etes vous certain de supprimer le répetroire %s et tous les fichiers qu\'il contient ?',
-            $entity->getName()
+            $data->getName()
         ));
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ]
+        ];
     }
 }

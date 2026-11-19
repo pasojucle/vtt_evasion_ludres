@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\DocumentationDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Documentation;
@@ -15,14 +16,14 @@ use App\Service\PaginatorService;
 use App\State\Documentation\Processor\DocumentationDeleteProcessor;
 use App\State\Documentation\Provider\DocumentationDeleteProvider;
 use App\UseCase\Documentation\EditDocumentation;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/documentation', name: 'admin_documentation_')]
-class DocumentationController extends AbstractCrudController
+class DocumentationController extends AbstractController
 {
     public function __construct(
         private DocumentationRepository $documentationRepository,
@@ -99,11 +100,12 @@ class DocumentationController extends AbstractCrudController
     #[IsGranted('DOCUMENTATION_EDIT', 'documentation')]
     public function adminDocumentationDelete(
         Request $request,
-        DocumentationDeleteProcessor $processor,
         DocumentationDeleteProvider $provider,
-        Documentation $documentation
+        DocumentationDeleteProcessor $processor,
+        Documentation $documentation,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $documentation,
             $provider,

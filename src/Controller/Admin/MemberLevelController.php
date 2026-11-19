@@ -11,13 +11,14 @@ use App\Form\Admin\MemberLevelType;
 use App\State\MemberLevel\Processor\MemberLevelUpdateProcessor;
 use App\State\MemberLevel\Provider\MemberLevelReadProvider;
 use App\State\MemberLevel\Provider\MemberLevelUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/member-level', name: 'admin_member_level')]
-class MemberLevelController extends AbstractCrudController
+class MemberLevelController extends AbstractController
 {
     #[Route('/{member}', name: '_show', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]

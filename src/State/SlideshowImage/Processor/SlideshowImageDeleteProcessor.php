@@ -4,38 +4,35 @@ declare(strict_types=1);
 
 namespace App\State\SlideshowImage\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\SlideshowImage;
-use App\Service\ProjectDirService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Filesystem\Filesystem;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Slideshow\DeleteSlideshowImage;
 
-class SlideshowImageDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class SlideshowImageDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ProjectDirService $projectDir,
+        private UrlContextService $urlContextService,
+        private DeleteSlideshowImage $deleteSlideshowImage
     ) {
     }
 
-    /**
-     * @implements FormRedirectProcessorInterface<SlideshowImage>
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $directoryId = $entity->getDirectory()->getId();
-        $filename = $entity->getFilename();
-        $this->entityManager->remove($entity);
-        $this->entityManager->flush();
+        $slideshowImage = $payload->data;
 
-        $filesystem = new Filesystem();
-        $filesystem->remove($this->projectDir->path('slideshow', (string) $directoryId, $filename));
-
+        ($this->deleteSlideshowImage)($slideshowImage);
+    
         return new RedirectProcessorResult(
             success: true,
             messageKey: 'slideshow.image.flash.success.delete',
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             flashType: 'success'
         );
     }

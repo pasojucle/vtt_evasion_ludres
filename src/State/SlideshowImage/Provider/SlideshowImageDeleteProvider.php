@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\State\SlideshowImage\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\SlideshowImage;
 use App\Mapper\DestructiveModalMapper;
-use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<SlideshowImage>
+ */
 class SlideshowImageDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
@@ -17,10 +20,7 @@ class SlideshowImageDeleteProvider implements FormComponentProviderInterface
     ) {
     }
     
-    /**
-     * @implements FormComponentProviderInterface<SlideshowImage>
-     */
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $entity, ?HandlerContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'image <b>%s</b> ?',
@@ -28,8 +28,12 @@ class SlideshowImageDeleteProvider implements FormComponentProviderInterface
         ));
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ]
+        ];
     }
 }

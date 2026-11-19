@@ -24,7 +24,6 @@ class ProductToggleProvider implements TurboStreamProviderInterface
     ) {
     }
 
-
     public function getStreamView(object $data, ?FlashMessage $flashMessage = null, ?HandlerContext $context = null): ListItemUpdateView
     {
         return new ListItemUpdateView(

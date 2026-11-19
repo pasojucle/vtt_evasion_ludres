@@ -16,14 +16,16 @@ use App\State\Product\Processor\ProductToggleProcessor;
 use App\State\Product\Processor\ProductUpdateProcessor;
 use App\State\Product\Provider\ProductAdminListProvider;
 use App\State\Product\Provider\ProductDeleteProvider;
+use App\State\Product\Provider\ProductRestoreProvider;
 use App\State\Product\Provider\ProductToggleProvider;
 use App\State\Product\Provider\ProductUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ProductController extends AbstractCrudController
+class ProductController extends AbstractController
 {
     #[Route('/admin/produits', name: 'admin_product_list', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]
@@ -94,12 +96,15 @@ class ProductController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function adminLevelRestore(
         Request $request,
+        ProductRestoreProvider $provider,
         ProductRestoreProcessor $processor,
-        Product $product
+        Product $product,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleProcessAction(
+        return $handler->handle(
             $request,
             $product,
+            $provider,
             $processor
         );
     }

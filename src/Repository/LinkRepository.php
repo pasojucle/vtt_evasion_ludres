@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Link;
 use App\Entity\Log;
 use App\Entity\Member;
+use App\Repository\Interface\LinkRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
@@ -20,11 +21,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Link[]    findAll()
  * @method Link[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LinkRepository extends ServiceEntityRepository
+class LinkRepository extends ServiceEntityRepository implements LinkRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Link::class);
+    }
+
+    public function save(Link $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(Link $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function findLinkQuery(int $position): QueryBuilder

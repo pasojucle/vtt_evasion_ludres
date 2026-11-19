@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\DetailHandler;
-use App\Dto\Payload\AssociateResourcePayload;
 use App\Dto\Payload\ClusterSkillAddPayload;
 use App\Dto\Payload\MemberSkillAddEvaluationPayload;
 use App\Dto\Payload\MemberSkillEvaluationPayload;
@@ -30,12 +29,14 @@ use App\State\ClusterSkill\Provider\ClusterSkillReadProvider;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ClusterSkillController extends AbstractCrudController
+class ClusterSkillController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -76,16 +77,19 @@ class ClusterSkillController extends AbstractCrudController
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminClusterEvaluationdDelete(
         Request $request,
-        ClusterSkillDeleteProcessor $processor,
         ClusterSkillDeleteProvider $provider,
+        ClusterSkillDeleteProcessor $processor,
         Cluster $cluster,
         Skill $skill,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
-            new AssociateResourcePayload($cluster, $skill),
+            $skill,
             $provider,
-            $processor
+            $processor,
+            FormType::class,
+            $cluster
         );
     }
 

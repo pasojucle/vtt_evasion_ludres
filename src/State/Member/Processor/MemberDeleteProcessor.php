@@ -4,68 +4,37 @@ declare(strict_types=1);
 
 namespace App\State\Member\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\Licence;
-use App\Entity\Member;
-use App\Entity\OrderHeader;
-use App\Repository\OrderLineRepository;
-use App\Repository\SurveyResponseRepository;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Member\DeleteMember;
 
-class MemberDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class MemberDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private OrderLineRepository $orderLineRepository,
-        private SurveyResponseRepository $surveyResponseRepository,
+        private UrlContextService $urlContextService,
+        private DeleteMember $deleteMember,
     ) {
     }
 
-    /**
-     * @implements FormRedirectProcessorInterface<Member>
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $this->removeRelations($entity);
-        $this->entityManager->remove($entity);
-        $this->entityManager->flush();
+        $member = $payload->data;
+
+        ($this->deleteMember)($member);
 
         return new RedirectProcessorResult(
             success: true,
             messageKey: 'member.flash.success.delete',
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             flashType: 'success'
         );
-    }
-
-    private function removeRelations(Member $member): void
-    {
-        $allData = [
-            [
-                'entity' => $member,
-                'methods' => ['getSessions', 'getLicences', 'getIdentity', 'getmemberGardians', 'getOrderHeaders', 'getRespondents'],
-            ],
-        ];
-
-        foreach ($allData as $data) {
-            foreach ($data['methods'] as $method) {
-                foreach ($data['entity']->{$method}() as $entity) {
-                    if ($entity instanceof OrderHeader) {
-                        $this->orderLineRepository->deleteByOrderHeader($entity);
-                    }
-                    if ($entity instanceof Licence) {
-                        foreach ($entity->getLicenceAgreements() as $licenceAgreement) {
-                            $entity->removeLicenceAgreement($licenceAgreement);
-                            $this->entityManager->remove($licenceAgreement);
-                        }
-                    }
-                    if ($entity) {
-                        $this->entityManager->remove($entity);
-                    }
-                }
-            }
-        }
-        $this->surveyResponseRepository->deleteResponsesByUser($member);
     }
 }

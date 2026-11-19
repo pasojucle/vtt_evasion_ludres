@@ -4,55 +4,55 @@ declare(strict_types=1);
 
 namespace App\State\Survey\Processor;
 
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\TurboStreamProcessorInterface;
+use App\Core\Dto\ActionDirectPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\TurboStreamProcessorResult;
 use App\Dto\Payload\SurveyToggleDto;
-use App\Dto\State\ComponentProcessorResult;
-use App\Mapper\Survey\SurveyStatusMapper;
 use App\Service\CsrfTokenService;
-use App\Service\DisableService;
-use App\State\Interface\ComponentProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\UseCase\v2\Survey\ToggleSurvey;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class SurveyToggleProcessor implements ComponentProcessorInterface
+/**
+ * @implements TurboStreamProcessorInterface<ActionDirectPayload>
+ */
+class SurveyToggleProcessor implements TurboStreamProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private ToggleSurvey $toggleSurvey,
         private CsrfTokenManagerInterface $csrfTokenManager,
         private CsrfTokenService $csrfTokenService,
-        private DisableService $disableService,
-        private SurveyStatusMapper $surveyStatusMapper,
     ) {
     }
     
     /**
-     * @implements ComponentProcessorInterface<SurveyToggleDto>
+     * @implements TurboStreamProcessorResult<SurveyToggleDto>
      */
-    public function process(object $entity): ComponentProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
-        $tokenId = $this->csrfTokenService->getTokenId($entity->survey);
-        $csrfToken = new CsrfToken($tokenId, $entity->token);
+        $survey = $payload->data;
+        $tokenId = $this->csrfTokenService->getTokenId($survey->survey);
+        $csrfToken = new CsrfToken($tokenId, $survey->token);
 
         if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
-            new ComponentProcessorResult(
+            new TurboStreamProcessorResult(
                 success: false,
                 messageKey: 'Jeton CSRF invalide.',
                 flashType: 'danger',
             );
         }
 
-        $survey = $entity->survey;
-        $this->disableService->toggle($survey);
+        ($this->toggleSurvey)($survey);
 
-        $this->entityManager->flush();
-
-        return new ComponentProcessorResult(
+        return new TurboStreamProcessorResult(
             success: true,
             messageKey: $survey->isDisabled()
                 ? 'survey.flash.success.disabled'
                 : 'survey.flash.success.enabled',
             flashType: 'success',
-            component: $this->surveyStatusMapper->mapToView($survey, $tokenId)
+            data: $survey,
         );
     }
 }

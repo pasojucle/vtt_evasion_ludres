@@ -4,37 +4,35 @@ declare(strict_types=1);
 
 namespace App\State\RegistrationStep\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\RegistrationStep;
-use App\Repository\RegistrationStepRepository;
-use App\Service\OrderByService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\RegistrationStep\DeleteRegistrationStep;
 
-class RegistrationStepDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class RegistrationStepDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private RegistrationStepRepository $registrationStepRepository,
-        private OrderByService $orderByService,
+        private DeleteRegistrationStep $deleteRegistrationStep,
+        private UrlContextService $urlContextService,
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        /** @var RegistrationStep $entity */
-        $group = $entity->getRegistrationStepGroup();
+        $registrationStep = $payload->data;
 
-        $this->entityManager->remove($entity);
-        $this->entityManager->flush();
-
-        $registrationSteps = $this->registrationStepRepository->findByGroup($group->getId());
-        $this->orderByService->resetOrders($registrationSteps);
+        ($this->deleteRegistrationStep)($registrationStep);
 
         return new RedirectProcessorResult(
             success: true,
             messageKey: 'message.flash.success.delete',
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             flashType: 'success'
         );
     }

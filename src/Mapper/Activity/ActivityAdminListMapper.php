@@ -9,20 +9,15 @@ use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\ActivityFilter;
-use App\Dto\View\BadgeView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
-use App\Dto\View\LabelView;
 use App\Dto\View\LinkView;
-use App\Dto\View\ListItemUrlView;
-use App\Dto\View\ListItemView;
 use App\Dto\View\ListView;
 use App\Entity\BikeRide;
 use App\Mapper\DropdownSettingsMapper;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
 use App\Service\UrlContextService;
-use DateTime;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -30,8 +25,8 @@ class ActivityAdminListMapper
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private ActivityMapper $activityMapper,
         private DropdownSettingsMapper $dropdownSettingsMapper,
-        private ActivityAdminDropdownMapper $activityAdminDropdownMapper,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
         private UrlContextService $urlContextService,
@@ -48,46 +43,15 @@ class ActivityAdminListMapper
     ): ListView {
         $targetUrl = $this->urlContextService->generateTargetUrl($route, $filter->toQueryParams($currentPage));
 
-        $items = [];
-        /** @var BikeRide $entity */
-        foreach ($entities as $entity) {
-            $isComplete = ($entity->getEndAt() ?? $entity->getStartAt()) < new DateTime();
-            $participantsTotal = "0";
-            if (array_key_exists($entity->getId(), $participantTotalByEntity)) {
-                $participantsTotal = (string) $participantTotalByEntity[$entity->getId()][$isComplete ? 'present' : 'count'];
-            }
-            $items[] = new ListItemView(
-                id: sprintf('activity-item-%s', $entity->getId()),
-                labels: [
-                    new LabelView($entity->getStartAt()->format('d/m/y'), LabelView::TYPE_DATE),
-                    new LabelView($entity->getTitle()),
-                ],
-                indicators: $this->getIndicators($entity),
-                status: $this->getStatus($entity, $isComplete),
-                counter: new BadgeView(
-                    $participantsTotal,
-                    $isComplete ? ColorVariant::SUCCESS : ColorVariant::DEFAULT,
-                ),
-                dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $targetUrl),
-                isDeleted: $entity->isDeleted(),
-                url: new ListItemUrlView(
-                    $this->urlContextService->generateUrl(
-                        "admin_cluster_list_activity",
-                        ['bikeRide' => $entity->getId()],
-                        $targetUrl
-                    )
-                ),
-                gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
-                gridTemplateLabels: 'grid-cols-[80px_auto]',
-                gridTemplateBadges: 'grid-cols-[80px_auto_40px]',
-            );
-        }
-
         return new ListView(
             name: 'activity',
             title: 'Programme des activités',
             description: 'Administration des activités : création, modification.',
-            items: $items,
+            items: array_map(
+                fn (BikeRide $activity) =>
+                $this->activityMapper->mapToView($activity, $participantTotalByEntity, $targetUrl),
+                iterator_to_array($entities)
+            ),
             settings: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
@@ -113,17 +77,6 @@ class ActivityAdminListMapper
         );
     }
 
-    //     {% if bikeRide.bikeRideType.isRegistrable %}
-    //     <a class="" href="{{ path('admin_cluster_list_activity', {'bikeRide' : bikeRide.id}) }}" title="Voir les participants">
-    //         {{ bikeRide_content }}
-    //     </a>
-    // {% else %}
-    //     <div class="list-item">{{ bikeRide_content }}</div>
-    // {% endif %}
-    // {% if is_granted('ROLE_ADMIN') or is_granted('SUMMARY_LIST') %}
-    //     {% include 'components/_dropdown.html.twig' with {'dropdown': bikeRide.dropdown} %}
-    // {% endif %}
-
     private function settings(string $targetUrl): DropdownView
     {
         return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', $targetUrl, RoundedVariant::ROUNDED, [
@@ -133,62 +86,5 @@ class ActivityAdminListMapper
                 variant: ColorVariant::DROPDOWN,
             ),
         ]);
-    }
-
-    private function getIndicators(BikeRide $entity): array
-    {
-        $indicators = [];
-        if (!$entity->getMembers()->isEmpty()) {
-            $indicators[] = new BadgeView(
-                value: 'lucide:users',
-                variant: ColorVariant::ACCENT,
-                size: Size::ICON
-            );
-        }
-        
-        if ($entity->getMaxAge() || $entity->getMinAge()) {
-            $indicators[] = new BadgeView(
-                value: 'lucide:cake',
-                variant: ColorVariant::ACCENT,
-                size: Size::ICON
-            );
-        }
-
-        if (!$entity->registrationEnabled()) {
-            $indicators[] = new BadgeView(
-                value: 'lucide:lock',
-                variant: ColorVariant::WARNING,
-                size: Size::ICON
-            );
-        }
-
-        if (!$entity->getSummaries()->isEmpty()) {
-            $indicators[] = new BadgeView(
-                value: 'lucide:image',
-                variant: ColorVariant::ACCENT,
-                size: Size::ICON
-            );
-        }
-
-        if ($entity->isPrivate()) {
-            $indicators[] = new BadgeView(
-                value: 'lucide:eye-off',
-                variant: ColorVariant::WARNING,
-                size: Size::ICON
-            );
-        }
-
-        return $indicators;
-    }
-
-    private function getStatus(BikeRide $entity, bool $isComplete): BadgeView
-    {
-        if ($entity->isDeleted()) {
-            return new BadgeView('Supprimée', ColorVariant::DESTRUCTIVE);
-        }
-
-        return $isComplete
-            ? new BadgeView('Terminée', ColorVariant::WARNING)
-            : new BadgeView('A venir', ColorVariant::SUCCESS);
     }
 }

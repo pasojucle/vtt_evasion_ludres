@@ -6,6 +6,7 @@ namespace App\Core\Handler;
 
 use App\Core\Contract\Processor\ProcessorInterface;
 use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Contract\Provider\InputInitializerInterface;
 use App\Core\Contract\Provider\TurboStreamProviderInterface;
 use App\Core\Contract\View\ComponentFormViewInterface;
 use App\Core\Dto\ActionPayload;
@@ -13,8 +14,6 @@ use App\Core\Dto\FlashMessage;
 use App\Core\Dto\HandlerContext;
 use App\Core\Dto\RedirectProcessorResult;
 use App\Core\Dto\TurboStreamProcessorResult;
-use App\Dto\State\ViewContext;
-use App\State\Interface\InputInitializerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -38,7 +37,6 @@ readonly class ActionDialogHandler
         FormComponentProviderInterface $provider,
         ProcessorInterface $processor,
         string $formClass = FormType::class,
-        ?ViewContext $context = null,
     ): Response {
         $context = HandlerContext::fromRequest($request);
 

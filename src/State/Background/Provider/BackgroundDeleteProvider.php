@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\State\Background\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Background;
 use App\Mapper\DestructiveModalMapper;
-use App\State\Interface\FormComponentProviderInterface;
 
 /**
  * @implements FormComponentProviderInterface<Background>
@@ -20,16 +20,19 @@ class BackgroundDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
-        /** @var Background $entity */
         return $this->destructiveModalMapper->mapToView(
-            sprintf('Etes vous certain de supprimer l\'image de fond %s', $entity->getFilename()),
+            sprintf('Etes vous certain de supprimer l\'image de fond %s', $data->getFilename()),
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ]
+        ];
     }
 }

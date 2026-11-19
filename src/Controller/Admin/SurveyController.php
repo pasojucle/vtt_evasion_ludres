@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDialogHandler;
+use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\Payload\SurveyToggleDto;
@@ -17,8 +18,10 @@ use App\State\Survey\Processor\SurveyUpdateProcessor;
 use App\State\Survey\Provider\SurveyAdminListProvider;
 use App\State\Survey\Provider\SurveyCopyProvider;
 use App\State\Survey\Provider\SurveyDeleteProvider;
+use App\State\Survey\Provider\SurveyToggleProvider;
 use App\State\Survey\Provider\SurveyUpdateProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/sondage')]
-class SurveyController extends AbstractCrudController
+class SurveyController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -146,11 +149,15 @@ class SurveyController extends AbstractCrudController
     #[IsGranted('SURVEY_EDIT', subject: 'survey')]
     public function adminProduitDisbaled(
         Request $request,
+        SurveyToggleProvider $provider,
         SurveyToggleProcessor $processor,
-        Survey $survey
+        Survey $survey,
+        ActionDirectHandler $handler,
     ): Response {
-        return $this->handleComponentProcessAction(
-            new SurveyToggleDto($survey, $request->request->get('csrfToken')),
+        return $handler->handle(
+            $request,
+            $survey,
+            $provider,
             $processor
         );
     }

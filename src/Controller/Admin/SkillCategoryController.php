@@ -16,13 +16,14 @@ use App\State\SkillCategory\Provider\SkillCategoryDeleteProvider;
 use App\State\SkillCategory\Provider\SkillCategoryListProvider;
 use App\State\SkillCategory\Provider\SkillCategoryRestoreProvider;
 use App\State\SkillCategory\Provider\SkillCategoryUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/competences/category', name: 'admin_skill_category_')]
-class SkillCategoryController extends AbstractCrudController
+class SkillCategoryController extends AbstractController
 {
     #[Route(path: '/list', name: 'list', methods: ['GET'])]
     public function list(

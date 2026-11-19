@@ -7,6 +7,7 @@ use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\SecondHand;
 use App\Entity\SecondHandCategory;
+use App\Repository\Interface\SecondHandRepositoryInterface;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,14 +24,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method SecondHand[]    findAll()
  * @method SecondHand[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SecondHandRepository extends ServiceEntityRepository
+class SecondHandRepository extends ServiceEntityRepository implements SecondHandRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SecondHand::class);
     }
 
-    public function save(SecondHand $entity, bool $flush = false): void
+    public function save(SecondHand $entity, bool $flush = true): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -39,7 +40,7 @@ class SecondHandRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(SecondHand $entity, bool $flush = false): void
+    public function remove(SecondHand $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
 

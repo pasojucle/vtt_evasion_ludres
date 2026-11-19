@@ -19,14 +19,15 @@ use App\Mapper\Activity\ActivityAdminListMapper;
 use App\Repository\BikeRideRepository;
 use App\Repository\SessionRepository;
 use App\Service\PaginatorService;
+use App\State\Activity\Trait\ActivityListDataTrait;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ActivityAdminListProvider implements ListProviderInterface
 {
     use FilterHydratorTrait;
+    use ActivityListDataTrait;
 
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
@@ -49,10 +50,12 @@ class ActivityAdminListProvider implements ListProviderInterface
             $currentPage,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
+        $entityIds = array_map(fn ($e) => $e->getId(), iterator_to_array($entities));
+
 
         return $this->mapper->mapToView(
             $entities,
-            $this->getParticipantTotalByActivity($entities),
+            $this->getParticipantTotalByActivity($entityIds),
             $context->route,
             $currentPage,
             $filter,
@@ -107,19 +110,5 @@ class ActivityAdminListProvider implements ListProviderInterface
             $firstDay,
             $firstDay->modify('last day of this month')
         ];
-    }
-
-    private function getParticipantTotalByActivity(Paginator $entities): array
-    {
-        $entityIds = array_map(fn ($e) => $e->getId(), iterator_to_array($entities));
-        $results = $this->sessionRepository->findTotalByActivityIds($entityIds);
-
-        return array_reduce($results, function ($acc, $item) {
-            $acc[$item['id']] = [
-                'count' => (int) $item['count'],
-                'present' => (int) $item['present']
-            ];
-            return $acc;
-        }, []);
     }
 }

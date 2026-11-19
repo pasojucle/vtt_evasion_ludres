@@ -12,7 +12,6 @@ use App\Core\Handler\ListLoadMoreHandler;
 use App\Dto\Filter\MemberSkillFilter;
 use App\Dto\Payload\MemberSkillCreatePayload;
 use App\Dto\Payload\MemberSkillEvaluationPayload;
-use App\Dto\State\ViewContext;
 use App\Entity\Enum\EvaluationEnum;
 use App\Entity\Member;
 use App\Entity\MemberSkill;
@@ -22,13 +21,14 @@ use App\State\MemberSkill\Processor\MemberSkillEvaluationProcessor;
 use App\State\MemberSkill\Provider\MemberSkillCreateProvider;
 use App\State\MemberSkill\Provider\MemberSkillReadProvider;
 use App\State\MemberSkill\Provider\MemberSkillUpdateProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/membre/competences', name: 'admin_member_skill')]
-class MemberSkillController extends AbstractCrudController
+class MemberSkillController extends AbstractController
 {
     #[Route('/list/{member}', name: '_list', methods: ['GET'])]
     #[IsGranted('USER_EDIT', 'member')]

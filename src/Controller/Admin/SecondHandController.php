@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
-use App\Dto\Filter\SecondHandFilter;
 use App\Entity\SecondHand;
 use App\Form\SecondHandType;
 use App\Repository\SecondHandRepository;
@@ -16,13 +16,14 @@ use App\State\SecondHand\Provider\SecondHandDetailProvider;
 use App\State\SecondHand\Provider\SecondHandListProvider;
 use App\UseCase\SecondHand\EditSecondHand;
 use DateTimeImmutable;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('admin/occasion', name: 'admin_second_hand_')]
-class SecondHandController extends AbstractCrudController
+class SecondHandController extends AbstractController
 {
     public function __construct(
         private SecondHandDtoTransformer $secondHandDtoTransformer,
@@ -92,9 +93,10 @@ class SecondHandController extends AbstractCrudController
          Request $request,
          SecondHandDeleteProcessor $processor,
          SecondHandDeleteProvider $provider,
-         SecondHand $secondHand
+         SecondHand $secondHand,
+         ActionFormHandler $handler,
      ): Response {
-         return $this->handleFormComponentAction(
+         return $handler->handle(
              $request,
              $secondHand,
              $provider,

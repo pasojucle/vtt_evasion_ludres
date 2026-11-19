@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\BikeRide;
 use App\Mapper\DestructiveModalMapper;
 use App\Service\BikeRideService;
-use App\State\Interface\FormComponentProviderInterface;
 
 /**
  * @implements FormComponentProviderInterface<BikeRide>
@@ -22,18 +22,18 @@ class ActivityDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(
             sprintf(
                 '<p>Etes vous certain de supprimer<br>la sortie %s du %s',
-                $entity->getTitle(),
-                $this->bikeRideService->getPeriod($entity)
+                $data->getTitle(),
+                $this->bikeRideService->getPeriod($data)
             )
         );
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [
             'attr' => [

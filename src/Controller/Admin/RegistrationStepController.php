@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
@@ -15,14 +16,14 @@ use App\State\RegistrationStep\Processor\RegistrationStepDeleteProcessor;
 use App\State\RegistrationStep\Provider\RegistrationStepDeleteProvider;
 use App\UseCase\Registration\GetRegistrationByTypes;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/inscription', name: 'admin_registration_step', methods: ['GET'])]
-class RegistrationStepController extends AbstractCrudController
+class RegistrationStepController extends AbstractController
 {
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
@@ -99,11 +100,12 @@ class RegistrationStepController extends AbstractCrudController
     #[Route('/supprimer/{registrationStep}', name: '_delete', methods: ['GET', 'POST'])]
     public function adminRegistrationStepDelete(
         Request $request,
-        RegistrationStepDeleteProcessor $processor,
         RegistrationStepDeleteProvider $provider,
-        RegistrationStep $registrationStep
+        RegistrationStepDeleteProcessor $processor,
+        RegistrationStep $registrationStep,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $registrationStep,
             $provider,

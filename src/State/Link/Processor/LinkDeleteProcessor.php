@@ -4,38 +4,35 @@ declare(strict_types=1);
 
 namespace App\State\Link\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\Link;
-use App\Repository\LinkRepository;
-use App\Service\OrderByService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Link\DeleteLink;
 
-class LinkDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class LinkDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private LinkRepository $linkRepository,
-        private OrderByService $orderByService,
+        private UrlContextService $urlContextService,
+        private DeleteLink $deleteLink,
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        /** @var Link $entity */
-        $position = $entity->getPosition();
+        $link = $payload->data;
 
-        $this->entityManager->remove($entity);
-        $this->entityManager->flush();
+        ($this->deleteLink)($link);
 
-        $links = $this->linkRepository->findByPosition($position);
-        $this->orderByService->resetOrders($links);
-
-    
         return new RedirectProcessorResult(
             success: true,
             messageKey: 'link.flash.success.delete',
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             flashType: 'success'
         );
     }

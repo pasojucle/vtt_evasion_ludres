@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Log;
 use App\Entity\Member;
 use App\Entity\SlideshowImage;
+use App\Repository\Interface\SlideshowImageRepositoryInterface;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -23,11 +24,29 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method SlideshowImage[]    findAll()
  * @method SlideshowImage[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SlideshowImageRepository extends ServiceEntityRepository
+class SlideshowImageRepository extends ServiceEntityRepository implements SlideshowImageRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SlideshowImage::class);
+    }
+
+    public function save(SlideshowImage $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(SlideshowImage $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**

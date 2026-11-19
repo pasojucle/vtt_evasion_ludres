@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\State\ClusterSkill\Provider;
 
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Payload\AssociateResourcePayload;
-use App\Dto\State\ViewContext;
 use App\Dto\View\DialogModalView;
 use App\Mapper\DestructiveModalMapper;
-use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<AssociateResourcePayload>
+ */
 class ClusterSkillDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
@@ -17,19 +20,20 @@ class ClusterSkillDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    /**
-     * @implements FormComponentProviderInterface<AssociateResourcePayload>
-     */
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
         return $this->destructiveModalMapper->mapToView(sprintf(
             'Etes vous certain de supprimer l\'évaluation <b>%s</b> ?',
-            $entity->data->getContent()
+            $data->data->getContent()
         ));
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ]
+        ];
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\LicenceStateEnum;
@@ -19,8 +20,8 @@ use App\State\Member\Processor\MemberDeleteProcessor;
 use App\State\Member\Provider\MemberDeleteProvider;
 use App\UseCase\CronTab\CronTabLog;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\ClickableInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -29,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ToolController extends AbstractCrudController
+class ToolController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager
@@ -57,11 +58,12 @@ class ToolController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function adminConfirmDeleteUser(
         Request $request,
-        MemberDeleteProcessor $processor,
         MemberDeleteProvider $provider,
-        ?Member $member,
+        MemberDeleteProcessor $processor,
+        Member $member,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $member,
             $provider,

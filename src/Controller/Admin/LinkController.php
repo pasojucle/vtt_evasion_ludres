@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Core\Handler\ActionFormHandler;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Link;
 use App\Form\Admin\LinkType;
@@ -14,6 +15,7 @@ use App\State\Link\Processor\LinkDeleteProcessor;
 use App\State\Link\Provider\LinkDeleteProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/param/lien', name: 'admin_link')]
-class LinkController extends AbstractCrudController
+class LinkController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -105,11 +107,12 @@ class LinkController extends AbstractCrudController
     #[IsGranted('ROLE_ADMIN')]
     public function adminLinkDelete(
         Request $request,
-        LinkDeleteProcessor $processor,
         LinkDeleteProvider $provider,
-        Link $link
+        LinkDeleteProcessor $processor,
+        Link $link,
+        ActionFormHandler $handler,
     ): Response {
-        return $this->handleFormComponentAction(
+        return $handler->handle(
             $request,
             $link,
             $provider,

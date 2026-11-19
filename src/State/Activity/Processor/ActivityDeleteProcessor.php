@@ -4,31 +4,34 @@ declare(strict_types=1);
 
 namespace App\State\Activity\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\BikeRide;
-use App\Service\SoftDeleteService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Activity\DeleteActivity;
 
-class ActivityDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class ActivityDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SoftDeleteService $softDeleteService,
+        private UrlContextService $urlContextService,
+        private DeleteActivity $deleteActivity,
     ) {
     }
 
-    /**
-     * @param BikeRide $entity
-     */
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        $this->softDeleteService->softDelete($entity);
-        $this->entityManager->flush();
+        $activity = $payload->data;
+
+        ($this->deleteActivity)($activity);
 
         return new RedirectProcessorResult(
             success: true,
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             messageKey: 'activity.flash.success.delete',
         );
     }

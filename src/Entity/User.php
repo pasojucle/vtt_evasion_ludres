@@ -35,7 +35,7 @@ abstract class User implements UserInterface
     #[ORM\Column(type: 'json')]
     protected array $roles = [];
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist'])]
     protected ?Identity $identity = null;
 
     /**

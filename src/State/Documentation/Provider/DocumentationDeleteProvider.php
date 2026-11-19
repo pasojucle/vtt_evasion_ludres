@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\State\Documentation\Provider;
 
-use App\Dto\State\ViewContext;
+use App\Core\Contract\Provider\FormComponentProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\View\DialogModalView;
 use App\Entity\Documentation;
 use App\Mapper\DestructiveModalMapper;
-use App\State\Interface\FormComponentProviderInterface;
 
+/**
+ * @implements FormComponentProviderInterface<Documentation>
+ */
 class DocumentationDeleteProvider implements FormComponentProviderInterface
 {
     public function __construct(
@@ -17,16 +20,21 @@ class DocumentationDeleteProvider implements FormComponentProviderInterface
     ) {
     }
 
-    /**
-     * @implements FormComponentProviderInterface<Documentation>
-     */
-    public function getFormView(object $entity, ?ViewContext $context = null): DialogModalView
+    
+    public function getView(object $data, ?HandlerContext $context = null): DialogModalView
     {
-        return $this->destructiveModalMapper->mapToView(sprintf('Etes vous certain de supprimer la documentation %s', $entity->getName()));
+        return $this->destructiveModalMapper->mapToView(sprintf(
+            'Etes vous certain de supprimer la documentation %s',
+            $data->getName()
+        ));
     }
 
-    public function getFormOptions(object $entity): array
+    public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->modal#handleFormSubmit',
+            ]
+        ];
     }
 }

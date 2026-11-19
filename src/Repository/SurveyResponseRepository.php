@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Dto\Enum\SurveyResponseValueType;
-use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Member;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
@@ -95,7 +93,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
         ;
     }
 
-    public function deleteResponsesByUser(Member $member): void
+    public function deleteResponsesByMember(Member $member): void
     {
         $this->createQueryBuilder('r')
         ->delete()

@@ -4,35 +4,35 @@ declare(strict_types=1);
 
 namespace App\State\Documentation\Processor;
 
-use App\Dto\State\RedirectProcessorResult;
-use App\Entity\Documentation;
-use App\Repository\DocumentationRepository;
-use App\Service\OrderByService;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Documentation\DeleteDocumentation;
 
-class DocumentationDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class DocumentationDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private DocumentationRepository $documentationRepository,
-        private OrderByService $orderByService,
+        private UrlContextService $urlContextService,
+        private DeleteDocumentation $deleteDocumentation,
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        /** @var Documentation $entity*/
-        $this->entityManager->remove($entity);
-        $this->entityManager->flush();
+        $documentation = $payload->data;
 
-        $documentations = $this->documentationRepository->findAll();
-        $this->orderByService->resetOrders($documentations);
+        ($this->deleteDocumentation)($documentation);
 
         return new RedirectProcessorResult(
             success: true,
             messageKey: 'documentation.flash.success.delete',
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             flashType: 'success'
         );
     }

@@ -23,7 +23,7 @@ class ParticipationMonthlyProvider
         $today = new DateTimeImmutable();
         $participations = $this->sessionRepository->findParticipation(
             $isSchool,
-            $today->sub(new DateInterval('P12M')),
+            $today->sub(new DateInterval('P6M')),
             $today
         );
 

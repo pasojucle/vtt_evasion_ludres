@@ -4,31 +4,36 @@ declare(strict_types=1);
 
 namespace App\State\ClusterSkill\Processor;
 
-use App\Dto\Payload\AssociateResourcePayload;
-use App\Dto\State\RedirectProcessorResult;
-use App\State\Interface\FormRedirectProcessorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Core\Contract\PayloadInterface;
+use App\Core\Contract\Processor\RedirectProcessorInterface;
+use App\Core\Dto\ActionPayload;
+use App\Core\Dto\HandlerContext;
+use App\Core\Dto\RedirectProcessorResult;
+use App\Service\UrlContextService;
+use App\UseCase\v2\Cluster\DeleteClusterSkill;
 
-class ClusterSkillDeleteProcessor implements FormRedirectProcessorInterface
+/**
+ * @implements RedirectProcessorInterface<ActionPayload>
+ */
+class ClusterSkillDeleteProcessor implements RedirectProcessorInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private UrlContextService $urlContextService,
+        private DeleteClusterSkill $deleteClusterSkill,
     ) {
     }
 
-    public function process(object $entity, ?array $uploadFiles, ?string $targetUrl = null): RedirectProcessorResult
+    public function process(PayloadInterface $payload, ?HandlerContext $context = null): RedirectProcessorResult
     {
-        /** @var AssociateResourcePayload $entity */
-        $cluster = $entity->parent;
-        $skill = $entity->data;
+        $cluster = $context->parent;
+        $skill = $payload->data;
 
-        $cluster->removeSkill($skill);
-        $this->entityManager->flush();
+        ($this->deleteClusterSkill)($cluster, $skill);
 
         return new RedirectProcessorResult(
             success: true,
             messageKey: 'cluster_skill.flash.success.delete',
-            targetUrl: $targetUrl,
+            targetUrl: $this->urlContextService->decodeUrl($context->encodedFallback),
             flashType: 'success'
         );
     }
