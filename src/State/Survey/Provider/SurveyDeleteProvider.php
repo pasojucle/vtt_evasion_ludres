@@ -32,6 +32,11 @@ class SurveyDeleteProvider implements FormComponentProviderInterface
 
     public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
-        return [];
+        return [
+            'attr' => [
+                'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-turbo-frame' => '_top'
+            ]
+        ];
     }
 }

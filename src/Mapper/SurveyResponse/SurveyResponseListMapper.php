@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Mapper\SurveyResponse;
 
+use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Enum\SurveyResponseValueType;
 use App\Dto\View\BadgeView;
+use App\Dto\View\DropdownItemView;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\SurveyResponse\SurveyResponseIssueView;
@@ -33,9 +38,12 @@ class SurveyResponseListMapper
             description: $survey->getContent(),
             fallback: new LinkView(
                 $this->urlContextService->decodeUrl($fallback),
+                variant: ColorVariant::GOST,
                 icon: 'lucide:chevron-left',
-                size: Size::ICON
+                size: Size::SM,
+                label: 'Retour'
             ),
+            dropdown: $this->dropdown($survey),
             issues: $this->getSurveyResponsesByIssue($survey),
         );
     }
@@ -111,5 +119,38 @@ class SurveyResponseListMapper
         }
 
         return $types;
+    }
+
+    private function dropdown(Survey $survey): DropdownView
+    {
+        return new DropdownView(
+            variant: DropdownVariant::BUTTON,
+            rounded: RoundedVariant::ROUNDED,
+            actionItems: [
+                new DropdownItemView(
+                    label: 'Copier les emails des participants',
+                    icon: 'lucide:clipboard-type',
+                    htmlAttributes: [
+                        new HtmlAttributeView(
+                            'data-email-to-clipboard-url-value',
+                            $this->urlGenerator->generate(
+                                'admin_survey_response_email_to_clipboard',
+                                ['survey' => $survey->getId()]
+                            )
+                        ),
+                        new HtmlAttributeView('data-controller', 'email-to-clipboard'),
+                        new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
+                    ]
+                )
+            ],
+            menuItems: [
+                new LinkView(
+                    label: 'Exporter les réponses',
+                    url: $this->urlGenerator->generate('admin_survey_response_export', ['survey' => $survey->getId()]),
+                    icon: 'lucide:file-down',
+                    variant: ColorVariant::DROPDOWN,
+                ),
+            ],
+        );
     }
 }

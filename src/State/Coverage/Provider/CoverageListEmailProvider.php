@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Coverage\Provider;
 
-use App\Core\Contract\Provider\ListJsonProviderInterface;
+use App\Core\Contract\Provider\JsonProviderInterface;
+use App\Core\Contract\Provider\ListFilteredProviderInterface;
 use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
@@ -16,9 +17,9 @@ use App\Service\SeasonService;
 use App\State\Coverage\Trait\CoverageDataProviderTrait;
 
 /**
- * @implements ListJsonProviderInterface<CoverageFilter>
+ * @implements JsonProviderInterface<CoverageFilter>
  */
-class CoverageListEmailProvider implements ListJsonProviderInterface
+class CoverageListEmailProvider implements JsonProviderInterface, ListFilteredProviderInterface
 {
     use FilterHydratorTrait;
     use CoverageDataProviderTrait;
@@ -31,7 +32,7 @@ class CoverageListEmailProvider implements ListJsonProviderInterface
     ) {
     }
 
-    public function getJson(AbstractFilter $filter, HandlerContext|null $context = null): array
+    public function getJson(?AbstractFilter $filter = null, HandlerContext|null $context = null): array
     {
         $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
 

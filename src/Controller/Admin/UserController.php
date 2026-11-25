@@ -7,8 +7,8 @@ namespace App\Controller\Admin;
 use App\Core\Handler\ActionDirectHandler;
 use App\Core\Handler\AutocompleteHandler;
 use App\Core\Handler\DetailHandler;
+use App\Core\Handler\JsonHandler;
 use App\Core\Handler\ListExportHandler;
-use App\Core\Handler\ListJsonHandler;
 use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\Filter\UserFilter;
 use App\Entity\Member;
@@ -65,7 +65,7 @@ class UserController extends AbstractController
     public function adminEmailUsers(
         Request $request,
         UserListEmailProvider $provider,
-        ListJsonHandler $handler,
+        JsonHandler $handler,
     ): JsonResponse {
         return $handler->handle(
             $request,
@@ -75,9 +75,6 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/{user}', name: 'user_show', requirements:['user' => '\d+'], methods: ['GET'])]
-    #[Route('/inscription/adherent/{user}', name: 'registration_user', requirements:['user' => '\d+'], methods: ['GET'])]
-    #[Route('/adherent/calendrier/{user}', name: 'bike_rides_user', requirements:['user' => '\d+'], methods: ['GET'])]
-    #[Route('/adherent/assurance/{user}', name: 'coverage_user', requirements:['user' => '\d+'], methods: ['GET'])]
     #[IsGranted('USER_SHARE', 'user')]
     public function adminUser(
         User $user,

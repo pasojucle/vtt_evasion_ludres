@@ -53,21 +53,8 @@ class ActivityAdminDropdownMapper
                     new HtmlAttributeView('data-action', 'click->dropdown#close')
                 ],
             );
-            $menuItems[] = new LinkView(
-                label: 'Exporter la séance',
-                url: $this->urlGenerator->generate('admin_bike_ride_export', ['bikeRide' => $bikeRide->getId()]),
-                icon: 'lucide:file-down',
-                variant: ColorVariant::DROPDOWN,
-            );
         }
-        if ($this->security->isGranted('SUMMARY_LIST')) {
-            $menuItems[] = new LinkView(
-                label: 'Actualités',
-                url: $this->urlContextService->generateUrl('admin_summary_list', ['bikeRide' => $bikeRide->getId()], $fallback),
-                icon: 'lucide:image',
-                variant: ColorVariant::DROPDOWN,
-            );
-        }
+
         $actionItems = [];
         if ($bikeRide->getBikeRideType()->isPublic()) {
             $actionItems[] = new DropdownItemView(

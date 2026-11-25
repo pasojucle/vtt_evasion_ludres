@@ -129,7 +129,7 @@ class ParticipationListExportProvider implements StreamListExportableInterface
         return $levels;
     }
 
-    public function filename(?HandlerContext $context = null): string
+    public function basename(?HandlerContext $context = null): string
     {
         return 'export_participations.csv';
     }

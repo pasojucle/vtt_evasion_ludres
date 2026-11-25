@@ -16,7 +16,7 @@ class ValidateCoverage
 
     public function __invoke(Licence $licence): void
     {
-        $licence->setCurrentSeasonForm(true);        
+        $licence->setCurrentSeasonForm(true);
         $this->licenceRepository->save($licence);
     }
 }

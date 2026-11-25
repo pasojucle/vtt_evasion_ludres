@@ -7,7 +7,6 @@ namespace App\Mapper\Order;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\OrderFilter;
@@ -51,8 +50,7 @@ class OrderAdminListMapper
                 fn (OrderHeader $order) => $this->orderAdminMapper->mapToView($order, $targetUrl),
                 iterator_to_array($entities)
             ),
-            settings: $this->dropdownSettingsMapper->mapToView('ORDER', $targetUrl, RoundedVariant::ROUNDED_END),
-            tools: $this->getTools($filter->toArray()),
+            dropdown: $this->dropdown($targetUrl, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
@@ -64,18 +62,19 @@ class OrderAdminListMapper
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            wiki:  $this->wikiMapper->mapToView('boutique', RoundedVariant::ROUNDED_START),
         );
     }
 
-    private function getTools(array $filter): DropdownView
+    private function dropdown(string $targetUrl, OrderFilter $filter): DropdownView
     {
-        $dropdown = new DropdownView(
-            variant: DropdownVariant::GOST,
-            menuItems: [
+        return $this->dropdownSettingsMapper->mapToView(
+            'ORDER',
+            $targetUrl,
+            RoundedVariant::ROUNDED,
+            [
                 new LinkView(
                     label: 'Exporter la sélection',
-                    url: $this->urlGenerator->generate('admin_order_headers_export', $filter),
+                    url: $this->urlGenerator->generate('admin_order_headers_export', $filter->toArray()),
                     icon: 'lucide:file-down',
                     variant: ColorVariant::DROPDOWN,
                     htmlAttributes: [
@@ -83,9 +82,8 @@ class OrderAdminListMapper
                         new HtmlAttributeView('data-turbo', 'false')
                     ]
                 ),
-            ],
+                $this->wikiMapper->mapToView('boutique'),
+            ]
         );
-
-        return $dropdown;
     }
 }

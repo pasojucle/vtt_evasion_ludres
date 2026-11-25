@@ -19,7 +19,7 @@ readonly class ListExportHandler
     ): StreamedResponse {
         $context = HandlerContext::fromRequest($request, $parent);
         $filter = $provider->getHydratedDto($context->queryParams, $filterClass);
-        $filename = $provider->filename($context);
+        $filename = $provider->basename($context);
 
         $response = new StreamedResponse(function () use ($provider, $filter, $context) {
             $provider->streamExportContent($filter, $context);

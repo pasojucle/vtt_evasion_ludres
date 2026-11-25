@@ -37,7 +37,7 @@ class SkillCategoryListProvider implements ListProviderInterface
 
         $entities = $this->paginator->paginate(
             $qb,
-            $$context->page,
+            $context->page,
             $filter->itemsPerPage ?? PaginatorService::PAGINATOR_PER_PAGE
         );
 

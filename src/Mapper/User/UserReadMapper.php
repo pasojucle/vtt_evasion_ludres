@@ -36,7 +36,7 @@ class UserReadMapper
 
         [$phones, $emergencyContact, $heath] = ($entity instanceof Member)
             ? [
-                $entity->getMemberGardians()->map(fn ($gardian) => $this->gardianReadMapper->mapToView($gardian)),
+                $entity->getMemberGardians()->map(fn ($gardian) => $this->gardianReadMapper->mapToView($gardian))->toArray(),
                 $entity->getEmergencyContact()?->getId(),
                 $entity->getHealth()
             ] : [new ArrayCollection(), null, null];

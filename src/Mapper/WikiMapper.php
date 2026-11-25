@@ -18,15 +18,13 @@ class WikiMapper
     ) {
     }
 
-    public function mapToView(string $dirName, RoundedVariant $rounded = RoundedVariant::ROUNDED): LinkView
+    public function mapToView(string $dirName): LinkView
     {
         return new LinkView(
             url: $this->urlGenerator->generate('wiki_show', ['directory' => $dirName]),
-            title: 'wiki',
+            label: 'Aide en ligne',
             icon: 'lucide:circle-help',
-            variant: ColorVariant::DEFAULT,
-            size: Size::ICON,
-            rounded: $rounded,
+            variant: ColorVariant::DROPDOWN,
             htmlAttributes: [
                 new HtmlAttributeView('target', '_blank'),
             ],

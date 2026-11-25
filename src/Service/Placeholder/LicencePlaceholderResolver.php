@@ -24,7 +24,7 @@ readonly class LicencePlaceholderResolver extends AbstractPlaceholderResolver
     {
         /** @var Licence $data */
         return match ($placeholder) {
-            'saison' => $data->getSeason(),
+            'saison' => (string) $data->getSeason(),
             'full_saison' => $data->getFullSeason(),
             'date' => ($data->getState()->isYearly())
                 ? $data->getCreatedAt()->format('d/m/Y')

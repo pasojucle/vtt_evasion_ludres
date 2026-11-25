@@ -10,6 +10,7 @@ use App\Entity\Member;
 use App\Entity\Session;
 use App\Entity\Summary;
 use App\Repository\SessionRepository;
+use App\Service\LicenceService;
 use DateTime;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -29,7 +30,7 @@ class BikeRideVoter extends Voter
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
         private readonly SessionRepository $sessionRepository,
         private readonly RequestStack $requestStack,
-        private readonly UserDtoTransformer $userDtoTransformer,
+        private readonly LicenceService $licenceService,
     ) {
     }
 
@@ -51,8 +52,8 @@ class BikeRideVoter extends Voter
         }
 
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
-        $userDto = $this->userDtoTransformer->fromEntity($member);
-        $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
+        $lastLicence = $member->getLastLicence();
+        $isActiveUser = $isGrantedUser && $lastLicence && $this->licenceService->isActive($lastLicence);
         $isUserWithPermission = $isActiveUser && $member->hasPermissions(PermissionEnum::BIKE_RIDE);
 
         return match ($attribute) {

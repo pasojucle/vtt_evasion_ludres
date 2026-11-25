@@ -24,5 +24,5 @@ interface StreamListExportableInterface
      */
     public function streamExportContent(AbstractFilter $filter, ?HandlerContext $context = null): void;
 
-    public function filename(?HandlerContext $context = null): string;
+    public function basename(?HandlerContext $context = null): string;
 }

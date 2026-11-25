@@ -36,7 +36,7 @@ class UserListExportProvider implements StreamListExportableInterface
         $this->exportMapper->streamToCsv($entities);
     }
 
-    public function filename(?HandlerContext $context = null): string
+    public function basename(?HandlerContext $context = null): string
     {
         return 'export_adherents.csv';
     }

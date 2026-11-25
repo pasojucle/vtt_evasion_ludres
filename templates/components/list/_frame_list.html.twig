@@ -2,15 +2,8 @@
     {% include "components/list/_list_skeleton.html.twig" with {title: list.title} %}
     <div class="block [turbo-frame[busy]>&]:hidden transition-opacity duration-200">
         <div class="border border-border rounded-md">
-            <div class="bg-slate-300 pl-4 py-0.5 flex items-center min-h-8">
-                <div class="uppercase text-white text-sm">
-                    {{ list.title }} - <span class="">{{ list.paginator.total }}
-                </div>
-                <div class="ml-auto">
-                    {% if list.tools is not null %}
-                        {% include 'components/_dropdown.html.twig'  with {dropdown: list.tools} %}
-                    {% endif %}
-                </div>
+            <div class="bg-slate-300 pl-4 py-0.5 flex items-center min-h-8 uppercase text-white text-sm">
+                {{ list.title }} - <span class="">{{ list.paginator.total }}
             </div>
             <ul 
                 id="{{ list.name }}_container" 

@@ -74,6 +74,13 @@ class SkillCategoryListMapper
                     new HtmlAttributeView('data-action', 'click->dropdown#close'),
                 ],
             ),
+            fallback: new LinkView(
+                url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                variant: ColorVariant::GOST,
+                icon: 'lucide:chevron-left',
+                size: Size::SM,
+                label: 'Retour',
+            ),
         );
     }
 }

@@ -50,7 +50,7 @@ class ContentController extends AbstractController
         ContentRepository $contentRepository,
         BikeRideRepository $bikeRideRepository,
         ContentDtoTransformer $contentDtoTransformer,
-        BikeRideDtoTransformer $bikeRideDtoTransformer
+        BikeRideDtoTransformer $bikeRideDtoTransformer,
     ): Response {
         $homeContents = $contentRepository->findHomeContents();
         $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);

@@ -171,13 +171,11 @@ class ClusterController extends AbstractController
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_CLUSTER_EXPORT', 'cluster')]
     public function adminClusterExport(
-        Request $request,
         ClusterExportProvider $provider,
         Cluster $cluster,
         ActionExportHandler $handler,
     ): Response {
         return $handler->handle(
-            $request,
             $provider,
             $cluster,
         );

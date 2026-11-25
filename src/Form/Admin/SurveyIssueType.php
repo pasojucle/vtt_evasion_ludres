@@ -16,29 +16,32 @@ class SurveyIssueType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $disabled = $builder->getFormConfig()->getDisabled();
+        $readonly = $options['readonly'];
 
         $builder
             ->add('content', TextType::class, [
                 'label' => false,
-                'disabled' => $disabled,
                 'attr' => [
                     'placeholder' => 'Saisir une question',
+                    'readonly' => $readonly,
                 ],
             ])
             ->add('responseType', EnumType::class, [
                 'label' => false,
                 'class' => SurveyResponseType::class,
-                'disabled' => $disabled,
+                'attr' => [
+                    'readonly' => $readonly,
+                ],
             ])
         ;
     }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SurveyIssue::class,
-            'issues_disabled' => false,
+            'readonly' => false,
         ]);
     }
 }

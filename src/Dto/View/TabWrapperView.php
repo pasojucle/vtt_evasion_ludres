@@ -18,6 +18,7 @@ readonly class TabWrapperView implements ComponentViewInterface
         public TabWrapperHeaderInterface $header,
         public array $tabs,
         public ?LinkView $fallback,
+        public ?DropdownView $dropdown = null,
     ) {
     }
 

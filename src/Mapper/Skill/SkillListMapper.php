@@ -7,7 +7,6 @@ namespace App\Mapper\Skill;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\SkillFilter;
@@ -50,8 +49,7 @@ class SkillListMapper
             title: 'Compétences',
             description: 'Administration de la liste des compétences.',
             items: array_map(fn (Skill $skill) => $this->skillMapper->mapToView($skill, $targetUrl), iterator_to_array($entities)),
-            tools: $this->getTools($filter->toArray()),
-            settings: $this->settings($targetUrl),
+            dropdown: $this->dropdown($targetUrl, $filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -74,42 +72,33 @@ class SkillListMapper
             ),
             fallback: new LinkView(
                 url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                variant: ColorVariant::GOST,
                 icon: 'lucide:chevron-left',
-                rounded: RoundedVariant::ROUNDED_END,
-                size: Size::ICON,
+                size: Size::SM,
+                label: 'Retour',
             ),
         );
     }
 
-    private function settings(string $targetUrl): DropdownView
+    private function dropdown(string $targetUrl, SkillFilter $filter): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView(null, $targetUrl, RoundedVariant::ROUNDED_START, [
+        return $this->dropdownSettingsMapper->mapToView(null, $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
-                label: 'Catégories',
-                url: $this->urlGenerator->generate('admin_skill_category_list'),
+                label: 'Exporter la sélection',
+                url: $this->urlGenerator->generate('admin_skill_export', $filter->toArray()),
+                icon: 'lucide:file-down',
                 variant: ColorVariant::DROPDOWN,
-            ),
-        ]);
-    }
-
-    private function getTools(array $filter): DropdownView
-    {
-        $dropdown = new DropdownView(
-            variant: DropdownVariant::GOST,
-            menuItems: [
-                new LinkView(
-                    label: 'Exporter la sélection',
-                    url: $this->urlGenerator->generate('admin_skill_export', $filter),
-                    icon: 'lucide:file-down',
-                    variant: ColorVariant::DROPDOWN,
-                    htmlAttributes: [
+                htmlAttributes: [
                         new HtmlAttributeView('data-action', 'click->dropdown#close'),
                         new HtmlAttributeView('data-turbo', 'false')
                     ]
-                ),
-            ],
-        );
-
-        return $dropdown;
+            ),
+            new LinkView(
+                label: 'Catégories',
+                url: $this->urlContextService->generateUrl('admin_skill_category_list', [], $targetUrl),
+                icon: 'lucide:settings',
+                variant: ColorVariant::DROPDOWN,
+            ),
+        ]);
     }
 }

@@ -14,12 +14,10 @@ readonly class ListView
      * @param string $description,
      * @param ListItemView[] $items
      * @param ?PaginatorView $paginator
-     * @param ?DropdownView $tools
-     * @param ?DropdownView $settings
+     * @param ?DropdownView $dropdown
      * @param ?LinkView $addItem
      * @param ?LinkView $advancedFilter
      * @param FilterChipView[] $filterChipViews
-     * @param ?LinkView $wiki
      */
     public function __construct(
         public string $name,
@@ -27,12 +25,10 @@ readonly class ListView
         public string $description,
         public array $items,
         public ?PaginatorView $paginator = null,
-        public ?DropdownView $tools = null,
-        public ?DropdownView $settings = null,
+        public ?DropdownView $dropdown = null,
         public ?LinkView $addItem = null,
         public ?LinkView $advancedFilter = null,
         public array $filterChipViews = [],
-        public ?LinkView $wiki = null,
         public ?LinkView $fallback = null,
         public ?string $sortableUrl = null,
     ) {

@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\State\Skill\Provider;
 
-use App\Core\Contract\Provider\ListFilteredProviderInterface;
-use App\Core\Contract\Provider\StreamActionExportableInterface;
+use App\Core\Contract\Provider\StreamListExportableInterface;
+use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
 use App\Dto\Filter\SkillFilter;
-use App\Entity\Skill;
 use App\Mapper\Skill\SkillListExportMapper;
 use App\Repository\SkillRepository;
 use App\State\Skill\Trait\SkillDataProviderTrait;
 
 /**
- * @implements StreamActionExportableInterface<Skill>
+ * @implements StreamListExportableInterface<SkillFilter>
  */
-class SkillExportProvider implements StreamActionExportableInterface, ListFilteredProviderInterface
+class SkillExportProvider implements StreamListExportableInterface
 {
     use FilterHydratorTrait;
     use SkillDataProviderTrait;
@@ -28,16 +27,13 @@ class SkillExportProvider implements StreamActionExportableInterface, ListFilter
     ) {
     }
 
-    /**
-     * @param SkillFilter $filter
-     */
-    public function streamExportContent(?object $data, ?AbstractFilter $filter): void
+    public function streamExportContent(?AbstractFilter $filter, ?HandlerContext $context = null): void
     {
         $skills = $this->getQueryBuilder($filter)->getQuery()->getResult();
         $this->skillListExportMapper->streamToCsv($skills);
     }
 
-    public function basename(?object $data): string
+    public function basename(?HandlerContext $context = null): string
     {
         return 'liste_des_compétences.csv';
     }

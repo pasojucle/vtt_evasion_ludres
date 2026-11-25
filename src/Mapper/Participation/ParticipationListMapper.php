@@ -8,6 +8,7 @@ use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\ParticipationFilter;
 use App\Dto\View\DropdownView;
@@ -50,7 +51,7 @@ class ParticipationListMapper
                 return $this->participationMapper->mapToView($activity, $total, array_merge($params, $arrayFilter));
             }, iterator_to_array($entities)),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
-            tools: $this->tools($filter),
+            dropdown: $this->settings($filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
                 icon: 'lucide:settings-2',
@@ -64,10 +65,11 @@ class ParticipationListMapper
         );
     }
 
-    public function tools(ParticipationFilter $filter): ?DropdownView
+    public function settings(ParticipationFilter $filter): ?DropdownView
     {
         return new DropdownView(
-            variant: DropdownVariant::GOST,
+            variant: DropdownVariant::BUTTON,
+            rounded: RoundedVariant::ROUNDED,
             menuItems: [
                 new LinkView(
                     label: 'Exporter la sélection',

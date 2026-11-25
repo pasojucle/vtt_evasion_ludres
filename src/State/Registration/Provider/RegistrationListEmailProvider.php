@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Registration\Provider;
 
-use App\Core\Contract\Provider\ListJsonProviderInterface;
+use App\Core\Contract\Provider\JsonProviderInterface;
+use App\Core\Contract\Provider\ListFilteredProviderInterface;
 use App\Core\Dto\HandlerContext;
 use App\Core\Filter\FilterHydratorTrait;
 use App\Dto\Filter\AbstractFilter;
@@ -16,9 +17,9 @@ use App\Service\SeasonService;
 use App\State\Registration\Trait\RegistrationListDataTrait;
 
 /**
- * @implements ListJsonProviderInterface<RegistrationFilter>
+ * @implements JsonProviderInterface<RegistrationFilter>
  */
-class RegistrationListEmailProvider implements ListJsonProviderInterface
+class RegistrationListEmailProvider implements JsonProviderInterface, ListFilteredProviderInterface
 {
     use FilterHydratorTrait;
     use RegistrationListDataTrait;
@@ -31,7 +32,7 @@ class RegistrationListEmailProvider implements ListJsonProviderInterface
     ) {
     }
 
-    public function getJson(AbstractFilter $filter, HandlerContext|null $context = null): array
+    public function getJson(?AbstractFilter $filter = null, HandlerContext|null $context = null): array
     {
         $entities = $this->getQueryBuilder($filter)->getQuery()->getResult();
 

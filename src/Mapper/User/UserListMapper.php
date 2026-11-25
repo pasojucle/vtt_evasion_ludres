@@ -53,8 +53,7 @@ class UserListMapper
             title: 'Adhérents ',
             description: 'Administration des adhérents du club',
             items: array_map(fn (User $user) => $this->userMapper->mapToView($user, $targetUrl), iterator_to_array($entities)),
-            settings: $this->settings($targetUrl),
-            tools: $this->getTools($filter),
+            dropdown: $this->settings($targetUrl, $filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_user_list'], $filter->toQueryParams())),
@@ -66,36 +65,15 @@ class UserListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-            wiki: $this->wikiMapper->mapToView('adhérents', RoundedVariant::ROUNDED_START),
         );
     }
 
-    private function settings(string $targetUrl): DropdownView
+    private function settings(string $targetUrl, UserFilter $filter): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('USER', $targetUrl, RoundedVariant::ROUNDED_END, [
-            new LinkView(
-                label: 'Niveaux',
-                url: $this->urlContextService->generateUrl('admin_level_list', [], $targetUrl),
-                variant: ColorVariant::DROPDOWN,
-            ),
-            new LinkView(
-                label: 'Compétences',
-                url: $this->urlContextService->generateUrl('admin_skill_list', [], $targetUrl),
-                variant: ColorVariant::DROPDOWN,
-            ),
-            new LinkView(
-                label: 'Roles du bureau et comité',
-                url: $this->urlContextService->generateUrl('admin_board_role_list', [], $targetUrl),
-                variant: ColorVariant::DROPDOWN,
-            ),
-        ]);
-    }
-
-    private function getTools(UserFilter $filter): DropdownView
-    {
-        return new DropdownView(
-            variant: DropdownVariant::GOST,
-            rounded: RoundedVariant::ROUNDED_END,
+        return $this->dropdownSettingsMapper->mapToView(
+            section: 'USER',
+            referer: $targetUrl,
+            rounded: RoundedVariant::ROUNDED,
             menuItems: [
                 new LinkView(
                     label: 'Exporter la sélection',
@@ -124,6 +102,25 @@ class UserListMapper
                     htmlAttributes: [
                         new HtmlAttributeView('data-action', 'click->dropdown#close')
                     ],
+                ),
+                $this->wikiMapper->mapToView('adhérents'),
+                new LinkView(
+                    label: 'Niveaux',
+                    icon: 'lucide:settings',
+                    url: $this->urlContextService->generateUrl('admin_level_list', [], $targetUrl),
+                    variant: ColorVariant::DROPDOWN,
+                ),
+                new LinkView(
+                    label: 'Compétences',
+                    icon: 'lucide:settings',
+                    url: $this->urlContextService->generateUrl('admin_skill_list', [], $targetUrl),
+                    variant: ColorVariant::DROPDOWN,
+                ),
+                new LinkView(
+                    label: 'Roles du bureau et comité',
+                    icon: 'lucide:settings',
+                    url: $this->urlContextService->generateUrl('admin_board_role_list', [], $targetUrl),
+                    variant: ColorVariant::DROPDOWN,
                 ),
             ],
             actionItems: [

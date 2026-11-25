@@ -73,7 +73,7 @@ class <?= $entity_name ?>ListMapper
             title: 'Titre de la page',
             description: 'description de la page.',
             items: $items,
-            settings: $this->settings(),
+            dropdown: $this->settings(),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),

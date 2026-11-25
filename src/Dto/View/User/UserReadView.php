@@ -6,7 +6,6 @@ namespace App\Dto\View\User;
 
 use App\Core\Contract\View\TabEntityInterface;
 use App\Dto\View\BadgeView;
-use Doctrine\Common\Collections\Collection;
 
 readonly class UserReadView implements TabEntityInterface
 {
@@ -24,7 +23,7 @@ readonly class UserReadView implements TabEntityInterface
         public BadgeView $level,
         public BadgeView $season,
         public array $authorizations,
-        public Collection $gardians,
+        public array $gardians,
         public ?int $emergencyContactId,
         public array $participationParams,
     ) {

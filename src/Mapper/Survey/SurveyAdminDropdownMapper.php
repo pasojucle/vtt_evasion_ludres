@@ -5,18 +5,15 @@ declare(strict_types=1);
 namespace App\Mapper\Survey;
 
 use App\Dto\Enum\ColorVariant;
-use App\Dto\View\DropdownItemView;
 use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Entity\Survey;
 use App\Service\UrlContextService;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SurveyAdminDropdownMapper
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
         private UrlContextService $urlContextService,
     ) {
     }
@@ -24,13 +21,6 @@ class SurveyAdminDropdownMapper
     public function mapToView(Survey $survey, string $fallback): DropdownView
     {
         $menuItems = [];
-
-        $menuItems[] = new LinkView(
-            label: 'Exporter les réponses',
-            url: $this->urlGenerator->generate('admin_survey_response_export', ['survey' => $survey->getId()]),
-            icon: 'lucide:file-down',
-            variant: ColorVariant::DROPDOWN,
-        );
 
         if (!$survey->isDisabled()) {
             $menuItems[] = new LinkView(
@@ -69,23 +59,6 @@ class SurveyAdminDropdownMapper
 
         return new DropdownView(
             title: $survey->getTitle(),
-            actionItems: [
-                new DropdownItemView(
-                    label: 'Copier les emails des participants',
-                    icon: 'lucide:clipboard-type',
-                    htmlAttributes: [
-                        new HtmlAttributeView(
-                            'data-email-to-clipboard-url-value',
-                            $this->urlGenerator->generate(
-                                'admin_survey_response_email_to_clipboard',
-                                ['survey' => $survey->getId()]
-                            )
-                        ),
-                        new HtmlAttributeView('data-controller', 'email-to-clipboard'),
-                        new HtmlAttributeView('data-action', 'click->email-to-clipboard#emailToClipboard click->dropdown#close'),
-                    ]
-                )
-            ],
             menuItems: $menuItems,
         );
     }

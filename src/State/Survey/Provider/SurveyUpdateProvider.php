@@ -49,7 +49,7 @@ class SurveyUpdateProvider implements FormComponentProviderInterface, InputIniti
     public function getFormOptions(object $data, ?HandlerContext $context = null): array
     {
         return [
-            'issues_disabled' => !$data->getRespondents()->isEmpty(),
+            'has_responses' => !$data->getRespondents()->isEmpty(),
             'attr' => [
                 'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
                 'data-controller' => 'form-modifier',

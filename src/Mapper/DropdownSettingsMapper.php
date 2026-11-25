@@ -32,10 +32,14 @@ class DropdownSettingsMapper
      * @param LinkView[] $menuItems
      * @return DropdownView
      */
-    public function mapToView(?string $section, string $referer, RoundedVariant $rounded, array $menuItems = []): DropdownView
-    {
+    public function mapToView(
+        ?string $section,
+        string $referer,
+        RoundedVariant $rounded,
+        array $menuItems = [],
+        array $actionItems = [],
+    ): DropdownView {
         return  new DropdownView(
-            trigger: 'lucide:settings',
             variant: DropdownVariant::BUTTON,
             rounded: $rounded,
             menuItems: $section
@@ -44,6 +48,7 @@ class DropdownSettingsMapper
                     $this->getParameters($section, $referer),
                     $this->getMessages($section, $referer),
                 ) : $menuItems,
+            actionItems: $actionItems
         );
     }
     

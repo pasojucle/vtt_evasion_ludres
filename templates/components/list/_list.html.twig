@@ -4,6 +4,11 @@
 
 {% block body %}
     <div class="p-4 lg:p-6 2xl:p-12">
+        {% if list.fallback is not null %}
+            <div class="flex mb-4">
+                {% include list.fallback.template with { (list.fallback.name): list.fallback } %}
+            </div>
+        {% endif %}
         <div class="flex gap-2 mb-8">
             <div>
                 <h1 class="font-bold text-3xl">{{ list.title }}</h1>
@@ -11,14 +16,8 @@
             </div>
             <div class="ml-auto">
                 <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
-                    {% if list.wiki is not null %}
-                        {% include 'components/_link.html.twig' with {link: list.wiki} %}
-                    {% endif %}
-                    {% if list.settings is not null %}
-                        {% include 'components/_dropdown.html.twig' with {dropdown: list.settings} %}
-                    {% endif %}
-                    {% if list.fallback is not null %}
-                        {% include list.fallback.template with {(list.fallback.name): list.fallback} %}
+                    {% if list.dropdown is not null %}
+                        {% include list.dropdown.template with {(list.dropdown.name): list.dropdown} %}
                     {% endif %}
                 </div>
             </div>

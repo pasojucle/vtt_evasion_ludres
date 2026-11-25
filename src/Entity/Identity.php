@@ -275,7 +275,7 @@ class Identity implements UploadableInterface
     {
         if (!$this->user instanceof Member) {
             throw new LogicException(sprintf(
-                'L\'entité Indentity (%d) est associée à un participant de type "%s", mais un "Member" était attendu.',
+                'L\'entité Identity (%d) est associée à un participant de type "%s", mais un "Member" était attendu.',
                 $this->id,
                 get_debug_type($this->user)
             ));

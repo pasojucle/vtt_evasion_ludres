@@ -6,11 +6,13 @@ namespace App\State\Cluster\Provider;
 
 use App\Core\Contract\Provider\ComponentProviderInterface;
 use App\Core\Dto\HandlerContext;
+use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\Size;
 use App\Dto\View\LinkView;
 use App\Dto\View\TabView;
 use App\Dto\View\TabWrapperView;
 use App\Entity\BikeRide;
+use App\Mapper\Cluster\ClustersActivityDropdownMapper;
 use App\Mapper\Cluster\ClustersActivityMapper;
 use App\Mapper\Cluster\ClusterTabMapper;
 use App\Service\UrlContextService;
@@ -23,6 +25,7 @@ class ClustersActivityReadProvider implements ComponentProviderInterface
     public function __construct(
         private ClustersActivityMapper $clutersActivityMapper,
         private ClusterTabMapper $clusterMapper,
+        private ClustersActivityDropdownMapper $clutersActivityDropdownMapper,
         private UrlContextService $urlContext,
     ) {
     }
@@ -30,6 +33,7 @@ class ClustersActivityReadProvider implements ComponentProviderInterface
     public function getView(object $data, ?HandlerContext $context = null): TabWrapperView
     {
         $fallback = $context->encodedFallback;
+        $targetUrl = $this->urlContext->encodeUrl($context->route, $context->routeParams);
         $currentTab = $context->tab;
 
         return new TabWrapperView(
@@ -39,9 +43,12 @@ class ClustersActivityReadProvider implements ComponentProviderInterface
             tabs: $this->tabs($data, $fallback, $currentTab),
             fallback: new LinkView(
                 url: $this->urlContext->decodeUrl($context->encodedFallback),
+                label: 'Retour',
+                variant: ColorVariant::GOST,
                 icon: 'lucide:chevron-left',
-                size: Size::ICON
+                size: Size::SM,
             ),
+            dropdown: $this->clutersActivityDropdownMapper->mapToView($data, $targetUrl),
         );
     }
 

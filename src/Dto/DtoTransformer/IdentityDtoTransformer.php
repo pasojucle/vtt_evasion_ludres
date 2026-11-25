@@ -53,7 +53,7 @@ class IdentityDtoTransformer
         $identityDto->address = $this->addressDtoTransformer->fromEntity($address, $histories);
         $identityDto->email = ($identity->getUser() instanceof Guest) ? $identity->getUser()->getEmail() : $identity->getEmail();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
-        $emergencyContact = $identity->getMember()->getEmergencyContact();
+        $emergencyContact = ($identity->getUser()) ? $identity->getMember()->getEmergencyContact() : null;
         if ($emergencyContact) {
             $identityDto->emergencyPhone = $emergencyContact->getPhone();
             $identityDto->emergencyPhoneAnchor = $this->getPhoneAnchor($emergencyContact->getPhone());

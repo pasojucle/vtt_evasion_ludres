@@ -111,6 +111,14 @@ export default class extends Controller {
         }
     }
 
+    handleDownloadSubmit() {
+        console.log("handleDownloadSubmit");
+
+        setTimeout(() => {
+            this.close();
+        }, 150);
+    }
+
     followLink(event) {
         const url = event.currentTarget.dataset.modalUrl;
         const target = event.currentTarget.dataset.modalLinkTarget || '_self';

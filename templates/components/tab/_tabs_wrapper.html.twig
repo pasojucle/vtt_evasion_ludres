@@ -4,11 +4,17 @@
 
 {% block body %}
     <div class="p-4 lg:p-6 2xl:p-12">
+        <div class="flex mb-4">
+            {% include view.fallback.template with { (view.fallback.name): view.fallback } %}
+        </div>
+        
         <div class="flex gap-2 mb-8">
             {% include view.header.template with { (view.header.name): view.header } %}
             <div class="ml-auto">
                 <div class="flex flex-col lg:flex-row items-center rounded-sm divide-y lg:divide-y-0 lg:divide-x divide-white">
-                    {% include "components/_link.html.twig" with {link: view.fallback} %}
+                    {% if view.dropdown %}
+                        {% include view.dropdown.template with { (view.dropdown.name): view.dropdown } %}
+                    {% endif %}
                 </div>
             </div>
         </div>

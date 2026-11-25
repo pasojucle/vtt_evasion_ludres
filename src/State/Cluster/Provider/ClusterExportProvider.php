@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\State\Cluster\Provider;
 
-use App\Core\Contract\Provider\StreamActionExportableInterface;
+use App\Core\Contract\Provider\StreamDownloadProviderInterface;
+use App\Core\Dto\HandlerContext;
 use App\Dto\Filter\AbstractFilter;
 use App\Entity\Cluster;
 use App\Mapper\Cluster\ParticpantListExportMapper;
@@ -12,9 +13,9 @@ use App\Service\LogService;
 use App\Service\StringService;
 
 /**
- * @implements StreamActionExportableInterface<Cluster>
+ * @implements StreamDownloadProviderInterface<Cluster>
  */
-class ClusterExportProvider implements StreamActionExportableInterface
+class ClusterExportProvider implements StreamDownloadProviderInterface
 {
     public function __construct(
         private ParticpantListExportMapper $particpantListExportMapper,
@@ -23,14 +24,14 @@ class ClusterExportProvider implements StreamActionExportableInterface
     ) {
     }
 
-    public function streamExportContent(?object $data, ?AbstractFilter $filter): void
+    public function streamDownloadContent(?object $data, ?HandlerContext $context = null): void
     {
         $this->logService->writeFromEntity($data);
 
         $this->particpantListExportMapper->streamToPdf($data);
     }
 
-    public function basename(object $data): string
+    public function basename(?object $data, ?HandlerContext $context = null): string
     {
         return $this->stringService->clean(
             sprintf(
@@ -39,5 +40,10 @@ class ClusterExportProvider implements StreamActionExportableInterface
                 $data->getBikeRide()->getStartAt()->format('Ymd')
             )
         ) . '.pdf';
+    }
+
+    public function contentType(): string
+    {
+        return 'aplication\pdf';
     }
 }

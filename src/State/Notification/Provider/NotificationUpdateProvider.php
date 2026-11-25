@@ -30,6 +30,7 @@ class NotificationUpdateProvider implements FormComponentProviderInterface
         return [
             'attr' => [
                 'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
+                'data-turbo-frame' => '_top'
             ]
         ];
     }

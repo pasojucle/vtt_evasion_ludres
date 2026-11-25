@@ -18,7 +18,6 @@ use App\Service\UrlContextService;
 class UserMapper
 {
     public function __construct(
-        private UserDropdownMapper $userDropdownMapper,
         private LevelBadgeMapper $levelBadgeMapper,
         private UrlContextService $urlContextService,
     ) {
@@ -37,7 +36,6 @@ class UserMapper
             ],
             indicators: $this->getIndicators($entity),
             status: $this->levelBadgeMapper->mapToView($level),
-            dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
             url: new ListItemUrlView($this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl)),
             gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
             gridTemplateBadges: 'grid-cols-[auto_160px]',

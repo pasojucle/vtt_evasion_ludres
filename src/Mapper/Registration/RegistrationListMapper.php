@@ -8,7 +8,6 @@ use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Contract\View\ListActionViewInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
-use App\Dto\Enum\DropdownVariant;
 use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\RegistrationFilter;
@@ -89,8 +88,7 @@ class RegistrationListMapper
             title: 'Inscriptions',
             description: sprintf('Administration des inscriptions pour la saison %s.', $this->seasonService->getCurrentSeason()),
             items: $items,
-            settings: $this->settings($targetUrl),
-            tools: $this->tools($filter),
+            dropdown: $this->dropdown($targetUrl, $filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -105,27 +103,12 @@ class RegistrationListMapper
         );
     }
 
-    public function settings(string $targetUrl): DropdownView
+    public function dropdown(string $targetUrl, RegistrationFilter $filter): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('REGISTRATION', $targetUrl, RoundedVariant::ROUNDED, [
-            new LinkView(
-                label: 'Étapes des inscriptions',
-                url: $this->urlGenerator->generate('admin_registration_step_list'),
-                variant: ColorVariant::DROPDOWN,
-            ),
-            new LinkView(
-                label: 'Gestions des autorisations',
-                url: $this->urlGenerator->generate('admin_agreement_list'),
-                variant: ColorVariant::DROPDOWN,
-            ),
-        ]);
-    }
-
-    public function tools(RegistrationFilter $filter): ?DropdownView
-    {
-        return new DropdownView(
-            variant: DropdownVariant::GOST,
-            rounded: RoundedVariant::ROUNDED_NONE,
+        return $this->dropdownSettingsMapper->mapToView(
+            section: 'REGISTRATION',
+            referer: $targetUrl,
+            rounded: RoundedVariant::ROUNDED,
             menuItems: [
                 new LinkView(
                     label: 'Exporter la sélection',
@@ -136,7 +119,19 @@ class RegistrationListMapper
                         new HtmlAttributeView('data-action', 'click->dropdown#close'),
                         new HtmlAttributeView('data-turbo', 'false')
                     ]
-                )
+                ),
+                new LinkView(
+                    label: 'Étapes des inscriptions',
+                    icon: 'lucide:settings',
+                    url: $this->urlGenerator->generate('admin_registration_step_list'),
+                    variant: ColorVariant::DROPDOWN,
+                ),
+                new LinkView(
+                    label: 'Gestions des autorisations',
+                    icon: 'lucide:settings',
+                    url: $this->urlGenerator->generate('admin_agreement_list'),
+                    variant: ColorVariant::DROPDOWN,
+                ),
             ],
             actionItems: [
                 new DropdownItemView(

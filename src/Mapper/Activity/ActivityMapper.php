@@ -41,18 +41,18 @@ class ActivityMapper
             indicators: $this->getIndicators($entity),
             status: $this->getStatus($entity, $isComplete),
             counter: new BadgeView(
-                    $participantsTotal,
-                    $isComplete ? ColorVariant::SUCCESS : ColorVariant::DEFAULT,
-                ),
+                $participantsTotal,
+                $isComplete ? ColorVariant::SUCCESS : ColorVariant::DEFAULT,
+            ),
             dropdown: $this->activityAdminDropdownMapper->mapToView($entity, $targetUrl),
             isDeleted: $entity->isDeleted(),
             url: new ListItemUrlView(
-                    $this->urlContextService->generateUrl(
+                $this->urlContextService->generateUrl(
                         "admin_cluster_list_activity",
                         ['bikeRide' => $entity->getId()],
                         $targetUrl
                     )
-                ),
+            ),
             gridTemplateContent: 'grid-cols-1 lg:grid-cols-[2fr_1fr]',
             gridTemplateLabels: 'grid-cols-[80px_auto]',
             gridTemplateBadges: 'grid-cols-[80px_auto_40px]',

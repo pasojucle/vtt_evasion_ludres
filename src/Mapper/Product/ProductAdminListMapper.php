@@ -7,8 +7,11 @@ namespace App\Mapper\Product;
 use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
+use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\ProductFilter;
+use App\Dto\View\DropdownView;
 use App\Dto\View\HtmlAttributeView;
 use App\Dto\View\LinkView;
 use App\Dto\View\ListView;
@@ -44,6 +47,13 @@ class ProductAdminListMapper
             description: 'Administration des produits aux couleurs du club vendus en lignes.',
             items: array_map(fn (Product $product) => $this->productMapper->mapToView($product, $targetUrl), iterator_to_array($entities)),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
+            dropdown: new DropdownView(
+                variant: DropdownVariant::BUTTON,
+                rounded: RoundedVariant::ROUNDED,
+                menuItems: [
+                    $this->wikiMapper->mapToView('boutique'),
+                ]
+            ),
             addItem: new LinkView(
                 label: 'Ajouter un produit',
                 url: $this->urlContextService->generateUrl('admin_product_add', [], $targetUrl),
@@ -64,7 +74,6 @@ class ProductAdminListMapper
                 ],
             ),
             filterChipViews: $this->filterChipsMapper->mapToView($filter, $filterConfig->getAdvancedFields(), $filterConfig->getRouteName()),
-            wiki:  $this->wikiMapper->mapToView('boutique'),
         );
     }
 }

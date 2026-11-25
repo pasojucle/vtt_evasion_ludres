@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mapper\SurveyResponse;
 
+use App\Dto\Enum\SurveyResponseValueType;
 use App\Entity\Enum\SurveyResponseType;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
@@ -46,6 +47,7 @@ class SurveyResponseExportMapper
             $this->addSurveyUsers($entity, $fp);
         }
         flush();
+
         fclose($fp);
     }
 
@@ -59,10 +61,27 @@ class SurveyResponseExportMapper
                     $row[] = $member ? $member->getIdentity()->getFullName() : $uuid;
                 }
 
-                $row[] = $surveyResponse->value;
+                $row[] = $this->getSurveyResponse($surveyResponse);
             }
             fputcsv($fp, $row, self::CSV_SEPARATOR);
         }
+    }
+
+    private function getSurveyResponse(SurveyResponse $surveyResponse): string
+    {
+        $issue = $surveyResponse->getSurveyIssue();
+        $responseType = $issue->getResponseType();
+        $surveyResponseValue = $surveyResponse->getValue();
+        if (SurveyResponseType::TEXT === $responseType) {
+            return $surveyResponseValue ?? '';
+        }
+        
+        return match ($surveyResponseValue) {
+            '1' => SurveyResponseValueType::YES->trans($this->translator),
+            '0' => SurveyResponseValueType::NO->trans($this->translator),
+            '2' => SurveyResponseValueType::NO_OPINION->trans($this->translator),
+            default => '-',
+        };
     }
 
     private function getResults(array $surveyResponsesByUuid): array
@@ -117,17 +136,21 @@ class SurveyResponseExportMapper
     private function addSurveyUsers(Survey $survey, $fp): void
     {
         fputcsv($fp, [], self::CSV_SEPARATOR);
-        if (!$survey->getRespondents()->isEmpty()) {
-            $content[] = 'Horodateur,Participants - ' . $survey->getRespondents()->count();
-            foreach ($survey->getRespondents() as $respondent) {
-                $row = [];
-                $identity = $respondent->getMember()->getIdentity();
-                $row[] = $respondent->getCreatedAt()->format('d/m/Y H:i');
-                $row[] = $identity->getFullName();
-                fputcsv($fp, $row, self::CSV_SEPARATOR);
-            }
-        } else {
+
+        $respondents = $survey->getRespondents();
+        if ($respondents->isEmpty()) {
             fputcsv($fp, ['Aucun participant'], self::CSV_SEPARATOR);
+
+            return;
+        }
+
+        fputcsv($fp, ['Horodateur', 'Participants - ' . $respondents->count()], self::CSV_SEPARATOR);
+
+        foreach ($respondents as $respondent) {
+            $createdAt = $respondent->getCreatedAt()?->format('d/m/Y H:i') ?? '';
+            $fullName = $respondent->getMember()?->getIdentity()?->getFullName() ?? 'Inconnu';
+
+            fputcsv($fp, [$createdAt, $fullName], self::CSV_SEPARATOR);
         }
     }
 }

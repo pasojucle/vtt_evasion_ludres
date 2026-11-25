@@ -6,8 +6,8 @@ namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\AutocompleteHandler;
+use App\Core\Handler\JsonHandler;
 use App\Core\Handler\ListExportHandler;
-use App\Core\Handler\ListJsonHandler;
 use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\Filter\CoverageFilter;
 use App\Entity\Licence;
@@ -76,7 +76,7 @@ class CoverageController extends AbstractController
     public function adminEmailCoverages(
         Request $request,
         CoverageListEmailProvider $provider,
-        ListJsonHandler $handler,
+        JsonHandler $handler,
     ): JsonResponse {
         return $handler->handle(
             $request,

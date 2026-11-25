@@ -68,9 +68,10 @@ class BoardRoleListMapper
             ),
             fallback: new LinkView(
                 url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                variant: ColorVariant::GOST,
+                label: 'Retour',
                 icon: 'lucide:chevron-left',
-                rounded: RoundedVariant::ROUNDED,
-                size: Size::ICON,
+                size: Size::SM,
             ),
             sortableUrl: $this->urlContextService->generateUrl('admin_board_role_order', ['boardRole' => 0], $targetUrl),
         );

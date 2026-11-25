@@ -8,6 +8,7 @@ use App\Core\Contract\Filter\FilterConfigInterface;
 use App\Core\Dto\HandlerContext;
 use App\Dto\Enum\ColorVariant;
 use App\Dto\Enum\DropdownVariant;
+use App\Dto\Enum\RoundedVariant;
 use App\Dto\Enum\Size;
 use App\Dto\Filter\CoverageFilter;
 use App\Dto\View\BadgeView;
@@ -24,7 +25,6 @@ use App\Entity\Licence;
 use App\Entity\Member;
 use App\Mapper\FilterChipsMapper;
 use App\Mapper\PaginatorMapper;
-use App\Mapper\User\UserDropdownMapper;
 use App\Service\SeasonService;
 use App\Service\UrlContextService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -36,7 +36,6 @@ class CoverageListMapper
         private UrlGeneratorInterface $urlGenerator,
         private FilterChipsMapper $filterChipsMapper,
         private PaginatorMapper $paginatorMapper,
-        private UserDropdownMapper $userDropdownMapper,
         private SeasonService $seasonService,
         private UrlContextService $urlContextService,
     ) {
@@ -64,7 +63,6 @@ class CoverageListMapper
                     new LabelView($identity->getFullName()),
                 ],
                 indicators: $this->getIndicators($entity->getLevel()),
-                dropdown: $this->userDropdownMapper->mapToView($entity, $targetUrl),
                 url: new ListItemUrlView($this->urlContextService->generateUrl("admin_user_show", ['user' => $entity->getId()], $targetUrl)),
                 action: $this->getAction($licence, $targetUrl),
                 gridTemplateRow: 'grid-cols-1 md:grid-cols-[1fr_112px]',
@@ -78,7 +76,7 @@ class CoverageListMapper
             title: sprintf('Assurances %s', $currentSeason),
             description: sprintf('Administration des assurances ffvélo, pour les adhérents ayant soucrit avant la publication des bulletins d\'assurance %s .', $currentSeason),
             items: $items,
-            tools: $this->tools($filter),
+            dropdown: $this->dropdown($filter),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => 'admin_coverage_list'], $filter->toQueryParams())),
@@ -106,10 +104,11 @@ class CoverageListMapper
         return $indicators;
     }
 
-    public function tools(CoverageFilter $filter): ?DropdownView
+    public function dropdown(CoverageFilter $filter): ?DropdownView
     {
         return new DropdownView(
-            variant: DropdownVariant::GOST,
+            variant: DropdownVariant::BUTTON,
+            rounded: RoundedVariant::ROUNDED,
             menuItems: [
                 new LinkView(
                     label: 'Exporter la sélection',

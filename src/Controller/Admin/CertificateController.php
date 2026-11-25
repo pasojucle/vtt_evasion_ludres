@@ -30,7 +30,6 @@ class CertificateController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationCertificate(
         Request $request,
-        GetRegistrationCertificate $getRegistrationCertificate,
         MemberCertificateCreateProvider $provider,
         MemberCertificateCreateProcessor $processor,
         Member $member,
@@ -41,28 +40,8 @@ class CertificateController extends AbstractController
             $member,
             $provider,
             $processor,
-            CertificateType::class
+            CertificateType::class,
         );
-
-        list($content) = $getRegistrationCertificate->execute($request, $member);
-        $form = $this->createForm(CertificateType::class, [
-            'content' => $content,
-        ]);
-        $form->handleRequest($request);
-        $filename = null;
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            list($content, $filename) = $getRegistrationCertificate->execute($request, $member, mb_convert_encoding($data['content'], 'UTF-8'));
-            $filename = base64_encode($this->parameterBag->get('data_directory_path') . $filename);
-        }
-
-        return $this->render('certificate/certificate.html.twig', [
-            'form' => $form->createView(),
-            'title' => 'Attestation d\'inscription pour CE',
-            'content' => $content,
-            'filename' => $filename,
-        ]);
     }
 
     #[Route('/admin/accompaganteur/certificate/{member}', name: 'user_accompanying_certificate', methods: ['GET', 'POST'])]

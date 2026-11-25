@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Handler\ActionDirectHandler;
-use App\Core\Handler\ActionExportHandler;
 use App\Core\Handler\ActionFormHandler;
 use App\Core\Handler\AutocompleteHandler;
+use App\Core\Handler\ListExportHandler;
 use App\Core\Handler\ListPaginatedHandler;
 use App\Dto\Filter\SkillAutocompleteFilter;
 use App\Dto\Filter\SkillFilter;
@@ -50,7 +50,7 @@ class SkillController extends AbstractController
     public function adminOrderHeadersExport(
         Request $request,
         SkillExportProvider $provider,
-        ActionExportHandler $handler,
+        ListExportHandler $handler,
     ): Response {
         return $handler->handle(
             request: $request,

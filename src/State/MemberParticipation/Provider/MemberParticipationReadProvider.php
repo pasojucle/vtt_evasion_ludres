@@ -179,7 +179,7 @@ class MemberParticipationReadProvider implements ListLoadMoreProviderInterface, 
         return $months;
     }
 
-    public function filename(?HandlerContext $context = null): string
+    public function basename(?HandlerContext $context = null): string
     {
         return sprintf('export_participation_%s.csv', $context->parent->getLicenceNumber());
     }

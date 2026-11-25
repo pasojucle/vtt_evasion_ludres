@@ -33,8 +33,8 @@ class SurveyToggleProcessor implements TurboStreamProcessorInterface
     public function process(PayloadInterface $payload, ?HandlerContext $context = null): TurboStreamProcessorResult
     {
         $survey = $payload->data;
-        $tokenId = $this->csrfTokenService->getTokenId($survey->survey);
-        $csrfToken = new CsrfToken($tokenId, $survey->token);
+        $tokenId = $this->csrfTokenService->getTokenId($survey);
+        $csrfToken = new CsrfToken($tokenId, $payload->token);
 
         if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
             new TurboStreamProcessorResult(

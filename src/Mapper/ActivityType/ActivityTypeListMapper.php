@@ -46,10 +46,10 @@ class ActivityTypeListMapper
 
         return new ListView(
             name: 'bike_ride_type',
-            title: 'Type d\'activité',
+            title: 'Types d\'activité',
             description: 'Administration des types d\'activité.',
             items: $this->listItems($entities, $targetUrl),
-            settings: $this->settings($targetUrl),
+            dropdown: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -73,16 +73,17 @@ class ActivityTypeListMapper
             ),
             fallback: new LinkView(
                 url: $this->urlContextService->decodeUrl($context->encodedFallback),
+                variant: ColorVariant::GOST,
                 icon: 'lucide:chevron-left',
-                rounded: RoundedVariant::ROUNDED_END,
-                size: Size::ICON,
+                size: Size::SM,
+                label: 'Retour',
             ),
         );
     }
 
     private function settings(string $targetUrl): DropdownView
     {
-        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', $targetUrl, RoundedVariant::ROUNDED_START, [
+        return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE_TYPE', $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
                 label: 'Ajouter un message',
                 url: $this->urlContextService->generateUrl('admin_message_add', [

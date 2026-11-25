@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Core\Dto\HandlerContext;
+use App\Core\Handler\ActionExportHandler;
+use App\Core\Handler\JsonHandler;
 use App\Core\Handler\ListDrawerHandler;
 use App\Entity\Survey;
 use App\State\SurveyResponse\Provider\SurveyResponcesReadProvider;
@@ -15,7 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -54,26 +55,28 @@ class SurveyResponseController extends AbstractController
     #[IsGranted('SURVEY_VIEW', 'survey')]
     public function export(
         SurveyResponseExportProvider $provider,
-        Survey $survey
+        Survey $survey,
+        ActionExportHandler $handler,
     ): Response {
-        $response = new StreamedResponse(function () use ($provider, $survey) {
-            $provider->streamExportContent($survey);
-        });
-        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export_inscriptions.csv"');
-
-        return $response;
+        return $handler->handle(
+            $provider,
+            $survey,
+        );
     }
-
-
 
     #[Route('/emails/{survey}', name: 'email_to_clipboard', methods: ['GET'])]
     #[IsGranted('SURVEY_LIST')]
     public function adminEmailSurvey(
         Request $request,
         Survey $survey,
-        SurveyResponseEmailProvider $provider
+        SurveyResponseEmailProvider $provider,
+        JsonHandler $handler,
     ): JsonResponse {
-        return new JsonResponse($provider->copyEmailListToClipboard($survey));
+        return $handler->handle(
+            $request,
+            $provider,
+            null,
+            $survey,
+        );
     }
 }

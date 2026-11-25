@@ -67,7 +67,7 @@ class SurveyType extends AbstractType
                     'attr' => [
                         'class' => 'flex flex-col gap-2'
                     ],
-                    'disabled' => $options['issues_disabled'],
+                    'readonly' => $options['has_responses'],
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -80,7 +80,7 @@ class SurveyType extends AbstractType
                     'data-switch-off' => 'Activer le mode anonyme',
                 ],
                 'required' => false,
-                'disabled' => $options['issues_disabled'],
+                'disabled' => $options['has_responses'],
             ])
         ;
 
@@ -116,7 +116,7 @@ class SurveyType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Survey::class,
             'filters' => [],
-            'issues_disabled' => false,
+            'has_responses' => false,
             'attr' => [
                 'data-controller' => 'form-modifier'
             ]

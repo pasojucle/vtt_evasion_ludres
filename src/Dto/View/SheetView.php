@@ -28,9 +28,10 @@ readonly class SheetView implements ComponentFormViewInterface
 
     public function getFormAttr(): array
     {
-        return [
-            'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
-            'data-turbo-frame' => '_top'
-        ];
+        return [];
+        // return [
+        //     'data-action' => 'turbo:submit-end->sheet#handleFormSubmit',
+        //     'data-turbo-frame' => '_top'
+        // ];
     }
 }

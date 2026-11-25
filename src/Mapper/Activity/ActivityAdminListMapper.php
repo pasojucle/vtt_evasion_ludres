@@ -52,7 +52,7 @@ class ActivityAdminListMapper
                 $this->activityMapper->mapToView($activity, $participantTotalByEntity, $targetUrl),
                 iterator_to_array($entities)
             ),
-            settings: $this->settings($targetUrl),
+            dropdown: $this->settings($targetUrl),
             paginator: $this->paginatorMapper->mapToView($entities, $route, $currentPage, $filter),
             advancedFilter: new LinkView(
                 url: $this->urlGenerator->generate('admin_fiter_advanced', array_merge(['route' => $route], $filter->toQueryParams())),
@@ -81,7 +81,8 @@ class ActivityAdminListMapper
     {
         return $this->dropdownSettingsMapper->mapToView('BIKE_RIDE', $targetUrl, RoundedVariant::ROUNDED, [
             new LinkView(
-                label: 'Types de rando',
+                label: 'Types d\'activité',
+                icon: 'lucide:settings',
                 url: $this->urlContextService->generateUrl('admin_bike_ride_type_list', [], $targetUrl),
                 variant: ColorVariant::DROPDOWN,
             ),

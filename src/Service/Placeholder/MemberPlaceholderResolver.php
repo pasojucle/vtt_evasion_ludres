@@ -24,6 +24,7 @@ readonly class MemberPlaceholderResolver extends AbstractPlaceholderResolver
             'email_principal' => $data->getMainIdentity()?->getEmail(),
             'date_naissance', 'date_naissance_enfant' => $identity?->getBirthDate()?->format('d/m/Y'),
             'lieu_naissance' => $identity?->getBirthCommune()?->getName(),
+            'adresse' => $identity?->getAddress()->__tostring(),
             default => null,
         };
     }
